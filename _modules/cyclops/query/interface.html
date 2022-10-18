@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.query.interface &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/cyclops.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+            <a href="../../../index.html" class="icon icon-home"> cyclops
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html"># cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#getting-started">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../coverage.html">Coverage report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>cyclops.query.interface</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cyclops.query.interface</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;A query interface class to wrap database objects and queries.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">codebase_ops</span> <span class="kn">import</span> <span class="n">get_log_file_path</span>
+<span class="kn">from</span> <span class="nn">cyclops.orm</span> <span class="kn">import</span> <span class="n">Database</span>
+<span class="kn">from</span> <span class="nn">cyclops.query.util</span> <span class="kn">import</span> <span class="n">TableTypes</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.file</span> <span class="kn">import</span> <span class="n">save_dataframe</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.log</span> <span class="kn">import</span> <span class="n">setup_logging</span>
+
+<span class="c1"># Logging.</span>
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">setup_logging</span><span class="p">(</span><span class="n">log_path</span><span class="o">=</span><span class="n">get_log_file_path</span><span class="p">(),</span> <span class="n">print_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="QueryInterface"><a class="viewcode-back" href="../../../reference/api/cyclops.query.interface.html#cyclops.query.interface.QueryInterface">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">QueryInterface</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;An interface dataclass to wrap queries, and run them.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    database: cyclops.orm.Database</span>
+<span class="sd">        Database object to create ORM, and query data.</span>
+<span class="sd">    query: cyclops.query.util.TableTypes</span>
+<span class="sd">        The query.</span>
+<span class="sd">    data: pandas.DataFrame</span>
+<span class="sd">        Data returned from executing the query, as Pandas DataFrame.</span>
+<span class="sd">    _run_args: dict</span>
+<span class="sd">        Private dictionary attribute to keep track of arguments</span>
+<span class="sd">        passed to run() method.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">database</span><span class="p">:</span> <span class="n">Database</span>
+    <span class="n">query</span><span class="p">:</span> <span class="n">TableTypes</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_run_args</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+<div class="viewcode-block" id="QueryInterface.run"><a class="viewcode-back" href="../../../reference/api/cyclops.query.interface.html#cyclops.query.interface.QueryInterface.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Run the query, and fetch data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        limit: int, optional</span>
+<span class="sd">            No. of rows to limit the query return.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            Query result dataframe.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Only re-run when new run arguments are given</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_args</span> <span class="o">==</span> <span class="nb">locals</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">run_query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
+
+<div class="viewcode-block" id="QueryInterface.save"><a class="viewcode-back" href="../../../reference/api/cyclops.query.interface.html#cyclops.query.interface.QueryInterface.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;parquet&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Save the query.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        save_path: str</span>
+<span class="sd">            Path where the file will be saved.</span>
+<span class="sd">        file_format: str</span>
+<span class="sd">            File format of the file to save.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Processed save path for upstream use.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># If the query was already run</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">save_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="n">file_format</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">path</span>
+
+        <span class="c1"># Save without running</span>
+        <span class="k">if</span> <span class="n">file_format</span> <span class="o">==</span> <span class="s2">&quot;csv&quot;</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">save_query_to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">file_format</span> <span class="o">==</span> <span class="s2">&quot;parquet&quot;</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">save_query_to_parquet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid file format specified.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">path</span></div>
+
+<div class="viewcode-block" id="QueryInterface.clear_data"><a class="viewcode-back" href="../../../reference/api/cyclops.query.interface.html#cyclops.query.interface.QueryInterface.clear_data">[docs]</a>    <span class="k">def</span> <span class="nf">clear_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Clear data container.</span>
+
+<span class="sd">        Sets the data attribute to None, thus clearing the dataframe contained.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="QueryInterface.run_in_grouped_batches"><a class="viewcode-back" href="../../../reference/api/cyclops.query.interface.html#cyclops.query.interface.QueryInterface.run_in_grouped_batches">[docs]</a>    <span class="k">def</span> <span class="nf">run_in_grouped_batches</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">id_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Run the query in batches with complete sets of sample IDs.</span>
+
+<span class="sd">        Queries are sorted and grouped such that the rows for a given sample ID are kept</span>
+<span class="sd">        together in a single batch.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        id_col: str</span>
+<span class="sd">            Name of the sample ID column by which to batch.</span>
+<span class="sd">        batch_size: int</span>
+<span class="sd">            Approximate batch size before rearranging based on sample IDs.</span>
+
+<span class="sd">        Yields</span>
+<span class="sd">        ------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            A query batch with complete sets of sample IDs.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">generator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">run_id_batched_query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">id_col</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="nb">next</span><span class="p">(</span><span class="n">generator</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+                <span class="k">return</span></div>
+
+<div class="viewcode-block" id="QueryInterface.save_in_grouped_batches"><a class="viewcode-back" href="../../../reference/api/cyclops.query.interface.html#cyclops.query.interface.QueryInterface.save_in_grouped_batches">[docs]</a>    <span class="k">def</span> <span class="nf">save_in_grouped_batches</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dir_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">id_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;parquet&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Save a query in different batches, keeping same sample IDs together.</span>
+
+<span class="sd">        Queries are sorted and grouped such that the rows for a given sample ID are kept</span>
+<span class="sd">        together in a single batch.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query: cyclops.query.util.TableTypes</span>
+<span class="sd">            Query to run.</span>
+<span class="sd">        dir_path: str</span>
+<span class="sd">            Path to directory in which to save the batches.</span>
+<span class="sd">        batch_size: int</span>
+<span class="sd">            Approximate batch size before rearranging based on sample IDs.</span>
+<span class="sd">        id_col: str</span>
+<span class="sd">            Name of the sample ID column by which to batch.</span>
+<span class="sd">        file_format: str</span>
+<span class="sd">            File format of the DataFrame to save.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">save_id_batched_query</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">dir_path</span><span class="p">,</span> <span class="n">id_col</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="n">file_format</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="QueryInterfaceProcessed"><a class="viewcode-back" href="../../../reference/api/cyclops.query.interface.html#cyclops.query.interface.QueryInterfaceProcessed">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">QueryInterfaceProcessed</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;An interface dataclass to wrap queries, and run them with post-processing.</span>
+
+<span class="sd">    An similar dataclass to QueryInterface, where custom post-processing</span>
+<span class="sd">    functions on the pandas dataframe returned from the query can be run. However,</span>
+<span class="sd">    this prevents the query from being further used, and hence is declared as</span>
+<span class="sd">    private attribute.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    database: cyclops.orm.Database</span>
+<span class="sd">        Database object to create ORM, and query data.</span>
+<span class="sd">    _query: cyclops.query.util.TableTypes</span>
+<span class="sd">        The query.</span>
+<span class="sd">    process_fn: Callable</span>
+<span class="sd">        Process function to apply on the pandas dataframe returned from the query.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    _run_args: dict</span>
+<span class="sd">        Private dictionary attribute to keep track of arguments</span>
+<span class="sd">        passed to run() method.</span>
+<span class="sd">    data: pandas.DataFrame</span>
+<span class="sd">        Data returned from executing the query, as Pandas DataFrame.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">database</span><span class="p">:</span> <span class="n">Database</span>
+    <span class="n">_query</span><span class="p">:</span> <span class="n">TableTypes</span>
+    <span class="n">process_fn</span><span class="p">:</span> <span class="n">Callable</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_run_args</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+<div class="viewcode-block" id="QueryInterfaceProcessed.run"><a class="viewcode-back" href="../../../reference/api/cyclops.query.interface.html#cyclops.query.interface.QueryInterfaceProcessed.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Run the query, and fetch data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        limit: int, optional</span>
+<span class="sd">            No. of rows to limit the query return.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            Query result dataframe.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_args</span> <span class="o">==</span> <span class="nb">locals</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">run_query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">)</span>
+
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Applying post-processing fn </span><span class="si">%s</span><span class="s2"> to query output&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">process_fn</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_fn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
+
+<div class="viewcode-block" id="QueryInterfaceProcessed.save"><a class="viewcode-back" href="../../../reference/api/cyclops.query.interface.html#cyclops.query.interface.QueryInterfaceProcessed.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;parquet&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Save the processed query.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        save_path: str</span>
+<span class="sd">            Path where the file will be saved.</span>
+<span class="sd">        file_format: str</span>
+<span class="sd">            File format of the file to save.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Processed save path for upstream use.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># The query must be run in order to be processed.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="n">save_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="n">file_format</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+<div class="viewcode-block" id="QueryInterfaceProcessed.clear_data"><a class="viewcode-back" href="../../../reference/api/cyclops.query.interface.html#cyclops.query.interface.QueryInterfaceProcessed.clear_data">[docs]</a>    <span class="k">def</span> <span class="nf">clear_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Clear data container.</span>
+
+<span class="sd">        Sets the data attribute to None, thus clearing the dataframe contained.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="kc">None</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Vector AI Engineering.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

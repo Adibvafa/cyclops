@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.query.postprocess.mimiciv &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/cyclops.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+            <a href="../../../../index.html" class="icon icon-home"> cyclops
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html"># cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html#getting-started">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../coverage.html">Coverage report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>cyclops.query.postprocess.mimiciv</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cyclops.query.postprocess.mimiciv</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Post-processing functions applied to queried MIMIC data (Pandas DataFrames).&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">cyclops.processors.column_names</span> <span class="kn">import</span> <span class="n">CARE_UNIT</span>
+<span class="kn">from</span> <span class="nn">cyclops.processors.constants</span> <span class="kn">import</span> <span class="n">ER</span><span class="p">,</span> <span class="n">ICU</span><span class="p">,</span> <span class="n">IP</span><span class="p">,</span> <span class="n">SCU</span>
+<span class="kn">from</span> <span class="nn">cyclops.query.postprocess.util</span> <span class="kn">import</span> <span class="n">process_care_unit_changepoints</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.profile</span> <span class="kn">import</span> <span class="n">time_function</span>
+
+<span class="n">CARE_UNIT_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">IP</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;observation&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Observation&quot;</span><span class="p">,</span> <span class="s2">&quot;Psychiatry&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;medicine&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Medicine&quot;</span><span class="p">,</span> <span class="s2">&quot;Medical/Surgical (Gynecology)&quot;</span><span class="p">],</span>
+    <span class="p">},</span>
+    <span class="n">ER</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;er&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Emergency Department&quot;</span><span class="p">,</span> <span class="s2">&quot;Emergency Department Observation&quot;</span><span class="p">],</span>
+    <span class="p">},</span>
+    <span class="n">ICU</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;icu&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;Surgical Intensive Care Unit (SICU)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Medical/Surgical Intensive Care Unit (MICU/SICU)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Medical Intensive Care Unit (MICU)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Trauma SICU (TSICU)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Neuro Surgical Intensive Care Unit (Neuro SICU)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Cardiac Vascular Intensive Care Unit (CVICU)&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">},</span>
+    <span class="n">SCU</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;surgery&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;Med/Surg&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Surgery&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Surgery/Trauma&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Med/Surg/Trauma&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Med/Surg/GYN&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Surgery/Vascular/Intermediate&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Thoracic Surgery&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Transplant&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Cardiac Surgery&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;PACU&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Surgery/Pancreatic/Biliary/Bariatric&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;cardiology&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;Cardiology&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Coronary Care Unit (CCU)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Cardiology Surgery Intermediate&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Medicine/Cardiology&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Medicine/Cardiology Intermediate&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;vascular&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;Vascular&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Hematology/Oncology&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Hematology/Oncology Intermediate&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;neuro&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Neurology&quot;</span><span class="p">,</span> <span class="s2">&quot;Neuro Intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;Neuro Stepdown&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;neonatal&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;Obstetrics (Postpartum &amp; Antepartum)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Neonatal Intensive Care Unit (NICU)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Special Care Nursery (SCN)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Nursery - Well Babies&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Obstetrics Antepartum&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Obstetrics Postpartum&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Labor &amp; Delivery&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+<span class="n">NONSPECIFIC_CARE_UNIT_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;medicine&quot;</span><span class="p">:</span> <span class="n">IP</span><span class="p">,</span>
+    <span class="s2">&quot;observation&quot;</span><span class="p">:</span> <span class="n">IP</span><span class="p">,</span>
+    <span class="s2">&quot;er&quot;</span><span class="p">:</span> <span class="n">ER</span><span class="p">,</span>
+    <span class="s2">&quot;icu&quot;</span><span class="p">:</span> <span class="n">ICU</span><span class="p">,</span>
+    <span class="s2">&quot;cardiology&quot;</span><span class="p">:</span> <span class="n">SCU</span><span class="p">,</span>
+    <span class="s2">&quot;neuro&quot;</span><span class="p">:</span> <span class="n">SCU</span><span class="p">,</span>
+    <span class="s2">&quot;neonatal&quot;</span><span class="p">:</span> <span class="n">SCU</span><span class="p">,</span>
+    <span class="s2">&quot;surgery&quot;</span><span class="p">:</span> <span class="n">SCU</span><span class="p">,</span>
+    <span class="s2">&quot;vascular&quot;</span><span class="p">:</span> <span class="n">SCU</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">CARE_UNIT_HIERARCHY</span> <span class="o">=</span> <span class="p">[</span><span class="n">ER</span><span class="p">,</span> <span class="n">ICU</span><span class="p">,</span> <span class="n">SCU</span><span class="p">,</span> <span class="n">IP</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="process_mimic_care_unit_changepoints"><a class="viewcode-back" href="../../../../reference/api/cyclops.query.postprocess.mimiciv.html#cyclops.query.postprocess.mimiciv.process_mimic_care_unit_changepoints">[docs]</a><span class="k">def</span> <span class="nf">process_mimic_care_unit_changepoints</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Process MIMIC changepoint care unit information in a hierarchical fashion.</span>
+
+<span class="sd">    Using the admit, discharge, and care unit information, create a</span>
+<span class="sd">    changepoint DataFrame usable for aggregation labelling purposes.</span>
+<span class="sd">    If a patient is in multiple care units at a changepoint, the care</span>
+<span class="sd">    unit highest in the hierarchy is selected.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data: pandas.DataFrame</span>
+<span class="sd">        The admit, discharge, and care unit information for a single encounter.</span>
+<span class="sd">        Expects columns &quot;admit&quot;, &quot;discharge&quot;, and CARE_UNIT.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.DataFrame</span>
+<span class="sd">        Changepoint information with associated care unit.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">process_care_unit_changepoints</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">CARE_UNIT_HIERARCHY</span><span class="p">)</span></div>
+
+
+<span class="nd">@time_function</span>
+<span class="k">def</span> <span class="nf">process_mimic_care_units</span><span class="p">(</span>
+    <span class="n">transfers</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">specific</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Process care unit data.</span>
+
+<span class="sd">    Processes the MIMIC Transfers table into a cleaned and simplified care</span>
+<span class="sd">    units DataFrame.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    transfers : pandas.DataFrame</span>
+<span class="sd">        MIMIC transfers table as a DataFrame.</span>
+<span class="sd">    specific : bool, optional</span>
+<span class="sd">        Whether care_unit_name column has specific or non-specific care units.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.DataFrame</span>
+<span class="sd">        Processed care units for MIMIC encounters.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">transfers</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;intime&quot;</span><span class="p">:</span> <span class="s2">&quot;admit&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;outtime&quot;</span><span class="p">:</span> <span class="s2">&quot;discharge&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;careunit&quot;</span><span class="p">:</span> <span class="n">CARE_UNIT</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Drop rows with eventtype discharge.</span>
+    <span class="c1"># Its admit timestamp is the discharge timestamp of eventtype admit.</span>
+    <span class="n">transfers</span> <span class="o">=</span> <span class="n">transfers</span><span class="p">[</span><span class="n">transfers</span><span class="p">[</span><span class="s2">&quot;eventtype&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;discharge&quot;</span><span class="p">]</span>
+    <span class="n">transfers</span> <span class="o">=</span> <span class="n">transfers</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;eventtype&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">transfers</span> <span class="o">=</span> <span class="n">transfers</span><span class="p">[</span><span class="n">transfers</span><span class="p">[</span><span class="n">CARE_UNIT</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Create replacement dictionary for care unit categories depending on specificity.</span>
+    <span class="n">replace_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">unit</span><span class="p">,</span> <span class="n">unit_dict</span> <span class="ow">in</span> <span class="n">CARE_UNIT_MAP</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">specific_unit</span><span class="p">,</span> <span class="n">unit_list</span> <span class="ow">in</span> <span class="n">unit_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">specific_unit</span> <span class="k">if</span> <span class="n">specific</span> <span class="k">else</span> <span class="n">unit</span>
+            <span class="n">replace_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">elem</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">unit_list</span><span class="p">})</span>
+    <span class="n">transfers</span><span class="p">[</span><span class="n">CARE_UNIT</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">replace_dict</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">transfers</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">transfers</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Vector AI Engineering.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

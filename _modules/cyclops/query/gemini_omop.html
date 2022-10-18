@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.query.gemini_omop &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/cyclops.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+            <a href="../../../index.html" class="icon icon-home"> cyclops
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html"># cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#getting-started">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../coverage.html">Coverage report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>cyclops.query.gemini_omop</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cyclops.query.gemini_omop</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;GEMINI OMOP query API functions.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy.sql.selectable</span> <span class="kn">import</span> <span class="n">Subquery</span>
+
+<span class="kn">from</span> <span class="nn">codebase_ops</span> <span class="kn">import</span> <span class="n">get_log_file_path</span>
+<span class="kn">from</span> <span class="nn">cyclops</span> <span class="kn">import</span> <span class="n">config</span>
+<span class="kn">from</span> <span class="nn">cyclops.constants</span> <span class="kn">import</span> <span class="n">GEMINI_OMOP</span>
+<span class="kn">from</span> <span class="nn">cyclops.orm</span> <span class="kn">import</span> <span class="n">Database</span>
+<span class="kn">from</span> <span class="nn">cyclops.query</span> <span class="kn">import</span> <span class="n">process</span> <span class="k">as</span> <span class="n">qp</span>
+<span class="kn">from</span> <span class="nn">cyclops.query.interface</span> <span class="kn">import</span> <span class="n">QueryInterface</span><span class="p">,</span> <span class="n">QueryInterfaceProcessed</span>
+<span class="kn">from</span> <span class="nn">cyclops.query.omop</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CARE_SITE_ID</span><span class="p">,</span>
+    <span class="n">CONCEPT</span><span class="p">,</span>
+    <span class="n">CONCEPT_ID</span><span class="p">,</span>
+    <span class="n">CONCEPT_NAME</span><span class="p">,</span>
+    <span class="n">OMOP_COLUMN_MAP</span><span class="p">,</span>
+    <span class="n">PERSON_ID</span><span class="p">,</span>
+    <span class="n">TABLE_MAP</span><span class="p">,</span>
+    <span class="n">VISIT_DETAIL</span><span class="p">,</span>
+    <span class="n">VISIT_END_DATETIME</span><span class="p">,</span>
+    <span class="n">VISIT_OCCURRENCE</span><span class="p">,</span>
+    <span class="n">VISIT_OCCURRENCE_ID</span><span class="p">,</span>
+    <span class="n">VISIT_START_DATETIME</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">cyclops.query.util</span> <span class="kn">import</span> <span class="n">TableTypes</span><span class="p">,</span> <span class="n">_to_subquery</span><span class="p">,</span> <span class="n">table_params_to_type</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.common</span> <span class="kn">import</span> <span class="n">to_list</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.log</span> <span class="kn">import</span> <span class="n">setup_logging</span>
+
+<span class="c1"># Logging.</span>
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">setup_logging</span><span class="p">(</span><span class="n">log_path</span><span class="o">=</span><span class="n">get_log_file_path</span><span class="p">(),</span> <span class="n">print_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">)</span>
+
+
+<span class="n">_db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">read_config</span><span class="p">(</span><span class="n">GEMINI_OMOP</span><span class="p">))</span>
+
+
+<span class="c1"># Constants</span>
+<span class="n">ID</span> <span class="o">=</span> <span class="s2">&quot;id&quot;</span>
+<span class="n">NAME</span> <span class="o">=</span> <span class="s2">&quot;name&quot;</span>
+
+
+<div class="viewcode-block" id="get_interface"><a class="viewcode-back" href="../../../reference/api/cyclops.query.gemini_omop.html#cyclops.query.gemini_omop.get_interface">[docs]</a><span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Subquery</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_interface</span><span class="p">(</span>
+    <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span>
+    <span class="n">process_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">QueryInterface</span><span class="p">,</span> <span class="n">QueryInterfaceProcessed</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Get a query interface for a GEMINI_OMOP table.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    table: cyclops.query.util.TableTypes</span>
+<span class="sd">        Table to wrap in the interface.</span>
+<span class="sd">    process_fn: Callable</span>
+<span class="sd">        Process function to apply on the Pandas DataFrame returned from the query.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cyclops.query.interface.QueryInterface or</span>
+<span class="sd">    cyclops.query.interface.QueryInterfaceProcessed</span>
+<span class="sd">        A query interface using the GEMINI database object.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">process_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">QueryInterfaceProcessed</span><span class="p">(</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">process_fn</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_table"><a class="viewcode-back" href="../../../reference/api/cyclops.query.gemini_omop.html#cyclops.query.gemini_omop.get_table">[docs]</a><span class="k">def</span> <span class="nf">get_table</span><span class="p">(</span><span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rename</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Get a table and possibly map columns to have standard names.</span>
+
+<span class="sd">    Standardizing column names allows for for columns to be</span>
+<span class="sd">    recognized in downstream processing.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    table_name: str</span>
+<span class="sd">        Name of GEMINI_OMOP table.</span>
+<span class="sd">    rename: bool, optional</span>
+<span class="sd">        Whether to map the column names</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">        Table with mapped columns.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">table_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">TABLE_MAP</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> not a recognised table.&quot;</span><span class="p">)</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">TABLE_MAP</span><span class="p">[</span><span class="n">table_name</span><span class="p">](</span><span class="n">_db</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
+
+    <span class="k">if</span> <span class="n">rename</span><span class="p">:</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">Rename</span><span class="p">(</span><span class="n">OMOP_COLUMN_MAP</span><span class="p">,</span> <span class="n">check_exists</span><span class="o">=</span><span class="kc">False</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_to_subquery</span><span class="p">(</span><span class="n">table</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_map_concept_ids_to_name</span><span class="p">(</span>
+    <span class="n">source_table</span><span class="p">:</span> <span class="n">Subquery</span><span class="p">,</span> <span class="n">source_cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Map concept IDs in a source table to concept names from concept table.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source_table: Subquery</span>
+<span class="sd">        Source table with concept IDs.</span>
+<span class="sd">    source_cols: list of str</span>
+<span class="sd">        List of columns names to consider as concept IDs for mapping.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Subquery</span>
+<span class="sd">        Query with mapped columns from concept table.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">concept_table</span> <span class="o">=</span> <span class="n">get_table</span><span class="p">(</span><span class="n">CONCEPT</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">to_list</span><span class="p">(</span><span class="n">source_cols</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">col</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Specified column not a concept ID column!&quot;</span><span class="p">)</span>
+        <span class="n">source_table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
+            <span class="n">concept_table</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">CONCEPT_ID</span><span class="p">),</span> <span class="n">join_table_cols</span><span class="o">=</span><span class="p">[</span><span class="n">CONCEPT_NAME</span><span class="p">]</span>
+        <span class="p">)(</span><span class="n">source_table</span><span class="p">)</span>
+        <span class="n">source_table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">Rename</span><span class="p">({</span><span class="n">CONCEPT_NAME</span><span class="p">:</span> <span class="n">col</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">ID</span><span class="p">,</span> <span class="n">NAME</span><span class="p">)})(</span><span class="n">source_table</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">source_table</span>
+
+
+<div class="viewcode-block" id="visit_occurrence"><a class="viewcode-back" href="../../../reference/api/cyclops.query.gemini_omop.html#cyclops.query.gemini_omop.visit_occurrence">[docs]</a><span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Subquery</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">visit_occurrence</span><span class="p">(</span>
+    <span class="n">drop_null_person_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">map_concept_cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">process_kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Query GEMINI_OMOP visit_occurrence table.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    drop_null_person_ids: bool, optional</span>
+<span class="sd">        Flag to say if entries should be dropped if &#39;person_id&#39; is missing.</span>
+<span class="sd">    map_concept_cols: str or list of str, optional</span>
+<span class="sd">        Names of columns which need to be joined with concept table</span>
+<span class="sd">        to map concepts (concept names are created as new column).</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cyclops.query.interface.QueryInterface</span>
+<span class="sd">        Constructed query, wrapped in an interface object.</span>
+
+<span class="sd">    Other Parameters</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    before_date: datetime.datetime or str</span>
+<span class="sd">        Get patients encounters before some date.</span>
+<span class="sd">        If a string, provide in YYYY-MM-DD format.</span>
+<span class="sd">    after_date: datetime.datetime or str</span>
+<span class="sd">        Get patients encounters after some date.</span>
+<span class="sd">        If a string, provide in YYYY-MM-DD format.</span>
+<span class="sd">    hospitals: str or list of str, optional</span>
+<span class="sd">        Get patient encounters by hospital sites.</span>
+<span class="sd">    years: int or list of int, optional</span>
+<span class="sd">        Get patient encounters by year.</span>
+<span class="sd">    months: int or list of int, optional</span>
+<span class="sd">        Get patient encounters by month.</span>
+<span class="sd">    limit: int, optional</span>
+<span class="sd">        Limit the number of rows returned.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">get_table</span><span class="p">(</span><span class="n">VISIT_OCCURRENCE</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">drop_null_person_ids</span><span class="p">:</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">DropNulls</span><span class="p">(</span><span class="n">PERSON_ID</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
+
+    <span class="c1"># Possibly cast string representations to timestamps</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">Cast</span><span class="p">([</span><span class="n">VISIT_START_DATETIME</span><span class="p">,</span> <span class="n">VISIT_END_DATETIME</span><span class="p">],</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
+
+    <span class="n">operations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionBeforeDate</span><span class="p">,</span> <span class="p">[</span><span class="n">VISIT_START_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;before_date&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+        <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">,</span> <span class="p">[</span><span class="n">VISIT_START_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;after_date&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+        <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">,</span> <span class="p">[</span><span class="n">VISIT_START_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;years&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+        <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionInMonths</span><span class="p">,</span> <span class="p">[</span><span class="n">VISIT_START_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;months&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+        <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionIn</span><span class="p">,</span> <span class="p">[</span><span class="n">CARE_SITE_ID</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;hospitals&quot;</span><span class="p">)],</span> <span class="p">{</span><span class="s2">&quot;to_str&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}),</span>
+        <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">Limit</span><span class="p">,</span> <span class="p">[</span><span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;limit&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+    <span class="p">]</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">process_operations</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">operations</span><span class="p">,</span> <span class="n">process_kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">map_concept_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_map_concept_ids_to_name</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">map_concept_cols</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="visit_detail"><a class="viewcode-back" href="../../../reference/api/cyclops.query.gemini_omop.html#cyclops.query.gemini_omop.visit_detail">[docs]</a><span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Subquery</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">visit_detail</span><span class="p">(</span>
+    <span class="n">visit_occurrence_table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TableTypes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">map_concept_cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Query GEMINI_OMOP visit_detail table.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    visit_occurrence_table: Subquery, optional</span>
+<span class="sd">        Visit occurrence table to join on.</span>
+<span class="sd">    map_concept_cols: str or list of str, optional</span>
+<span class="sd">        Names of columns which need to be joined with concept table</span>
+<span class="sd">        to map concepts (concept names are created as new column).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cyclops.query.interface.QueryInterface</span>
+<span class="sd">        Constructed query, wrapped in an interface object.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">get_table</span><span class="p">(</span><span class="n">VISIT_DETAIL</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">visit_occurrence_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span><span class="n">visit_occurrence_table</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="n">PERSON_ID</span><span class="p">,</span> <span class="n">VISIT_OCCURRENCE_ID</span><span class="p">])(</span>
+            <span class="n">table</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">map_concept_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_map_concept_ids_to_name</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">map_concept_cols</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Vector AI Engineering.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

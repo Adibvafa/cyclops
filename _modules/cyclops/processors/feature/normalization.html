@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.processors.feature.normalization &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/cyclops.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+            <a href="../../../../index.html" class="icon icon-home"> cyclops
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html"># cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html#getting-started">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../coverage.html">Coverage report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>cyclops.processors.feature.normalization</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cyclops.processors.feature.normalization</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Feature normalization.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">MinMaxScaler</span><span class="p">,</span> <span class="n">StandardScaler</span>
+
+<span class="kn">from</span> <span class="nn">cyclops.processors.constants</span> <span class="kn">import</span> <span class="n">MIN_MAX</span><span class="p">,</span> <span class="n">STANDARD</span>
+<span class="kn">from</span> <span class="nn">cyclops.processors.util</span> <span class="kn">import</span> <span class="n">has_columns</span><span class="p">,</span> <span class="n">has_range_index</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.common</span> <span class="kn">import</span> <span class="n">to_list_optional</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.indexing</span> <span class="kn">import</span> <span class="n">index_axis</span>
+
+<span class="n">METHOD_MAP</span> <span class="o">=</span> <span class="p">{</span><span class="n">STANDARD</span><span class="p">:</span> <span class="n">StandardScaler</span><span class="p">,</span> <span class="n">MIN_MAX</span><span class="p">:</span> <span class="n">MinMaxScaler</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="SklearnNormalizer"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.SklearnNormalizer">[docs]</a><span class="k">class</span> <span class="nc">SklearnNormalizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Sklearn normalizer wrapper.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    method: str</span>
+<span class="sd">        Name of normalization method.</span>
+<span class="sd">    scaler: sklearn.preprocessing.StandardScaler or sklearn.preprocessing.MinMaxScaler</span>
+<span class="sd">        Sklearn scaler object.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SklearnNormalizer.__init__"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.SklearnNormalizer.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        method: str</span>
+<span class="sd">            String specifying the type of Sklearn scaler.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+
+        <span class="c1"># Raise an exception if the method string is not recognized.</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">METHOD_MAP</span><span class="p">:</span>
+            <span class="n">options</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">METHOD_MAP</span><span class="p">])</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Method &#39;</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&#39; is invalid, must be in: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">options</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span> <span class="o">=</span> <span class="n">METHOD_MAP</span><span class="p">[</span><span class="n">method</span><span class="p">]()</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Repr method.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The normalization method name.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span>
+
+<div class="viewcode-block" id="SklearnNormalizer.fit"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.SklearnNormalizer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Fit the scaler.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: numpy.ndarray or pandas.Series</span>
+<span class="sd">            Data over which to fit.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Ignore errors encountered when with null values</span>
+        <span class="c1"># Save previous settings to later reset</span>
+        <span class="n">old_settings</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Data must be a 1D array.&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Data must be a pandas.Series or 1-dimensional numpy.ndarray&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Reset to old settings</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="o">**</span><span class="n">old_settings</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_transform_by_method</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">],</span>
+        <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Apply a method on the scaler.</span>
+
+<span class="sd">        If a numpy.ndarray is given, a numpy.ndarray is returned. Similarly, if a</span>
+<span class="sd">        pandas.Series is given, a pandas.Series is returned.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: numpy.ndarray or pandas.Series</span>
+<span class="sd">            Input data.</span>
+<span class="sd">        method: str</span>
+<span class="sd">            Name of the method to apply.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray or pandas.Series</span>
+<span class="sd">            Transformed data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">method_fn</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+        <span class="c1"># Ignore errors encountered when with null values</span>
+        <span class="c1"># Save previous settings to later reset</span>
+        <span class="n">old_settings</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+            <span class="n">transformed</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">method_fn</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))),</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Data must be a 1D array.&quot;</span><span class="p">)</span>
+
+            <span class="n">transformed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">method_fn</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Data must be a pandas.Series or 1-dimensional numpy.ndarray&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Reset to old settings</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="o">**</span><span class="n">old_settings</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">transformed</span>
+
+<div class="viewcode-block" id="SklearnNormalizer.transform"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.SklearnNormalizer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Apply normalization.</span>
+
+<span class="sd">        If a numpy.ndarray is given, a numpy.ndarray is returned. Similarly, if a</span>
+<span class="sd">        pandas.Series is given, a pandas.Series is returned.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: numpy.ndarray or pandas.Series</span>
+<span class="sd">            Input data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray or pandas.Series</span>
+<span class="sd">            Normalized data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_by_method</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;transform&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SklearnNormalizer.inverse_transform"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.SklearnNormalizer.inverse_transform">[docs]</a>    <span class="k">def</span> <span class="nf">inverse_transform</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Apply inverse normalization.</span>
+
+<span class="sd">        If a numpy.ndarray is given, a numpy.ndarray is returned. Similarly, if a</span>
+<span class="sd">        pandas.Series is given, a pandas.Series is returned.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: numpy.ndarray or pandas.Series</span>
+<span class="sd">            Input data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray or pandas.Series</span>
+<span class="sd">            Inversely normalized data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_by_method</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;inverse_transform&quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="GroupbyNormalizer"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.GroupbyNormalizer">[docs]</a><span class="k">class</span> <span class="nc">GroupbyNormalizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Perform normalization over a DataFrame.</span>
+
+<span class="sd">    Optionally normalize over specified groups rather than directly over columns.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    normalizer_map: dict</span>
+<span class="sd">        A map from the column name to the type of normalization, e.g.,</span>
+<span class="sd">        {&quot;event_values&quot;: &quot;standard&quot;}</span>
+<span class="sd">    by: str or list of str, optional</span>
+<span class="sd">        Columns to groupby, which affects how values are normalized.</span>
+<span class="sd">    normalizers: dict</span>
+<span class="sd">        The normalizer object information, where each column/group has a row</span>
+<span class="sd">        with a normalization object.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="GroupbyNormalizer.__init__"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.GroupbyNormalizer.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">normalizer_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">by</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># pylint: disable=invalid-name</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize.&quot;&quot;&quot;</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">normalizer_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="c1"># Check for duplicated occurences of features in the map.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">normalizer_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">features</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot specify the same feature more than once.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalizer_map</span> <span class="o">=</span> <span class="n">normalizer_map</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">by</span> <span class="o">=</span> <span class="n">to_list_optional</span><span class="p">(</span><span class="n">by</span><span class="p">)</span>  <span class="c1"># pylint: disable=invalid-name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="GroupbyNormalizer.get_map"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.GroupbyNormalizer.get_map">[docs]</a>    <span class="k">def</span> <span class="nf">get_map</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get normalization mapping from features to type.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Normalization map.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizer_map</span></div>
+
+<div class="viewcode-block" id="GroupbyNormalizer.get_by"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.GroupbyNormalizer.get_by">[docs]</a>    <span class="k">def</span> <span class="nf">get_by</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get groupby columns.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Groupby columns.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">by</span></div>
+
+<div class="viewcode-block" id="GroupbyNormalizer.fit"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.GroupbyNormalizer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Fit the normalizing objects.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: pandas.DataFrame</span>
+<span class="sd">            Data over which to fit.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_range_index</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;DataFrame required to have a range index. Try resetting the index.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">get_normalizer_for_group</span><span class="p">(</span><span class="n">group</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizer_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">normalizer</span> <span class="o">=</span> <span class="n">SklearnNormalizer</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sd">&quot;&quot;&quot;Must specify a string for the normalizer type.</span>
+<span class="sd">                        Passing normalizer objects not yet supported.&quot;&quot;&quot;</span>
+                    <span class="p">)</span>
+
+                <span class="n">normalizer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">group</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+                <span class="n">cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">normalizer</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">data</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">by</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span> <span class="o">=</span> <span class="n">get_normalizer_for_group</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">has_columns</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">by</span><span class="p">,</span> <span class="n">raise_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">grouped</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">by</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span> <span class="o">=</span> <span class="n">grouped</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">get_normalizer_for_group</span><span class="p">)</span><span class="o">.</span><span class="n">droplevel</span><span class="p">(</span>
+                <span class="n">level</span><span class="o">=-</span><span class="mi">1</span>
+            <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_transform_by_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Apply a method from the normalizer object to the data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: pandas.DataFrame</span>
+<span class="sd">            Data to transform.</span>
+<span class="sd">        method: str</span>
+<span class="sd">            Name of normalizer method to apply.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            The data with the method applied.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must first fit the normalizers.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_range_index</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;DataFrame required to have a range index. Try resetting the index.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">transform_group</span><span class="p">(</span><span class="n">group</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizer_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="c1"># Get normalizer object and transform</span>
+                <span class="n">normalizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">group</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="n">col</span><span class="p">]</span>
+                <span class="n">group</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">normalizer</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="n">group</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">group</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+        <span class="c1"># Over columns</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">by</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizer_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">normalizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">col</span><span class="p">]</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">normalizer</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+        <span class="c1"># Over groups</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># WARNING: The indexing here is very confusing, where if not done properly</span>
+            <span class="c1"># the function will hang without explanation... devs be warned!</span>
+            <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;index&quot;</span>
+            <span class="k">assert</span> <span class="s2">&quot;index&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+            <span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">by</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">grouped</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">by</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">grouped</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">transform_group</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">data</span>
+
+<div class="viewcode-block" id="GroupbyNormalizer.transform"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.GroupbyNormalizer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Normalize the data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: pandas.DataFrame</span>
+<span class="sd">            Data to transform.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            The normalized data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_by_method</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;transform&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GroupbyNormalizer.inverse_transform"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.GroupbyNormalizer.inverse_transform">[docs]</a>    <span class="k">def</span> <span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inversely normalize the data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: pandas.DataFrame</span>
+<span class="sd">            Data to transform.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            The inversely normalized data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_by_method</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;inverse_transform&quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="VectorizedNormalizer"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.VectorizedNormalizer">[docs]</a><span class="k">class</span> <span class="nc">VectorizedNormalizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Perform normalization over a NumPy array.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    axis: int</span>
+<span class="sd">        Axis over which to normalize.</span>
+<span class="sd">    normalizer_map: dict</span>
+<span class="sd">        Mapping from an index to normalization type, e.g., {&quot;eventA&quot;: &quot;standard&quot;}.</span>
+<span class="sd">    normalizers: dict</span>
+<span class="sd">        Mapping from an index to a normalizer object.</span>
+<span class="sd">    is_fit: bool</span>
+<span class="sd">        Whether or not the normalizers are fit.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="VectorizedNormalizer.__init__"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.VectorizedNormalizer.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">axis</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">normalizer_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalizer_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalizer_map</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">SklearnNormalizer</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="VectorizedNormalizer.get_map"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.VectorizedNormalizer.get_map">[docs]</a>    <span class="k">def</span> <span class="nf">get_map</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get normalization mapping from features to type.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Normalization map.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizer_map</span></div>
+
+    <span class="k">def</span> <span class="nf">_check_missing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Check if any of the normalizer_map features are missing a given index_map.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        index_map: dict</span>
+<span class="sd">            Map from feature name to index in the normalizer&#39;s given axis.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizer_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;normalizer_map is not set. Cannot check missing.&quot;</span><span class="p">)</span>
+
+        <span class="n">missing</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalizer_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">index_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing features </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="si">}</span><span class="s2"> in the data.&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="VectorizedNormalizer.fit"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.VectorizedNormalizer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">index_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Fit the normalizing objects.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: numpy.ndarray</span>
+<span class="sd">            Data over which to fit.</span>
+<span class="sd">        index_map: dict</span>
+<span class="sd">            Map from feature name to index in the normalizer&#39;s given axis.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_missing</span><span class="p">(</span><span class="n">index_map</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">feat</span><span class="p">,</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizer_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">normalizer</span> <span class="o">=</span> <span class="n">SklearnNormalizer</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sd">&quot;&quot;&quot;Must specify a string for the normalizer type.</span>
+<span class="sd">                    Passing normalizer objects not yet supported.&quot;&quot;&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">ind</span> <span class="o">=</span> <span class="n">index_map</span><span class="p">[</span><span class="n">feat</span><span class="p">]</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">index_axis</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)]</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">normalizer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span><span class="p">[</span><span class="n">feat</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalizer</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+    <span class="k">def</span> <span class="nf">_transform_by_method</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">index_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Apply a method from the normalizer object to the data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: numpy.ndarray</span>
+<span class="sd">            Data to transform.</span>
+<span class="sd">        index_map: dict</span>
+<span class="sd">            Map from feature name to index in the normalizer&#39;s given axis.</span>
+<span class="sd">        method: str</span>
+<span class="sd">            Name of normalizer method to apply.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            The data with the method applied.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must first fit the normalizers.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_missing</span><span class="p">(</span><span class="n">index_map</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">feat</span><span class="p">,</span> <span class="n">normalizer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">ind</span> <span class="o">=</span> <span class="n">index_map</span><span class="p">[</span><span class="n">feat</span><span class="p">]</span>
+            <span class="n">data_indexing</span> <span class="o">=</span> <span class="n">index_axis</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data_indexing</span><span class="p">]</span>
+            <span class="n">prev_shape</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">shape</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">normalized</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">normalizer</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">prev_shape</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">data_indexing</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalized</span>
+
+        <span class="k">return</span> <span class="n">data</span>
+
+<div class="viewcode-block" id="VectorizedNormalizer.transform"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.VectorizedNormalizer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">index_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;Normalize the data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: numpy.ndarray</span>
+<span class="sd">            Data to transform.</span>
+<span class="sd">        index_map: dict</span>
+<span class="sd">            Map from feature name to index in the normalizer&#39;s given axis.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            The normalized data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Normalizer has not been fit.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_by_method</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">index_map</span><span class="p">,</span> <span class="s2">&quot;transform&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="VectorizedNormalizer.inverse_transform"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.VectorizedNormalizer.inverse_transform">[docs]</a>    <span class="k">def</span> <span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">index_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;Inversely normalize the data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: numpy.ndarray</span>
+<span class="sd">            Data to transform.</span>
+<span class="sd">        index_map: dict</span>
+<span class="sd">            Map from feature name to index in the normalizer&#39;s given axis.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            The inversely normalized data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Normalizer has not been fit.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_by_method</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">index_map</span><span class="p">,</span> <span class="s2">&quot;inverse_transform&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="VectorizedNormalizer.set_normalizers"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.VectorizedNormalizer.set_normalizers">[docs]</a>    <span class="k">def</span> <span class="nf">set_normalizers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normalizers</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Directly set the normalizer objects rather than fitting.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        normalizers: dict</span>
+<span class="sd">            Mapping from an index to a normalizer object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">normalizers</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalizer_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;normalizers has keys not existing in the normalizer map.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span> <span class="o">=</span> <span class="n">normalizers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="VectorizedNormalizer.subset"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.VectorizedNormalizer.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indexes</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VectorizedNormalizer</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Subset the normalizers and return this new VectorizedNormalizer.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        indexes: numpy.ndarray</span>
+<span class="sd">            Indexes to keep.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">normalizer_map</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalizer_map</span><span class="p">)</span>
+
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">normalizer_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="n">keep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">indexes</span><span class="p">)</span>
+
+        <span class="n">keep_keys</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span>
+        <span class="n">normalizer_map</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">normalizer_map</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keep_keys</span>
+        <span class="p">}</span>
+
+        <span class="n">normalizer</span> <span class="o">=</span> <span class="n">VectorizedNormalizer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">normalizer_map</span><span class="o">=</span><span class="n">normalizer_map</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fit</span><span class="p">:</span>
+            <span class="n">normalizers</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span><span class="p">)</span>
+            <span class="n">normalizers</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">key</span><span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">normalizers</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keep_keys</span>
+            <span class="p">}</span>
+            <span class="n">normalizer</span><span class="o">.</span><span class="n">set_normalizers</span><span class="p">(</span><span class="n">normalizers</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">normalizer</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Vector AI Engineering.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

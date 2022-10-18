@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.processors.cleaning &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/cyclops.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+            <a href="../../../index.html" class="icon icon-home"> cyclops
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html"># cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#getting-started">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../coverage.html">Coverage report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>cyclops.processors.cleaning</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cyclops.processors.cleaning</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Events processor module, applies cleaning step to event data before aggregation.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">codebase_ops</span> <span class="kn">import</span> <span class="n">get_log_file_path</span>
+<span class="kn">from</span> <span class="nn">cyclops.processors.column_names</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ENCOUNTER_ID</span><span class="p">,</span>
+    <span class="n">EVENT_CATEGORY</span><span class="p">,</span>
+    <span class="n">EVENT_NAME</span><span class="p">,</span>
+    <span class="n">EVENT_TIMESTAMP</span><span class="p">,</span>
+    <span class="n">EVENT_VALUE</span><span class="p">,</span>
+    <span class="n">EVENT_VALUE_UNIT</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">cyclops.processors.constants</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">EMPTY_STRING</span><span class="p">,</span>
+    <span class="n">NEGATIVE_RESULT_TERMS</span><span class="p">,</span>
+    <span class="n">POSITIVE_RESULT_TERMS</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">cyclops.processors.string_ops</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">fill_missing_with_nan</span><span class="p">,</span>
+    <span class="n">fix_inequalities</span><span class="p">,</span>
+    <span class="n">none_to_empty_string</span><span class="p">,</span>
+    <span class="n">remove_text_in_parentheses</span><span class="p">,</span>
+    <span class="n">replace_if_string_match</span><span class="p">,</span>
+    <span class="n">strip_whitespace</span><span class="p">,</span>
+    <span class="n">to_lower</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">cyclops.processors.util</span> <span class="kn">import</span> <span class="n">assert_has_columns</span><span class="p">,</span> <span class="n">gather_columns</span><span class="p">,</span> <span class="n">log_counts_step</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.log</span> <span class="kn">import</span> <span class="n">setup_logging</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.profile</span> <span class="kn">import</span> <span class="n">time_function</span>
+
+<span class="c1"># Logging.</span>
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">setup_logging</span><span class="p">(</span><span class="n">log_path</span><span class="o">=</span><span class="n">get_log_file_path</span><span class="p">(),</span> <span class="n">print_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">)</span>
+
+
+<span class="n">UNSUPPORTED</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;urinalysis&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;alp&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;alt&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ast&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;d-dimer&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ldh&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;serum osmolality&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;tsh&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;urine osmolality&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="combine_events"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.cleaning.html#cyclops.processors.cleaning.combine_events">[docs]</a><span class="k">def</span> <span class="nf">combine_events</span><span class="p">(</span><span class="n">event_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Gather event data from multiple dataframes into a single one.</span>
+
+<span class="sd">    Events can be in multiple raw dataframes like labs, vitals, etc. This</span>
+<span class="sd">    function takes in multiple dataframes and gathers all events into a single</span>
+<span class="sd">    dataframe. If just a single dataframe is passed, it returns it back.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    event_data: pandas.DataFrame or list of pandas.DataFrame</span>
+<span class="sd">        Raw event data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.DataFrame</span>
+<span class="sd">        Combined event data.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">add_events</span><span class="p">(</span><span class="n">events</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">events_to_add</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">events</span><span class="p">,</span>
+                <span class="n">events_to_add</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">events</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event_data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="n">event_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">event_data</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">event_dataframe</span> <span class="ow">in</span> <span class="n">event_data</span><span class="p">:</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="n">add_events</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">event_dataframe</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">events</span></div>
+
+
+<div class="viewcode-block" id="convert_to_events"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.cleaning.html#cyclops.processors.cleaning.convert_to_events">[docs]</a><span class="nd">@assert_has_columns</span><span class="p">([</span><span class="n">ENCOUNTER_ID</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">convert_to_events</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">event_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">event_category</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">timestamp_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">value_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Convert dataframe with just timestamps into events.</span>
+
+<span class="sd">    Any event like admission, discharge, transfer, etc. can be converted to the</span>
+<span class="sd">    common events dataframe format with &#39;encounter_id&#39;, &#39;event_name&#39;, &#39;event_timestamp&#39;,</span>
+<span class="sd">    and &#39;event_value&#39; columns. The input data in this case does not have an explicit</span>
+<span class="sd">    event name and hence we assign it. Like for e.g. admission.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data: pandas.DataFrame</span>
+<span class="sd">        Raw data with some timestamps denoting an event.</span>
+<span class="sd">    event_name: str</span>
+<span class="sd">        Event name to give, added as a new column.</span>
+<span class="sd">    event_category: str</span>
+<span class="sd">        Event name to give, added as a new column.</span>
+<span class="sd">    timestamp_col: str</span>
+<span class="sd">        Name of the column in the incoming dataframe that has the timestamp.</span>
+<span class="sd">    value_col: str, optional</span>
+<span class="sd">        Name of the column in the incoming dataframe that has potential event values.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.DataFrame</span>
+<span class="sd">        Events in the converted format.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value_col</span><span class="p">:</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">ENCOUNTER_ID</span><span class="p">,</span> <span class="n">timestamp_col</span><span class="p">,</span> <span class="n">value_col</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">ENCOUNTER_ID</span><span class="p">,</span> <span class="n">timestamp_col</span><span class="p">]</span>
+    <span class="n">events</span> <span class="o">=</span> <span class="n">gather_columns</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">EVENT_VALUE</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+        <span class="n">events</span><span class="p">[</span><span class="n">EVENT_VALUE</span><span class="p">]</span> <span class="o">=</span> <span class="n">EMPTY_STRING</span>
+    <span class="n">events</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">timestamp_col</span><span class="p">:</span> <span class="n">EVENT_TIMESTAMP</span><span class="p">,</span> <span class="n">value_col</span><span class="p">:</span> <span class="n">EVENT_VALUE</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">events</span><span class="p">[</span><span class="n">EVENT_NAME</span><span class="p">]</span> <span class="o">=</span> <span class="n">event_name</span>
+    <span class="n">events</span><span class="p">[</span><span class="n">EVENT_CATEGORY</span><span class="p">]</span> <span class="o">=</span> <span class="n">event_category</span>
+
+    <span class="k">return</span> <span class="n">events</span></div>
+
+
+<div class="viewcode-block" id="is_supported"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.cleaning.html#cyclops.processors.cleaning.is_supported">[docs]</a><span class="k">def</span> <span class="nf">is_supported</span><span class="p">(</span><span class="n">event_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Check if event name is supported.</span>
+
+<span class="sd">    Processing events involves data cleaning, and hence some event names</span>
+<span class="sd">    are currently removed until they are supported.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    event_name: str</span>
+<span class="sd">        Name of event.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        If supported return True, else False.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">event_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">UNSUPPORTED</span></div>
+
+
+<div class="viewcode-block" id="drop_unsupported"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.cleaning.html#cyclops.processors.cleaning.drop_unsupported">[docs]</a><span class="nd">@assert_has_columns</span><span class="p">([</span><span class="n">EVENT_NAME</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">drop_unsupported</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Drop events currently not supported for processing.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data: pandas.DataFrame</span>
+<span class="sd">        Input data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.DataFrame</span>
+<span class="sd">        Output data with dropped events (rows) which had unsupported events.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">EVENT_NAME</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">is_supported</span><span class="p">)]</span>
+    <span class="n">log_counts_step</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;Drop unsupported events...&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="normalize_names"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.cleaning.html#cyclops.processors.cleaning.normalize_names">[docs]</a><span class="k">def</span> <span class="nf">normalize_names</span><span class="p">(</span><span class="n">names</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Normalize event names.</span>
+
+<span class="sd">    Perform basic cleaning/house-keeping of event names.</span>
+<span class="sd">    e.g. remove parantheses from the measurement-name,</span>
+<span class="sd">    convert to lower-case.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    names: pandas.Series</span>
+<span class="sd">        Event names.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.DataFrame</span>
+<span class="sd">        Normalized event names.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">to_lower</span><span class="p">)</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">remove_text_in_parentheses</span><span class="p">)</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">names</span></div>
+
+
+<div class="viewcode-block" id="normalize_categories"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.cleaning.html#cyclops.processors.cleaning.normalize_categories">[docs]</a><span class="k">def</span> <span class="nf">normalize_categories</span><span class="p">(</span><span class="n">categories</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Normalize event category names.</span>
+
+<span class="sd">    Perform basic cleaning/house-keeping of event category names.</span>
+<span class="sd">    e.g. convert to lower-case.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    categories: pandas.Series</span>
+<span class="sd">        Categories.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.Series</span>
+<span class="sd">        Normalized event categories.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">categories</span> <span class="o">=</span> <span class="n">categories</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">to_lower</span><span class="p">)</span>
+    <span class="n">categories</span> <span class="o">=</span> <span class="n">categories</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">categories</span></div>
+
+
+<div class="viewcode-block" id="normalize_values"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.cleaning.html#cyclops.processors.cleaning.normalize_values">[docs]</a><span class="k">def</span> <span class="nf">normalize_values</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Normalize event values.</span>
+
+<span class="sd">    Perform basic cleaning/house-keeping of event values.</span>
+<span class="sd">    e.g. fill empty strings with NaNs, convert some strings to</span>
+<span class="sd">    equivalent boolean or numeric, so they can be used as features.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    values: pandas.Series</span>
+<span class="sd">        Event values.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.Series</span>
+<span class="sd">        Normalized event values.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="n">replace_if_string_match</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">POSITIVE_RESULT_TERMS</span><span class="p">),</span> <span class="s2">&quot;1&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="n">replace_if_string_match</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">NEGATIVE_RESULT_TERMS</span><span class="p">),</span> <span class="s2">&quot;0&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">remove_text_in_parentheses</span><span class="p">)</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">fix_inequalities</span><span class="p">)</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">fill_missing_with_nan</span><span class="p">)</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">values</span></div>
+
+
+<div class="viewcode-block" id="normalize_units"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.cleaning.html#cyclops.processors.cleaning.normalize_units">[docs]</a><span class="k">def</span> <span class="nf">normalize_units</span><span class="p">(</span><span class="n">units</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Normalize event value units.</span>
+
+<span class="sd">    Perform basic cleaning/house-keeping of event value units.</span>
+<span class="sd">    e.g. converting units to SI.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data: pandas.Series</span>
+<span class="sd">        Units.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.Series</span>
+<span class="sd">        Normalized units.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Normalizing units...&quot;</span><span class="p">)</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">none_to_empty_string</span><span class="p">)</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">to_lower</span><span class="p">)</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">units</span></div>
+
+
+<span class="nd">@time_function</span>
+<span class="k">def</span> <span class="nf">normalize_events</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Pre-process and normalize (clean) raw event data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data: pandas.DataFrame</span>
+<span class="sd">        Raw event data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.DataFrame</span>
+<span class="sd">        Cleaned event data.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="n">log_counts_step</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;Cleaning raw event data...&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">infer_objects</span><span class="p">()</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">EVENT_NAME</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize_names</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">EVENT_NAME</span><span class="p">])</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">drop_unsupported</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">EVENT_VALUE</span><span class="p">]</span><span class="o">.</span><span class="n">dtypes</span> <span class="o">==</span> <span class="nb">object</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">EVENT_VALUE</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize_values</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">EVENT_VALUE</span><span class="p">])</span>
+        <span class="n">log_counts_step</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;Normalized values...&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">EVENT_VALUE_UNIT</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">EVENT_VALUE_UNIT</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize_units</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">EVENT_VALUE_UNIT</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">EVENT_CATEGORY</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">EVENT_CATEGORY</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize_categories</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">EVENT_CATEGORY</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">data</span>
+
+
+<div class="viewcode-block" id="dropna_rows"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.cleaning.html#cyclops.processors.cleaning.dropna_rows">[docs]</a><span class="k">def</span> <span class="nf">dropna_rows</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Drop null values in some specific columns.</span>
+
+<span class="sd">    Part of the utility of this function lies in its logging.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data: pandas.DataFrame</span>
+<span class="sd">        Data.</span>
+<span class="sd">    cols: str or list of str</span>
+<span class="sd">        Columns over which to drop null values.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.DataFrame</span>
+<span class="sd">        Data with corresponding null rows dropped.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
+    <span class="n">new_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">new_length</span> <span class="o">!=</span> <span class="n">length</span><span class="p">:</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="n">length</span> <span class="o">-</span> <span class="n">new_length</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Dropped nulls over columns: </span><span class="si">%s</span><span class="s2">. Removed </span><span class="si">%d</span><span class="s2"> rows.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cols</span><span class="p">),</span> <span class="n">num</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Vector AI Engineering.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

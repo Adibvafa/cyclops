@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.evaluation.metrics package &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/cyclops.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="cyclops.evaluation.metrics.functional package" href="cyclops.evaluation.metrics.functional.html" />
+    <link rel="prev" title="cyclops.evaluation package" href="cyclops.evaluation.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+            <a href="../../index.html" class="icon icon-home"> cyclops
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html"># cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#getting-started">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../coverage.html">Coverage report</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../api.html">API Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cyclops.config.html">cyclops.config module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cyclops.evaluation.html">cyclops.evaluation package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="cyclops.evaluation.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">cyclops.evaluation.metrics package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">cyclops.evaluation.metrics package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.html">cyclops.evaluation.metrics.functional package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.utils.html">cyclops.evaluation.metrics.utils module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.html">cyclops.evaluation.metrics.functional package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.f_beta.html">cyclops.evaluation.metrics.functional.f_beta module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.precision_recall.html">cyclops.evaluation.metrics.functional.precision_recall module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.stat_scores.html">cyclops.evaluation.metrics.functional.stat_scores module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.utils.html">cyclops.evaluation.metrics.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.orm.html">cyclops.orm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.plotter.html">cyclops.plotter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.html">cyclops.processors package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.aggregate.html">cyclops.processors.aggregate module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.cleaning.html">cyclops.processors.cleaning module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.diagnoses.html">cyclops.processors.diagnoses module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.html">cyclops.processors.feature package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.feature.html">cyclops.processors.feature.feature module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.normalization.html">cyclops.processors.feature.normalization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.split.html">cyclops.processors.feature.split module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.type_handling.html">cyclops.processors.feature.type_handling module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.vectorize.html">cyclops.processors.feature.vectorize module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.impute.html">cyclops.processors.impute module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.string_ops.html">cyclops.processors.string_ops module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.util.html">cyclops.processors.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.html">cyclops.query package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.gemini.html">cyclops.query.gemini module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.gemini_omop.html">cyclops.query.gemini_omop module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.interface.html">cyclops.query.interface module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.mimiciv.html">cyclops.query.mimiciv module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.omop.html">cyclops.query.omop module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.html">cyclops.query.postprocess package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.gemini.html">cyclops.query.postprocess.gemini module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.mimiciv.html">cyclops.query.postprocess.mimiciv module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.util.html">cyclops.query.postprocess.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.process.html">cyclops.query.process module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.util.html">cyclops.query.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.html">cyclops.utils package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.common.html">cyclops.utils.common module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.file.html">cyclops.utils.file module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.indexing.html">cyclops.utils.indexing module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.log.html">cyclops.utils.log module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.profile.html">cyclops.utils.profile module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.workflow.html">cyclops.workflow package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.workflow.task.html">cyclops.workflow.task module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../api.html">API Documentation</a> &raquo;</li>
+          <li><a href="cyclops.evaluation.html">cyclops.evaluation package</a> &raquo;</li>
+      <li>cyclops.evaluation.metrics package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reference/api/cyclops.evaluation.metrics.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-cyclops.evaluation.metrics">
+<span id="cyclops-evaluation-metrics-package"></span><h1>cyclops.evaluation.metrics package<a class="headerlink" href="#module-cyclops.evaluation.metrics" title="Permalink to this headline"></a></h1>
+<p>Evaluation metrics package.</p>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cyclops.evaluation.metrics.functional.html">cyclops.evaluation.metrics.functional package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cyclops.evaluation.metrics.functional.f_beta.html">cyclops.evaluation.metrics.functional.f_beta module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cyclops.evaluation.metrics.functional.precision_recall.html">cyclops.evaluation.metrics.functional.precision_recall module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cyclops.evaluation.metrics.functional.stat_scores.html">cyclops.evaluation.metrics.functional.stat_scores module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cyclops.evaluation.metrics.utils.html">cyclops.evaluation.metrics.utils module</a></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cyclops.evaluation.html" class="btn btn-neutral float-left" title="cyclops.evaluation package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cyclops.evaluation.metrics.functional.html" class="btn btn-neutral float-right" title="cyclops.evaluation.metrics.functional package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Vector AI Engineering.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

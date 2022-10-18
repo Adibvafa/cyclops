@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Using cyclops on the GEMINI HPC &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/cyclops.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contributing to cyclops" href="contributing.html" />
+    <link rel="prev" title="Framework Design" href="design.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+            <a href="index.html" class="icon icon-home"> cyclops
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html"># cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#getting-started">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">Framework Design</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Using cyclops on the GEMINI HPC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#setup-python-virtual-environment-and-install-dependencies">Setup Python virtual environment and install dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#environment-variables">Environment variables</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coverage.html">Coverage report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Using cyclops on the GEMINI HPC</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/gemini_hpc.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="using-cyclops-on-the-gemini-hpc">
+<h1>Using cyclops on the GEMINI HPC<a class="headerlink" href="#using-cyclops-on-the-gemini-hpc" title="Permalink to this headline"></a></h1>
+<section id="setup-python-virtual-environment-and-install-dependencies">
+<h2>Setup Python virtual environment and install dependencies<a class="headerlink" href="#setup-python-virtual-environment-and-install-dependencies" title="Permalink to this headline"></a></h2>
+<p>The GEMINI HPC environment has a separate private repository to fetch and
+install python packages. Hence, add the following lines to the <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>
+file before trying to setup the python virtual environment and install dependencies,
+(i.e. before running the <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span></code> command).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[[</span>tool.poetry.source<span class="o">]]</span>
+<span class="nv">name</span> <span class="o">=</span> <span class="s2">&quot;gemini_repository&quot;</span>
+<span class="nv">url</span> <span class="o">=</span> <span class="s2">&quot;https://packages.gemini-hpc.ca/repository/pypi/simple&quot;</span>
+<span class="nv">default</span> <span class="o">=</span> <span class="nb">true</span>
+</pre></div>
+</div>
+</section>
+<section id="environment-variables">
+<h2>Environment variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline"></a></h2>
+<p>To use the querying API which involves access to GEMINI’s database, add the
+GEMINI password to a <code class="docutils literal notranslate"><span class="pre">.env</span></code> file in the root of this repo. The password is
+automatically added to cyclops’s configuration and used when running queries.</p>
+<p>For security, ensure that the permissions are set such that the repo is accessible
+to only you, hence preventing other users on the HPC from accessing your password!</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">PGPASSWORD</span><span class="o">=</span>&lt;your-gemini-db-password&gt;
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="design.html" class="btn btn-neutral float-left" title="Framework Design" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing to cyclops" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Vector AI Engineering.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

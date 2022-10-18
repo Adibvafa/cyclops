@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.orm &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/cyclops.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+            <a href="../../index.html" class="icon icon-home"> cyclops
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html"># cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#getting-started">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../coverage.html">Coverage report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>cyclops.orm</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cyclops.orm</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Object Relational Mapper (ORM) using sqlalchemy.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">pyarrow.csv</span> <span class="k">as</span> <span class="nn">pv</span>
+<span class="kn">import</span> <span class="nn">pyarrow.parquet</span> <span class="k">as</span> <span class="nn">pq</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">and_</span><span class="p">,</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">inspect</span><span class="p">,</span> <span class="n">select</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.engine.base</span> <span class="kn">import</span> <span class="n">Engine</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">sessionmaker</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm.session</span> <span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.sql.elements</span> <span class="kn">import</span> <span class="n">BinaryExpression</span><span class="p">,</span> <span class="n">BooleanClauseList</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.sql.selectable</span> <span class="kn">import</span> <span class="n">Select</span><span class="p">,</span> <span class="n">Subquery</span>
+
+<span class="kn">from</span> <span class="nn">codebase_ops</span> <span class="kn">import</span> <span class="n">get_log_file_path</span>
+<span class="kn">from</span> <span class="nn">cyclops.query.util</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DBMetaclass</span><span class="p">,</span>
+    <span class="n">DBSchema</span><span class="p">,</span>
+    <span class="n">DBTable</span><span class="p">,</span>
+    <span class="n">TableTypes</span><span class="p">,</span>
+    <span class="n">get_column</span><span class="p">,</span>
+    <span class="n">table_params_to_type</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.file</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">exchange_extension</span><span class="p">,</span>
+    <span class="n">join</span><span class="p">,</span>
+    <span class="n">process_dir_save_path</span><span class="p">,</span>
+    <span class="n">process_file_save_path</span><span class="p">,</span>
+    <span class="n">save_dataframe</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.log</span> <span class="kn">import</span> <span class="n">setup_logging</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.profile</span> <span class="kn">import</span> <span class="n">time_function</span>
+
+<span class="c1"># Logging.</span>
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">setup_logging</span><span class="p">(</span><span class="n">log_path</span><span class="o">=</span><span class="n">get_log_file_path</span><span class="p">(),</span> <span class="n">print_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">)</span>
+
+
+<span class="n">SOCKET_CONNECTION_TIMEOUT</span> <span class="o">=</span> <span class="mi">5</span>
+
+
+<span class="k">def</span> <span class="nf">_get_db_url</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+    <span class="n">dbms</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pwd</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Combine to make Database URL string.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dbms</span><span class="si">}</span><span class="s2">://</span><span class="si">{</span><span class="n">user</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">pwd</span><span class="si">}</span><span class="s2">@</span><span class="si">{</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">database</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_get_attr_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Get attribute name (second part of first.second).&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="Database"><a class="viewcode-back" href="../../reference/api/cyclops.orm.html#cyclops.orm.Database">[docs]</a><span class="k">class</span> <span class="nc">Database</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">DBMetaclass</span><span class="p">):</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Database class (singleton).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config: argparse.Namespace</span>
+<span class="sd">        Configuration stored in object.</span>
+<span class="sd">    engine: sqlalchemy.engine.base.Engine</span>
+<span class="sd">        SQL extraction engine.</span>
+<span class="sd">    inspector: sqlalchemy.engine.reflection.Inspector</span>
+<span class="sd">        Module for schema inspection.</span>
+<span class="sd">    session: sqlalchemy.orm.session.Session</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Database.__init__"><a class="viewcode-back" href="../../reference/api/cyclops.orm.html#cyclops.orm.Database.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Instantiate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        config: argparse.Namespace</span>
+<span class="sd">            Configuration stored in object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+
+        <span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+        <span class="n">sock</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="n">SOCKET_CONNECTION_TIMEOUT</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">is_port_open</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">connect_ex</span><span class="p">((</span><span class="n">config</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">port</span><span class="p">))</span>
+        <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">gaierror</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;Server name not known, cannot establish connection!&quot;&quot;&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">is_port_open</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sd">&quot;&quot;&quot;Valid server host but port seems open, check if server is up!&quot;&quot;&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_engine</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_session</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setup</span><span class="p">()</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Database setup, ready to run queries!&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_create_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Engine</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create an engine.&quot;&quot;&quot;</span>
+        <span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span>
+            <span class="n">_get_db_url</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">dbms</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">password</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">database</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">engine</span>
+
+    <span class="k">def</span> <span class="nf">_create_session</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Session</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create session.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inspector</span> <span class="o">=</span> <span class="n">inspect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
+
+        <span class="c1"># Create a session for using ORM.</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
+        <span class="n">session</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">session</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Prepare ORM DB.&quot;&quot;&quot;</span>
+        <span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">schemas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inspector</span><span class="o">.</span><span class="n">get_schema_names</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">schema_name</span> <span class="ow">in</span> <span class="n">schemas</span><span class="p">:</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">(</span><span class="n">schema</span><span class="o">=</span><span class="n">schema_name</span><span class="p">)</span>
+            <span class="n">metadata</span><span class="o">.</span><span class="n">reflect</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
+            <span class="n">meta</span><span class="p">[</span><span class="n">schema_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span>
+            <span class="n">schema</span> <span class="o">=</span> <span class="n">DBSchema</span><span class="p">(</span><span class="n">schema_name</span><span class="p">,</span> <span class="n">meta</span><span class="p">[</span><span class="n">schema_name</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">[</span><span class="n">schema_name</span><span class="p">]</span><span class="o">.</span><span class="n">tables</span><span class="p">:</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">DBTable</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">meta</span><span class="p">[</span><span class="n">schema_name</span><span class="p">]</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="n">table_name</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">[</span><span class="n">schema_name</span><span class="p">]</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="n">table_name</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">column</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">table</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">_get_attr_name</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="n">table</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema_name</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span>
+
+    <span class="nd">@time_function</span>
+    <span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Select</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">run_query</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span>
+        <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Run query.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query: cyclops.query.util.TableTypes</span>
+<span class="sd">            Query to run.</span>
+<span class="sd">        limit: Optional[int]</span>
+<span class="sd">            Limit query result to limit.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pd.DataFrame</span>
+<span class="sd">            Extracted data from query.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Limit the results returned</span>
+        <span class="k">if</span> <span class="n">limit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">limit</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+        <span class="c1"># Run the query and return the results</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">connection</span><span class="p">():</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
+
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Query returned successfully!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="nd">@time_function</span>
+    <span class="k">def</span> <span class="nf">run_sql_string</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Run query from SQL raw SQL string.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query: str</span>
+<span class="sd">            Raw SQL query string.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pd.DataFrame</span>
+<span class="sd">            Extracted data from query.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Run the query and return the results</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">connection</span><span class="p">():</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
+
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Query returned successfully!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="nd">@time_function</span>
+    <span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Select</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">save_query_to_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Save query in a .csv format.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query: cyclops.query.util.TableTypes</span>
+<span class="sd">            Query to save.</span>
+<span class="sd">        path:</span>
+<span class="sd">            Save path.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Processed save path for upstream use.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">process_file_save_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;csv&quot;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">connection</span><span class="p">():</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_descriptor</span><span class="p">:</span>
+                <span class="n">outcsv</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">file_descriptor</span><span class="p">)</span>
+                <span class="n">outcsv</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                <span class="n">outcsv</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">path</span>
+
+    <span class="nd">@time_function</span>
+    <span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Select</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">save_query_to_parquet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Save query in a .parquet format.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query: cyclops.query.util.TableTypes</span>
+<span class="sd">            Query to save.</span>
+<span class="sd">        path:</span>
+<span class="sd">            Save path.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Processed save path for upstream use.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">process_file_save_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;parquet&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Save to CSV, load with pyarrow, save to Parquet</span>
+        <span class="n">csv_path</span> <span class="o">=</span> <span class="n">exchange_extension</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;csv&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_query_to_csv</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">csv_path</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_path</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">csv_path</span><span class="p">)</span>
+        <span class="n">pq</span><span class="o">.</span><span class="n">write_table</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span>
+
+<div class="viewcode-block" id="Database.query_batch_conditions"><a class="viewcode-back" href="../../reference/api/cyclops.orm.html#cyclops.orm.Database.query_batch_conditions">[docs]</a>    <span class="k">def</span> <span class="nf">query_batch_conditions</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span>
+        <span class="n">id_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">BinaryExpression</span><span class="p">,</span> <span class="n">BooleanClauseList</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of WHERE conditions to segment a query into batches.</span>
+
+<span class="sd">        Batches are created via SQL windowing, based on segmenting the values in a</span>
+<span class="sd">        given column, such as an ID column, into intervals.</span>
+
+<span class="sd">        Requires a database that supports window functions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        column: sqlalchemy.sql.schema.Column</span>
+<span class="sd">            The column over which to create the interval ranges and conditions.</span>
+<span class="sd">        window_size: int</span>
+<span class="sd">            The range of the interval to create.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of sqlalchemy.sql.elements.BinaryExpression or</span>
+<span class="sd">        sqlalchemy.sql.elements.BooleanClauseList</span>
+<span class="sd">            The window conditions on which to filter.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">compute_query_dividers</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">id_col</span><span class="p">,</span> <span class="n">maximum</span><span class="p">):</span>
+            <span class="c1"># Compute the row count for each unique value</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="n">get_column</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">id_col</span><span class="p">)</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+            <span class="n">count_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_query</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+            <span class="c1"># Check that all values can actually fit into the maximum batch size</span>
+            <span class="n">max_count</span> <span class="o">=</span> <span class="n">count_data</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">maximum</span> <span class="o">&lt;</span> <span class="n">max_count</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Maximum must be at least </span><span class="si">{</span><span class="n">max_count</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Sort and create a cumulative sum of row counts</span>
+            <span class="n">count_data</span> <span class="o">=</span> <span class="n">count_data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">id_col</span><span class="p">)</span>
+            <span class="n">count_data</span><span class="p">[</span><span class="s2">&quot;cumsum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">count_data</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+
+            <span class="c1"># Create query dividers</span>
+            <span class="n">last_sum</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">count_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Query is empty. Cannot return batched results.&quot;</span><span class="p">)</span>
+
+            <span class="n">dividers</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">count_data</span><span class="p">[</span><span class="n">id_col</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cumsum</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">count_data</span><span class="p">[</span><span class="s2">&quot;cumsum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+                <span class="c1"># If adding the next value will put the sum over the max,</span>
+                <span class="c1"># then add another divider on the previous value</span>
+                <span class="k">if</span> <span class="n">cumsum</span> <span class="o">-</span> <span class="n">last_sum</span> <span class="o">&gt;</span> <span class="n">maximum</span><span class="p">:</span>
+                    <span class="n">dividers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">count_data</span><span class="p">[</span><span class="n">id_col</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+                    <span class="n">last_sum</span> <span class="o">=</span> <span class="n">count_data</span><span class="p">[</span><span class="s2">&quot;cumsum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="k">return</span> <span class="n">dividers</span>
+
+        <span class="k">def</span> <span class="nf">range_condition</span><span class="p">(</span><span class="n">start_id</span><span class="p">,</span> <span class="n">end_id</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">end_id</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">and_</span><span class="p">(</span><span class="n">column</span> <span class="o">&gt;=</span> <span class="n">start_id</span><span class="p">,</span> <span class="n">column</span> <span class="o">&lt;</span> <span class="n">end_id</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">column</span> <span class="o">&gt;=</span> <span class="n">start_id</span>
+
+        <span class="c1"># Create interval dividers</span>
+        <span class="n">dividers</span> <span class="o">=</span> <span class="n">compute_query_dividers</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">id_col</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
+        <span class="c1"># print(&quot;dividers&quot;, dividers)</span>
+
+        <span class="c1"># Create filtering conditions</span>
+        <span class="n">column</span> <span class="o">=</span> <span class="n">get_column</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">id_col</span><span class="p">)</span>
+        <span class="n">conditions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="n">dividers</span><span class="p">:</span>
+            <span class="c1"># Create interval ranges</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">dividers</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dividers</span><span class="p">:</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="n">dividers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="c1"># Create condition</span>
+            <span class="n">conditions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">range_condition</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">conditions</span></div>
+
+<div class="viewcode-block" id="Database.run_id_batched_query"><a class="viewcode-back" href="../../reference/api/cyclops.orm.html#cyclops.orm.Database.run_id_batched_query">[docs]</a>    <span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Subquery</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">run_id_batched_query</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span>
+        <span class="n">id_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Generate query batches with complete sets of IDs in a batch.</span>
+
+<span class="sd">        Queries are sorted and grouped such that the rows for a given sample ID are kept</span>
+<span class="sd">        together in a single batch.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query: cyclops.query.util.TableTypes</span>
+<span class="sd">            Query to run.</span>
+<span class="sd">        window_size: int</span>
+<span class="sd">            Window size used to batch queries over the ID column.</span>
+<span class="sd">        id_col: str</span>
+<span class="sd">            Name of the sample ID column by which to batch.</span>
+
+<span class="sd">        Yields</span>
+<span class="sd">        ------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            A query batch with complete sets of sample IDs.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;limit&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;Currently not supporting batching for queries with a LIMIT.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">conditions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_batch_conditions</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">id_col</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
+        <span class="n">sess_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="c1"># Opportunity for easy multi-processing/parallelization here!</span>
+        <span class="k">for</span> <span class="n">condition</span> <span class="ow">in</span> <span class="n">conditions</span><span class="p">:</span>
+            <span class="n">run</span> <span class="o">=</span> <span class="p">(</span><span class="n">sess_query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">condition</span><span class="p">))</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
+            <span class="k">yield</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">run</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span></div>
+
+    <span class="nd">@time_function</span>
+    <span class="k">def</span> <span class="nf">save_id_batched_query</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span>
+        <span class="n">dir_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">id_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;parquet&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Save a query in different batches, keeping same sample IDs together.</span>
+
+<span class="sd">        Queries are sorted and grouped such that the rows for a given sample ID are kept</span>
+<span class="sd">        together in a single batch.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query: cyclops.query.util.TableTypes</span>
+<span class="sd">            Query to run.</span>
+<span class="sd">        dir_path: str</span>
+<span class="sd">            Path to directory in which to save the batches.</span>
+<span class="sd">        batch_size: int</span>
+<span class="sd">            Approximate batch size before rearranging based on sample IDs.</span>
+<span class="sd">        id_col: str</span>
+<span class="sd">            Name of the sample ID column by which to batch.</span>
+<span class="sd">        file_format: str</span>
+<span class="sd">            File format of the DataFrame to save.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dir_path</span> <span class="o">=</span> <span class="n">process_dir_save_path</span><span class="p">(</span><span class="n">dir_path</span><span class="p">)</span>
+        <span class="n">generator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_id_batched_query</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">id_col</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">generator</span><span class="p">):</span>
+            <span class="n">save_dataframe</span><span class="p">(</span>
+                <span class="n">batch</span><span class="p">,</span>
+                <span class="n">join</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="s2">&quot;batch_&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+                <span class="n">file_format</span><span class="o">=</span><span class="n">file_format</span><span class="p">,</span>
+            <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Vector AI Engineering.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.query.process &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/cyclops.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+            <a href="../../../index.html" class="icon icon-home"> cyclops
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html"># cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#getting-started">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../coverage.html">Coverage report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>cyclops.query.process</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cyclops.query.process</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;High-level query processing functionality.&quot;&quot;&quot;</span>
+
+<span class="c1"># pylint: disable=too-many-lines</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">and_</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">extract</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">or_</span><span class="p">,</span> <span class="n">select</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.sql.elements</span> <span class="kn">import</span> <span class="n">BinaryExpression</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.sql.expression</span> <span class="kn">import</span> <span class="n">literal</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.sql.selectable</span> <span class="kn">import</span> <span class="n">Select</span><span class="p">,</span> <span class="n">Subquery</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.types</span> <span class="kn">import</span> <span class="n">Boolean</span>
+
+<span class="c1"># Logging.</span>
+<span class="kn">from</span> <span class="nn">codebase_ops</span> <span class="kn">import</span> <span class="n">get_log_file_path</span>
+<span class="kn">from</span> <span class="nn">cyclops.query.util</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TableTypes</span><span class="p">,</span>
+    <span class="n">apply_to_columns</span><span class="p">,</span>
+    <span class="n">check_timestamp_columns</span><span class="p">,</span>
+    <span class="n">drop_columns</span><span class="p">,</span>
+    <span class="n">ends_with</span><span class="p">,</span>
+    <span class="n">equals</span><span class="p">,</span>
+    <span class="n">filter_columns</span><span class="p">,</span>
+    <span class="n">get_column</span><span class="p">,</span>
+    <span class="n">get_column_names</span><span class="p">,</span>
+    <span class="n">get_columns</span><span class="p">,</span>
+    <span class="n">get_delta_column</span><span class="p">,</span>
+    <span class="n">has_columns</span><span class="p">,</span>
+    <span class="n">has_substring</span><span class="p">,</span>
+    <span class="n">in_</span><span class="p">,</span>
+    <span class="n">not_equals</span><span class="p">,</span>
+    <span class="n">process_column</span><span class="p">,</span>
+    <span class="n">rename_columns</span><span class="p">,</span>
+    <span class="n">reorder_columns</span><span class="p">,</span>
+    <span class="n">starts_with</span><span class="p">,</span>
+    <span class="n">table_params_to_type</span><span class="p">,</span>
+    <span class="n">trim_columns</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.common</span> <span class="kn">import</span> <span class="n">to_datetime_format</span><span class="p">,</span> <span class="n">to_list</span><span class="p">,</span> <span class="n">to_list_optional</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.log</span> <span class="kn">import</span> <span class="n">setup_logging</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">setup_logging</span><span class="p">(</span><span class="n">log_path</span><span class="o">=</span><span class="n">get_log_file_path</span><span class="p">(),</span> <span class="n">print_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="QAP"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.QAP">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">QAP</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Query argument placeholder (QAP) class.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kwarg_name: str</span>
+<span class="sd">        Name of keyword argument for which this classs</span>
+<span class="sd">        acts as a placeholder.</span>
+<span class="sd">    required: bool</span>
+<span class="sd">        Whether the keyword argument is required to run the process.</span>
+<span class="sd">    transform_fn: callable</span>
+<span class="sd">        A function accepting and transforming the passed in argument.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">kwarg_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">transform_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the name of the placeholded keyword argument.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The name of the keyword argument.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwarg_name</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Recover the value of the placeholder argument.</span>
+
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kwargs: dict</span>
+<span class="sd">            Dictionary containing self.kwarg_name as a key with a</span>
+<span class="sd">            corresponding value.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        any</span>
+<span class="sd">            Value of the placeholder argument.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">kwarg_name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_fn</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">val</span></div>
+
+
+<div class="viewcode-block" id="ckwarg"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ckwarg">[docs]</a><span class="k">def</span> <span class="nf">ckwarg</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">kwarg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the value of a conditional keyword argument.</span>
+
+<span class="sd">    A keyword argument may or may not be specified in some</span>
+<span class="sd">    keyword arguments. If specified, return the value,</span>
+<span class="sd">    otherwise return None.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kwargs: dict</span>
+<span class="sd">        Process keyword arguments.</span>
+<span class="sd">    kwarg: str</span>
+<span class="sd">        The keyword argument of interest.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    any, optional</span>
+<span class="sd">        The value of the keyword argument if it exists, otherwise None.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">kwarg</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">kwarg</span><span class="p">]</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="remove_kwargs"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.remove_kwargs">[docs]</a><span class="k">def</span> <span class="nf">remove_kwargs</span><span class="p">(</span><span class="n">process_kwargs</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]):</span>
+    <span class="sd">&quot;&quot;&quot;Remove some keyword arguments from process_kwargs if they exist.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    process_kwargs: dict</span>
+<span class="sd">        Process keyword arguments.</span>
+<span class="sd">    kwargs: str or list of str</span>
+<span class="sd">        The keyword arguments to remove should they exist.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">kwarg</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">kwarg</span> <span class="ow">in</span> <span class="n">process_kwargs</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">process_kwargs</span><span class="p">[</span><span class="n">kwarg</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">process_kwargs</span></div>
+
+
+<div class="viewcode-block" id="process_operations"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.process_operations">[docs]</a><span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Subquery</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">process_operations</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-locals</span>
+    <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span> <span class="n">operations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">],</span> <span class="n">user_kwargs</span><span class="p">:</span> <span class="nb">dict</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Query MIMIC encounter-specific patient data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    table: cyclops.query.util.TableTypes</span>
+<span class="sd">        Table to process.</span>
+<span class="sd">    operations:</span>
+<span class="sd">        Operations to execute, which are of the form:</span>
+<span class="sd">        (process function, arguments to pass, keyword arguments to pass).</span>
+<span class="sd">    user_kwargs:</span>
+<span class="sd">        Keyword arguments specified by the calling function, or user.</span>
+<span class="sd">        If a keyword argument is None, it is discarded.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cyclops.query.interface.QueryInterface</span>
+<span class="sd">        Constructed query, wrapped in an interface object.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Remove None user kwargs</span>
+    <span class="n">user_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">kwarg</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">kwarg</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">user_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">get_required_qap</span><span class="p">(</span><span class="n">qaps</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">qap</span> <span class="k">for</span> <span class="n">qap</span> <span class="ow">in</span> <span class="n">qaps</span> <span class="k">if</span> <span class="n">qap</span><span class="o">.</span><span class="n">required</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_qap_args</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">qap_args</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">operation</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">QAP</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">required</span><span class="p">:</span>
+            <span class="n">qap_args</span> <span class="o">=</span> <span class="n">get_required_qap</span><span class="p">(</span><span class="n">qap_args</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">qap_args</span>
+
+    <span class="k">def</span> <span class="nf">get_qap_kwargs</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">qap_kwargs</span> <span class="o">=</span> <span class="p">[</span><span class="n">val</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">operation</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">QAP</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">required</span><span class="p">:</span>
+            <span class="n">qap_kwargs</span> <span class="o">=</span> <span class="n">get_required_qap</span><span class="p">(</span><span class="n">qap_kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">qap_kwargs</span>
+
+    <span class="k">def</span> <span class="nf">process_args</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">arg</span><span class="p">(</span><span class="n">user_kwargs</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">QAP</span><span class="p">)</span> <span class="k">else</span> <span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">process_kwargs</span><span class="p">(</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QAP</span><span class="p">):</span>
+                <span class="c1"># Convert if found</span>
+                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">user_kwargs</span><span class="p">:</span>
+                    <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="p">(</span><span class="n">user_kwargs</span><span class="p">)</span>
+                <span class="c1"># Otherwise, ensure it wasn&#39;t required and remove later</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">required</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;QAP </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2"> must be specified.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Remove optional kwargs which were not specified</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">QAP</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">kwargs</span>
+
+    <span class="k">def</span> <span class="nf">flatten_2d</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">j</span> <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">lst</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">sub</span><span class="p">]</span>
+
+    <span class="c1"># Get the valid kwargs which may be specified for this function</span>
+    <span class="n">qap_args</span> <span class="o">=</span> <span class="n">flatten_2d</span><span class="p">([</span><span class="n">get_qap_args</span><span class="p">(</span><span class="n">op</span><span class="p">)</span> <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">operations</span><span class="p">])</span>
+    <span class="n">qap_kwargs</span> <span class="o">=</span> <span class="n">flatten_2d</span><span class="p">([</span><span class="n">get_qap_kwargs</span><span class="p">(</span><span class="n">op</span><span class="p">)</span> <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">operations</span><span class="p">])</span>
+    <span class="n">kwargs_supported</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">qap</span><span class="p">)</span> <span class="k">for</span> <span class="n">qap</span> <span class="ow">in</span> <span class="n">qap_args</span> <span class="o">+</span> <span class="n">qap_kwargs</span><span class="p">]</span>
+
+    <span class="c1"># Ensure only supported operations are being performed</span>
+    <span class="k">for</span> <span class="n">kwarg</span> <span class="ow">in</span> <span class="n">user_kwargs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">kwarg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs_supported</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Keyword </span><span class="si">{</span><span class="n">kwarg</span><span class="si">}</span><span class="s2"> is not supported in this query function,</span>
+<span class="s2">                only keywords </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kwargs_supported</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">operation</span> <span class="ow">in</span> <span class="n">operations</span><span class="p">:</span>
+        <span class="n">process_func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">operation</span>
+
+        <span class="c1"># Skip if not all the required kwargs were given</span>
+        <span class="n">required</span> <span class="o">=</span> <span class="n">get_qap_args</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="n">get_qap_kwargs</span><span class="p">(</span>
+            <span class="n">operation</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">specified_required</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">user_kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">required</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">specified_required</span><span class="p">):</span>
+            <span class="c1"># If not all the required parameters are specified ones, warn if only</span>
+            <span class="c1"># some of the parameters are.</span>
+            <span class="n">all_params</span> <span class="o">=</span> <span class="n">get_qap_args</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="n">get_qap_kwargs</span><span class="p">(</span>
+                <span class="n">operation</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+            <span class="n">specified_params</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">user_kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">all_params</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">specified_params</span><span class="p">):</span>
+                <span class="n">specified_kwargs</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">kwarg</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">kwarg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">all_params</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">specified_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="p">]</span>
+                <span class="n">missing_kwargs</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">kwarg</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">kwarg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">required</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">specified_required</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="p">]</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Process arguments </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">specified_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2"> were</span>
+<span class="s2">                    specified, but missing </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">continue</span>
+
+        <span class="c1"># Run the operation, replacing all the query argument placeholders with</span>
+        <span class="c1"># their respective values</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">process_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="n">process_kwargs</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">table</span></div>
+
+
+<div class="viewcode-block" id="col_name_remove"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.col_name_remove">[docs]</a><span class="k">def</span> <span class="nf">col_name_remove</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">remove_names</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Remove any Column from lst if its name is in remove_names.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">lst</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">remove_names</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="append_if_missing"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.append_if_missing">[docs]</a><span class="k">def</span> <span class="nf">append_if_missing</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">keep_cols</span><span class="p">,</span> <span class="n">force_include_cols</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Keep only certain columns in a table, but must include certain columns.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    table:</span>
+<span class="sd">    keep_cols</span>
+<span class="sd">    force_include_cols</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">keep_cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">table</span>
+
+    <span class="n">extend_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">force_include_cols</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keep_cols</span><span class="p">]</span>
+    <span class="n">keep_cols</span> <span class="o">=</span> <span class="n">extend_cols</span> <span class="o">+</span> <span class="n">keep_cols</span>
+    <span class="k">return</span> <span class="n">FilterColumns</span><span class="p">(</span><span class="n">keep_cols</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="none_add"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.none_add">[docs]</a><span class="k">def</span> <span class="nf">none_add</span><span class="p">(</span><span class="n">obj1</span><span class="p">,</span> <span class="n">obj2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add two objects together while ignoring None values.</span>
+
+<span class="sd">    If both objects are None, returns None.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    obj1: Any</span>
+<span class="sd">    obj2: Any</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">obj1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">obj2</span>
+    <span class="k">if</span> <span class="n">obj2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">obj1</span>
+    <span class="k">return</span> <span class="n">obj1</span> <span class="o">+</span> <span class="n">obj2</span></div>
+
+
+<div class="viewcode-block" id="process_checks"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.process_checks">[docs]</a><span class="k">def</span> <span class="nf">process_checks</span><span class="p">(</span>
+    <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span>
+    <span class="n">cols</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">cols_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">timestamp_cols</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Perform checks, and possibly alterations, on a table.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    table : cyclops.query.util.TableTypes</span>
+<span class="sd">        Table on which to perform the operation.</span>
+<span class="sd">    cols: str or list of str, optional</span>
+<span class="sd">        Columns to check.</span>
+<span class="sd">    timestamp_cols: str or list of str, optional</span>
+<span class="sd">        Timestamp columns to check.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">        Checked and possibly altered table.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
+        <span class="n">has_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">raise_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cols_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cols_not_in</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">cols_not_in</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">has_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="p">,</span> <span class="n">raise_error</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot specify columns </span><span class="si">{</span><span class="n">cols_not_in</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">timestamp_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">timestamp_cols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">timestamp_cols</span><span class="p">)</span>
+        <span class="n">has_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">timestamp_cols</span><span class="p">,</span> <span class="n">raise_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">check_timestamp_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">timestamp_cols</span><span class="p">,</span> <span class="n">raise_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">table</span></div>
+
+
+<div class="viewcode-block" id="Drop"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.Drop">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Drop</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Drop some columns.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cols: str or list of str</span>
+<span class="sd">        Columns to drop.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">drop_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rename"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.Rename">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Rename</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Rename some columns.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rename_map: dict</span>
+<span class="sd">        Map from an existing column name to another name.</span>
+<span class="sd">    check_exists: bool</span>
+<span class="sd">        Whether to check if all of the keys in the map exist as columns.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">rename_map</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">check_exists</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : sqlalchemy.sql.selectable.Select or sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">        or sqlalchemy.sql.schema.Table or cyclops.query.utils.DBTable</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_exists</span><span class="p">:</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rename_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="n">rename_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rename_map</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Reorder"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.Reorder">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Reorder</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Reorder the columns in a table.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cols: list of str</span>
+<span class="sd">        Complete list of table column names in the new order.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cols</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">reorder_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ReorderAfter"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ReorderAfter">[docs]</a><span class="k">class</span> <span class="nc">ReorderAfter</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Reorder a number of columns to come after a specified column.</span>
+
+<span class="sd">    cols: list of str</span>
+<span class="sd">        Ordered list of column names which will come after a specified column.</span>
+<span class="sd">    after: str</span>
+<span class="sd">        Column name for the column after which the other columns will follow.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ReorderAfter.__init__"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ReorderAfter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">after</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">after</span> <span class="o">=</span> <span class="n">after</span></div>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">after</span><span class="p">])</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="n">get_column_names</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">]</span>
+        <span class="n">name_after_ind</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">after</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">new_order</span> <span class="o">=</span> <span class="n">names</span><span class="p">[:</span><span class="n">name_after_ind</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">+</span> <span class="n">names</span><span class="p">[</span><span class="n">name_after_ind</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">Reorder</span><span class="p">(</span><span class="n">new_order</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FilterColumns"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.FilterColumns">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">FilterColumns</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Keep only the specified columns in a table.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cols: str or list of str</span>
+<span class="sd">        The columns to keep.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">filter_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Trim"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.Trim">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Trim</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Trim the whitespace from some string columns.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cols: str or list of str</span>
+<span class="sd">        Columns to trim.</span>
+<span class="sd">    new_col_labels: str or list of str, optional</span>
+<span class="sd">        If specified, create new columns with these labels. Otherwise,</span>
+<span class="sd">        apply the function to the existing columns.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+    <span class="n">new_col_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">trim_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span> <span class="n">new_col_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Literal"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.Literal">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Literal</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Add a literal column to a table.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    value: any</span>
+<span class="sd">        Value of the literal, e.g., a string or integer.</span>
+<span class="sd">    col: str</span>
+<span class="sd">        Label of the new literal column.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">value</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">col</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">))</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ExtractTimestampComponent"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ExtractTimestampComponent">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ExtractTimestampComponent</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Extract a component such as year or month from a timestamp column.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    timestamp_col: str</span>
+<span class="sd">        Timestamp column from which to extract the time component.</span>
+<span class="sd">    extract_str: str</span>
+<span class="sd">        Information to extract, e.g., &quot;year&quot;, &quot;month&quot;</span>
+<span class="sd">    label: str</span>
+<span class="sd">        Column label for the extracted column.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">timestamp_col</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">extract_str</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span>
+            <span class="n">table</span><span class="p">,</span> <span class="n">timestamp_cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span>
+        <span class="p">)</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span>
+            <span class="n">table</span><span class="p">,</span>
+            <span class="n">extract</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extract_str</span><span class="p">,</span> <span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">))</span><span class="o">.</span><span class="n">label</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">label</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Cast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="s2">&quot;int&quot;</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AddNumeric"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.AddNumeric">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">AddNumeric</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Add a numeric value to some columns.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    add_to: str or list of str</span>
+<span class="sd">        Column names specifying to which columns is being added.</span>
+<span class="sd">    num: int or float</span>
+<span class="sd">        Adds this value to the add_to columns.</span>
+<span class="sd">    new_col_labels: str or list of str, optional</span>
+<span class="sd">        If specified, create new columns with these labels. Otherwise,</span>
+<span class="sd">        apply the function to the existing columns.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">add_to</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+    <span class="n">num</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+    <span class="n">new_col_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_to</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">apply_to_columns</span><span class="p">(</span>
+            <span class="n">table</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_to</span><span class="p">,</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">num</span><span class="p">,</span>
+            <span class="n">new_col_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AddDeltaConstant"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.AddDeltaConstant">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">AddDeltaConstant</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Construct and add a datetime.timedelta object to some columns.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    add_to: str or list of str</span>
+<span class="sd">        Column names specifying to which columns is being added.</span>
+<span class="sd">    delta: datetime.timedelta</span>
+<span class="sd">        A timedelta object.</span>
+<span class="sd">    new_col_labels: str or list of str, optional</span>
+<span class="sd">        If specified, create new columns with these labels. Otherwise,</span>
+<span class="sd">        apply the function to the existing columns.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">add_to</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+    <span class="n">delta</span><span class="p">:</span> <span class="n">timedelta</span>
+    <span class="n">new_col_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span>
+            <span class="n">table</span><span class="p">,</span> <span class="n">timestamp_cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_to</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">apply_to_columns</span><span class="p">(</span>
+            <span class="n">table</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_to</span><span class="p">,</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta</span><span class="p">,</span>
+            <span class="n">new_col_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AddColumn"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.AddColumn">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">AddColumn</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Add an column to some columns.</span>
+
+<span class="sd">    Pay attention to column types. Some combinations will work,</span>
+<span class="sd">    whereas others will not.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    add_to: str or list of str</span>
+<span class="sd">        Column names specifying to which columns is being added.</span>
+<span class="sd">    col: str</span>
+<span class="sd">        Column name of column to add to the add_to columns.</span>
+<span class="sd">    negative: bool, optional</span>
+<span class="sd">        Subtract the column rather than adding.</span>
+<span class="sd">    new_col_labels: str or list of str, optional</span>
+<span class="sd">        If specified, create new columns with these labels. Otherwise,</span>
+<span class="sd">        apply the function to the existing columns.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">add_to</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+    <span class="n">col</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">negative</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">new_col_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># If the column being added is a timestamp column, ensure the others are too</span>
+        <span class="k">if</span> <span class="n">check_timestamp_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">):</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span>
+                <span class="n">table</span><span class="p">,</span> <span class="n">timestamp_cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_to</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span>
+                <span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_to</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span>
+            <span class="p">)</span>
+
+        <span class="n">col</span> <span class="o">=</span> <span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">negative</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">apply_to_columns</span><span class="p">(</span>
+                <span class="n">table</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_to</span><span class="p">,</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">-</span> <span class="n">col</span><span class="p">,</span>
+                <span class="n">new_col_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">apply_to_columns</span><span class="p">(</span>
+            <span class="n">table</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_to</span><span class="p">,</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">col</span><span class="p">,</span>
+            <span class="n">new_col_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AddDeltaColumns"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.AddDeltaColumns">[docs]</a><span class="k">class</span> <span class="nc">AddDeltaColumns</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Construct and add an interval column to some columns.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    add_to: str or list of str</span>
+<span class="sd">        Column names specifying to which columns is being added.</span>
+<span class="sd">    add: Column</span>
+<span class="sd">        Column object of type interval.</span>
+<span class="sd">    negative: bool, optional</span>
+<span class="sd">        Subtract the object rather than adding.</span>
+<span class="sd">    new_col_labels: str or list of str, optional</span>
+<span class="sd">        If specified, create new columns with these labels. Otherwise,</span>
+<span class="sd">        apply the function to the existing columns.</span>
+<span class="sd">    **delta_kwargs</span>
+<span class="sd">        The arguments used to create the Interval column.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AddDeltaColumns.__init__"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.AddDeltaColumns.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">add_to</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+        <span class="n">negative</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">new_col_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">delta_kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_to</span> <span class="o">=</span> <span class="n">add_to</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">negative</span> <span class="o">=</span> <span class="n">negative</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span> <span class="o">=</span> <span class="n">new_col_labels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delta_kwargs</span> <span class="o">=</span> <span class="n">delta_kwargs</span></div>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span>
+            <span class="n">table</span><span class="p">,</span> <span class="n">timestamp_cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_to</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span>
+        <span class="p">)</span>
+
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">get_delta_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">delta_kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">negative</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">apply_to_columns</span><span class="p">(</span>
+                <span class="n">table</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_to</span><span class="p">,</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">-</span> <span class="n">delta</span><span class="p">,</span>
+                <span class="n">new_col_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">apply_to_columns</span><span class="p">(</span>
+            <span class="n">table</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_to</span><span class="p">,</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">delta</span><span class="p">,</span>
+            <span class="n">new_col_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Cast"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.Cast">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Cast</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Cast columns to a specified type.</span>
+
+<span class="sd">    Currently supporting conversions to str, int, float, date and timestamp.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cols : str or list of str</span>
+<span class="sd">        Columns to = cast.</span>
+<span class="sd">    type_ : str</span>
+<span class="sd">        Name of type to which to convert. Must be supported.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+    <span class="n">type_</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+
+        <span class="n">cast_type_map</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;str&quot;</span><span class="p">:</span> <span class="s2">&quot;to_str&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;int&quot;</span><span class="p">:</span> <span class="s2">&quot;to_int&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;float&quot;</span><span class="p">:</span> <span class="s2">&quot;to_float&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;to_date&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;to_timestamp&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Assert that the type inputted is supported</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cast_type_map</span><span class="p">:</span>
+            <span class="n">supported_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">cast_type_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Conversion to type </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type_</span><span class="si">}</span><span class="s2"> not supported. Supporting</span>
+<span class="s2">                conversion to types </span><span class="si">{</span><span class="n">supported_str</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Cast</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">cast_type_map</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">type_</span><span class="p">]:</span> <span class="kc">True</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">apply_to_columns</span><span class="p">(</span>
+            <span class="n">table</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">process_column</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span>  <span class="c1"># pylint: disable=unnecessary-lambda</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Join"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.Join">[docs]</a><span class="k">class</span> <span class="nc">Join</span><span class="p">:</span>  <span class="c1"># pylint:disable=too-few-public-methods, too-many-arguments</span>
+    <span class="sd">&quot;&quot;&quot;Join a table with another table.</span>
+
+<span class="sd">    Warning: If neither on nor cond parameters are specified, an</span>
+<span class="sd">    expensive Cartesian product is performed.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    join_table: cyclops.query.util.TableTypes</span>
+<span class="sd">        Table on which to join.</span>
+<span class="sd">    on_: list of str or tuple, optional</span>
+<span class="sd">        A list of strings or tuples representing columns on which to join.</span>
+<span class="sd">        Strings represent columns of same name in both tables. A tuple of</span>
+<span class="sd">        style (table_col, join_table_col) is used to join on columns of</span>
+<span class="sd">        different names. Suggested to specify this parameter as opposed to</span>
+<span class="sd">        cond.</span>
+<span class="sd">    on_to_type: list of type, optional</span>
+<span class="sd">        A list of types to which to convert the on_ columns before joining. Useful when</span>
+<span class="sd">        two columns have the same values but in different format, e.g., strings of int.</span>
+<span class="sd">    cond: BinaryExpression, optional</span>
+<span class="sd">        Condition on which to join to tables.</span>
+<span class="sd">    table_cols: str or list of str, optional</span>
+<span class="sd">        Filters to keep only these columns from the table.</span>
+<span class="sd">    join_table_cols:</span>
+<span class="sd">        Filters to keep only these columns from the join_table.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Join.__init__"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.Join.__init__">[docs]</a>    <span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Subquery</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">join_table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span>
+        <span class="n">on</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>  <span class="c1"># pylint:disable=invalid-name</span>
+            <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">],</span> <span class="kc">None</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">on_to_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">type</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">cond</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BinaryExpression</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">table_cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">join_table_cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">on</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cond</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot specify both the &#39;on&#39; and &#39;cond&#39; arguments.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">join_table</span> <span class="o">=</span> <span class="n">join_table</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cond</span> <span class="o">=</span> <span class="n">cond</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_</span> <span class="o">=</span> <span class="n">to_list_optional</span><span class="p">(</span><span class="n">on</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_to_type</span> <span class="o">=</span> <span class="n">to_list_optional</span><span class="p">(</span><span class="n">on_to_type</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table_cols</span> <span class="o">=</span> <span class="n">to_list_optional</span><span class="p">(</span><span class="n">table_cols</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">join_table_cols</span> <span class="o">=</span> <span class="n">to_list_optional</span><span class="p">(</span><span class="n">join_table_cols</span><span class="p">)</span></div>
+
+    <span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Subquery</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Join on the equality of values in columns of same name in both tables</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Process on columns</span>
+            <span class="n">on_table_cols</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">col_obj</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col_obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">col_obj</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">col_obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_</span>
+            <span class="p">]</span>
+            <span class="n">on_join_table_cols</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">col_obj</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col_obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">col_obj</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">col_obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_</span>
+            <span class="p">]</span>
+
+            <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">none_add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_cols</span><span class="p">,</span> <span class="n">on_table_cols</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">join_table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">join_table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">none_add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">join_table_cols</span><span class="p">,</span> <span class="n">on_join_table_cols</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Filter columns, keeping those being joined on</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">append_if_missing</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_cols</span><span class="p">,</span> <span class="n">on_table_cols</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">join_table</span> <span class="o">=</span> <span class="n">append_if_missing</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">join_table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">join_table_cols</span><span class="p">,</span> <span class="n">on_join_table_cols</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Perform type conversions if given</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_to_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">type_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_to_type</span><span class="p">):</span>
+                    <span class="n">table</span> <span class="o">=</span> <span class="n">Cast</span><span class="p">(</span><span class="n">on_table_cols</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">type_</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">join_table</span> <span class="o">=</span> <span class="n">Cast</span><span class="p">(</span><span class="n">on_join_table_cols</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">type_</span><span class="p">)(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">join_table</span>
+                    <span class="p">)</span>
+
+            <span class="n">cond</span> <span class="o">=</span> <span class="n">and_</span><span class="p">(</span>
+                <span class="o">*</span><span class="p">[</span>
+                    <span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">on_table_cols</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="o">==</span> <span class="n">get_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">join_table</span><span class="p">,</span> <span class="n">on_join_table_cols</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">on_table_cols</span><span class="p">))</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="c1"># table.c.discharge_disposition == self.join_table.c.value</span>
+
+            <span class="n">table</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">join_table</span><span class="p">,</span> <span class="n">cond</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Filter columns</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">FilterColumns</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_cols</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">join_table_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">join_table</span> <span class="o">=</span> <span class="n">FilterColumns</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_cols</span><span class="p">)(</span>  <span class="c1"># type: ignore</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">join_table</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Join on a specified condition</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cond</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">join_table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cond</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+
+            <span class="c1"># Join on no condition, i.e., a Cartesian product</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;A Cartesian product has been queried.&quot;</span><span class="p">)</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">join_table</span><span class="p">)</span>
+
+        <span class="c1"># Filter to include no duplicate columns</span>
+        <span class="k">return</span> <span class="n">select</span><span class="p">(</span>
+            <span class="o">*</span><span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s2">&quot;%(&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">col</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ConditionEquals"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ConditionEquals">[docs]</a><span class="k">class</span> <span class="nc">ConditionEquals</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Filter rows based on being equal, or not equal, to some value.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    col: str</span>
+<span class="sd">        Column name on which to condition.</span>
+<span class="sd">    value: any</span>
+<span class="sd">        Value to equal.</span>
+<span class="sd">    not_: bool, default=False</span>
+<span class="sd">        Take negation of condition.</span>
+<span class="sd">    binarize_col: str, optional</span>
+<span class="sd">        If specified, create a Boolean column of name binarize_col instead of filtering.</span>
+<span class="sd">    **cond_kwargs</span>
+<span class="sd">        Optional keyword arguments for processing the condition.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ConditionEquals.__init__"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ConditionEquals.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">not_</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">binarize_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">cond_kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col</span> <span class="o">=</span> <span class="n">col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">not_</span> <span class="o">=</span> <span class="n">not_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="o">=</span> <span class="n">binarize_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span> <span class="o">=</span> <span class="n">cond_kwargs</span></div>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+        <span class="n">cond</span> <span class="o">=</span> <span class="n">equals</span><span class="p">(</span><span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_</span><span class="p">:</span>
+            <span class="n">cond</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">_negate</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">select</span><span class="p">(</span>
+                <span class="n">table</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">Boolean</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ConditionIn"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ConditionIn">[docs]</a><span class="k">class</span> <span class="nc">ConditionIn</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Filter rows based on having a value in list of values.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    col: str</span>
+<span class="sd">        Column name on which to condition.</span>
+<span class="sd">    values: any or list of any</span>
+<span class="sd">        Values in which the column value must be.</span>
+<span class="sd">    not_: bool, default=False</span>
+<span class="sd">        Take negation of condition.</span>
+<span class="sd">    binarize_col: str, optional</span>
+<span class="sd">        If specified, create a Boolean column of name binarize_col instead of filtering.</span>
+<span class="sd">    **cond_kwargs</span>
+<span class="sd">        Optional keyword arguments for processing the condition.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ConditionIn.__init__"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ConditionIn.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span>
+        <span class="n">not_</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">binarize_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">cond_kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col</span> <span class="o">=</span> <span class="n">col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">not_</span> <span class="o">=</span> <span class="n">not_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="o">=</span> <span class="n">binarize_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span> <span class="o">=</span> <span class="n">cond_kwargs</span></div>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+        <span class="n">cond</span> <span class="o">=</span> <span class="n">in_</span><span class="p">(</span>
+            <span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">),</span>
+            <span class="n">to_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_</span><span class="p">:</span>
+            <span class="n">cond</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">_negate</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">select</span><span class="p">(</span>
+                <span class="n">table</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">Boolean</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ConditionSubstring"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ConditionSubstring">[docs]</a><span class="k">class</span> <span class="nc">ConditionSubstring</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Filter rows on based on having substrings.</span>
+
+<span class="sd">    Can be specified whether it must have any or all of the specified substrings.</span>
+<span class="sd">    This makes no difference when only one substring is provided</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    col: str</span>
+<span class="sd">        Column name on which to condition.</span>
+<span class="sd">    substrings: any</span>
+<span class="sd">        Substrings.</span>
+<span class="sd">    any_: bool, default=True</span>
+<span class="sd">        If true, the row must have just one of the substrings. If false, it must</span>
+<span class="sd">        have all of the substrings.</span>
+<span class="sd">    not_: bool, default=False</span>
+<span class="sd">        Take negation of condition.</span>
+<span class="sd">    binarize_col: str, optional</span>
+<span class="sd">        If specified, create a Boolean column of name binarize_col instead of filtering.</span>
+<span class="sd">    **cond_kwargs</span>
+<span class="sd">        Optional keyword arguments for processing the condition.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ConditionSubstring.__init__"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ConditionSubstring.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">substrings</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+        <span class="n">any_</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">not_</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">binarize_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">cond_kwargs</span><span class="p">,</span>
+    <span class="p">):</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+        <span class="sd">&quot;&quot;&quot;Initialize.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col</span> <span class="o">=</span> <span class="n">col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">substrings</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">substrings</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">any_</span> <span class="o">=</span> <span class="n">any_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">not_</span> <span class="o">=</span> <span class="n">not_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="o">=</span> <span class="n">binarize_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span> <span class="o">=</span> <span class="n">cond_kwargs</span></div>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+        <span class="n">conds</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">has_substring</span><span class="p">(</span><span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">),</span> <span class="n">sub</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">substrings</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">any_</span><span class="p">:</span>
+            <span class="n">cond</span> <span class="o">=</span> <span class="n">or_</span><span class="p">(</span><span class="o">*</span><span class="n">conds</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cond</span> <span class="o">=</span> <span class="n">and_</span><span class="p">(</span><span class="o">*</span><span class="n">conds</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_</span><span class="p">:</span>
+            <span class="n">cond</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">_negate</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">select</span><span class="p">(</span>
+                <span class="n">table</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">Boolean</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ConditionStartsWith"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ConditionStartsWith">[docs]</a><span class="k">class</span> <span class="nc">ConditionStartsWith</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Filter rows based on starting with some string.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    col: str</span>
+<span class="sd">        Column name on which to condition.</span>
+<span class="sd">    string: any</span>
+<span class="sd">        String.</span>
+<span class="sd">    not_: bool, default=False</span>
+<span class="sd">        Take negation of condition.</span>
+<span class="sd">    binarize_col: str, optional</span>
+<span class="sd">        If specified, create a Boolean column of name binarize_col instead of filtering.</span>
+<span class="sd">    **cond_kwargs</span>
+<span class="sd">        Optional keyword arguments for processing the condition.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ConditionStartsWith.__init__"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ConditionStartsWith.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">not_</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">binarize_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">cond_kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col</span> <span class="o">=</span> <span class="n">col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">=</span> <span class="n">string</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">not_</span> <span class="o">=</span> <span class="n">not_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="o">=</span> <span class="n">binarize_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span> <span class="o">=</span> <span class="n">cond_kwargs</span></div>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+        <span class="n">cond</span> <span class="o">=</span> <span class="n">starts_with</span><span class="p">(</span><span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_</span><span class="p">:</span>
+            <span class="n">cond</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">_negate</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">select</span><span class="p">(</span>
+                <span class="n">table</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">Boolean</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ConditionEndsWith"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ConditionEndsWith">[docs]</a><span class="k">class</span> <span class="nc">ConditionEndsWith</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Filter rows based on ending with some string.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    col: str</span>
+<span class="sd">        Column name on which to condition.</span>
+<span class="sd">    string: any</span>
+<span class="sd">        String.</span>
+<span class="sd">    not_: bool, default=False</span>
+<span class="sd">        Take negation of condition.</span>
+<span class="sd">    binarize_col: str, optional</span>
+<span class="sd">        If specified, create a Boolean column of name binarize_col instead of filtering.</span>
+<span class="sd">    **cond_kwargs</span>
+<span class="sd">        Optional keyword arguments for processing the condition.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ConditionEndsWith.__init__"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ConditionEndsWith.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">not_</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">binarize_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">cond_kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col</span> <span class="o">=</span> <span class="n">col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">=</span> <span class="n">string</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">not_</span> <span class="o">=</span> <span class="n">not_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="o">=</span> <span class="n">binarize_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span> <span class="o">=</span> <span class="n">cond_kwargs</span></div>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+        <span class="n">cond</span> <span class="o">=</span> <span class="n">ends_with</span><span class="p">(</span><span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_</span><span class="p">:</span>
+            <span class="n">cond</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">_negate</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">select</span><span class="p">(</span>
+                <span class="n">table</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">Boolean</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ConditionInYears"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ConditionInYears">[docs]</a><span class="k">class</span> <span class="nc">ConditionInYears</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Filter rows based on a timestamp column being in a list of years.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    timestamp_col: str</span>
+<span class="sd">        Timestamp column name.</span>
+<span class="sd">    years: int or list of int</span>
+<span class="sd">        Years in which the timestamps must be.</span>
+<span class="sd">    not_: bool, default=False</span>
+<span class="sd">        Take negation of condition.</span>
+<span class="sd">    binarize_col: str, optional</span>
+<span class="sd">        If specified, create a Boolean column of name binarize_col instead of filtering.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ConditionInYears.__init__"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ConditionInYears.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">timestamp_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">years</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
+        <span class="n">not_</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">binarize_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span> <span class="o">=</span> <span class="n">timestamp_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">years</span> <span class="o">=</span> <span class="n">years</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">not_</span> <span class="o">=</span> <span class="n">not_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="o">=</span> <span class="n">binarize_col</span></div>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span>
+            <span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span>
+        <span class="p">)</span>
+        <span class="n">cond</span> <span class="o">=</span> <span class="n">in_</span><span class="p">(</span>
+            <span class="n">extract</span><span class="p">(</span><span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">)),</span>
+            <span class="n">to_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">years</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_</span><span class="p">:</span>
+            <span class="n">cond</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">_negate</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">select</span><span class="p">(</span>
+                <span class="n">table</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">Boolean</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ConditionInMonths"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ConditionInMonths">[docs]</a><span class="k">class</span> <span class="nc">ConditionInMonths</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Filter rows based on a timestamp being in a list of years.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    timestamp_col: str</span>
+<span class="sd">        Timestamp column name.</span>
+<span class="sd">    months: int or list of int</span>
+<span class="sd">        Months in which the timestamps must be.</span>
+<span class="sd">    not_: bool, default=False</span>
+<span class="sd">        Take negation of condition.</span>
+<span class="sd">    binarize_col: str, optional</span>
+<span class="sd">        If specified, create a Boolean column of name binarize_col instead of filtering.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ConditionInMonths.__init__"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ConditionInMonths.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">timestamp_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">months</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
+        <span class="n">not_</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">binarize_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span> <span class="o">=</span> <span class="n">timestamp_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">months</span> <span class="o">=</span> <span class="n">months</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">not_</span> <span class="o">=</span> <span class="n">not_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="o">=</span> <span class="n">binarize_col</span></div>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span>
+            <span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span>
+        <span class="p">)</span>
+        <span class="n">cond</span> <span class="o">=</span> <span class="n">in_</span><span class="p">(</span>
+            <span class="n">extract</span><span class="p">(</span><span class="s2">&quot;month&quot;</span><span class="p">,</span> <span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">)),</span>
+            <span class="n">to_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">months</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_</span><span class="p">:</span>
+            <span class="n">cond</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">_negate</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">select</span><span class="p">(</span>
+                <span class="n">table</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">Boolean</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ConditionBeforeDate"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ConditionBeforeDate">[docs]</a><span class="k">class</span> <span class="nc">ConditionBeforeDate</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Filter rows based on a timestamp being before some date.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    timestamp_col: str</span>
+<span class="sd">        Timestamp column name.</span>
+<span class="sd">    timestamp: str or datetime.datetime</span>
+<span class="sd">        A datetime object or str in YYYY-MM-DD format.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ConditionBeforeDate.__init__"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ConditionBeforeDate.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestamp_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">datetime</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span> <span class="o">=</span> <span class="n">timestamp_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="n">timestamp</span></div>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">timestamp_cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">timestamp</span> <span class="o">=</span> <span class="n">to_datetime_format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">timestamp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">timestamp</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConditionAfterDate"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ConditionAfterDate">[docs]</a><span class="k">class</span> <span class="nc">ConditionAfterDate</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Filter rows based on a timestamp being after some date.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    timestamp_col: str</span>
+<span class="sd">        Timestamp column name.</span>
+<span class="sd">    timestamp: str or datetime.datetime</span>
+<span class="sd">        A datetime object or str in YYYY-MM-DD format.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ConditionAfterDate.__init__"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.ConditionAfterDate.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestamp_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">datetime</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span> <span class="o">=</span> <span class="n">timestamp_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="n">timestamp</span></div>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">timestamp_cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">timestamp</span> <span class="o">=</span> <span class="n">to_datetime_format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">timestamp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">timestamp</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Limit"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.Limit">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Limit</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+    <span class="sd">&quot;&quot;&quot;Limit the number of rows returned in a query.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    number: int</span>
+<span class="sd">        Number of rows to return in the limit.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">number</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Select</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">table</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>  <span class="c1"># type: ignore</span></div>
+
+
+<div class="viewcode-block" id="RandomizeOrder"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.RandomizeOrder">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">RandomizeOrder</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Randomize order of table rows.</span>
+
+<span class="sd">    Useful when the data is ordered, so certain rows cannot</span>
+<span class="sd">    be seen or analyzed when limited.</span>
+
+<span class="sd">    Warning: Becomes quite slow on large tables.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Subquery</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">random</span><span class="p">())</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DropNulls"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.DropNulls">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">DropNulls</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Remove rows with null values in some specified columns.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cols: str or list of str</span>
+<span class="sd">        Columns in which, if a value is null, the corresponding row</span>
+<span class="sd">        is removed.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+
+        <span class="n">cond</span> <span class="o">=</span> <span class="n">and_</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">not_equals</span><span class="p">(</span><span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">col</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="OrderBy"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.OrderBy">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">OrderBy</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Order, or sort, the rows of a table by some columns.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cols: str or list of str</span>
+<span class="sd">        Columns by which to order.</span>
+<span class="sd">    ascending: bool or list of bool</span>
+<span class="sd">        Whether to order each columns by ascending (True) or descending (False).</span>
+<span class="sd">        If not provided, orders all by ascending.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+    <span class="n">ascending</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="n">ascending</span> <span class="o">=</span> <span class="n">to_list_optional</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ascending</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ascending</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ascending</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ascending</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;If ascending is specified. Must specify for all columns.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="n">order_cols</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">col</span> <span class="k">if</span> <span class="n">ascending</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">else</span> <span class="n">col</span><span class="o">.</span><span class="n">desc</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">get_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">))</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="o">*</span><span class="n">order_cols</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="GroupByAggregate"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.GroupByAggregate">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">GroupByAggregate</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Aggregate over a group by object.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    groupby_cols: str or list of str</span>
+<span class="sd">        Columns by which to group.</span>
+<span class="sd">    aggfuncs: dict</span>
+<span class="sd">        Specify a dictionary of key-value pairs:</span>
+<span class="sd">        column name: aggfunc string or</span>
+<span class="sd">        column name: (aggfunc string, new column label)</span>
+<span class="sd">        This labelling allows for the aggregation of the same column with</span>
+<span class="sd">        different functions.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">groupby_cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+    <span class="n">aggfuncs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Paramaters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">str_to_aggfunc</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;sum&quot;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="n">sum</span><span class="p">,</span>
+            <span class="s2">&quot;average&quot;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="n">avg</span><span class="p">,</span>
+            <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="n">min</span><span class="p">,</span>
+            <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="n">max</span><span class="p">,</span>
+            <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">aggfunc_tuples</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aggfuncs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="n">aggfunc_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">aggfunc_tuples</span><span class="p">]</span>
+        <span class="n">aggfunc_strs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">aggfunc_tuples</span>
+        <span class="p">]</span>
+
+        <span class="c1"># If not specified, aggregate column names default to that of</span>
+        <span class="c1"># the column being aggregated over</span>
+        <span class="n">aggfunc_names</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">aggfunc_cols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">aggfunc_tuples</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="n">groupby_names</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groupby_cols</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">groupby_names</span> <span class="o">+</span> <span class="n">aggfunc_cols</span><span class="p">)</span>
+
+        <span class="c1"># Error checking</span>
+        <span class="k">for</span> <span class="n">aggfunc_str</span> <span class="ow">in</span> <span class="n">aggfunc_strs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">aggfunc_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">str_to_aggfunc</span><span class="p">:</span>
+                <span class="n">allowed_strs</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">str_to_aggfunc</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid aggfuncs specified. Allowed values are </span><span class="si">{</span><span class="n">allowed_strs</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="n">all_names</span> <span class="o">=</span> <span class="n">groupby_names</span> <span class="o">+</span> <span class="n">aggfunc_names</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_names</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">all_names</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sd">&quot;&quot;&quot;Duplicate column names were found. Try naming aggregated columns</span>
+<span class="sd">                to avoid this issue.&quot;&quot;&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Perform group by</span>
+        <span class="n">groupby_cols</span> <span class="o">=</span> <span class="n">get_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">groupby_names</span><span class="p">)</span>
+        <span class="n">agg_cols</span> <span class="o">=</span> <span class="n">get_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">aggfunc_cols</span><span class="p">)</span>
+        <span class="n">agg_cols</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">str_to_aggfunc</span><span class="p">[</span><span class="n">aggfunc_strs</span><span class="p">[</span><span class="n">i</span><span class="p">]](</span><span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="n">aggfunc_names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">agg_cols</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="o">*</span><span class="n">groupby_cols</span><span class="p">,</span> <span class="o">*</span><span class="n">agg_cols</span><span class="p">)</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="o">*</span><span class="n">groupby_cols</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Vector AI Engineering.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

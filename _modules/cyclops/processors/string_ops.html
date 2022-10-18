@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.processors.string_ops &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/cyclops.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+            <a href="../../../index.html" class="icon icon-home"> cyclops
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html"># cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#getting-started">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../coverage.html">Coverage report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>cyclops.processors.string_ops</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cyclops.processors.string_ops</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;String operations used in data extraction.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">cyclops.processors.constants</span> <span class="kn">import</span> <span class="n">EMPTY_STRING</span>
+
+
+<div class="viewcode-block" id="fill_missing_with_nan"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.string_ops.html#cyclops.processors.string_ops.fill_missing_with_nan">[docs]</a><span class="k">def</span> <span class="nf">fill_missing_with_nan</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Return NaN if input string is empty.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    string: str</span>
+<span class="sd">        Input string.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str or float</span>
+<span class="sd">        NaN if input was empty, else input.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">string</span> <span class="o">==</span> <span class="n">EMPTY_STRING</span> <span class="k">else</span> <span class="n">string</span></div>
+
+
+<div class="viewcode-block" id="replace_if_string_match"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.string_ops.html#cyclops.processors.string_ops.replace_if_string_match">[docs]</a><span class="k">def</span> <span class="nf">replace_if_string_match</span><span class="p">(</span>
+    <span class="n">search_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">search_terms</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">replace_value</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Replace string with value, if string has matched terms.</span>
+
+<span class="sd">    If any of the &#39;search_terms&#39; are found in the string, then</span>
+<span class="sd">    it is replaced with the &#39;replace_value&#39; string.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    string: str</span>
+<span class="sd">        The string to search for possible matches.</span>
+<span class="sd">    search_terms: str</span>
+<span class="sd">        String terms to search x1|x2...|xn.</span>
+<span class="sd">    replace_value: str</span>
+<span class="sd">        String which will replace if search found any matches.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The string to replace, &#39;replace_value&#39; if matches found, else same as input.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">search_string</span> <span class="o">=</span> <span class="n">search_string</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">found</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">search_terms</span><span class="p">,</span> <span class="n">search_string</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">found</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">replace_value</span>
+    <span class="k">return</span> <span class="n">search_string</span></div>
+
+
+<div class="viewcode-block" id="remove_text_in_parentheses"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.string_ops.html#cyclops.processors.string_ops.remove_text_in_parentheses">[docs]</a><span class="k">def</span> <span class="nf">remove_text_in_parentheses</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Remove text within parentheses.</span>
+
+<span class="sd">    e.g. test (T) -&gt; test</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    string: str</span>
+<span class="sd">        Input string.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Output string with text inside including parentheses removed.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\([^)]*\)&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="fix_inequalities"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.string_ops.html#cyclops.processors.string_ops.fix_inequalities">[docs]</a><span class="k">def</span> <span class="nf">fix_inequalities</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Match result value, remove inequality symbols (&lt;, &gt;, =).</span>
+
+<span class="sd">    For e.g.</span>
+<span class="sd">    10.2, &gt;= 10, &lt; 10, 11 -&gt; 10.2, 10, 10, 11</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    string: str</span>
+<span class="sd">        The string to search for possible matches.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Result value string is matched to regex, symbols removed.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+        <span class="sa">r</span><span class="s2">&quot;^\s*(&lt;|&gt;)?=?\s*(-?\s*[0-9]+(?P&lt;floating&gt;\.)?(?(floating)[0-9]+|))\s*$&quot;</span><span class="p">,</span>
+        <span class="n">string</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">matches</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="n">matches</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="to_lower"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.string_ops.html#cyclops.processors.string_ops.to_lower">[docs]</a><span class="k">def</span> <span class="nf">to_lower</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Convert string to lowercase letters.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    string: str</span>
+<span class="sd">        Input string.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Output string in lowercase.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">string</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="none_to_empty_string"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.string_ops.html#cyclops.processors.string_ops.none_to_empty_string">[docs]</a><span class="k">def</span> <span class="nf">none_to_empty_string</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Convert None to empty string.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    value: None or str</span>
+<span class="sd">        Input value.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Empty string.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">EMPTY_STRING</span>
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="strip_whitespace"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.string_ops.html#cyclops.processors.string_ops.strip_whitespace">[docs]</a><span class="k">def</span> <span class="nf">strip_whitespace</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Remove all whitespaces from string.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    string: str</span>
+<span class="sd">        Input string.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">       Output string with whitespace removed.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\s+&quot;</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_non_empty_string"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.string_ops.html#cyclops.processors.string_ops.is_non_empty_string">[docs]</a><span class="k">def</span> <span class="nf">is_non_empty_string</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Return True if value == &quot;&quot;, else False.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    string: str</span>
+<span class="sd">        Input string.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if non-empty string, else False.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">string</span> <span class="o">==</span> <span class="n">EMPTY_STRING</span></div>
+
+
+<div class="viewcode-block" id="normalize_special_characters"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.string_ops.html#cyclops.processors.string_ops.normalize_special_characters">[docs]</a><span class="k">def</span> <span class="nf">normalize_special_characters</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Replace special characters with string equivalents.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    item: str</span>
+<span class="sd">        Input string.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Output string after normalizing.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">replacements</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;(&quot;</span><span class="p">:</span> <span class="s2">&quot; &quot;</span><span class="p">,</span>
+        <span class="s2">&quot;)&quot;</span><span class="p">:</span> <span class="s2">&quot; &quot;</span><span class="p">,</span>
+        <span class="s2">&quot;,&quot;</span><span class="p">:</span> <span class="s2">&quot; &quot;</span><span class="p">,</span>
+        <span class="s2">&quot;%&quot;</span><span class="p">:</span> <span class="s2">&quot; percent &quot;</span><span class="p">,</span>
+        <span class="s2">&quot;+&quot;</span><span class="p">:</span> <span class="s2">&quot; plus &quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#&quot;</span><span class="p">:</span> <span class="s2">&quot; number &quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&amp;&quot;</span><span class="p">:</span> <span class="s2">&quot; and &quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;/&quot;</span><span class="p">:</span> <span class="s2">&quot; per &quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">replacee</span><span class="p">,</span> <span class="n">replacement</span> <span class="ow">in</span> <span class="n">replacements</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">replacee</span><span class="p">,</span> <span class="n">replacement</span><span class="p">)</span>
+
+    <span class="n">item</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\s+&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^0-9a-z_()]+&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(?s:(^[0-9_].+))&quot;</span><span class="p">,</span> <span class="s2">&quot;a_</span><span class="se">\1</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">item</span></div>
+
+
+<div class="viewcode-block" id="count_occurrences"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.string_ops.html#cyclops.processors.string_ops.count_occurrences">[docs]</a><span class="k">def</span> <span class="nf">count_occurrences</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Count number of occurrences of the items.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    items: Iterable</span>
+<span class="sd">        Iterable of items to count the number of repeated values.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    List</span>
+<span class="sd">        (item, count) ordered by count, descending order.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">counter</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convert_to_numeric"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.string_ops.html#cyclops.processors.string_ops.convert_to_numeric">[docs]</a><span class="k">def</span> <span class="nf">convert_to_numeric</span><span class="p">(</span><span class="n">input_</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Convert input to numeric values.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input_: str</span>
+<span class="sd">        Input value to try and convert to numeric.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str or int or float</span>
+<span class="sd">        Converted numeric output.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">input_</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># Originally this case implicitly returned None.</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected string, received </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">is_range</span><span class="p">(</span><span class="n">input_</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">compute_range_avg</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span>
+            <span class="k">raise</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;^-?[^0-9.]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">input_</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="is_range"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.string_ops.html#cyclops.processors.string_ops.is_range">[docs]</a><span class="k">def</span> <span class="nf">is_range</span><span class="p">(</span><span class="n">input_</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Test if x matches range pattern.</span>
+
+<span class="sd">    e.g. &quot;2 to 5&quot; or &quot;2 - 5&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input_: str</span>
+<span class="sd">        Input string to test if its a range.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if categorical, False otherwise.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># [TODO:] Why is a space required? Isn&#39;t 1-5 all right, too?</span>
+    <span class="n">categorical_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;-?\d+\s+(?:to|-)\s+(-?\d+)&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">categorical_pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="compute_range_avg"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.string_ops.html#cyclops.processors.string_ops.compute_range_avg">[docs]</a><span class="k">def</span> <span class="nf">compute_range_avg</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Compute the average of a range.</span>
+
+<span class="sd">    For instance, 5 - 7 -&gt; 6, and 1 - 4 -&gt; 2.5</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    item: str</span>
+<span class="sd">        Input string which mentions a range.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int or float</span>
+<span class="sd">        Computed average of range.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pattern_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^(?P&lt;first&gt;-?\d+)\s*(?:to|-)\s*(?P&lt;second&gt;-?\d+)$&quot;</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">pattern_str</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">matched</span> <span class="o">:=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">item</span><span class="p">)):</span>  <span class="c1"># pylint: disable=superfluous-parens</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;item&#39; does not match expected pattern </span><span class="si">{</span><span class="n">pattern_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">matched</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;first&quot;</span><span class="p">))</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">matched</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;second&quot;</span><span class="p">)))</span> <span class="o">/</span> <span class="mi">2</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Vector AI Engineering.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

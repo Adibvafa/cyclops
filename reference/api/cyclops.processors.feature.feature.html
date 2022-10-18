@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.processors.feature.feature module &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/cyclops.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="cyclops.processors.feature.normalization module" href="cyclops.processors.feature.normalization.html" />
+    <link rel="prev" title="cyclops.processors.feature package" href="cyclops.processors.feature.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+            <a href="../../index.html" class="icon icon-home"> cyclops
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html"># cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#getting-started">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../coverage.html">Coverage report</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../api.html">API Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cyclops.config.html">cyclops.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.html">cyclops.evaluation package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.html">cyclops.evaluation.metrics package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.html">cyclops.evaluation.metrics.functional package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.f_beta.html">cyclops.evaluation.metrics.functional.f_beta module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.precision_recall.html">cyclops.evaluation.metrics.functional.precision_recall module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.stat_scores.html">cyclops.evaluation.metrics.functional.stat_scores module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.utils.html">cyclops.evaluation.metrics.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.orm.html">cyclops.orm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.plotter.html">cyclops.plotter module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cyclops.processors.html">cyclops.processors package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="cyclops.processors.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="cyclops.processors.feature.html">cyclops.processors.feature package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cyclops.processors.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.aggregate.html">cyclops.processors.aggregate module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.cleaning.html">cyclops.processors.cleaning module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.diagnoses.html">cyclops.processors.diagnoses module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cyclops.processors.feature.html">cyclops.processors.feature package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="cyclops.processors.feature.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">cyclops.processors.feature.feature module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.processors.feature.normalization.html">cyclops.processors.feature.normalization module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.processors.feature.split.html">cyclops.processors.feature.split module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.processors.feature.type_handling.html">cyclops.processors.feature.type_handling module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.processors.feature.vectorize.html">cyclops.processors.feature.vectorize module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">cyclops.processors.feature.feature module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.normalization.html">cyclops.processors.feature.normalization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.split.html">cyclops.processors.feature.split module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.type_handling.html">cyclops.processors.feature.type_handling module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.vectorize.html">cyclops.processors.feature.vectorize module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.impute.html">cyclops.processors.impute module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.string_ops.html">cyclops.processors.string_ops module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.util.html">cyclops.processors.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.html">cyclops.query package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.gemini.html">cyclops.query.gemini module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.gemini_omop.html">cyclops.query.gemini_omop module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.interface.html">cyclops.query.interface module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.mimiciv.html">cyclops.query.mimiciv module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.omop.html">cyclops.query.omop module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.html">cyclops.query.postprocess package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.gemini.html">cyclops.query.postprocess.gemini module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.mimiciv.html">cyclops.query.postprocess.mimiciv module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.util.html">cyclops.query.postprocess.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.process.html">cyclops.query.process module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.util.html">cyclops.query.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.html">cyclops.utils package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.common.html">cyclops.utils.common module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.file.html">cyclops.utils.file module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.indexing.html">cyclops.utils.indexing module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.log.html">cyclops.utils.log module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.profile.html">cyclops.utils.profile module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.workflow.html">cyclops.workflow package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.workflow.task.html">cyclops.workflow.task module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../api.html">API Documentation</a> &raquo;</li>
+          <li><a href="cyclops.processors.html">cyclops.processors package</a> &raquo;</li>
+          <li><a href="cyclops.processors.feature.html">cyclops.processors.feature package</a> &raquo;</li>
+      <li>cyclops.processors.feature.feature module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reference/api/cyclops.processors.feature.feature.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-cyclops.processors.feature.feature">
+<span id="cyclops-processors-feature-feature-module"></span><h1>cyclops.processors.feature.feature module<a class="headerlink" href="#module-cyclops.processors.feature.feature" title="Permalink to this headline"></a></h1>
+<p>Feature processing.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.FeatureMeta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FeatureMeta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#FeatureMeta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.FeatureMeta" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.9/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Feature metadata class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.FeatureMeta.feature_type">
+<span class="sig-name descname"><span class="pre">feature_type</span></span><a class="headerlink" href="#cyclops.processors.feature.feature.FeatureMeta.feature_type" title="Permalink to this definition"></a></dt>
+<dd><p>Feature type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.FeatureMeta.target">
+<span class="sig-name descname"><span class="pre">target</span></span><a class="headerlink" href="#cyclops.processors.feature.feature.FeatureMeta.target" title="Permalink to this definition"></a></dt>
+<dd><p>Whether the feature a target variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.FeatureMeta.indicator_of">
+<span class="sig-name descname"><span class="pre">indicator_of</span></span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#FeatureMeta.indicator_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.FeatureMeta.indicator_of" title="Permalink to this definition"></a></dt>
+<dd><p>If not None, the feature from which this indicator was generated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.FeatureMeta.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#FeatureMeta.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.FeatureMeta.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Init.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.FeatureMeta.get_mapping">
+<span class="sig-name descname"><span class="pre">get_mapping</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#FeatureMeta.get_mapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.FeatureMeta.get_mapping" title="Permalink to this definition"></a></dt>
+<dd><p>Get the category value map for binary and ordinal categories.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A mapping from the integer categories to the original values, or None if
+there is no mapping.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.FeatureMeta.get_type">
+<span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#FeatureMeta.get_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.FeatureMeta.get_type" title="Permalink to this definition"></a></dt>
+<dd><p>Get the feature type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Feature type.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">indicator_of</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#FeatureMeta.indicator_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<dd><p>Get the name of an indicator’s original categorical feature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The categorical column from which an indicator was generated, or None if
+not a categorical indicator.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.FeatureMeta.is_target">
+<span class="sig-name descname"><span class="pre">is_target</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#FeatureMeta.is_target"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.FeatureMeta.is_target" title="Permalink to this definition"></a></dt>
+<dd><p>Get whether the feature is a target.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Whether the feature is a target.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.FeatureMeta.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#FeatureMeta.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.FeatureMeta.update" title="Permalink to this definition"></a></dt>
+<dd><p>Update meta attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>meta</strong> (<em>list of tuple</em>) – List of tuples in the format (attribute name, attribute value).</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">by</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalizers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#Features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.Features" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.9/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Features.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#cyclops.processors.feature.feature.Features.data" title="Permalink to this definition"></a></dt>
+<dd><p>Features data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)">pandas.DataFrame</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.features">
+<span class="sig-name descname"><span class="pre">features</span></span><a class="headerlink" href="#cyclops.processors.feature.feature.Features.features" title="Permalink to this definition"></a></dt>
+<dd><p>List of feature columns. The remaining columns are treated as metadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.by">
+<span class="sig-name descname"><span class="pre">by</span></span><a class="headerlink" href="#cyclops.processors.feature.feature.Features.by" title="Permalink to this definition"></a></dt>
+<dd><p>Columns to groupby during processing, affecting how the features are treated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.targets">
+<span class="sig-name descname"><span class="pre">targets</span></span><a class="headerlink" href="#cyclops.processors.feature.feature.Features.targets" title="Permalink to this definition"></a></dt>
+<dd><p>Column names to specify as target features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.meta">
+<span class="sig-name descname"><span class="pre">meta</span></span><a class="headerlink" href="#cyclops.processors.feature.feature.Features.meta" title="Permalink to this definition"></a></dt>
+<dd><p>Feature metadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.normalizers">
+<span class="sig-name descname"><span class="pre">normalizers</span></span><a class="headerlink" href="#cyclops.processors.feature.feature.Features.normalizers" title="Permalink to this definition"></a></dt>
+<dd><p>Organize normalization objects with different keys, e.g.,
+having separate normalizers for keys “features” and “targets”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.normalized">
+<span class="sig-name descname"><span class="pre">normalized</span></span><a class="headerlink" href="#cyclops.processors.feature.feature.Features.normalized" title="Permalink to this definition"></a></dt>
+<dd><p>Track for each normalizer whether normalization has been performed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">by</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalizers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#Features.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.Features.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Init.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.add_normalizer">
+<span class="sig-name descname"><span class="pre">add_normalizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalizer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#Features.add_normalizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.Features.add_normalizer" title="Permalink to this definition"></a></dt>
+<dd><p>Add a normalization object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Unique name of the normalizer.</p></li>
+<li><p><strong>normalizer</strong> (<a class="reference internal" href="cyclops.processors.feature.normalization.html#cyclops.processors.feature.normalization.GroupbyNormalizer" title="cyclops.processors.feature.normalization.GroupbyNormalizer"><em>GroupbyNormalizer</em></a>) – Normalization object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.columns">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">columns</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cyclops.processors.feature.feature.Features.columns" title="Permalink to this definition"></a></dt>
+<dd><p>Access as attribute, data columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of all column names.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.compute_value_splits">
+<span class="sig-name descname"><span class="pre">compute_value_splits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fractions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">randomize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#Features.compute_value_splits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.Features.compute_value_splits" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the value splits given fractions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fractions</strong> (<em>list of float</em><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>optional</em>) – Fraction(s) of samples between 0 and 1 to use for each split.</p></li>
+<li><p><strong>randomize</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default = True</em>) – Whether to randomize the data in the splits.</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Seed for random number generator.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list with an element for each split, where the elements are numpy.ndarray
+with values determined how the splits are segmented.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.feature_names">
+<span class="sig-name descname"><span class="pre">feature_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#Features.feature_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.Features.feature_names" title="Permalink to this definition"></a></dt>
+<dd><p>Access as attribute, feature names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>feature_type</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – Filter by feature type.</p></li>
+<li><p><strong>target</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – Filter by whether the feature is a target.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of the desired feature names.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.features_by_type">
+<span class="sig-name descname"><span class="pre">features_by_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#Features.features_by_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.Features.features_by_type" title="Permalink to this definition"></a></dt>
+<dd><p>Get feature names of a given type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>type</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Feature type.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Names of all features with the given type.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_binary_indicators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#Features.get_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.Features.get_data" title="Permalink to this definition"></a></dt>
+<dd><p>Get the features data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features_only</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default = True</em>) – Whether to return only the by and feature columns.</p></li>
+<li><p><strong>to_indicators</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em><em>, </em><em>optional</em>) – Ordinal features to convert to categorical indicators.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Features data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)">pandas.DataFrame</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.inverse_normalize">
+<span class="sig-name descname"><span class="pre">inverse_normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#Features.inverse_normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.Features.inverse_normalize" title="Permalink to this definition"></a></dt>
+<dd><p>Inverse normalize.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Unique name of the normalizer.</p></li>
+<li><p><strong>inplace</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to perform in-place, or to simply return the DataFrame.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The inversely normalized data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)">pandas.DataFrame</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.normalize">
+<span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#Features.normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.Features.normalize" title="Permalink to this definition"></a></dt>
+<dd><p>Normalize.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Unique name of the normalizer.</p></li>
+<li><p><strong>inplace</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to perform in-place, or to simply return the DataFrame.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The normalized features data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)">pandas.DataFrame</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.remove_normalizer">
+<span class="sig-name descname"><span class="pre">remove_normalizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#Features.remove_normalizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.Features.remove_normalizer" title="Permalink to this definition"></a></dt>
+<dd><p>Remove a normalization object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Unique name of the normalizer.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'parquet'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#Features.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.Features.save" title="Permalink to this definition"></a></dt>
+<dd><p>Save data to file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_path</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Path where the file will be saved.</p></li>
+<li><p><strong>file_format</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – File format of the file to save.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Processed save path for upstream use.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.split">
+<span class="sig-name descname"><span class="pre">split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fractions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">randomize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#Features.split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.Features.split" title="Permalink to this definition"></a></dt>
+<dd><p>Split the data into multiple datasets by fractions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fractions</strong> (<em>list of float</em><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>optional</em>) – Fraction(s) of samples between 0 and 1 to use for each split.</p></li>
+<li><p><strong>randomize</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default = True</em>) – Whether to randomize the data in the splits.</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Seed for random number generator.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A tuple of Features objects with the split data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.split_by_values">
+<span class="sig-name descname"><span class="pre">split_by_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value_splits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#Features.split_by_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.Features.split_by_values" title="Permalink to this definition"></a></dt>
+<dd><p>Split the data into multiple datasets by values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value_splits</strong> (<em>list of numpy.ndarray</em>) – A list with an element for each split, where the elements are numpy.ndarray
+with values determined how the splits are segmented.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A tuple of Features objects with the split data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id1">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">targets</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id1" title="Permalink to this definition"></a></dt>
+<dd><p>Access as attribute, names of target features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Names of target features.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.Features.types">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><span class="pre">dict</span></a></em><a class="headerlink" href="#cyclops.processors.feature.feature.Features.types" title="Permalink to this definition"></a></dt>
+<dd><p>Access as attribute, feature type names.</p>
+<p>Note: These are framework-specific feature names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Feature type mapped for each feature.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.TabularFeatures">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TabularFeatures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">by</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#TabularFeatures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.TabularFeatures" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cyclops.processors.feature.feature.Features" title="cyclops.processors.feature.feature.Features"><code class="xref py py-class docutils literal notranslate"><span class="pre">cyclops.processors.feature.feature.Features</span></code></a></p>
+<p>Tabular features.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.TabularFeatures.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">by</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#TabularFeatures.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.TabularFeatures.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Init.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.TabularFeatures.plot_features">
+<span class="sig-name descname"><span class="pre">plot_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#TabularFeatures.plot_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.TabularFeatures.plot_features" title="Permalink to this definition"></a></dt>
+<dd><p>Plot features.</p>
+<p>High-level plotting function for features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>features</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em><em>, </em><em>optional</em>) – Names of features to plot.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.TabularFeatures.vectorize">
+<span class="sig-name descname"><span class="pre">vectorize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">get_data_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#TabularFeatures.vectorize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.TabularFeatures.vectorize" title="Permalink to this definition"></a></dt>
+<dd><p>Vectorize the tabular data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>**get_data_kwargs</strong> – Keyword arguments to be fed to get_data.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(data, by_map, feat_map), (pandas.DataFrame, dict, dict)
+feat_map is the feature order and by_map is the order of
+the by column, or None if no by was provided.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.TemporalFeatures">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TemporalFeatures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">by</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#TemporalFeatures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.TemporalFeatures" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cyclops.processors.feature.feature.Features" title="cyclops.processors.feature.feature.Features"><code class="xref py py-class docutils literal notranslate"><span class="pre">cyclops.processors.feature.feature.Features</span></code></a></p>
+<p>Temporal features.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.TemporalFeatures.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">by</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#TemporalFeatures.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.TemporalFeatures.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Init.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.TemporalFeatures.aggregate">
+<span class="sig-name descname"><span class="pre">aggregate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">aggregate_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#TemporalFeatures.aggregate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.TemporalFeatures.aggregate" title="Permalink to this definition"></a></dt>
+<dd><p>Aggregate the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>**aggregate_kwargs</strong> – Keywords to pass to the aggregation function.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Aggregated data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)">pandas.DataFrame</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.TemporalFeatures.plot_features">
+<span class="sig-name descname"><span class="pre">plot_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#TemporalFeatures.plot_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.TemporalFeatures.plot_features" title="Permalink to this definition"></a></dt>
+<dd><p>Plot features.</p>
+<p>High-level plotting function for features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>features</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – Names of features to plot.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.processors.feature.feature.split_features">
+<span class="sig-name descname"><span class="pre">split_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fractions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">randomize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/feature/feature.html#split_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.feature.feature.split_features" title="Permalink to this definition"></a></dt>
+<dd><p>Split a set of features using the same uniquely identifying values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>list of Features</em><em> or </em><a class="reference internal" href="#cyclops.processors.feature.feature.TabularFeatures" title="cyclops.processors.feature.feature.TabularFeatures"><em>TabularFeatures</em></a><em> or </em><a class="reference internal" href="#cyclops.processors.feature.feature.TemporalFeatures" title="cyclops.processors.feature.feature.TemporalFeatures"><em>TemporalFeatures</em></a>) – List of feature objects.</p></li>
+<li><p><strong>fractions</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>, </em><em>optional</em>) – Fraction(s) of samples between 0 and 1 to use for each split.</p></li>
+<li><p><strong>randomize</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default = True</em>) – Whether to randomize the data in the splits.</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Seed for random number generator.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A tuple of the dataset splits, where each contains a tuple of splits.
+e.g., split1, split2 = split_features([features1, features2], 0.5)
+train1, test1 = split1
+train2, test2 = split2</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cyclops.processors.feature.html" class="btn btn-neutral float-left" title="cyclops.processors.feature package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cyclops.processors.feature.normalization.html" class="btn btn-neutral float-right" title="cyclops.processors.feature.normalization module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Vector AI Engineering.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

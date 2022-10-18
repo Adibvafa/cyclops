@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.evaluation.metrics.functional.stat_scores module &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/cyclops.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="cyclops.evaluation.metrics.utils module" href="cyclops.evaluation.metrics.utils.html" />
+    <link rel="prev" title="cyclops.evaluation.metrics.functional.precision_recall module" href="cyclops.evaluation.metrics.functional.precision_recall.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+            <a href="../../index.html" class="icon icon-home"> cyclops
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html"># cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#getting-started">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../coverage.html">Coverage report</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../api.html">API Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cyclops.config.html">cyclops.config module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cyclops.evaluation.html">cyclops.evaluation package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="cyclops.evaluation.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="cyclops.evaluation.metrics.html">cyclops.evaluation.metrics package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="cyclops.evaluation.metrics.html">cyclops.evaluation.metrics package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="cyclops.evaluation.metrics.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="cyclops.evaluation.metrics.functional.html">cyclops.evaluation.metrics.functional package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cyclops.evaluation.metrics.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="cyclops.evaluation.metrics.functional.html">cyclops.evaluation.metrics.functional package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="cyclops.evaluation.metrics.functional.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.f_beta.html">cyclops.evaluation.metrics.functional.f_beta module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.precision_recall.html">cyclops.evaluation.metrics.functional.precision_recall module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">cyclops.evaluation.metrics.functional.stat_scores module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.f_beta.html">cyclops.evaluation.metrics.functional.f_beta module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.precision_recall.html">cyclops.evaluation.metrics.functional.precision_recall module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">cyclops.evaluation.metrics.functional.stat_scores module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.utils.html">cyclops.evaluation.metrics.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.orm.html">cyclops.orm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.plotter.html">cyclops.plotter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.html">cyclops.processors package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.aggregate.html">cyclops.processors.aggregate module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.cleaning.html">cyclops.processors.cleaning module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.diagnoses.html">cyclops.processors.diagnoses module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.html">cyclops.processors.feature package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.feature.html">cyclops.processors.feature.feature module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.normalization.html">cyclops.processors.feature.normalization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.split.html">cyclops.processors.feature.split module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.type_handling.html">cyclops.processors.feature.type_handling module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.vectorize.html">cyclops.processors.feature.vectorize module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.impute.html">cyclops.processors.impute module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.string_ops.html">cyclops.processors.string_ops module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.util.html">cyclops.processors.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.html">cyclops.query package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.gemini.html">cyclops.query.gemini module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.gemini_omop.html">cyclops.query.gemini_omop module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.interface.html">cyclops.query.interface module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.mimiciv.html">cyclops.query.mimiciv module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.omop.html">cyclops.query.omop module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.html">cyclops.query.postprocess package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.gemini.html">cyclops.query.postprocess.gemini module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.mimiciv.html">cyclops.query.postprocess.mimiciv module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.util.html">cyclops.query.postprocess.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.process.html">cyclops.query.process module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.util.html">cyclops.query.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.html">cyclops.utils package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.common.html">cyclops.utils.common module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.file.html">cyclops.utils.file module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.indexing.html">cyclops.utils.indexing module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.log.html">cyclops.utils.log module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.profile.html">cyclops.utils.profile module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.workflow.html">cyclops.workflow package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.workflow.task.html">cyclops.workflow.task module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../api.html">API Documentation</a> &raquo;</li>
+          <li><a href="cyclops.evaluation.html">cyclops.evaluation package</a> &raquo;</li>
+          <li><a href="cyclops.evaluation.metrics.html">cyclops.evaluation.metrics package</a> &raquo;</li>
+          <li><a href="cyclops.evaluation.metrics.functional.html">cyclops.evaluation.metrics.functional package</a> &raquo;</li>
+      <li>cyclops.evaluation.metrics.functional.stat_scores module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reference/api/cyclops.evaluation.metrics.functional.stat_scores.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-cyclops.evaluation.metrics.functional.stat_scores">
+<span id="cyclops-evaluation-metrics-functional-stat-scores-module"></span><h1>cyclops.evaluation.metrics.functional.stat_scores module<a class="headerlink" href="#module-cyclops.evaluation.metrics.functional.stat_scores" title="Permalink to this headline"></a></h1>
+<p>Functions for computing stat scores for different types of inputs.</p>
+<p>The stat scores are the number of true positives, false positives, true negatives, and
+false negatives. Binary, multiclass and multilabel data are supported, including logits
+and probabilities.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.evaluation.metrics.functional.stat_scores.binary_stat_scores">
+<span class="sig-name descname"><span class="pre">binary_stat_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/stat_scores.html#binary_stat_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.stat_scores.binary_stat_scores" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the stat scores for binary inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth.</p></li>
+<li><p><strong>preds</strong> (<em>ArrayLike</em>) – Predictions.</p></li>
+<li><p><strong>pos_label</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The positive label to report. Defaults to 1. Can be either 0, 1.</p></li>
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Threshold for converting logits and probability predictions to binary
+[1, 0]. Defaults to 0.5.</p></li>
+<li><p><strong>sample_weight</strong> (<em>ArrayLike</em>) – Sample weights.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>The true positives, false positives, true negatives and false negatives.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – If threshold is not a float and not in [0,1].</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.evaluation.metrics.functional.stat_scores.multiclass_stat_scores">
+<span class="sig-name descname"><span class="pre">multiclass_stat_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classwise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/stat_scores.html#multiclass_stat_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.stat_scores.multiclass_stat_scores" title="Permalink to this definition"></a></dt>
+<dd><p>Compute stat scores for multiclass inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth.</p></li>
+<li><p><strong>preds</strong> (<em>ArrayLike</em>) – Predictions.</p></li>
+<li><p><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The total number of classes for the problem.</p></li>
+<li><p><strong>top_k</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of top predictions to consider when computing the statistics.
+Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>classwise</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to return the statistics for each class or sum over all classes.
+Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>sample_weight</strong> (<em>ArrayLike</em>) – Sample weights.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><em>The number of true positives, false positives, true negatives and false</em></p></li>
+<li><p><em>negatives.</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.evaluation.metrics.functional.stat_scores.multilabel_stat_scores">
+<span class="sig-name descname"><span class="pre">multilabel_stat_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduce</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'micro'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/stat_scores.html#multilabel_stat_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.stat_scores.multilabel_stat_scores" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the stat scores for multilabel inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth.</p></li>
+<li><p><strong>preds</strong> (<em>ArrayLike</em>) – Predictions.</p></li>
+<li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The total number of labels for the problem.</p></li>
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Threshold value for binarizing the predictions. Defaults to <code class="docutils literal notranslate"><span class="pre">0.5</span></code>.</p></li>
+<li><p><strong>top_k</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of top predictions to consider when computing the statistics.
+Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>reduce</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;samples&quot;</em><em>]</em>) – <dl class="simple">
+<dt>The reduction method to use. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;micro&quot;</span></code>. Can be one of:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;micro&quot;</span></code> - sum the statistics over all labels.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;macro&quot;</span></code> - compute the unweighted mean of the per-label statistics.</p></li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;samples&quot;</span></code> - compute the unweighted mean of the per-sample</dt><dd><p>statistics.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>sample_weight</strong> (<em>ArrayLike</em>) – Sample weights.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><em>The number of true positives, false positives, true negatives and false</em></p></li>
+<li><p><em>negatives and the support.</em></p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">reduce</span></code> is not one of <code class="docutils literal notranslate"><span class="pre">&quot;micro&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;macro&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;samples&quot;</span></code>.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">threshold</span></code> is not between <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.evaluation.metrics.functional.stat_scores.stat_scores">
+<span class="sig-name descname"><span class="pre">stat_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classwise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduce</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'micro'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/stat_scores.html#stat_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.stat_scores.stat_scores" title="Permalink to this definition"></a></dt>
+<dd><p>Compute true positives, false positives, true negatives and false negatives.</p>
+<p>Concatenates the results in a single array, along with the support. This
+function acts as an entry point for more specialized functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>preds</strong> (<em>ArrayLike</em>) – Predictions.</p></li>
+<li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth.</p></li>
+<li><p><strong>task</strong> (<em>String</em>) – <p>The task type. Can be either <code class="docutils literal notranslate"><span class="pre">&quot;binary&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;multiclass&quot;</span></code> or
+<code class="docutils literal notranslate"><span class="pre">&quot;multilabel&quot;</span></code>. One of:</p>
+<blockquote>
+<div><ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;binary&quot;</span></code>: binary classification.</dt><dd><p>Example: [0, 1, 1, 0, 1] or [0.1, 0.9, 0.8, 0.2, 0.4]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;multiclass&quot;</span></code>: multiclass classification.</dt><dd><p>Example: [0, 1, 2, 0, 1] or [[0.1, 0.9, 0.0], [0.0, 0.8, 0.2], …]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;multilabel&quot;</span></code>: multilabel classification.</dt><dd><p>Example: [[0, 1], [1, 0], [1, 1], [0, 0], [1, 0]] or
+[[0.1, 0.9], [0.0, 0.8], …]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</p></li>
+<li><p><strong>pos_label</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The positive label. Defaults to 1. Only used for binary tasks.</p></li>
+<li><p><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of classes. Only used for multiclass tasks.</p></li>
+<li><p><strong>classwise</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to compute the stat scores classwise. Only used for multiclass
+tasks. Defaults to False.</p></li>
+<li><p><strong>top_k</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of top classes to consider. Used for multiclass and
+multilabel tasks. Defaults to None.</p></li>
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – The threshold to use for binarizing the predictions. Used for
+binary and multilabel tasks. Defaults to 0.5.</p></li>
+<li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of labels. Only used for multilabel tasks.</p></li>
+<li><p><strong>reduce</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;samples&quot;</em><em>]</em>) – <p>Reduction mode. Defaults to ‘micro’. Only used for multiclass and
+multilabel tasks. One of:</p>
+<blockquote>
+<div><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;micro&quot;</span></code>: compute the stat scores globally.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;macro&quot;</span></code>: compute the stat scores for each class.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;samples&quot;</span></code>: compute the stat scores for each sample.</p></li>
+</ul>
+</div></blockquote>
+</p></li>
+<li><p><strong>sample_weight</strong> (<em>ArrayLike</em>) – Sample weights.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>The stat scores.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cyclops.evaluation.metrics.functional.precision_recall.html" class="btn btn-neutral float-left" title="cyclops.evaluation.metrics.functional.precision_recall module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cyclops.evaluation.metrics.utils.html" class="btn btn-neutral float-right" title="cyclops.evaluation.metrics.utils module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Vector AI Engineering.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

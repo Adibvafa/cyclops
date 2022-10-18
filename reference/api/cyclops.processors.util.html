@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.processors.util module &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/cyclops.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="cyclops.query package" href="cyclops.query.html" />
+    <link rel="prev" title="cyclops.processors.string_ops module" href="cyclops.processors.string_ops.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+            <a href="../../index.html" class="icon icon-home"> cyclops
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html"># cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#getting-started">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../coverage.html">Coverage report</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../api.html">API Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cyclops.config.html">cyclops.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.html">cyclops.evaluation package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.html">cyclops.evaluation.metrics package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.html">cyclops.evaluation.metrics.functional package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.f_beta.html">cyclops.evaluation.metrics.functional.f_beta module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.precision_recall.html">cyclops.evaluation.metrics.functional.precision_recall module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.stat_scores.html">cyclops.evaluation.metrics.functional.stat_scores module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.utils.html">cyclops.evaluation.metrics.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.orm.html">cyclops.orm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.plotter.html">cyclops.plotter module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cyclops.processors.html">cyclops.processors package</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cyclops.processors.html#subpackages">Subpackages</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="cyclops.processors.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="cyclops.processors.aggregate.html">cyclops.processors.aggregate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.processors.cleaning.html">cyclops.processors.cleaning module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.processors.diagnoses.html">cyclops.processors.diagnoses module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.processors.impute.html">cyclops.processors.impute module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.processors.string_ops.html">cyclops.processors.string_ops module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">cyclops.processors.util module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.aggregate.html">cyclops.processors.aggregate module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.cleaning.html">cyclops.processors.cleaning module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.diagnoses.html">cyclops.processors.diagnoses module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.html">cyclops.processors.feature package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.feature.html">cyclops.processors.feature.feature module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.normalization.html">cyclops.processors.feature.normalization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.split.html">cyclops.processors.feature.split module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.type_handling.html">cyclops.processors.feature.type_handling module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.vectorize.html">cyclops.processors.feature.vectorize module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.impute.html">cyclops.processors.impute module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.string_ops.html">cyclops.processors.string_ops module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">cyclops.processors.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.html">cyclops.query package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.gemini.html">cyclops.query.gemini module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.gemini_omop.html">cyclops.query.gemini_omop module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.interface.html">cyclops.query.interface module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.mimiciv.html">cyclops.query.mimiciv module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.omop.html">cyclops.query.omop module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.html">cyclops.query.postprocess package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.gemini.html">cyclops.query.postprocess.gemini module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.mimiciv.html">cyclops.query.postprocess.mimiciv module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.util.html">cyclops.query.postprocess.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.process.html">cyclops.query.process module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.util.html">cyclops.query.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.html">cyclops.utils package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.common.html">cyclops.utils.common module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.file.html">cyclops.utils.file module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.indexing.html">cyclops.utils.indexing module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.log.html">cyclops.utils.log module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.profile.html">cyclops.utils.profile module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.workflow.html">cyclops.workflow package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.workflow.task.html">cyclops.workflow.task module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../api.html">API Documentation</a> &raquo;</li>
+          <li><a href="cyclops.processors.html">cyclops.processors package</a> &raquo;</li>
+      <li>cyclops.processors.util module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reference/api/cyclops.processors.util.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-cyclops.processors.util">
+<span id="cyclops-processors-util-module"></span><h1>cyclops.processors.util module<a class="headerlink" href="#module-cyclops.processors.util" title="Permalink to this headline"></a></h1>
+<p>Utility functions for processor API.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.processors.util.assert_has_columns">
+<span class="sig-name descname"><span class="pre">assert_has_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/util.html#assert_has_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.util.assert_has_columns" title="Permalink to this definition"></a></dt>
+<dd><p>Decorate function to assert that input DataFrames have the necessary columns.</p>
+<p>assert_has_columns([“A”, “B”], None) is equivalent to assert_has_columns([“A”, “B”])
+but may be necessary when wanting to check,
+assert_has_columns([“A”], None, [“C”])</p>
+<p>Can also check keyword arguments, e.g., optional DataFrames,
+assert_has_columns([“A”], optional_df=[“D”])</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> – Required columns of the function’s ordered DataFrame arguments.</p></li>
+<li><p><strong>**kwargs</strong> – Keyword corresponds to the DataFrame kwargs of the function.
+The value is this keyword argument’s required columns.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Decorator function.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.processors.util.create_indicator_variables">
+<span class="sig-name descname"><span class="pre">create_indicator_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/util.html#create_indicator_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.util.create_indicator_variables" title="Permalink to this definition"></a></dt>
+<dd><p>Create binary indicator variable for each column (or specified).</p>
+<p>Create new indicator variable columns based on NAs for other feature columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – Input features with missing values.</p></li>
+<li><p><strong>columns</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>, </em><em>optional</em>) – Columns to create variables, all if not specified.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dataframe with indicator variables as columns.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)">pandas.DataFrame</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.processors.util.gather_columns">
+<span class="sig-name descname"><span class="pre">gather_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/util.html#gather_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.util.gather_columns" title="Permalink to this definition"></a></dt>
+<dd><p>Gather specified columns, discarding rest and return copy of columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – DataFrame to check.</p></li>
+<li><p><strong>columns</strong> (<em>list of str</em><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Column names to gather from dataframe.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>DataFrame with required columns, other columns discarded.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)">pandas.DataFrame</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.processors.util.has_columns">
+<span class="sig-name descname"><span class="pre">has_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exactly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/util.html#has_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.util.has_columns" title="Permalink to this definition"></a></dt>
+<dd><p>Check if data has required columns for processing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – DataFrame to check.</p></li>
+<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – List of column names that must be present in data.</p></li>
+<li><p><strong>raise_error</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to raise a ValueError if there are missing columns.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if all required columns are present, otherwise False.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.processors.util.has_range_index">
+<span class="sig-name descname"><span class="pre">has_range_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/util.html#has_range_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.util.has_range_index" title="Permalink to this definition"></a></dt>
+<dd><p>Check whether a DataFrame has a range index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – Data.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Whether the data has a range index.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.processors.util.is_timestamp_series">
+<span class="sig-name descname"><span class="pre">is_timestamp_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/util.html#is_timestamp_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.util.is_timestamp_series" title="Permalink to this definition"></a></dt>
+<dd><p>Check whether a series has the Pandas Timestamp datatype.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>series</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.5.0)"><em>pandas.Series</em></a>) – A series.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Whether the series has the Pandas Timestamp datatype.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.processors.util.log_counts_step">
+<span class="sig-name descname"><span class="pre">log_counts_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/util.html#log_counts_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.util.log_counts_step" title="Permalink to this definition"></a></dt>
+<dd><p>Log num. of encounters and num. of samples (rows).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – Encounter specific input data.</p></li>
+<li><p><strong>step_description</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Description of intermediate processing step.</p></li>
+<li><p><strong>rows</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Log the number of samples, or rows of data.</p></li>
+<li><p><strong>columns</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Log the number of data columns.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.processors.util.pivot_aggregated_events_to_features">
+<span class="sig-name descname"><span class="pre">pivot_aggregated_events_to_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aggregated_events</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggfunc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/util.html#pivot_aggregated_events_to_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.util.pivot_aggregated_events_to_features" title="Permalink to this definition"></a></dt>
+<dd><p>Pivot aggregated events table to column-wise features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>aggregated_events</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – Aggregated events.</p></li>
+<li><p><strong>aggfunc</strong> (<em>Callable</em>) – Aggregation function for the column values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Column-wise pivoted dataframe with features.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)">pandas.DataFrame</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.processors.util.to_range_index">
+<span class="sig-name descname"><span class="pre">to_range_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/processors/util.html#to_range_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.processors.util.to_range_index" title="Permalink to this definition"></a></dt>
+<dd><p>Force a DataFrame to have a range index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)"><em>pandas.DataFrame</em></a>) – Data.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Data with a range index.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.0)">pandas.DataFrame</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cyclops.processors.string_ops.html" class="btn btn-neutral float-left" title="cyclops.processors.string_ops module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cyclops.query.html" class="btn btn-neutral float-right" title="cyclops.query package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Vector AI Engineering.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
