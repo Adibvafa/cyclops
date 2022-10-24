@@ -173,12 +173,7 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">codebase_ops</span> <span class="kn">import</span> <span class="n">get_log_file_path</span>
-<span class="kn">from</span> <span class="nn">cyclops.processors.column_names</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">ENCOUNTER_ID</span><span class="p">,</span>
-    <span class="n">EVENT_NAME</span><span class="p">,</span>
-    <span class="n">EVENT_VALUE</span><span class="p">,</span>
-    <span class="n">TIMESTEP</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">cyclops.processors.column_names</span> <span class="kn">import</span> <span class="n">ENCOUNTER_ID</span>
 <span class="kn">from</span> <span class="nn">cyclops.utils.common</span> <span class="kn">import</span> <span class="n">to_list</span>
 <span class="kn">from</span> <span class="nn">cyclops.utils.log</span> <span class="kn">import</span> <span class="n">setup_logging</span>
 
@@ -213,34 +208,6 @@
         <span class="n">indicator_features</span> <span class="o">=</span> <span class="n">features</span>
 
     <span class="k">return</span> <span class="n">indicator_features</span><span class="o">.</span><span class="n">notnull</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">add_suffix</span><span class="p">(</span><span class="s2">&quot;_indicator&quot;</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="pivot_aggregated_events_to_features"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.util.html#cyclops.processors.util.pivot_aggregated_events_to_features">[docs]</a><span class="k">def</span> <span class="nf">pivot_aggregated_events_to_features</span><span class="p">(</span>
-    <span class="n">aggregated_events</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">aggfunc</span><span class="p">:</span> <span class="n">Callable</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Pivot aggregated events table to column-wise features.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    aggregated_events: pandas.DataFrame</span>
-<span class="sd">        Aggregated events.</span>
-<span class="sd">    aggfunc: Callable</span>
-<span class="sd">        Aggregation function for the column values.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    pandas.DataFrame</span>
-<span class="sd">        Column-wise pivoted dataframe with features.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
-        <span class="n">aggregated_events</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;null_fraction&quot;</span><span class="p">]),</span>
-        <span class="n">values</span><span class="o">=</span><span class="n">EVENT_VALUE</span><span class="p">,</span>
-        <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="n">ENCOUNTER_ID</span><span class="p">,</span> <span class="n">TIMESTEP</span><span class="p">],</span>
-        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">EVENT_NAME</span><span class="p">],</span>
-        <span class="n">aggfunc</span><span class="o">=</span><span class="n">aggfunc</span><span class="p">,</span>
-        <span class="n">dropna</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="is_timestamp_series"><a class="viewcode-back" href="../../../reference/api/cyclops.processors.util.html#cyclops.processors.util.is_timestamp_series">[docs]</a><span class="k">def</span> <span class="nf">is_timestamp_series</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">raise_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
