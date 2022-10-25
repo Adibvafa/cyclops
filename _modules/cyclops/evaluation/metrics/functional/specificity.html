@@ -12,6 +12,7 @@
   <title>cyclops.evaluation.metrics.functional.specificity &mdash; cyclops  documentation</title>
       <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../../_static/css/cyclops.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/copybutton.css" type="text/css" />
     <link rel="shortcut icon" href="../../../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../../../_static/js/html5shiv.min.js"></script>
@@ -21,6 +22,8 @@
         <script src="../../../../../_static/jquery.js"></script>
         <script src="../../../../../_static/underscore.js"></script>
         <script src="../../../../../_static/doctools.js"></script>
+        <script src="../../../../../_static/clipboard.min.js"></script>
+        <script src="../../../../../_static/copybutton.js"></script>
     <script src="../../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" />
@@ -202,21 +205,19 @@
 <span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, &quot;samples&quot;, None]</span>
 <span class="sd">            If None, return the specificity for each class, otherwise return the</span>
 <span class="sd">            average specificity. Average options are:</span>
-<span class="sd">                - ``&quot;micro&quot;``:</span>
-<span class="sd">                    Calculate metrics globally by counting the total true positives,</span>
-<span class="sd">                    false negatives and false positives.</span>
-<span class="sd">                - ``&quot;macro&quot;``:</span>
-<span class="sd">                    Calculate metrics for each label, and find their unweighted</span>
-<span class="sd">                    mean. This does not take label imbalance into account.</span>
-<span class="sd">                - ``&quot;weighted&quot;``:</span>
-<span class="sd">                    Calculate metrics for each label, and find their average,</span>
-<span class="sd">                    weighted by support (the number of true instances for each label).</span>
-<span class="sd">                - ``&quot;samples&quot;``:</span>
-<span class="sd">                    Calculate metrics for each instance, and find their average.</span>
+<span class="sd">                - ``micro``: Calculate metrics globally by counting the total</span>
+<span class="sd">                  true positives, false negatives and false positives.</span>
+<span class="sd">                - ``macro``: Calculate metrics for each label, and find their unweighted</span>
+<span class="sd">                  mean. This does not take label imbalance into account.</span>
+<span class="sd">                - ``weighted``: Calculate metrics for each label, and find their</span>
+<span class="sd">                  average, weighted by support (the number of true instances for</span>
+<span class="sd">                  each label).</span>
+<span class="sd">                - ``samples``: Calculate metrics for each instance, and find their</span>
+<span class="sd">                  average.</span>
 <span class="sd">        sample_weight : Optional[ArrayLike]</span>
 <span class="sd">            Sample weights.</span>
 <span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1]</span>
-<span class="sd">            Sets the value to return when there is a zero division. If set to &quot;warn&quot;,</span>
+<span class="sd">            Sets the value to return when there is a zero division. If set to ``warn``,</span>
 <span class="sd">            this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
@@ -288,23 +289,17 @@
 <span class="sd">            Estimated targets (predictions) as returned by a classifier.</span>
 <span class="sd">        task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
 <span class="sd">            The task type. One of:</span>
-<span class="sd">                - ``&quot;binary&quot;``: binary classification.</span>
-<span class="sd">                    Example:</span>
-<span class="sd">                    &gt;&gt;&gt; [0, 1, 1, 0, 1] or [0.1, 0.9, 0.8, 0.2, 0.4]</span>
-
-<span class="sd">                - ``&quot;multiclass&quot;``: multiclass classification.</span>
-<span class="sd">                    Example:</span>
-<span class="sd">                    &gt;&gt;&gt; [0, 1, 2, 0, 1] or [[0.1, 0.9, 0.0], [0.0, 0.8, 0.2], ...]</span>
-
-<span class="sd">                - ``&quot;multilabel&quot;``: multilabel classification.</span>
-<span class="sd">                    Example:</span>
-<span class="sd">                    &gt;&gt;&gt; [[0, 1], [1, 0], [1, 1], [0, 0], [1, 0]] or</span>
+<span class="sd">                - ``binary``: binary classification.</span>
+<span class="sd">                    Example: [0, 1, 1, 0, 1] or [0.1, 0.9, 0.8, 0.2, 0.4]</span>
+<span class="sd">                - ``multiclass``: multiclass classification.</span>
+<span class="sd">                    Example: [0, 1, 2, 0, 1] or [[0.1, 0.9, 0.0], [0.0, 0.8, 0.2], ...]</span>
+<span class="sd">                - ``multilabel``: multilabel classification.</span>
+<span class="sd">                    Example: [[0, 1], [1, 0], [1, 1], [0, 0], [1, 0]] or</span>
 <span class="sd">                    [[0.1, 0.9], [0.0, 0.8], ...]</span>
-
 <span class="sd">        pos_label : int</span>
 <span class="sd">            The class to report if task is binary. Defaults to 1.</span>
 <span class="sd">        num_classes : int</span>
-<span class="sd">            Number of classes. Necessary for ``&quot;multiclass&quot;`` tasks.</span>
+<span class="sd">            Number of classes. Necessary for ``multiclass`` tasks.</span>
 <span class="sd">        threshold : float</span>
 <span class="sd">            The threshold value for converting probability or logit scores to</span>
 <span class="sd">            binary. A sigmoid function is first applied to logits to convert them</span>
@@ -314,26 +309,24 @@
 <span class="sd">            to find the correct label. Only works when ``preds`` contain</span>
 <span class="sd">            probabilities/logits.</span>
 <span class="sd">        num_labels : int</span>
-<span class="sd">            Number of labels. Necessary for ``&quot;multilabel&quot;`` tasks.</span>
+<span class="sd">            Number of labels. Necessary for ``multilabel`` tasks.</span>
 <span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, &quot;samples&quot;, None]</span>
 <span class="sd">            If None, return the specificity for each class, otherwise return the</span>
 <span class="sd">            average specificity. Average options are:</span>
-<span class="sd">                - ``&quot;micro&quot;``:</span>
-<span class="sd">                    Calculate metrics globally by counting the total true positives,</span>
-<span class="sd">                    false negatives and false positives.</span>
-<span class="sd">                - ``&quot;macro&quot;``:</span>
-<span class="sd">                    Calculate metrics for each label, and find their unweighted</span>
-<span class="sd">                    mean. This does not take label imbalance into account.</span>
-<span class="sd">                - ``&quot;weighted&quot;``:</span>
-<span class="sd">                    Calculate metrics for each label, and find their average,</span>
-<span class="sd">                    weighted by support (the number of true instances for each label).</span>
-<span class="sd">                - ``&quot;samples&quot;``:</span>
-<span class="sd">                    Calculate metrics for each instance, and find their average.</span>
+<span class="sd">                - ``micro``: Calculate metrics globally by counting the total</span>
+<span class="sd">                  true positives, false negatives and false positives.</span>
+<span class="sd">                - ``macro``: Calculate metrics for each label, and find their</span>
+<span class="sd">                  unweighted mean. This does not take label imbalance into account.</span>
+<span class="sd">                - ``weighted``: Calculate metrics for each label, and find</span>
+<span class="sd">                  their average, weighted by support (the number of true instances</span>
+<span class="sd">                  for each label).</span>
+<span class="sd">                - ``samples``: Calculate metrics for each instance, and find their</span>
+<span class="sd">                  average.</span>
 <span class="sd">        sample_weight : Optional[ArrayLike]</span>
 <span class="sd">            Sample weights.</span>
 <span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1]</span>
-<span class="sd">            Sets the value to return when there is a zero division. If set to &quot;warn&quot;,</span>
-<span class="sd">            this acts as 0, but warnings are also raised.</span>
+<span class="sd">            Sets the value to return when there is a zero division. If set to</span>
+<span class="sd">            ``warn``, this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -342,8 +335,8 @@
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">        ValueError</span>
-<span class="sd">            If ``task`` is not one of ``&quot;binary&quot;``, ``&quot;multiclass&quot;``, or</span>
-<span class="sd">            ``&quot;multilabel&quot;``.</span>
+<span class="sd">            If ``task`` is not one of ``binary``, ``multiclass``, or</span>
+<span class="sd">            ``multilabel``.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;binary&quot;</span><span class="p">:</span>
@@ -416,7 +409,7 @@
 <span class="sd">        sample_weight : Optional[ArrayLike]</span>
 <span class="sd">            Sample weights.</span>
 <span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1]</span>
-<span class="sd">            Sets the value to return when there is a zero division. If set to &quot;warn&quot;,</span>
+<span class="sd">            Sets the value to return when there is a zero division. If set to ``warn``,</span>
 <span class="sd">            this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
@@ -479,17 +472,15 @@
 <span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None]</span>
 <span class="sd">            If None, return the specificity for each class, otherwise return the</span>
 <span class="sd">            average specificity. Average options are:</span>
-<span class="sd">                - ``&quot;micro&quot;``:</span>
-<span class="sd">                    Calculate metrics globally by counting the total true positives,</span>
-<span class="sd">                    false negatives and false positives.</span>
-<span class="sd">                - ``&quot;macro&quot;``:</span>
-<span class="sd">                    Calculate metrics for each label, and find their unweighted</span>
-<span class="sd">                    mean. This does not take label imbalance into account.</span>
-<span class="sd">                - ``&quot;weighted&quot;``:</span>
-<span class="sd">                    Calculate metrics for each label, and find their average,</span>
-<span class="sd">                    weighted by support (the number of true instances for each label).</span>
+<span class="sd">                - ``micro``: Calculate metrics globally by counting the total true</span>
+<span class="sd">                  positives, false negatives and false positives.</span>
+<span class="sd">                - ``macro``: Calculate metrics for each label, and find their unweighted</span>
+<span class="sd">                  mean. This does not take label imbalance into account.</span>
+<span class="sd">                - ``weighted``: Calculate metrics for each label, and find their</span>
+<span class="sd">                  average, weighted by support (the number of true instances for each</span>
+<span class="sd">                  label).</span>
 <span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1]</span>
-<span class="sd">            Sets the value to return when there is a zero division. If set to &quot;warn&quot;,</span>
+<span class="sd">            Sets the value to return when there is a zero division. If set to ``warn``,</span>
 <span class="sd">            this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
@@ -551,15 +542,15 @@
 <span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;samples&quot;, &quot;weighted&quot;, None]</span>
 <span class="sd">            If None, return the specificity for each class, otherwise return the</span>
 <span class="sd">            average specificity. Average options are:</span>
-<span class="sd">            - &quot;micro&quot;: Calculate metrics globally by counting the total true positives,</span>
-<span class="sd">                false negatives and false positives.</span>
-<span class="sd">            - &quot;macro&quot;: Calculate metrics for each label, and find their unweighted</span>
-<span class="sd">                mean. This does not take label imbalance into account.</span>
-<span class="sd">            - &quot;weighted&quot;: Calculate metrics for each label, and find their average,</span>
-<span class="sd">                weighted by support (the number of true instances for each label).</span>
-<span class="sd">            - &quot;samples&quot;: Calculate metrics for each instance, and find their average.</span>
+<span class="sd">            - ``micro``: Calculate metrics globally by counting the total true</span>
+<span class="sd">              positives, false negatives and false positives.</span>
+<span class="sd">            - ``macro``: Calculate metrics for each label, and find their unweighted</span>
+<span class="sd">              mean. This does not take label imbalance into account.</span>
+<span class="sd">            - ``weighted``: Calculate metrics for each label, and find their average,</span>
+<span class="sd">              weighted by support (the number of true instances for each label).</span>
+<span class="sd">            - ``samples``: Calculate metrics for each instance, and find their average.</span>
 <span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1]</span>
-<span class="sd">            Sets the value to return when there is a zero division. If set to &quot;warn&quot;,</span>
+<span class="sd">            Sets the value to return when there is a zero division. If set to ``warn``,</span>
 <span class="sd">            this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>

@@ -13,6 +13,7 @@
   <title>cyclops.evaluation.metrics.functional.f_beta module &mdash; cyclops  documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/cyclops.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
@@ -22,6 +23,8 @@
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -166,7 +169,6 @@
 <li class="toctree-l2"><a class="reference internal" href="cyclops.processors.html">cyclops.processors package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.processors.aggregate.html">cyclops.processors.aggregate module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.processors.clean.html">cyclops.processors.clean module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.cleaning.html">cyclops.processors.cleaning module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.processors.diagnoses.html">cyclops.processors.diagnoses module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.html">cyclops.processors.feature package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.feature.html">cyclops.processors.feature.feature module</a></li>
@@ -261,7 +263,7 @@
 Default: 0.5</p></li>
 <li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em>) – Sample weights.</p></li>
 <li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em>) – Value to return when there are no true positives or true negatives.
-If set to <cite>“warn”</cite>, this acts as 0, but warnings are also raised.</p></li>
+If set to <code class="docutils literal notranslate"><span class="pre">warn</span></code>, this acts as 0, but warnings are also raised.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -288,7 +290,7 @@ If set to <cite>“warn”</cite>, this acts as 0, but warnings are also raised.
 Default: 0.5</p></li>
 <li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em>) – Sample weights.</p></li>
 <li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em>) – Value to return when there are no true positives or true negatives.
-If set to <cite>“warn”</cite>, this acts as 0, but warnings are also raised.</p></li>
+If set to <code class="docutils literal notranslate"><span class="pre">warn</span></code>, this acts as 0, but warnings are also raised.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -315,17 +317,17 @@ If set to <cite>“warn”</cite>, this acts as 0, but warnings are also raised.
 <li><p><strong>task</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;binary&quot;</em><em>, </em><em>&quot;multiclass&quot;</em><em>, </em><em>&quot;multilabel&quot;</em><em>]</em>) – <dl class="simple">
 <dt>The task type. One of:</dt><dd><ul>
 <li><dl class="simple">
-<dt><cite>”binary”</cite>: binary classification.</dt><dd><p>Example: [0, 1, 1, 0, 1] or [0.1, 0.9, 0.8, 0.2, 0.4]</p>
+<dt><code class="docutils literal notranslate"><span class="pre">binary</span></code>: binary classification.</dt><dd><p>Example: [0, 1, 1, 0, 1] or [0.1, 0.9, 0.8, 0.2, 0.4]</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><cite>”multiclass”</cite>: multiclass classification.</dt><dd><p>Example: [0, 1, 2, 0, 1] or [[0.1, 0.9, 0.0], [0.0, 0.8, 0.2], …]</p>
+<dt><code class="docutils literal notranslate"><span class="pre">multiclass</span></code>: multiclass classification.</dt><dd><p>Example: [0, 1, 2, 0, 1] or [[0.1, 0.9, 0.0], [0.0, 0.8, 0.2], …]</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><cite>”multilabel”</cite>: multilabel classification.</dt><dd><p>Example: [[0, 1], [1, 0], [1, 1], [0, 0], [1, 0]] or
+<dt><code class="docutils literal notranslate"><span class="pre">multilabel</span></code>: multilabel classification.</dt><dd><p>Example: [[0, 1], [1, 0], [1, 1], [0, 0], [1, 0]] or
 [[0.1, 0.9], [0.0, 0.8], …]</p>
 </dd>
 </dl>
@@ -342,44 +344,24 @@ If set to <cite>“warn”</cite>, this acts as 0, but warnings are also raised.
 <li><p><strong>num_labels</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – Number of labels for multilabel task. Defaults to None.</p></li>
 <li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>&quot;samples&quot;</em><em>, </em><em>None</em><em>]</em>) – <dl class="simple">
 <dt>If not None, this determines the type of averaging performed on the data:</dt><dd><ul>
-<li><dl class="simple">
-<dt><cite>”micro”</cite>:</dt><dd><p>Calculate metrics globally by counting the total true positives,
-false negatives and false positives.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>”macro”</cite>:</dt><dd><p>Calculate metrics for each label, and find their unweighted
-mean.  This does not take label imbalance into account.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>”weighted”</cite>:</dt><dd><p>Calculate metrics for each label, and find their average, weighted
-by support (the number of true instances for each label). This
-alters ‘macro’ to account for label imbalance; it can result in an
-F-score that is not between precision and recall.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>”samples”</cite>:</dt><dd><p>Calculate metrics for each instance, and find their average (only
-meaningful for multilabel classification).</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>None</cite>:</dt><dd><p>The scores for each class are returned.</p>
-</dd>
-</dl>
-</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true
+positives, false negatives and false positives.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each label, and find their unweighted
+mean.  This does not take label imbalance into account.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their
+average, weighted by support (the number of true instances for each
+label). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for label imbalance; it can
+result in an F-score that is not between precision and recall.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">samples</span></code>: Calculate metrics for each instance, and find their
+average (only meaningful for multilabel classification).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: The scores for each class are returned.</p></li>
 </ul>
 </dd>
 </dl>
 </p></li>
 <li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em>) – Sample weights.</p></li>
 <li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em>) – Value to return when there are no true positives or true negatives.
-If set to <cite>“warn”</cite>, this acts as 0, but warnings are also raised.</p></li>
+If set to <code class="docutils literal notranslate"><span class="pre">warn</span></code>, this acts as 0, but warnings are also raised.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -414,17 +396,17 @@ favors recall (beta -&gt; inf: precision, beta -&gt; 0: recall).</p>
 <li><p><strong>task</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;binary&quot;</em><em>, </em><em>&quot;multiclass&quot;</em><em>, </em><em>&quot;multilabel&quot;</em><em>]</em>) – <dl class="simple">
 <dt>The task type. One of:</dt><dd><ul>
 <li><dl class="simple">
-<dt><cite>”binary”</cite>: binary classification.</dt><dd><p>Example: [0, 1, 1, 0, 1] or [0.1, 0.9, 0.8, 0.2, 0.4]</p>
+<dt><code class="docutils literal notranslate"><span class="pre">binary</span></code>: binary classification.</dt><dd><p>Example: [0, 1, 1, 0, 1] or [0.1, 0.9, 0.8, 0.2, 0.4]</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><cite>”multiclass”</cite>: multiclass classification.</dt><dd><p>Example: [0, 1, 2, 0, 1] or [[0.1, 0.9, 0.0], [0.0, 0.8, 0.2], …]</p>
+<dt><code class="docutils literal notranslate"><span class="pre">multiclass</span></code>: multiclass classification.</dt><dd><p>Example: [0, 1, 2, 0, 1] or [[0.1, 0.9, 0.0], [0.0, 0.8, 0.2], …]</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><cite>”multilabel”</cite>: multilabel classification.</dt><dd><p>Example: [[0, 1], [1, 0], [1, 1], [0, 0], [1, 0]] or
+<dt><code class="docutils literal notranslate"><span class="pre">multilabel</span></code>: multilabel classification.</dt><dd><p>Example: [[0, 1], [1, 0], [1, 1], [0, 0], [1, 0]] or
 [[0.1, 0.9], [0.0, 0.8], …]</p>
 </dd>
 </dl>
@@ -441,44 +423,24 @@ favors recall (beta -&gt; inf: precision, beta -&gt; 0: recall).</p>
 <li><p><strong>num_labels</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – Number of labels for multilabel task. Defaults to None.</p></li>
 <li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>&quot;samples&quot;</em><em>, </em><em>None</em><em>]</em>) – <dl class="simple">
 <dt>If not None, this determines the type of averaging performed on the data:</dt><dd><ul>
-<li><dl class="simple">
-<dt><cite>”micro”</cite>:</dt><dd><p>Calculate metrics globally by counting the total true positives,
-false negatives and false positives.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>”macro”</cite>:</dt><dd><p>Calculate metrics for each label, and find their unweighted
-mean.  This does not take label imbalance into account.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>”weighted”</cite>:</dt><dd><p>Calculate metrics for each label, and find their average, weighted
-by support (the number of true instances for each label). This
-alters ‘macro’ to account for label imbalance; it can result in an
-F-score that is not between precision and recall.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>”samples”</cite>:</dt><dd><p>Calculate metrics for each instance, and find their average (only
-meaningful for multilabel classification).</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>None</cite>:</dt><dd><p>The scores for each class are returned.</p>
-</dd>
-</dl>
-</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true
+positives, false negatives and false positives.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each label, and find their unweighted
+mean.  This does not take label imbalance into account.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their
+average, weighted by support (the number of true instances for
+each label). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for label imbalance;
+it can result in an F-score that is not between precision and recall.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">samples</span></code>: Calculate metrics for each instance, and find their
+average (only meaningful for multilabel classification).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: The scores for each class are returned.</p></li>
 </ul>
 </dd>
 </dl>
 </p></li>
 <li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em>) – Sample weights.</p></li>
 <li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em>) – Value to return when there are no true positives or true negatives.
-If set to <cite>“warn”</cite>, this acts as 0, but warnings are also raised.</p></li>
+If set to <code class="docutils literal notranslate"><span class="pre">warn</span></code>, this acts as 0, but warnings are also raised.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -492,8 +454,8 @@ If set to <cite>“warn”</cite>, this acts as 0, but warnings are also raised.
 </p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – If <cite>task</cite> is not one of <cite>“binary”</cite>, <cite>“multiclass”</cite>, or
-<cite>“multilabel”</cite>.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">task</span></code> is not one of <code class="docutils literal notranslate"><span class="pre">binary</span></code>, <code class="docutils literal notranslate"><span class="pre">multiclass</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">multilabel</span></code>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -513,37 +475,21 @@ to 1s. If not set, top_k = 1.</p></li>
 <li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em>) – Sample weights.</p></li>
 <li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em>) – <dl class="simple">
 <dt>If not None, this determines the type of averaging performed on the data:</dt><dd><ul>
-<li><dl class="simple">
-<dt><cite>”micro”</cite>:</dt><dd><p>Calculate metrics globally by counting the total true positives,
-false negatives and false positives.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>”macro”</cite>:</dt><dd><p>Calculate metrics for each label, and find their unweighted
-mean.  This does not take label imbalance into account.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>”weighted”</cite>:</dt><dd><p>Calculate metrics for each label, and find their average, weighted
-by support (the number of true instances for each label). This
-alters ‘macro’ to account for label imbalance; it can result in an
-F-score that is not between precision and recall.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>None</cite>:</dt><dd><p>The scores for each class are returned. Default: None.</p>
-</dd>
-</dl>
-</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true
+positives, false negatives and false positives.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each label, and find their unweighted
+mean.  This does not take label imbalance into account.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their
+average, weighted by support (the number of true instances for each
+label). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for label imbalance;
+it can result in an F-score that is not between precision and recall.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: The scores for each class are returned. Default: None.</p></li>
 </ul>
 </dd>
 </dl>
 </p></li>
 <li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em>) – Value to return when there are no true positives or true negatives.
-If set to <cite>“warn”</cite>, this acts as 0, but warnings are also raised.</p></li>
+If set to <code class="docutils literal notranslate"><span class="pre">warn</span></code>, this acts as 0, but warnings are also raised.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -571,47 +517,31 @@ to 1s. If not set, top_k = 1.</p></li>
 <li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em>) – Sample weights.</p></li>
 <li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em>) – <dl class="simple">
 <dt>If not None, this determines the type of averaging performed on the data:</dt><dd><ul>
-<li><dl class="simple">
-<dt><cite>”micro”</cite>:</dt><dd><p>Calculate metrics globally by counting the total true positives,
-false negatives and false positives.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>”macro”</cite>:</dt><dd><p>Calculate metrics for each label, and find their unweighted
-mean.  This does not take label imbalance into account.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>”weighted”</cite>:</dt><dd><p>Calculate metrics for each label, and find their average, weighted
-by support (the number of true instances for each label). This
-alters ‘macro’ to account for label imbalance; it can result in an
-F-score that is not between precision and recall.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>None</cite>:</dt><dd><p>The scores for each class are returned.</p>
-</dd>
-</dl>
-</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true
+positives, false negatives and false positives.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each label, and find their unweighted
+mean.  This does not take label imbalance into account.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their
+average, weighted by support (the number of true instances for each
+label). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for label imbalance;
+it can result in an F-score that is not between precision and recall.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: The scores for each class are returned.</p></li>
 </ul>
 </dd>
 </dl>
 </p></li>
 <li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em>) – Value to return when there are no true positives or true negatives.
-If set to <cite>“warn”</cite>, this acts as 0, but warnings are also raised.</p></li>
+If set to <code class="docutils literal notranslate"><span class="pre">warn</span></code>, this acts as 0, but warnings are also raised.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>F-beta score</strong></p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float or np.ndarray (if average is <cite>None</cite>).</p>
+<dd class="field-odd"><p>float or np.ndarray (if average is <code class="docutils literal notranslate"><span class="pre">None</span></code>).</p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – <cite>average</cite> is not one of <cite>“micro”</cite>, <cite>“macro”</cite>, <cite>“weighted”</cite>, or <cite>None</cite>.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – <code class="docutils literal notranslate"><span class="pre">average</span></code> is not one of <code class="docutils literal notranslate"><span class="pre">micro</span></code>, <code class="docutils literal notranslate"><span class="pre">macro</span></code>, <code class="docutils literal notranslate"><span class="pre">weighted</span></code>, or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -633,42 +563,23 @@ to 1s. If not set, top_k = 1.</p></li>
 <li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em>) – Sample weights.</p></li>
 <li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;samples&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em>) – <dl class="simple">
 <dt>If not None, this determines the type of averaging performed on the data:</dt><dd><ul>
-<li><dl class="simple">
-<dt><cite>”micro”</cite>:</dt><dd><p>Calculate metrics globally by counting the total true positives,
-false negatives and false positives.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>”macro”</cite>:</dt><dd><p>Calculate metrics for each label, and find their unweighted
-mean.  This does not take label imbalance into account.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>”samples”</cite>:</dt><dd><p>Calculate metrics for each instance, and find their average.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>”weighted”</cite>:</dt><dd><p>Calculate metrics for each label, and find their average, weighted
-by support (the number of true instances for each label). This
-alters ‘macro’ to account for label imbalance; it can result in an
-F-score that is not between precision and recall.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>None</cite>:</dt><dd><p>The scores for each class are returned. Default: None.</p>
-</dd>
-</dl>
-</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true
+positives, false negatives and false positives.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each label, and find their unweighted
+mean.  This does not take label imbalance into account.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">samples</span></code>: Calculate metrics for each instance, and find their
+average.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their
+average, weighted by support (the number of true instances for each
+label). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for label imbalance;
+it can result in an F-score that is not between precision and recall.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: The scores for each class are returned. Default: None.</p></li>
 </ul>
 </dd>
 </dl>
 </p></li>
 <li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em>) – Value to return when there are no true positives or true negatives.
-If set to “warn”, this acts as 0, but warnings are also raised.</p></li>
+If set to <code class="docutils literal notranslate"><span class="pre">warn</span></code>, this acts as 0, but warnings are also raised.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -698,53 +609,34 @@ to 1s. If not set, top_k = 1.</p></li>
 <li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em>) – Sample weights.</p></li>
 <li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;samples&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em>) – <dl class="simple">
 <dt>If not None, this determines the type of averaging performed on the data:</dt><dd><ul>
-<li><dl class="simple">
-<dt><cite>”micro”</cite>:</dt><dd><p>Calculate metrics globally by counting the total true positives,
-false negatives and false positives.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>”macro”</cite>:</dt><dd><p>Calculate metrics for each label, and find their unweighted
-mean.  This does not take label imbalance into account.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>”samples”</cite>:</dt><dd><p>Calculate metrics for each instance, and find their average.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>”weighted”</cite>:</dt><dd><p>Calculate metrics for each label, and find their average, weighted
-by support (the number of true instances for each label). This
-alters ‘macro’ to account for label imbalance; it can result in an
-F-score that is not between precision and recall.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><cite>None</cite>:</dt><dd><p>The scores for each class are returned. Default: None.</p>
-</dd>
-</dl>
-</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true
+positives, false negatives and false positives.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each label, and find their unweighted
+mean.  This does not take label imbalance into account.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">samples</span></code>: Calculate metrics for each instance, and find their
+average.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their
+average, weighted by support (the number of true instances for each
+label). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for label imbalance;
+it can result in an F-score that is not between precision and recall.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: The scores for each class are returned. Default: None.</p></li>
 </ul>
 </dd>
 </dl>
 </p></li>
 <li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em>) – Value to return when there are no true positives or true negatives.
-If set to “warn”, this acts as 0, but warnings are also raised.</p></li>
+If set to <code class="docutils literal notranslate"><span class="pre">warn</span></code>, this acts as 0, but warnings are also raised.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>F-beta score</strong></p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float or np.ndarray (if average is <cite>None</cite>).</p>
+<dd class="field-odd"><p>float or np.ndarray (if average is <code class="docutils literal notranslate"><span class="pre">None</span></code>).</p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – <cite>average</cite> is not one of <cite>“micro”</cite>, <cite>“macro”</cite>, <cite>“samples”</cite>,
-<cite>“weighted”</cite>, or <cite>None</cite>.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – <code class="docutils literal notranslate"><span class="pre">average</span></code> is not one of <code class="docutils literal notranslate"><span class="pre">micro</span></code>, <code class="docutils literal notranslate"><span class="pre">macro</span></code>, <code class="docutils literal notranslate"><span class="pre">samples</span></code>,
+<code class="docutils literal notranslate"><span class="pre">weighted</span></code>, or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </dd>
 </dl>
 </dd></dl>

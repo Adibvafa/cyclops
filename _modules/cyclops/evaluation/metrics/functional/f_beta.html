@@ -12,6 +12,7 @@
   <title>cyclops.evaluation.metrics.functional.f_beta &mdash; cyclops  documentation</title>
       <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../../_static/css/cyclops.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/copybutton.css" type="text/css" />
     <link rel="shortcut icon" href="../../../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../../../_static/js/html5shiv.min.js"></script>
@@ -21,6 +22,8 @@
         <script src="../../../../../_static/jquery.js"></script>
         <script src="../../../../../_static/underscore.js"></script>
         <script src="../../../../../_static/doctools.js"></script>
+        <script src="../../../../../_static/clipboard.min.js"></script>
+        <script src="../../../../../_static/copybutton.js"></script>
     <script src="../../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" />
@@ -203,27 +206,27 @@
 <span class="sd">        average: Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, &quot;samples&quot;, None]</span>
 <span class="sd">            If ``None``, the scores for each class are returned. Otherwise, this</span>
 <span class="sd">            determines the type of averaging performed on the data:</span>
-<span class="sd">                - ``&quot;micro&quot;``: Calculate metrics globally by counting the total</span>
-<span class="sd">                    true positives, false negatives and false positives.</span>
-<span class="sd">                - ``&quot;macro&quot;``: Calculate metrics for each label, and find their</span>
-<span class="sd">                    unweighted mean.  This does not take label imbalance into account.</span>
-<span class="sd">                - ``&quot;weighted&quot;``: Calculate metrics for each label, and find their</span>
-<span class="sd">                    average, weighted by support (the number of true instances for each</span>
-<span class="sd">                    label). This alters &#39;macro&#39; to account for label imbalance;</span>
-<span class="sd">                    it can result in an F-score that is not between precision and</span>
-<span class="sd">                    recall.</span>
-<span class="sd">                - ``&quot;samples&quot;``: Calculate metrics for each instance, and find</span>
-<span class="sd">                    their average (only meaningful for multilabel classification).</span>
+<span class="sd">                - ``micro``: Calculate metrics globally by counting the total</span>
+<span class="sd">                  true positives, false negatives and false positives.</span>
+<span class="sd">                - ``macro``: Calculate metrics for each label, and find their</span>
+<span class="sd">                  unweighted mean.  This does not take label imbalance into account.</span>
+<span class="sd">                - ``weighted``: Calculate metrics for each label, and find their</span>
+<span class="sd">                  average, weighted by support (the number of true instances for each</span>
+<span class="sd">                  label). This alters &#39;macro&#39; to account for label imbalance;</span>
+<span class="sd">                  it can result in an F-score that is not between precision and</span>
+<span class="sd">                  recall.</span>
+<span class="sd">                - ``samples``: Calculate metrics for each instance, and find</span>
+<span class="sd">                  their average (only meaningful for multilabel classification).</span>
 <span class="sd">        sample_weight: Optional[ArrayLike]</span>
 <span class="sd">            Sample weights.</span>
 <span class="sd">        zero_division: Literal[&quot;warn&quot;, 0, 1]</span>
 <span class="sd">            Sets the value to return when there is a zero division:</span>
-<span class="sd">                - ``&quot;warn&quot;``: return 0 if the denominator is zero, otherwise return</span>
-<span class="sd">                    the result</span>
+<span class="sd">                - ``warn``: return 0 if the denominator is zero, otherwise return</span>
+<span class="sd">                  the result</span>
 <span class="sd">                - ``0``: return 0 if the denominator is zero, otherwise return</span>
-<span class="sd">                    the result</span>
+<span class="sd">                  the result</span>
 <span class="sd">                - ``1``: return 1 if the denominator is zero, otherwise return</span>
-<span class="sd">                    the result</span>
+<span class="sd">                  the result</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -310,11 +313,11 @@
 <span class="sd">            Weight of precision in harmonic mean.</span>
 <span class="sd">        task: Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
 <span class="sd">            The task type. One of:</span>
-<span class="sd">                - `&quot;binary&quot;`: binary classification.</span>
+<span class="sd">                - ``binary``: binary classification.</span>
 <span class="sd">                    Example: [0, 1, 1, 0, 1] or [0.1, 0.9, 0.8, 0.2, 0.4]</span>
-<span class="sd">                - `&quot;multiclass&quot;`: multiclass classification.</span>
+<span class="sd">                - ``multiclass``: multiclass classification.</span>
 <span class="sd">                    Example: [0, 1, 2, 0, 1] or [[0.1, 0.9, 0.0], [0.0, 0.8, 0.2], ...]</span>
-<span class="sd">                - `&quot;multilabel&quot;`: multilabel classification.</span>
+<span class="sd">                - ``multilabel``: multilabel classification.</span>
 <span class="sd">                    Example: [[0, 1], [1, 0], [1, 1], [0, 0], [1, 0]] or</span>
 <span class="sd">                    [[0.1, 0.9], [0.0, 0.8], ...]</span>
 <span class="sd">        pos_label: int</span>
@@ -330,27 +333,22 @@
 <span class="sd">            Number of labels for multilabel task. Defaults to None.</span>
 <span class="sd">        average: Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, &quot;samples&quot;, None]</span>
 <span class="sd">            If not None, this determines the type of averaging performed on the data:</span>
-<span class="sd">                - `&quot;micro&quot;`:</span>
-<span class="sd">                    Calculate metrics globally by counting the total true positives,</span>
-<span class="sd">                    false negatives and false positives.</span>
-<span class="sd">                - `&quot;macro&quot;`:</span>
-<span class="sd">                    Calculate metrics for each label, and find their unweighted</span>
-<span class="sd">                    mean.  This does not take label imbalance into account.</span>
-<span class="sd">                - `&quot;weighted&quot;`:</span>
-<span class="sd">                    Calculate metrics for each label, and find their average, weighted</span>
-<span class="sd">                    by support (the number of true instances for each label). This</span>
-<span class="sd">                    alters &#39;macro&#39; to account for label imbalance; it can result in an</span>
-<span class="sd">                    F-score that is not between precision and recall.</span>
-<span class="sd">                - `&quot;samples&quot;`:</span>
-<span class="sd">                    Calculate metrics for each instance, and find their average (only</span>
-<span class="sd">                    meaningful for multilabel classification).</span>
-<span class="sd">                - `None`:</span>
-<span class="sd">                    The scores for each class are returned.</span>
+<span class="sd">                - ``micro``: Calculate metrics globally by counting the total true</span>
+<span class="sd">                  positives, false negatives and false positives.</span>
+<span class="sd">                - ``macro``: Calculate metrics for each label, and find their unweighted</span>
+<span class="sd">                  mean.  This does not take label imbalance into account.</span>
+<span class="sd">                - ``weighted``: Calculate metrics for each label, and find their</span>
+<span class="sd">                  average, weighted by support (the number of true instances for</span>
+<span class="sd">                  each label). This alters ``macro`` to account for label imbalance;</span>
+<span class="sd">                  it can result in an F-score that is not between precision and recall.</span>
+<span class="sd">                - ``samples``: Calculate metrics for each instance, and find their</span>
+<span class="sd">                  average (only meaningful for multilabel classification).</span>
+<span class="sd">                - ``None``: The scores for each class are returned.</span>
 <span class="sd">        sample_weight: Optional[ArrayLike]</span>
 <span class="sd">            Sample weights.</span>
 <span class="sd">        zero_division: Literal[&quot;warn&quot;, 0, 1]</span>
 <span class="sd">            Value to return when there are no true positives or true negatives.</span>
-<span class="sd">            If set to `&quot;warn&quot;`, this acts as 0, but warnings are also raised.</span>
+<span class="sd">            If set to ``warn``, this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -360,8 +358,8 @@
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">        ValueError</span>
-<span class="sd">            If `task` is not one of `&quot;binary&quot;`, `&quot;multiclass&quot;`, or</span>
-<span class="sd">            `&quot;multilabel&quot;`.</span>
+<span class="sd">            If ``task`` is not one of ``binary``, ``multiclass``, or</span>
+<span class="sd">            ``multilabel``.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;binary&quot;</span><span class="p">:</span>
@@ -440,7 +438,7 @@
 <span class="sd">            Sample weights.</span>
 <span class="sd">        zero_division: Literal[&quot;warn&quot;, 0, 1]</span>
 <span class="sd">            Value to return when there are no true positives or true negatives.</span>
-<span class="sd">            If set to `&quot;warn&quot;`, this acts as 0, but warnings are also raised.</span>
+<span class="sd">            If set to ``warn``, this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -511,31 +509,27 @@
 <span class="sd">            Sample weights.</span>
 <span class="sd">        average: Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None]</span>
 <span class="sd">            If not None, this determines the type of averaging performed on the data:</span>
-<span class="sd">                - `&quot;micro&quot;`:</span>
-<span class="sd">                    Calculate metrics globally by counting the total true positives,</span>
-<span class="sd">                    false negatives and false positives.</span>
-<span class="sd">                - `&quot;macro&quot;`:</span>
-<span class="sd">                    Calculate metrics for each label, and find their unweighted</span>
-<span class="sd">                    mean.  This does not take label imbalance into account.</span>
-<span class="sd">                - `&quot;weighted&quot;`:</span>
-<span class="sd">                    Calculate metrics for each label, and find their average, weighted</span>
-<span class="sd">                    by support (the number of true instances for each label). This</span>
-<span class="sd">                    alters &#39;macro&#39; to account for label imbalance; it can result in an</span>
-<span class="sd">                    F-score that is not between precision and recall.</span>
-<span class="sd">                - `None`:</span>
-<span class="sd">                    The scores for each class are returned.</span>
+<span class="sd">                - ``micro``: Calculate metrics globally by counting the total true</span>
+<span class="sd">                  positives, false negatives and false positives.</span>
+<span class="sd">                - ``macro``: Calculate metrics for each label, and find their unweighted</span>
+<span class="sd">                  mean.  This does not take label imbalance into account.</span>
+<span class="sd">                - ``weighted``: Calculate metrics for each label, and find their</span>
+<span class="sd">                  average, weighted by support (the number of true instances for each</span>
+<span class="sd">                  label). This alters ``macro`` to account for label imbalance;</span>
+<span class="sd">                  it can result in an F-score that is not between precision and recall.</span>
+<span class="sd">                - ``None``: The scores for each class are returned.</span>
 <span class="sd">        zero_division: Literal[&quot;warn&quot;, 0, 1]</span>
 <span class="sd">            Value to return when there are no true positives or true negatives.</span>
-<span class="sd">            If set to `&quot;warn&quot;`, this acts as 0, but warnings are also raised.</span>
+<span class="sd">            If set to ``warn``, this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        F-beta score: float or np.ndarray (if average is `None`).</span>
+<span class="sd">        F-beta score: float or np.ndarray (if average is ``None``).</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">        ValueError</span>
-<span class="sd">            `average` is not one of `&quot;micro&quot;`, `&quot;macro&quot;`, `&quot;weighted&quot;`, or `None`.</span>
+<span class="sd">            ``average`` is not one of ``micro``, ``macro``, ``weighted``, or ``None``.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">average</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
@@ -598,34 +592,30 @@
 <span class="sd">            Sample weights.</span>
 <span class="sd">        average: Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;samples&quot;, &quot;weighted&quot;, None]</span>
 <span class="sd">            If not None, this determines the type of averaging performed on the data:</span>
-<span class="sd">                - `&quot;micro&quot;`:</span>
-<span class="sd">                    Calculate metrics globally by counting the total true positives,</span>
-<span class="sd">                    false negatives and false positives.</span>
-<span class="sd">                - `&quot;macro&quot;`:</span>
-<span class="sd">                    Calculate metrics for each label, and find their unweighted</span>
-<span class="sd">                    mean.  This does not take label imbalance into account.</span>
-<span class="sd">                - `&quot;samples&quot;`:</span>
-<span class="sd">                    Calculate metrics for each instance, and find their average.</span>
-<span class="sd">                - `&quot;weighted&quot;`:</span>
-<span class="sd">                    Calculate metrics for each label, and find their average, weighted</span>
-<span class="sd">                    by support (the number of true instances for each label). This</span>
-<span class="sd">                    alters &#39;macro&#39; to account for label imbalance; it can result in an</span>
-<span class="sd">                    F-score that is not between precision and recall.</span>
-<span class="sd">                - `None`:</span>
-<span class="sd">                    The scores for each class are returned. Default: None.</span>
+<span class="sd">                - ``micro``: Calculate metrics globally by counting the total true</span>
+<span class="sd">                  positives, false negatives and false positives.</span>
+<span class="sd">                - ``macro``: Calculate metrics for each label, and find their unweighted</span>
+<span class="sd">                  mean.  This does not take label imbalance into account.</span>
+<span class="sd">                - ``samples``: Calculate metrics for each instance, and find their</span>
+<span class="sd">                  average.</span>
+<span class="sd">                - ``weighted``: Calculate metrics for each label, and find their</span>
+<span class="sd">                  average, weighted by support (the number of true instances for each</span>
+<span class="sd">                  label). This alters ``macro`` to account for label imbalance;</span>
+<span class="sd">                  it can result in an F-score that is not between precision and recall.</span>
+<span class="sd">                - ``None``: The scores for each class are returned. Default: None.</span>
 <span class="sd">        zero_division: Literal[&quot;warn&quot;, 0, 1]</span>
 <span class="sd">            Value to return when there are no true positives or true negatives.</span>
-<span class="sd">            If set to &quot;warn&quot;, this acts as 0, but warnings are also raised.</span>
+<span class="sd">            If set to ``warn``, this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        F-beta score: float or np.ndarray (if average is `None`).</span>
+<span class="sd">        F-beta score: float or np.ndarray (if average is ``None``).</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">        ValueError</span>
-<span class="sd">            `average` is not one of `&quot;micro&quot;`, `&quot;macro&quot;`, `&quot;samples&quot;`,</span>
-<span class="sd">            `&quot;weighted&quot;`, or `None`.</span>
+<span class="sd">            ``average`` is not one of ``micro``, ``macro``, ``samples``,</span>
+<span class="sd">            ``weighted``, or ``None``.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">average</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
@@ -679,11 +669,11 @@
 <span class="sd">            Estimated targets as returned by a classifier.</span>
 <span class="sd">        task: Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
 <span class="sd">            The task type. One of:</span>
-<span class="sd">                - `&quot;binary&quot;`: binary classification.</span>
+<span class="sd">                - ``binary``: binary classification.</span>
 <span class="sd">                    Example: [0, 1, 1, 0, 1] or [0.1, 0.9, 0.8, 0.2, 0.4]</span>
-<span class="sd">                - `&quot;multiclass&quot;`: multiclass classification.</span>
+<span class="sd">                - ``multiclass``: multiclass classification.</span>
 <span class="sd">                    Example: [0, 1, 2, 0, 1] or [[0.1, 0.9, 0.0], [0.0, 0.8, 0.2], ...]</span>
-<span class="sd">                - `&quot;multilabel&quot;`: multilabel classification.</span>
+<span class="sd">                - ``multilabel``: multilabel classification.</span>
 <span class="sd">                    Example: [[0, 1], [1, 0], [1, 1], [0, 0], [1, 0]] or</span>
 <span class="sd">                    [[0.1, 0.9], [0.0, 0.8], ...]</span>
 <span class="sd">        pos_label: int</span>
@@ -699,27 +689,22 @@
 <span class="sd">            Number of labels for multilabel task. Defaults to None.</span>
 <span class="sd">        average: Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, &quot;samples&quot;, None]</span>
 <span class="sd">            If not None, this determines the type of averaging performed on the data:</span>
-<span class="sd">                - `&quot;micro&quot;`:</span>
-<span class="sd">                    Calculate metrics globally by counting the total true positives,</span>
-<span class="sd">                    false negatives and false positives.</span>
-<span class="sd">                - `&quot;macro&quot;`:</span>
-<span class="sd">                    Calculate metrics for each label, and find their unweighted</span>
-<span class="sd">                    mean.  This does not take label imbalance into account.</span>
-<span class="sd">                - `&quot;weighted&quot;`:</span>
-<span class="sd">                    Calculate metrics for each label, and find their average, weighted</span>
-<span class="sd">                    by support (the number of true instances for each label). This</span>
-<span class="sd">                    alters &#39;macro&#39; to account for label imbalance; it can result in an</span>
-<span class="sd">                    F-score that is not between precision and recall.</span>
-<span class="sd">                - `&quot;samples&quot;`:</span>
-<span class="sd">                    Calculate metrics for each instance, and find their average (only</span>
-<span class="sd">                    meaningful for multilabel classification).</span>
-<span class="sd">                - `None`:</span>
-<span class="sd">                    The scores for each class are returned.</span>
+<span class="sd">                - ``micro``: Calculate metrics globally by counting the total true</span>
+<span class="sd">                  positives, false negatives and false positives.</span>
+<span class="sd">                - ``macro``: Calculate metrics for each label, and find their unweighted</span>
+<span class="sd">                  mean.  This does not take label imbalance into account.</span>
+<span class="sd">                - ``weighted``: Calculate metrics for each label, and find their</span>
+<span class="sd">                  average, weighted by support (the number of true instances for each</span>
+<span class="sd">                  label). This alters ``macro`` to account for label imbalance; it can</span>
+<span class="sd">                  result in an F-score that is not between precision and recall.</span>
+<span class="sd">                - ``samples``: Calculate metrics for each instance, and find their</span>
+<span class="sd">                  average (only meaningful for multilabel classification).</span>
+<span class="sd">                - ``None``: The scores for each class are returned.</span>
 <span class="sd">        sample_weight: Optional[ArrayLike]</span>
 <span class="sd">            Sample weights.</span>
 <span class="sd">        zero_division: Literal[&quot;warn&quot;, 0, 1]</span>
 <span class="sd">            Value to return when there are no true positives or true negatives.</span>
-<span class="sd">            If set to `&quot;warn&quot;`, this acts as 0, but warnings are also raised.</span>
+<span class="sd">            If set to ``warn``, this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -768,7 +753,7 @@
 <span class="sd">            Sample weights.</span>
 <span class="sd">        zero_division: Literal[&quot;warn&quot;, 0, 1]</span>
 <span class="sd">            Value to return when there are no true positives or true negatives.</span>
-<span class="sd">            If set to `&quot;warn&quot;`, this acts as 0, but warnings are also raised.</span>
+<span class="sd">            If set to ``warn``, this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -812,22 +797,18 @@
 <span class="sd">            Sample weights.</span>
 <span class="sd">        average: Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None]</span>
 <span class="sd">            If not None, this determines the type of averaging performed on the data:</span>
-<span class="sd">                - `&quot;micro&quot;`:</span>
-<span class="sd">                    Calculate metrics globally by counting the total true positives,</span>
-<span class="sd">                    false negatives and false positives.</span>
-<span class="sd">                - `&quot;macro&quot;`:</span>
-<span class="sd">                    Calculate metrics for each label, and find their unweighted</span>
-<span class="sd">                    mean.  This does not take label imbalance into account.</span>
-<span class="sd">                - `&quot;weighted&quot;`:</span>
-<span class="sd">                    Calculate metrics for each label, and find their average, weighted</span>
-<span class="sd">                    by support (the number of true instances for each label). This</span>
-<span class="sd">                    alters &#39;macro&#39; to account for label imbalance; it can result in an</span>
-<span class="sd">                    F-score that is not between precision and recall.</span>
-<span class="sd">                - `None`:</span>
-<span class="sd">                    The scores for each class are returned. Default: None.</span>
+<span class="sd">                - ``micro``: Calculate metrics globally by counting the total true</span>
+<span class="sd">                  positives, false negatives and false positives.</span>
+<span class="sd">                - ``macro``: Calculate metrics for each label, and find their unweighted</span>
+<span class="sd">                  mean.  This does not take label imbalance into account.</span>
+<span class="sd">                - ``weighted``: Calculate metrics for each label, and find their</span>
+<span class="sd">                  average, weighted by support (the number of true instances for each</span>
+<span class="sd">                  label). This alters ``macro`` to account for label imbalance;</span>
+<span class="sd">                  it can result in an F-score that is not between precision and recall.</span>
+<span class="sd">                - ``None``: The scores for each class are returned. Default: None.</span>
 <span class="sd">        zero_division: Literal[&quot;warn&quot;, 0, 1]</span>
 <span class="sd">            Value to return when there are no true positives or true negatives.</span>
-<span class="sd">            If set to `&quot;warn&quot;`, this acts as 0, but warnings are also raised.</span>
+<span class="sd">            If set to ``warn``, this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -876,24 +857,20 @@
 <span class="sd">            Sample weights.</span>
 <span class="sd">        average: Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;samples&quot;, &quot;weighted&quot;, None]</span>
 <span class="sd">            If not None, this determines the type of averaging performed on the data:</span>
-<span class="sd">                - `&quot;micro&quot;`:</span>
-<span class="sd">                    Calculate metrics globally by counting the total true positives,</span>
-<span class="sd">                    false negatives and false positives.</span>
-<span class="sd">                - `&quot;macro&quot;`:</span>
-<span class="sd">                    Calculate metrics for each label, and find their unweighted</span>
-<span class="sd">                    mean.  This does not take label imbalance into account.</span>
-<span class="sd">                - `&quot;samples&quot;`:</span>
-<span class="sd">                    Calculate metrics for each instance, and find their average.</span>
-<span class="sd">                - `&quot;weighted&quot;`:</span>
-<span class="sd">                    Calculate metrics for each label, and find their average, weighted</span>
-<span class="sd">                    by support (the number of true instances for each label). This</span>
-<span class="sd">                    alters &#39;macro&#39; to account for label imbalance; it can result in an</span>
-<span class="sd">                    F-score that is not between precision and recall.</span>
-<span class="sd">                - `None`:</span>
-<span class="sd">                    The scores for each class are returned. Default: None.</span>
+<span class="sd">                - ``micro``: Calculate metrics globally by counting the total true</span>
+<span class="sd">                  positives, false negatives and false positives.</span>
+<span class="sd">                - ``macro``: Calculate metrics for each label, and find their unweighted</span>
+<span class="sd">                  mean.  This does not take label imbalance into account.</span>
+<span class="sd">                - ``samples``: Calculate metrics for each instance, and find their</span>
+<span class="sd">                  average.</span>
+<span class="sd">                - ``weighted``: Calculate metrics for each label, and find their</span>
+<span class="sd">                  average, weighted by support (the number of true instances for each</span>
+<span class="sd">                  label). This alters ``macro`` to account for label imbalance;</span>
+<span class="sd">                  it can result in an F-score that is not between precision and recall.</span>
+<span class="sd">                - ``None``: The scores for each class are returned. Default: None.</span>
 <span class="sd">        zero_division: Literal[&quot;warn&quot;, 0, 1]</span>
 <span class="sd">            Value to return when there are no true positives or true negatives.</span>
-<span class="sd">            If set to &quot;warn&quot;, this acts as 0, but warnings are also raised.</span>
+<span class="sd">            If set to ``warn``, this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
