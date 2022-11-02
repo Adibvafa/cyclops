@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.evaluation.metrics.functional.auroc &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/cyclops.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script src="../../../../../_static/clipboard.min.js"></script>
+        <script src="../../../../../_static/copybutton.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+            <a href="../../../../../index.html" class="icon icon-home"> cyclops
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../coverage.html">Coverage report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cyclops.evaluation.metrics.functional.auroc</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cyclops.evaluation.metrics.functional.auroc</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Functions for computing the area under the ROC curve (AUROC).&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">ArrayLike</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">auc</span>
+
+<span class="kn">from</span> <span class="nn">cyclops.evaluation.metrics.functional.precision_recall_curve</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_binary_precision_recall_curve_format</span><span class="p">,</span>
+    <span class="n">_binary_precision_recall_curve_update</span><span class="p">,</span>
+    <span class="n">_multiclass_precision_recall_curve_format</span><span class="p">,</span>
+    <span class="n">_multiclass_precision_recall_curve_update</span><span class="p">,</span>
+    <span class="n">_multilabel_precision_recall_curve_format</span><span class="p">,</span>
+    <span class="n">_multilabel_precision_recall_curve_update</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">cyclops.evaluation.metrics.functional.roc</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_binary_roc_compute</span><span class="p">,</span>
+    <span class="n">_multiclass_roc_compute</span><span class="p">,</span>
+    <span class="n">_multilabel_roc_compute</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">cyclops.evaluation.metrics.utils</span> <span class="kn">import</span> <span class="n">_check_thresholds</span>
+
+
+<span class="k">def</span> <span class="nf">_reduce_auroc</span><span class="p">(</span>
+    <span class="n">fpr</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span>
+    <span class="n">tpr</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span>
+    <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">weights</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Compute the area under the ROC curve and apply ``average`` method.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        fpr : np.ndarray or list of np.ndarray</span>
+<span class="sd">            False positive rate.</span>
+<span class="sd">        tpr : np.ndarray or list of np.ndarray</span>
+<span class="sd">            True positive rate.</span>
+<span class="sd">        average : Literal[&quot;macro&quot;, &quot;weighted&quot;], default=None</span>
+<span class="sd">            If not None, apply the method to compute the average area under the</span>
+<span class="sd">            ROC curve.</span>
+<span class="sd">        weights : np.ndarray, default=None</span>
+<span class="sd">            Sample weights.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        auroc : float or np.ndarray</span>
+<span class="sd">            Area under the ROC curve. If ``average`` is not None, ``auroc`` is a</span>
+<span class="sd">            numpy array.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``average`` is not one of ``macro`` or ``weighted`` or if</span>
+<span class="sd">            ``average`` is ``weighted`` and ``weights`` is None.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">auc</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">)</span>
+    <span class="p">]</span>  <span class="c1"># without the loop: np.trapz(tpr, fpr, axis=1) * direction</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">average</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Average precision score for one or more classes was `nan`.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; Ignoring these classes in </span><span class="si">{</span><span class="n">average</span><span class="si">}</span><span class="s2">-average&quot;</span><span class="p">,</span>
+                <span class="ne">UserWarning</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">average</span> <span class="o">==</span> <span class="s2">&quot;macro&quot;</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">average</span> <span class="o">==</span> <span class="s2">&quot;weighted&quot;</span> <span class="ow">and</span> <span class="n">weights</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span>
+                <span class="n">weights</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                <span class="n">weights</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span>
+                <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+                <span class="n">where</span><span class="o">=</span><span class="n">weights</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Received an incompatible combinations of inputs to make reduction.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<div class="viewcode-block" id="auroc"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.auroc.html#cyclops.evaluation.metrics.functional.auroc.auroc">[docs]</a><span class="k">def</span> <span class="nf">auroc</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">task</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">,</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">],</span>
+    <span class="n">max_fpr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">thresholds</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Compute the area under the ROC curve for different tasks.</span>
+
+<span class="sd">     target : ArrayLike</span>
+<span class="sd">            Ground truth (correct) target values.</span>
+<span class="sd">        preds : ArrayLike</span>
+<span class="sd">            Estimated probabilities or decision function. If ``preds`` is not in</span>
+<span class="sd">            the range [0, 1], a sigmoid function is applied to transform it to</span>
+<span class="sd">            the range [0, 1].</span>
+<span class="sd">        task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
+<span class="sd">            Task type. One of ``binary``, ``multiclass``, ``multilabel``.</span>
+<span class="sd">        max_fpr : float, default=None</span>
+<span class="sd">            The maximum value of the false positive rate. If not None, the</span>
+<span class="sd">            a partial AUC in the range [0, max_fpr] is returned. Only used for</span>
+<span class="sd">            binary classification.</span>
+<span class="sd">        thresholds : int or list of floats or np.ndarray of floats, default=None</span>
+<span class="sd">            Thresholds used for binarizing the values of ``preds``.</span>
+<span class="sd">            If int, then the number of thresholds to use.</span>
+<span class="sd">            If list or array, then the thresholds to use.</span>
+<span class="sd">            If None, then the thresholds are automatically determined by the</span>
+<span class="sd">            unique values in ``preds``.</span>
+<span class="sd">        num_classes : int, default=None</span>
+<span class="sd">            Number of classes. This parameter is required for the ``multiclass``</span>
+<span class="sd">            task.</span>
+<span class="sd">        num_labels : int, default=None</span>
+<span class="sd">            Number of labels. This parameter is required for the ``multilabel``</span>
+<span class="sd">            task.</span>
+<span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;], default=None</span>
+<span class="sd">            If not None, apply the method to compute the average area under the</span>
+<span class="sd">            ROC curve. Only applicable for the ``multiclass`` and ``multilabel``</span>
+<span class="sd">            tasks. One of:</span>
+<span class="sd">            - ``micro``: Calculate metrics globally by counting the total true</span>
+<span class="sd">            positives, false negatives and false positives.</span>
+<span class="sd">            - ``macro``: Calculate metrics for each label, and find their unweighted</span>
+<span class="sd">            mean. This does not take label imbalance into account.</span>
+<span class="sd">            - ``weighted``: Calculate metrics for each label, and find their average,</span>
+<span class="sd">            weighted by support (accounting for label imbalance).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        auroc : float or np.ndarray</span>
+<span class="sd">            Area under the ROC curve. If ``average`` is None or task is ``binary``,</span>
+<span class="sd">            ``auroc`` is a float. Otherwise, ``auroc`` is a numpy array.</span>
+
+<span class="sd">    Examples (binary)</span>
+<span class="sd">    -----------------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import auroc</span>
+<span class="sd">        &gt;&gt;&gt; target = [0, 1, 0, 1]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [0.1, 0.35, 0.4, 0.8]</span>
+<span class="sd">        &gt;&gt;&gt; auroc(target, preds, task=&quot;binary&quot;)</span>
+<span class="sd">        0.75</span>
+
+<span class="sd">    Examples (multiclass)</span>
+<span class="sd">    ---------------------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import auroc</span>
+<span class="sd">        &gt;&gt;&gt; target = [0, 1, 2, 0, 1, 2]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.6, 0.3], [0.05, 0.95, 0], [0.5, 0.3, 0.2],</span>
+<span class="sd">        ...          [0.1, 0.6, 0.3], [0.05, 0.95, 0], [0.5, 0.3, 0.2]]</span>
+<span class="sd">        &gt;&gt;&gt; auroc(target, preds, task=&quot;multiclass&quot;, num_classes=3, average=None)</span>
+<span class="sd">        array([0.5, 1. , 0.5])</span>
+
+<span class="sd">    Examples (multilabel)</span>
+<span class="sd">    ---------------------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import auroc</span>
+<span class="sd">        &gt;&gt;&gt; target = [[0, 1], [1, 1], [0, 0], [1, 0]]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.9], [0.8, 0.2], [0.4, 0.6], [0.2, 0.8]]</span>
+<span class="sd">        &gt;&gt;&gt; auroc(target, preds, task=&quot;multilabel&quot;, num_labels=2, average=None)</span>
+<span class="sd">        array([0.25, 0.5 ])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;binary&quot;</span><span class="p">:</span>
+        <span class="n">auroc_score</span> <span class="o">=</span> <span class="n">binary_auroc</span><span class="p">(</span>
+            <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">max_fpr</span><span class="o">=</span><span class="n">max_fpr</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_classes</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_classes</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="p">),</span> <span class="s2">&quot;Number of classes must be a positive integer.&quot;</span>
+        <span class="n">auroc_score</span> <span class="o">=</span> <span class="n">multiclass_auroc</span><span class="p">(</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="n">preds</span><span class="p">,</span>
+            <span class="n">num_classes</span><span class="p">,</span>
+            <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span>
+            <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_labels</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_labels</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="p">),</span> <span class="s2">&quot;Number of labels must be a positive integer.&quot;</span>
+        <span class="n">auroc_score</span> <span class="o">=</span> <span class="n">multilabel_auroc</span><span class="p">(</span>
+            <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_labels</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="n">average</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Expected argument `task` to be either &#39;binary&#39;, &#39;multiclass&#39; or &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;&#39;multilabel&#39;, but got </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">auroc_score</span></div>
+
+
+<span class="k">def</span> <span class="nf">_binary_auroc_compute</span><span class="p">(</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_fpr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Compute the area under the ROC curve for binary classification tasks.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        state : Union[Tuple[np.ndarray, np.ndarray], np.ndarray]</span>
+<span class="sd">            If ``state`` is a tuple, then it must be a tuple of two numpy arrays</span>
+<span class="sd">            ``(target, preds)``. If ``state`` is a numpy array, then it is a multi-</span>
+<span class="sd">            threshold confusion matrix.</span>
+<span class="sd">        thresholds : np.ndarray, default=None</span>
+<span class="sd">            Thresholds used for computing binarizing the predictions. If None,</span>
+<span class="sd">            then the thresholds are automatically determined by the unique values</span>
+<span class="sd">            in ``preds``.</span>
+<span class="sd">        max_fpr : float, default=None</span>
+<span class="sd">            The maximum value of the false positive rate. If ``None``, the</span>
+<span class="sd">            false positive rate is set to the complement of the true positive</span>
+<span class="sd">            rate.</span>
+<span class="sd">        pos_label : int, default=1</span>
+<span class="sd">            The label of the positive class.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        auroc : float</span>
+<span class="sd">            Area under the ROC curve.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_binary_roc_compute</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">max_fpr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">max_fpr</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">auc</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">fpr</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">tpr</span><span class="p">)</span>
+
+    <span class="c1"># Add a single point at max_fpr by linear interpolation</span>
+    <span class="n">stop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">fpr</span><span class="p">,</span> <span class="n">max_fpr</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">)</span>
+    <span class="n">x_interp</span> <span class="o">=</span> <span class="p">[</span><span class="n">fpr</span><span class="p">[</span><span class="n">stop</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">fpr</span><span class="p">[</span><span class="n">stop</span><span class="p">]]</span>
+    <span class="n">y_interp</span> <span class="o">=</span> <span class="p">[</span><span class="n">tpr</span><span class="p">[</span><span class="n">stop</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">tpr</span><span class="p">[</span><span class="n">stop</span><span class="p">]]</span>
+    <span class="n">tpr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tpr</span><span class="p">[:</span><span class="n">stop</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">max_fpr</span><span class="p">,</span> <span class="n">x_interp</span><span class="p">,</span> <span class="n">y_interp</span><span class="p">))</span>
+    <span class="n">fpr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fpr</span><span class="p">[:</span><span class="n">stop</span><span class="p">],</span> <span class="n">max_fpr</span><span class="p">)</span>
+    <span class="n">partial_auc</span> <span class="o">=</span> <span class="n">auc</span><span class="p">(</span><span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">)</span>
+
+    <span class="c1"># McClish correction: standardize result to be 0.5 if non-discriminant</span>
+    <span class="c1"># and 1 if maximal</span>
+    <span class="n">min_area</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">max_fpr</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">max_area</span> <span class="o">=</span> <span class="n">max_fpr</span>
+
+    <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">partial_auc</span> <span class="o">-</span> <span class="n">min_area</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">max_area</span> <span class="o">-</span> <span class="n">min_area</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="binary_auroc"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.auroc.html#cyclops.evaluation.metrics.functional.auroc.binary_auroc">[docs]</a><span class="k">def</span> <span class="nf">binary_auroc</span><span class="p">(</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">max_fpr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">thresholds</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Compute the area under the ROC curve for binary classification tasks.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        target : ArrayLike</span>
+<span class="sd">            Ground truth (correct) target values.</span>
+<span class="sd">        preds : ArrayLike</span>
+<span class="sd">            Estimated probabilities or decision function. If the values in ``preds``</span>
+<span class="sd">            are not in the range [0, 1], then they will be transformed to this range</span>
+<span class="sd">            via a sigmoid function.</span>
+<span class="sd">        max_fpr : float, default=None</span>
+<span class="sd">            The maximum value of the false positive rate. If not None, then</span>
+<span class="sd">            the partial AUCROC in the range [0, max_fpr] is returned.</span>
+<span class="sd">        thresholds : Union[int, List[float], np.ndarray], default=None</span>
+<span class="sd">            Thresholds used for binarizing the values of ``preds``.</span>
+<span class="sd">            If int, then the number of thresholds to use.</span>
+<span class="sd">            If list or array, then the thresholds to use.</span>
+<span class="sd">            If None, then the thresholds are automatically determined by the</span>
+<span class="sd">            unique values in ``preds``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        auroc : float</span>
+<span class="sd">            Area under the ROC curve.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import binary_auroc</span>
+<span class="sd">        &gt;&gt;&gt; target = [1, 0, 0, 1]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [0.1, 0.9, 0.4, 0.6]</span>
+<span class="sd">        &gt;&gt;&gt; binary_auroc(target, preds, thresholds=5)</span>
+<span class="sd">        0.25</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_check_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">max_fpr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_fpr</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Expected argument ``max_fpr`` to be a float or integer, but got&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">max_fpr</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">max_fpr</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">max_fpr</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Expected argument ``max_fpr`` to be in the range (0, 1], but got&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">max_fpr</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_binary_precision_recall_curve_format</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">thresholds</span>
+    <span class="p">)</span>
+
+    <span class="n">state</span> <span class="o">=</span> <span class="n">_binary_precision_recall_curve_update</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_binary_auroc_compute</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span> <span class="n">max_fpr</span><span class="o">=</span><span class="n">max_fpr</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_multiclass_auroc_compute</span><span class="p">(</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span>
+    <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Compute the area under the ROC curve for multiclass classification tasks.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        state : Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]</span>
+<span class="sd">            If ``state`` is a numpy array, then it is a multi-threshold confusion</span>
+<span class="sd">            matrix. If ``state`` is a tuple, then it must be a tuple of two numpy</span>
+<span class="sd">            arrays ``(target, preds)``.</span>
+<span class="sd">        num_classes : int</span>
+<span class="sd">            Number of classes.</span>
+<span class="sd">        thresholds : np.ndarray, default=None</span>
+<span class="sd">            Thresholds used for computing binarizing the predictions. If None,</span>
+<span class="sd">            then the thresholds are automatically determined by the unique values</span>
+<span class="sd">            in ``preds``.</span>
+<span class="sd">        average : Literal[&quot;macro&quot;, &quot;weighted&quot;], default=None</span>
+<span class="sd">            If ``None``, then the scores for each class are returned. Otherwise,</span>
+<span class="sd">            this determines the type of averaging performed on the scores.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        auroc : Union[float, np.ndarray]</span>
+<span class="sd">            Area under the ROC curve. If ``average`` is ``None``, then a numpy array</span>
+<span class="sd">            of shape (num_classes,) is returned, otherwise a float is returned.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_multiclass_roc_compute</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_reduce_auroc</span><span class="p">(</span>
+        <span class="n">fpr</span><span class="p">,</span>
+        <span class="n">tpr</span><span class="p">,</span>
+        <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">,</span>
+        <span class="n">weights</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">minlength</span><span class="o">=</span><span class="n">num_classes</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">thresholds</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">else</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="multiclass_auroc"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.auroc.html#cyclops.evaluation.metrics.functional.auroc.multiclass_auroc">[docs]</a><span class="k">def</span> <span class="nf">multiclass_auroc</span><span class="p">(</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">thresholds</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Compute the area under the ROC curve for multiclass classification tasks.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        target : ArrayLike</span>
+<span class="sd">            Ground truth (correct) target values.</span>
+<span class="sd">        preds : ArrayLike</span>
+<span class="sd">            Estimated probabilities or decision function. If the values in ``preds``</span>
+<span class="sd">            are not in the range [0, 1], then they will be transformed to this range</span>
+<span class="sd">            via a softmax function.</span>
+<span class="sd">        num_classes : int</span>
+<span class="sd">            Number of classes.</span>
+<span class="sd">        thresholds : Union[int, List[float], np.ndarray], default=None</span>
+<span class="sd">            Thresholds used for binarizing the values of ``preds``.</span>
+<span class="sd">            If int, then the number of thresholds to use.</span>
+<span class="sd">            If list or array, then the thresholds to use.</span>
+<span class="sd">            If None, then the thresholds are automatically determined by the</span>
+<span class="sd">            unique values in ``preds``.</span>
+<span class="sd">        average : Literal[&quot;macro&quot;, &quot;weighted&quot;], default=None</span>
+<span class="sd">            If ``None``, then the scores for each class are returned. Otherwise,</span>
+<span class="sd">            this determines the type of averaging performed on the scores. One of</span>
+<span class="sd">            - `macro`: Calculate metrics for each class, and find their unweighted</span>
+<span class="sd">                mean. This does not take class imbalance into account.</span>
+<span class="sd">            - `weighted`: Calculate metrics for each class, and find their average,</span>
+<span class="sd">                weighted by support (the number of true instances for each class).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        auroc : Union[float, np.ndarray]</span>
+<span class="sd">            Area under the ROC curve. If ``average`` is ``None``, then a numpy array</span>
+<span class="sd">            of shape (num_classes,) is returned, otherwise a float is returned.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multiclass_auroc</span>
+<span class="sd">        &gt;&gt;&gt; target = [1, 0, 2, 0]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05],</span>
+<span class="sd">        ...         [0.05, 0.05, 0.9], [0.9, 0.05, 0.05]]</span>
+<span class="sd">        &gt;&gt;&gt; multiclass_auroc(target, preds, num_classes=3, thresholds=5,</span>
+<span class="sd">        ...     average=None</span>
+<span class="sd">        ... )</span>
+<span class="sd">        array([0.5       , 0.33333333, 1.        ])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_check_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">average</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">average</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Expected argument `average` to be one of (&#39;macro&#39;, &#39;weighted&#39;, None),&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; but got </span><span class="si">{</span><span class="n">average</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_multiclass_precision_recall_curve_format</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span>
+    <span class="p">)</span>
+
+    <span class="n">state</span> <span class="o">=</span> <span class="n">_multiclass_precision_recall_curve_update</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_multiclass_auroc_compute</span><span class="p">(</span>
+        <span class="n">state</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="n">average</span>
+    <span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_multilabel_auroc_compute</span><span class="p">(</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Compute the area under the ROC curve for multilabel classification tasks.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        state : Union[Tuple[np.ndarray, np.ndarray], np.ndarray]</span>
+<span class="sd">            If ``state`` is a numpy array, then it is a multi-threshold confusion</span>
+<span class="sd">            matrix. If ``state`` is a tuple, then it must be a tuple of two numpy</span>
+<span class="sd">            arrays ``(target, preds)``.</span>
+<span class="sd">        num_labels : int</span>
+<span class="sd">            Number of labels.</span>
+<span class="sd">        thresholds : np.ndarray, default=None</span>
+<span class="sd">            Thresholds used for computing binarizing the predictions. If None,</span>
+<span class="sd">            then the thresholds are automatically determined by the unique values</span>
+<span class="sd">            in ``preds``.</span>
+<span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;], default=None</span>
+<span class="sd">            If ``None``, then the scores for each label are returned. Otherwise,</span>
+<span class="sd">            this determines the type of averaging performed on the scores. One of</span>
+<span class="sd">            - `micro`: Calculate metrics globally by counting the total true</span>
+<span class="sd">                positives, false negatives and false positives.</span>
+<span class="sd">            - `macro`: Calculate metrics for each label, and find their unweighted</span>
+<span class="sd">                mean. This does not take label imbalance into account.</span>
+<span class="sd">            - `weighted`: Calculate metrics for each label, and find their average,</span>
+<span class="sd">                weighted by support (the number of true instances for each label).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        auroc : Union[float, np.ndarray]</span>
+<span class="sd">            Area under the ROC curve. If ``average`` is ``None``, then a numpy array</span>
+<span class="sd">            of shape (num_labels,) is returned, otherwise a float is returned.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">average</span> <span class="o">==</span> <span class="s2">&quot;micro&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">thresholds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_binary_auroc_compute</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">thresholds</span><span class="p">,</span> <span class="n">max_fpr</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">target</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">_binary_auroc_compute</span><span class="p">((</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">),</span> <span class="n">thresholds</span><span class="p">,</span> <span class="n">max_fpr</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_multilabel_roc_compute</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">num_labels</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_reduce_auroc</span><span class="p">(</span>
+        <span class="n">fpr</span><span class="p">,</span>
+        <span class="n">tpr</span><span class="p">,</span>
+        <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">,</span>
+        <span class="n">weights</span><span class="o">=</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">thresholds</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">else</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="multilabel_auroc"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.auroc.html#cyclops.evaluation.metrics.functional.auroc.multilabel_auroc">[docs]</a><span class="k">def</span> <span class="nf">multilabel_auroc</span><span class="p">(</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">thresholds</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Compute the area under the ROC curve for multilabel classification tasks.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        target : ArrayLike</span>
+<span class="sd">            Ground truth (correct) target values.</span>
+<span class="sd">        preds : ArrayLike</span>
+<span class="sd">            Estimated probabilities or decision function. If the values in ``preds``</span>
+<span class="sd">            are not in the range [0, 1], then they will be transformed to this range</span>
+<span class="sd">            via a softmax function.</span>
+<span class="sd">        num_labels : int</span>
+<span class="sd">            Number of labels.</span>
+<span class="sd">        thresholds : Union[int, List[float], np.ndarray], default=None</span>
+<span class="sd">            Thresholds used for binarizing the values of ``preds``.</span>
+<span class="sd">            If int, then the number of thresholds to use.</span>
+<span class="sd">            If list or array, then the thresholds to use.</span>
+<span class="sd">            If None, then the thresholds are automatically determined by the</span>
+<span class="sd">            unique values in ``preds``.</span>
+<span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;], default=None</span>
+<span class="sd">            If ``None``, then the scores for each label are returned. Otherwise,</span>
+<span class="sd">            this determines the type of averaging performed on the scores. One of</span>
+<span class="sd">            - `micro`: Calculate metrics globally by counting the total true</span>
+<span class="sd">                positives, false negatives and false positives.</span>
+<span class="sd">            - `macro`: Calculate metrics for each label, and find their unweighted</span>
+<span class="sd">                mean. This does not take label imbalance into account.</span>
+<span class="sd">            - `weighted``: Calculate metrics for each label, and find their average,</span>
+<span class="sd">                weighted by support (the number of true instances for each label).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        auroc : Union[float, np.ndarray]</span>
+<span class="sd">            Area under the ROC curve. If ``average`` is ``None``, then a numpy array</span>
+<span class="sd">            of shape (num_labels,) is returned, otherwise a float is returned.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multilabel_auroc</span>
+<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 0], [0, 1, 1], [1, 0, 1]]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.05, 0.1, 0.9], [0.8, 0.2, 0.3]]</span>
+<span class="sd">        &gt;&gt;&gt; multilabel_auroc(target, preds, num_labels=3, thresholds=5,</span>
+<span class="sd">        ...     average=None)</span>
+<span class="sd">        array([1.  , 0.75, 0.25])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_check_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">average</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">average</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Expected argument `average` to be one of (&#39;micro&#39;, &#39;macro&#39;, &#39;weighted&#39;&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; , None), but got </span><span class="si">{</span><span class="n">average</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_multilabel_precision_recall_curve_format</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span>
+    <span class="p">)</span>
+
+    <span class="n">state</span> <span class="o">=</span> <span class="n">_multilabel_precision_recall_curve_update</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_multilabel_auroc_compute</span><span class="p">(</span>
+        <span class="n">state</span><span class="p">,</span> <span class="n">num_labels</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="n">average</span>
+    <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Vector AI Engineering.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
