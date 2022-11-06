@@ -892,15 +892,18 @@
         <span class="k">return</span> <span class="n">save_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="n">file_format</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Features.slice"><a class="viewcode-back" href="../../../../reference/api/cyclops.processors.feature.feature.html#cyclops.processors.feature.feature.Features.slice">[docs]</a>    <span class="k">def</span> <span class="nf">slice</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">slice_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">slice_values</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">replace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">slice_cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+        <span class="n">slice_values</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]],</span>
+        <span class="n">replace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Slice the data across a column, given values.</span>
+        <span class="sd">&quot;&quot;&quot;Slice the data across column(s), given values.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        slice_col: str</span>
-<span class="sd">            The column across which to slice the data.</span>
-<span class="sd">        slice_values: Any or List[Any]</span>
+<span class="sd">        slice_col: str or list of str</span>
+<span class="sd">            The column(s) across which to slice the data.</span>
+<span class="sd">        slice_values: Any or List[Any] or List[List[Any]]</span>
 <span class="sd">            A single value or list of values, that the column should be sliced by.</span>
 <span class="sd">        replace: bool, optional</span>
 <span class="sd">            If set to True, the data is replaced with the sliced data, and the</span>
@@ -912,9 +915,31 @@
 <span class="sd">            Array of the values of the by column, in the sliced dataset.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">slice_col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Provided slice_col </span><span class="si">{</span><span class="n">slice_col</span><span class="si">}</span><span class="s2"> not in dataset.&quot;</span><span class="p">)</span>
-        <span class="n">sliced_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">slice_col</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">to_list</span><span class="p">(</span><span class="n">slice_values</span><span class="p">))]</span>
+        <span class="n">slice_cols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">slice_cols</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">slice_cols</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">slice_values</span><span class="p">,</span> <span class="n">List</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sd">&quot;&quot;&quot;If slicing by multiple columns, provide a list of slice values</span>
+<span class="sd">                for each column!&quot;&quot;&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">slice_cols</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">slice_values</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">slice_cols</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sd">&quot;&quot;&quot;Trying to slice by multiple columns, provide slice values</span>
+<span class="sd">                for each column!&quot;&quot;&quot;</span>
+            <span class="p">)</span>
+        <span class="k">for</span> <span class="n">slice_col</span> <span class="ow">in</span> <span class="n">slice_cols</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">slice_col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Provided slice_col </span><span class="si">{</span><span class="n">slice_col</span><span class="si">}</span><span class="s2"> not in dataset.&quot;</span><span class="p">)</span>
+
+        <span class="n">slice_values</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">slice_values</span><span class="p">)</span>
+        <span class="n">sliced_indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">slice_col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">slice_cols</span><span class="p">):</span>
+            <span class="n">sliced_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">slice_col</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">to_list</span><span class="p">(</span><span class="n">slice_values</span><span class="p">[</span><span class="n">idx</span><span class="p">]))][</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">by</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="p">)</span>
+        <span class="n">intersect_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="o">*</span><span class="nb">map</span><span class="p">(</span><span class="nb">set</span><span class="p">,</span> <span class="n">sliced_indices</span><span class="p">))</span>
+        <span class="n">sliced_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">by</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">intersect_indices</span><span class="p">)]</span>
         <span class="k">if</span> <span class="n">replace</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">sliced_data</span>
 
