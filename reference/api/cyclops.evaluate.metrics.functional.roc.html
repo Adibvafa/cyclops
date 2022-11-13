@@ -1,0 +1,622 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.evaluate.metrics.functional.roc module &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/cyclops.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="cyclops.evaluate.metrics.functional.sensitivity module" href="cyclops.evaluate.metrics.functional.sensitivity.html" />
+    <link rel="prev" title="cyclops.evaluate.metrics.functional.precision_recall_curve module" href="cyclops.evaluate.metrics.functional.precision_recall_curve.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+    document.body.innerHTML = document.body.innerHTML.replace(/ package/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav">
+  <!--
+    Lie about what theme we really are when some RTD-injected JS fetches the
+    full versions panel from the RTD API.  RTD's JS replaces the stub versions
+    panel in the Sphinx-generated HTML with the full versions panel it fetches
+    from the RTD API.  If the API thinks we're not sphinx_rtd_theme, it will
+    serve us the wrong HTML and the panel will float as a "badge" when it
+    shouldn't.  As a customized version of sphinx_rtd_theme, we really do want
+    the same HTML it gets.  See also the diagnoses in
+    <https://github.com/nextstrain/docs.nextstrain.org/issues/76>.
+
+    This bit of JS finds the data RTD injects into the page and modifies it
+    before the code that RTD injects runs and looks at the data.  RTD's
+    <script>s (in <head>) run before this JS, but they wait until the DOM is
+    ready to actually do any work.  This gives us a chance to modify the data
+    during DOM load before the RTD code actually uses it.
+
+      -trs, 27 Jan 2022
+  -->
+  <script>
+    (() => {
+      try {
+        console.log("Lying about the theme to RTD's JS so the versions panel works properly. 🙈");
+
+        /* Update global variable, which is used in the request to get the RTD
+         * "footer" that includes the versions panel.
+         */
+        if (window.READTHEDOCS_DATA)
+          window.READTHEDOCS_DATA.theme = "sphinx_rtd_theme";
+
+        /* Update stored JSON in case anything else deserializes it later.
+         * Comments in the RTD-injected HTML source claim the global variable
+         * above is deprecated.
+         */
+        var script = document.querySelector("#READTHEDOCS_DATA");
+        if (script)
+          script.innerHTML = JSON.stringify({ ...JSON.parse(script.innerHTML), theme: "sphinx_rtd_theme" });
+      }
+      catch (err) {
+        console.log("Lying about the theme to RTD's JS failed… oh well. 🤷", err);
+      }
+    })();
+  </script>
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+
+
+
+
+  <a href="https://vectorinstitute.github.io/cyclops/">
+    <img src="../../_static/cyclops_logo-dark.png" class="logo" alt="Logo"/>
+  </a>
+
+
+
+  <div class="subproject">
+    <a href="../../index.html" class="project-name" alt="Documentation Home">
+      cyclops
+    </a>
+
+    
+    
+    
+
+  </div>
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../coverage.html">Coverage report</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../api.html">API Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="cyclops.evaluate.html">cyclops.evaluate package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="cyclops.evaluate.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="cyclops.evaluate.metrics.html">cyclops.evaluate.metrics package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="cyclops.evaluate.metrics.html">cyclops.evaluate.metrics package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="cyclops.evaluate.metrics.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="cyclops.evaluate.metrics.functional.html">cyclops.evaluate.metrics.functional package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cyclops.evaluate.metrics.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.accuracy.html">cyclops.evaluate.metrics.accuracy module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.auroc.html">cyclops.evaluate.metrics.auroc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.f_beta.html">cyclops.evaluate.metrics.f_beta module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cyclops.evaluate.metrics.functional.html">cyclops.evaluate.metrics.functional package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="cyclops.evaluate.metrics.functional.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="cyclops.evaluate.metrics.functional.accuracy.html">cyclops.evaluate.metrics.functional.accuracy module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.evaluate.metrics.functional.auroc.html">cyclops.evaluate.metrics.functional.auroc module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.evaluate.metrics.functional.f_beta.html">cyclops.evaluate.metrics.functional.f_beta module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.evaluate.metrics.functional.precision_recall.html">cyclops.evaluate.metrics.functional.precision_recall module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.evaluate.metrics.functional.precision_recall_curve.html">cyclops.evaluate.metrics.functional.precision_recall_curve module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">cyclops.evaluate.metrics.functional.roc module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.evaluate.metrics.functional.sensitivity.html">cyclops.evaluate.metrics.functional.sensitivity module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.evaluate.metrics.functional.specificity.html">cyclops.evaluate.metrics.functional.specificity module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.evaluate.metrics.functional.stat_scores.html">cyclops.evaluate.metrics.functional.stat_scores module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.accuracy.html">cyclops.evaluate.metrics.functional.accuracy module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.auroc.html">cyclops.evaluate.metrics.functional.auroc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.f_beta.html">cyclops.evaluate.metrics.functional.f_beta module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.precision_recall.html">cyclops.evaluate.metrics.functional.precision_recall module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.precision_recall_curve.html">cyclops.evaluate.metrics.functional.precision_recall_curve module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">cyclops.evaluate.metrics.functional.roc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.sensitivity.html">cyclops.evaluate.metrics.functional.sensitivity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.specificity.html">cyclops.evaluate.metrics.functional.specificity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.stat_scores.html">cyclops.evaluate.metrics.functional.stat_scores module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.metric.html">cyclops.evaluate.metrics.metric module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.precision_recall.html">cyclops.evaluate.metrics.precision_recall module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.precision_recall_curve.html">cyclops.evaluate.metrics.precision_recall_curve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.roc.html">cyclops.evaluate.metrics.roc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.sensitivity.html">cyclops.evaluate.metrics.sensitivity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.specificity.html">cyclops.evaluate.metrics.specificity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.stat_scores.html">cyclops.evaluate.metrics.stat_scores module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.utils.html">cyclops.evaluate.metrics.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.plotter.html">cyclops.plotter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.html">cyclops.processors package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.aggregate.html">cyclops.processors.aggregate module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.clean.html">cyclops.processors.clean module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.diagnoses.html">cyclops.processors.diagnoses module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.html">cyclops.processors.feature package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.feature.html">cyclops.processors.feature.feature module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.normalization.html">cyclops.processors.feature.normalization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.split.html">cyclops.processors.feature.split module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.type_handling.html">cyclops.processors.feature.type_handling module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.feature.vectorize.html">cyclops.processors.feature.vectorize module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.impute.html">cyclops.processors.impute module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.string_ops.html">cyclops.processors.string_ops module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.processors.util.html">cyclops.processors.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.html">cyclops.query package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.base.html">cyclops.query.base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.gemini.html">cyclops.query.gemini module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.interface.html">cyclops.query.interface module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.mimiciv.html">cyclops.query.mimiciv module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.omop.html">cyclops.query.omop module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.orm.html">cyclops.query.orm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.html">cyclops.query.postprocess package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.gemini.html">cyclops.query.postprocess.gemini module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.mimiciv.html">cyclops.query.postprocess.mimiciv module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.util.html">cyclops.query.postprocess.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.process.html">cyclops.query.process module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.util.html">cyclops.query.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.html">cyclops.utils package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.common.html">cyclops.utils.common module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.file.html">cyclops.utils.file module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.indexing.html">cyclops.utils.indexing module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.log.html">cyclops.utils.log module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.profile.html">cyclops.utils.profile module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.workflow.html">cyclops.workflow package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.workflow.task.html">cyclops.workflow.task module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+  
+
+  
+  
+    <li><a href="https://vectorinstitute.github.io/cyclops/">Home</a></li>
+    <li><a href="../../index.html">cyclops</a></li>
+  
+
+  
+  
+    <li><a href="../../api.html">API Documentation</a></li>
+  
+    <li><a href="cyclops.evaluate.html">cyclops.evaluate package</a></li>
+  
+    <li><a href="cyclops.evaluate.metrics.html">cyclops.evaluate.metrics package</a></li>
+  
+    <li><a href="cyclops.evaluate.metrics.functional.html">cyclops.evaluate.metrics.functional package</a></li>
+  
+
+  
+
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reference/api/cyclops.evaluate.metrics.functional.roc.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-cyclops.evaluate.metrics.functional.roc">
+<span id="cyclops-evaluate-metrics-functional-roc-module"></span><h1>cyclops.evaluate.metrics.functional.roc module<a class="headerlink" href="#module-cyclops.evaluate.metrics.functional.roc" title="Permalink to this headline"></a></h1>
+<p>Functions for computing the receiver operating characteristic (ROC) curve.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.evaluate.metrics.functional.roc.binary_roc_curve">
+<span class="sig-name descname"><span class="pre">binary_roc_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresholds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluate/metrics/functional/roc.html#binary_roc_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluate.metrics.functional.roc.binary_roc_curve" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the ROC curve for binary classification tasks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth (correct) target values.</p></li>
+<li><p><strong>preds</strong> (<em>ArrayLike</em>) – Estimated probabilities or decision function. If <code class="docutils literal notranslate"><span class="pre">preds</span></code> is not in
+the range [0, 1], a sigmoid function is applied to transform it to
+the range [0, 1].</p></li>
+<li><p><strong>thresholds</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of floats</em><em> or </em><em>numpy.ndarray of floats</em><em>, </em><em>default=None</em>) – Thresholds used for computing the precision and recall scores.
+If int, then the number of thresholds to use.
+If list or array, then the thresholds to use.
+If None, then the thresholds are automatically determined by the
+unique values in <code class="docutils literal notranslate"><span class="pre">preds</span></code>.</p></li>
+<li><p><strong>pos_label</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – The label of the positive class.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>fpr</strong> (<em>numpy.ndarray</em>) – False positive rate.</p></li>
+<li><p><strong>tpr</strong> (<em>numpy.ndarray</em>) – True positive rate.</p></li>
+<li><p><strong>thresholds</strong> (<em>numpy.ndarray</em>) – Thresholds used to compute fpr and tpr.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cyclops.evaluation.metrics.functional</span> <span class="kn">import</span> <span class="n">binary_roc_curve</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preds</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">binary_roc_curve</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fpr</span>
+<span class="go">array([0. , 0. , 0. , 0.5, 1. ])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tpr</span>
+<span class="go">array([0., 1., 1., 1., 1.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thresholds</span>
+<span class="go">array([1.  , 0.75, 0.5 , 0.25, 0.  ])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.evaluate.metrics.functional.roc.multiclass_roc_curve">
+<span class="sig-name descname"><span class="pre">multiclass_roc_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresholds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluate/metrics/functional/roc.html#multiclass_roc_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluate.metrics.functional.roc.multiclass_roc_curve" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the ROC curve for multiclass classification tasks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth (correct) target values.</p></li>
+<li><p><strong>preds</strong> (<em>ArrayLike</em>) – Estimated probabilities or decision function. If <code class="docutils literal notranslate"><span class="pre">preds</span></code> is not in
+the range [0, 1], a softmax function is applied to transform it to
+the range [0, 1].</p></li>
+<li><p><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of classes.</p></li>
+<li><p><strong>thresholds</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of floats</em><em> or </em><em>numpy.ndarray of floats</em><em>, </em><em>default=None</em>) – Thresholds used for binarizing the predicted probabilities.
+If int, then the number of thresholds to use.
+If list or array, then the thresholds to use.
+If None, then the thresholds are automatically determined by the
+unique values in <code class="docutils literal notranslate"><span class="pre">preds</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>], <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>], <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>], <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]]]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>fpr</strong> (<em>numpy.ndarray or list of numpy.ndarray</em>) – False positive rate. If <code class="docutils literal notranslate"><span class="pre">threshold</span></code> is not None, <code class="docutils literal notranslate"><span class="pre">fpr</span></code> is a 1d numpy
+array. Otherwise, <code class="docutils literal notranslate"><span class="pre">fpr</span></code> is a list of 1d numpy arrays, one for each
+class.</p></li>
+<li><p><strong>tpr</strong> (<em>numpy.ndarray or list of numpy.ndarray</em>) – True positive rate. If <code class="docutils literal notranslate"><span class="pre">threshold</span></code> is not None, <code class="docutils literal notranslate"><span class="pre">tpr</span></code> is a 1d numpy
+array. Otherwise, <code class="docutils literal notranslate"><span class="pre">tpr</span></code> is a list of 1d numpy arrays, one for each class.</p></li>
+<li><p><strong>thresholds</strong> (<em>numpy.ndarray or list of numpy.ndarray</em>) – Thresholds used to compute fpr and tpr. <code class="docutils literal notranslate"><span class="pre">threshold</span></code> is not None,
+thresholds is a 1d numpy array. Otherwise, thresholds is a list of
+1d numpy arrays, one for each class.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cyclops.evaluation.metrics.functional</span> <span class="kn">import</span> <span class="n">multiclass_roc_curve</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preds</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">],</span>
+<span class="gp">... </span>        <span class="p">[</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">multiclass_roc_curve</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">num_classes</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="mi">5</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fpr</span>
+<span class="go">array([[0.        , 0.5       , 0.5       , 0.5       , 1.        ],</span>
+<span class="go">[0.        , 0.33333333, 0.33333333, 0.33333333, 1.        ],</span>
+<span class="go">[0.        , 0.        , 0.        , 0.        , 1.        ]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tpr</span>
+<span class="go">array([[0. , 0.5, 0.5, 0.5, 1. ],</span>
+<span class="go">[0. , 0. , 0. , 0. , 1. ],</span>
+<span class="go">[0. , 1. , 1. , 1. , 1. ]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thresholds</span>
+<span class="go">array([1.  , 0.75, 0.5 , 0.25, 0.  ])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.evaluate.metrics.functional.roc.multilabel_roc_curve">
+<span class="sig-name descname"><span class="pre">multilabel_roc_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresholds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluate/metrics/functional/roc.html#multilabel_roc_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluate.metrics.functional.roc.multilabel_roc_curve" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the ROC curve for multilabel classification tasks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth (correct) target values.</p></li>
+<li><p><strong>preds</strong> (<em>ArrayLike</em>) – Estimated probabilities or decision function. If <code class="docutils literal notranslate"><span class="pre">preds</span></code> is not in
+the range [0, 1], a sigmoid function is applied to transform it to
+the range [0, 1].</p></li>
+<li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of labels in the dataset.</p></li>
+<li><p><strong>thresholds</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of floats</em><em> or </em><em>numpy.ndarray of floats</em><em>, </em><em>default=None</em>) – Thresholds used for binarizing the values of <code class="docutils literal notranslate"><span class="pre">preds</span></code>.
+If int, then the number of thresholds to use.
+If list or array, then the thresholds to use.
+If None, then the thresholds are automatically determined by the
+unique values in <code class="docutils literal notranslate"><span class="pre">preds</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>], <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>], <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>], <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]]]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>fpr</strong> (<em>numpy.ndarray or list of numpy.ndarray</em>) – False positive rate. If <code class="docutils literal notranslate"><span class="pre">threshold</span></code> is not None, <code class="docutils literal notranslate"><span class="pre">fpr</span></code> is a 1d numpy
+array. Otherwise, <code class="docutils literal notranslate"><span class="pre">fpr</span></code> is a list of 1d numpy arrays, one for each
+label.</p></li>
+<li><p><strong>tpr</strong> (<em>numpy.ndarray or list of numpy.ndarray</em>) – True positive rate. If <code class="docutils literal notranslate"><span class="pre">threshold</span></code> is not None, <code class="docutils literal notranslate"><span class="pre">tpr</span></code> is a 1d numpy
+array. Otherwise, <code class="docutils literal notranslate"><span class="pre">tpr</span></code> is a list of 1d numpy arrays, one for each label.</p></li>
+<li><p><strong>thresholds</strong> (<em>numpy.ndarray or list of numpy.ndarray</em>) – Thresholds used to compute fpr and tpr. <code class="docutils literal notranslate"><span class="pre">threshold</span></code> is not None,
+thresholds is a 1d numpy array. Otherwise, thresholds is a list of
+1d numpy arrays, one for each label.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cyclops.evaluation.metrics.functional</span> <span class="kn">import</span> <span class="n">multilabel_roc_curve</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preds</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">multilabel_roc_curve</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">thresholds</span><span class="o">=</span><span class="mi">5</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fpr</span>
+<span class="go">array([[0., 0., 0., 0., 1.],</span>
+<span class="go">[0., 0., 0., 0., 1.],</span>
+<span class="go">[0., 1., 1., 1., 1.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tpr</span>
+<span class="go">array([[0. , 1. , 1. , 1. , 1. ],</span>
+<span class="go">[0. , 0.5, 0.5, 0.5, 1. ],</span>
+<span class="go">[0. , 0.5, 0.5, 1. , 1. ]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">thresholds</span>
+<span class="go">array([1.  , 0.75, 0.5 , 0.25, 0.  ])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.evaluate.metrics.functional.roc.roc_curve">
+<span class="sig-name descname"><span class="pre">roc_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresholds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluate/metrics/functional/roc.html#roc_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluate.metrics.functional.roc.roc_curve" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the ROC curve for different tasks/input types.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth (correct) target values.</p></li>
+<li><p><strong>preds</strong> (<em>ArrayLike</em>) – Estimated probabilities or non-thresholded output of decision function.
+If <code class="docutils literal notranslate"><span class="pre">task</span></code> is <code class="docutils literal notranslate"><span class="pre">multiclass</span></code> and the values in <code class="docutils literal notranslate"><span class="pre">preds</span></code> are not
+probabilities, they will be converted to probabilities using the softmax
+function. If <code class="docutils literal notranslate"><span class="pre">task</span></code> is <code class="docutils literal notranslate"><span class="pre">multilabel</span></code> and the values in <code class="docutils literal notranslate"><span class="pre">preds</span></code> are
+not probabilities, they will be converted to probabilities using the
+sigmoid function.</p></li>
+<li><p><strong>task</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;binary&quot;</em><em>, </em><em>&quot;multiclass&quot;</em><em>, </em><em>&quot;multilabel&quot;</em><em>]</em>) – The type of task for the input data. One of ‘binary’, ‘multiclass’
+or ‘multilabel’.</p></li>
+<li><p><strong>thresholds</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of floats</em><em> or </em><em>numpy.ndarray of floats</em><em>, </em><em>default=None</em>) – <dl class="simple">
+<dt>Thresholds used for computing the ROC curve. Can be one of:</dt><dd><ul>
+<li><p>None: use the unique values of <code class="docutils literal notranslate"><span class="pre">preds</span></code> as thresholds</p></li>
+<li><p>int: generate <code class="docutils literal notranslate"><span class="pre">thresholds</span></code> number of evenly spaced values between
+0 and 1 as thresholds.</p></li>
+<li><p>list of floats: use the values in the list as thresholds. The list
+of values should be monotonically increasing. The list will be
+converted into a numpy array.</p></li>
+<li><p>numpy.ndarray of floats: use the values in the array as thresholds.
+The array should be 1d and monotonically increasing.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>pos_label</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>default=1</em>) – The label of the positive class.</p></li>
+<li><p><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – The number of classes in the dataset. Required for multiclass tasks.</p></li>
+<li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – The number of labels in the dataset. Required for multilabel tasks.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>], <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>], <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>], <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]]]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>fpr</strong> (<em>numpy.ndarray or list of numpy.ndarray</em>) – False positive rate. If <code class="docutils literal notranslate"><span class="pre">task</span></code> is ‘binary’ or <code class="docutils literal notranslate"><span class="pre">threshold</span></code> is not None,
+<code class="docutils literal notranslate"><span class="pre">fpr</span></code> is a 1d numpy array. If <code class="docutils literal notranslate"><span class="pre">task</span></code> is ‘multiclass’ or ‘multilabel’,
+and <code class="docutils literal notranslate"><span class="pre">threshold</span></code> is None, then <code class="docutils literal notranslate"><span class="pre">fpr</span></code> is a list of 1d numpy
+arrays, one for each class or label.</p></li>
+<li><p><strong>tpr</strong> (<em>numpy.ndarray or list of numpy.ndarray</em>) – True positive rate. If <code class="docutils literal notranslate"><span class="pre">task</span></code> is ‘binary’ or <code class="docutils literal notranslate"><span class="pre">threshold</span></code> is not None,
+<code class="docutils literal notranslate"><span class="pre">tpr</span></code> is a 1d numpy array. If <code class="docutils literal notranslate"><span class="pre">task</span></code> is ‘multiclass’ or ‘multilabel’,
+and <code class="docutils literal notranslate"><span class="pre">threshold</span></code> is None, then <code class="docutils literal notranslate"><span class="pre">tpr</span></code> is a list of 1d numpy
+arrays, one for each class or label.</p></li>
+<li><p><strong>thresholds</strong> (<em>numpy.ndarray or list of numpy.ndarray</em>) – Thresholds used to compute fpr and tpr. If <code class="docutils literal notranslate"><span class="pre">task</span></code> is ‘binary’ or
+<code class="docutils literal notranslate"><span class="pre">threshold</span></code> is not None, <code class="docutils literal notranslate"><span class="pre">thresholds</span></code> is a 1d numpy array. If
+<code class="docutils literal notranslate"><span class="pre">task</span></code> is ‘multiclass’ or ‘multilabel’, and <code class="docutils literal notranslate"><span class="pre">threshold</span></code> is None,
+then <code class="docutils literal notranslate"><span class="pre">thresholds</span></code> is a list of 1d numpy arrays, one for each class
+or label.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">task</span></code> is not one of ‘binary’, ‘multiclass’ or ‘multilabel’.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#AssertionError" title="(in Python v3.9)"><strong>AssertionError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">task</span></code> is <code class="docutils literal notranslate"><span class="pre">multiclass</span></code> and <code class="docutils literal notranslate"><span class="pre">num_classes</span></code> is not provided.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#AssertionError" title="(in Python v3.9)"><strong>AssertionError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">task</span></code> is <code class="docutils literal notranslate"><span class="pre">multilabel</span></code> and <code class="docutils literal notranslate"><span class="pre">num_labels</span></code> is not provided.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cyclops.evaluate.metrics.functional.precision_recall_curve.html" class="btn btn-neutral float-left" title="cyclops.evaluate.metrics.functional.precision_recall_curve module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cyclops.evaluate.metrics.functional.sensitivity.html" class="btn btn-neutral float-right" title="cyclops.evaluate.metrics.functional.sensitivity module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  
+
+  <div class="citation">
+    CyclOps team <i>et al.,</i>
+    <a href="https://vectorinstitute.github.io/cyclops/">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, TBD</i> (2022)
+  </def>
+
+
+  <p class="avatar">cyclops is built by</p>
+  <div class="avatar">
+    
+    
+    <span>
+      <a href="https://github.com/amrit110">
+        <img src="../../_static/team/amrit-krishnan.jpg" width="32"/>
+        Amrit Krishnan
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/KadenMc">
+        <img src="../../_static/team/kaden-mckeen.jpg" width="32"/>
+        Kaden McKeen
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/vsubasri">
+        <img src="../../_static/team/valli-subasri.jpg" width="32"/>
+        Valli Subasri
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/a-kore">
+        <img src="../../_static/team/ali-kore.jpg" width="32"/>
+        Ali Kore
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/fcogidi">
+        <img src="../../_static/team/franklin-ogidi.jpg" width="32"/>
+        Franklin Ogidi
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/dhrumilp15">
+        <img src="../../_static/team/dhrumil-patel.jpg" width="32"/>
+        Dhrumil Patel
+      </a>
+    </span>
+    ,
+  </div>
+
+
+  <div class="footer-small-text">
+    All <a href="https://github.com/VectorInstitute/cyclops">source code for cyclops</a> is freely available under the terms of an <a href="https://opensource.org/licenses/Apache-2.0">Apache-2.0</a> license.
+  </div>
+
+  <div class="footer-small-text">
+    This work is made possible due to the data obtained from the
+    General Medicine Inpatient Initiative (GEMINI).
+  </div>
+
+  <hr/>
+
+  <div class="logo">
+    <a class="logo" href="https://vectorinstitute.ai/">
+      <span class="logo"></span>
+      <img alt="Logo of the Vector Institute" style="width:90px; max-width:90px;" src="../../_static/logos/vector_logo.png" />
+    </a>
+    <a class="logo" href="https://www.geminimedicine.ca/">
+      <span class="logo"></span>
+      <img alt="Logo of GEMINI" style="width:90px; max-width:90px;" src="../../_static/logos/gemini_logo.png" />
+    </a>
+  </div>
+
+  <div class="copyright">
+    &copy; Copyright 2022, Vector AI Engineering
+  </div>
+
+  <div class="copyright">
+    </p>
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using customised version of
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">base theme</a> provided by
+    <a href="https://readthedocs.org">Read the Docs</a>.
+  </div>
+
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
