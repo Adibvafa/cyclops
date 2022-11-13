@@ -28,7 +28,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="cyclops.evaluation.metrics.utils module" href="cyclops.evaluation.metrics.utils.html" />
+    <link rel="next" title="cyclops.evaluation.metrics.accuracy module" href="cyclops.evaluation.metrics.accuracy.html" />
     <link rel="prev" title="cyclops.evaluation.metrics.functional.specificity module" href="cyclops.evaluation.metrics.functional.specificity.html" />
 <script type="text/javascript">
   window.onload = function() {
@@ -146,6 +146,9 @@
 <li class="toctree-l3"><a class="reference internal" href="cyclops.evaluation.metrics.html#submodules">Submodules</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.accuracy.html">cyclops.evaluation.metrics.accuracy module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.auroc.html">cyclops.evaluation.metrics.auroc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.f_beta.html">cyclops.evaluation.metrics.f_beta module</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="cyclops.evaluation.metrics.functional.html">cyclops.evaluation.metrics.functional package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="cyclops.evaluation.metrics.functional.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.accuracy.html">cyclops.evaluation.metrics.functional.accuracy module</a></li>
@@ -154,6 +157,7 @@
 <li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.precision_recall.html">cyclops.evaluation.metrics.functional.precision_recall module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.precision_recall_curve.html">cyclops.evaluation.metrics.functional.precision_recall_curve module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.roc.html">cyclops.evaluation.metrics.functional.roc module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.sensitivity.html">cyclops.evaluation.metrics.functional.sensitivity module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.specificity.html">cyclops.evaluation.metrics.functional.specificity module</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">cyclops.evaluation.metrics.functional.stat_scores module</a></li>
 </ul>
@@ -166,8 +170,16 @@
 <li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.precision_recall.html">cyclops.evaluation.metrics.functional.precision_recall module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.precision_recall_curve.html">cyclops.evaluation.metrics.functional.precision_recall_curve module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.roc.html">cyclops.evaluation.metrics.functional.roc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.sensitivity.html">cyclops.evaluation.metrics.functional.sensitivity module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.specificity.html">cyclops.evaluation.metrics.functional.specificity module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">cyclops.evaluation.metrics.functional.stat_scores module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.metric.html">cyclops.evaluation.metrics.metric module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.precision_recall.html">cyclops.evaluation.metrics.precision_recall module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.precision_recall_curve.html">cyclops.evaluation.metrics.precision_recall_curve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.roc.html">cyclops.evaluation.metrics.roc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.sensitivity.html">cyclops.evaluation.metrics.sensitivity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.specificity.html">cyclops.evaluation.metrics.specificity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.stat_scores.html">cyclops.evaluation.metrics.stat_scores module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.utils.html">cyclops.evaluation.metrics.utils module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.plotter.html">cyclops.plotter module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.processors.html">cyclops.processors package</a></li>
@@ -259,61 +271,81 @@ false negatives. Binary, multiclass and multilabel data are supported, including
 and probabilities.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="cyclops.evaluation.metrics.functional.stat_scores.binary_stat_scores">
-<span class="sig-name descname"><span class="pre">binary_stat_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/stat_scores.html#binary_stat_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.stat_scores.binary_stat_scores" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">binary_stat_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/stat_scores.html#binary_stat_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.stat_scores.binary_stat_scores" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the stat scores for binary inputs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth.</p></li>
 <li><p><strong>preds</strong> (<em>ArrayLike</em>) – Predictions.</p></li>
-<li><p><strong>pos_label</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The positive label to report. Defaults to 1. Can be either 0, 1.</p></li>
-<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Threshold for converting logits and probability predictions to binary
-[1, 0]. Defaults to 0.5.</p></li>
-<li><p><strong>sample_weight</strong> (<em>ArrayLike</em>) – Sample weights.</p></li>
+<li><p><strong>pos_label</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>default=1</em>) – The label to use for the positive class.</p></li>
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>default=0.5</em>) – The threshold to use for converting the predictions to binary
+values. Logits will be converted to probabilities using the sigmoid
+function.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>The true positives, false positives, true negatives and false negatives.</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The true positives, false positives, true negatives and false negatives
+and support in that order.</p>
 </dd>
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – If threshold is not a float and not in [0,1].</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – If the threshold is not in [0, 1] or if the pos_label is not 0 or 1.</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cyclops.evaluation.metrics.functional</span> <span class="kn">import</span> <span class="n">binary_stat_scores</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preds</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">binary_stat_scores</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span>
+<span class="go">array([1, 0, 2, 1, 2])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cyclops.evaluation.metrics.functional.stat_scores.multiclass_stat_scores">
-<span class="sig-name descname"><span class="pre">multiclass_stat_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classwise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/stat_scores.html#multiclass_stat_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.stat_scores.multiclass_stat_scores" title="Permalink to this definition"></a></dt>
-<dd><p>Compute stat scores for multiclass inputs.</p>
+<span class="sig-name descname"><span class="pre">multiclass_stat_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classwise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/stat_scores.html#multiclass_stat_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.stat_scores.multiclass_stat_scores" title="Permalink to this definition"></a></dt>
+<dd><p>Compute stat scores for multiclass targets.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth.</p></li>
-<li><p><strong>preds</strong> (<em>ArrayLike</em>) – Predictions.</p></li>
+<li><p><strong>target</strong> (<em>ArrayLike</em>) – The ground truth values.</p></li>
+<li><p><strong>preds</strong> (<em>ArrayLike</em>) – The predictions. If determined to be in continuous format, will be
+converted to multiclass using the <code class="docutils literal notranslate"><span class="pre">top_k</span></code> parameter.</p></li>
 <li><p><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The total number of classes for the problem.</p></li>
-<li><p><strong>top_k</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of top predictions to consider when computing the statistics.
-Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
-<li><p><strong>classwise</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to return the statistics for each class or sum over all classes.
-Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
-<li><p><strong>sample_weight</strong> (<em>ArrayLike</em>) – Sample weights.</p></li>
+<li><p><strong>top_k</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em><em>, </em><em>default=None</em>) – The number of top predictions to consider when computing the
+stat scores. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, it is assumed to be 1.</p></li>
+<li><p><strong>classwise</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default=True</em>) – Whether to return the stat scores for each class or sum over all
+classes.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The number of true positives, false positives, true negatives, false
+negatives and support. If <code class="docutils literal notranslate"><span class="pre">classwise</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the shape is
+<code class="docutils literal notranslate"><span class="pre">(num_classes,</span> <span class="pre">5)</span></code>. Otherwise, the shape is <code class="docutils literal notranslate"><span class="pre">(5,)</span></code></p>
 </dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p><em>The number of true positives, false positives, true negatives and false</em></p></li>
-<li><p><em>negatives.</em></p></li>
-</ul>
-</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.nadarray</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cyclops.evaluation.metrics.functional</span> <span class="kn">import</span> <span class="n">multiclass_stat_scores</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preds</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">multiclass_stat_scores</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">array([[1, 1, 3, 0, 1],</span>
+<span class="go">       [0, 1, 3, 1, 1],</span>
+<span class="go">       [1, 1, 1, 2, 3]])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cyclops.evaluation.metrics.functional.stat_scores.multilabel_stat_scores">
-<span class="sig-name descname"><span class="pre">multilabel_stat_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduce</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'micro'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/stat_scores.html#multilabel_stat_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.stat_scores.multilabel_stat_scores" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">multilabel_stat_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelwise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/stat_scores.html#multilabel_stat_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.stat_scores.multilabel_stat_scores" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the stat scores for multilabel inputs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -321,99 +353,73 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">False</
 <li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth.</p></li>
 <li><p><strong>preds</strong> (<em>ArrayLike</em>) – Predictions.</p></li>
 <li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The total number of labels for the problem.</p></li>
-<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Threshold value for binarizing the predictions. Defaults to <code class="docutils literal notranslate"><span class="pre">0.5</span></code>.</p></li>
-<li><p><strong>top_k</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of top predictions to consider when computing the statistics.
-Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
-<li><p><strong>reduce</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;samples&quot;</em><em>]</em>) – <dl class="simple">
-<dt>The reduction method to use. Defaults to <code class="docutils literal notranslate"><span class="pre">micro</span></code>. Can be one of:</dt><dd><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code> - sum the statistics over all labels.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code> - compute the unweighted mean of the per-label statistics.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">samples</span></code> - compute the unweighted mean of the per-sample
-statistics.</p></li>
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>default=0.5</em>) – Threshold value for binarizing predictions that are probabilities or
+logits. A sigmoid function is applied if the predictions are logits.</p></li>
+<li><p><strong>top_k</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>default=None</em>) – The number of top predictions to consider when computing the statistics.</p></li>
+<li><p><strong>labelwise</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default=False</em>) – Whether to return the stat scores for each label or sum over all labels.</p></li>
 </ul>
 </dd>
-</dl>
-</p></li>
-<li><p><strong>sample_weight</strong> (<em>ArrayLike</em>) – Sample weights.</p></li>
-</ul>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The number of true positives, false positives, true negatives and false
+negatives and the support. The shape of the array is <code class="docutils literal notranslate"><span class="pre">(5,</span> <span class="pre">num_labels)</span></code>
+if <code class="docutils literal notranslate"><span class="pre">labelwise=True</span></code> and <code class="docutils literal notranslate"><span class="pre">(5,)</span></code> otherwise.</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p><em>The number of true positives, false positives, true negatives and false</em></p></li>
-<li><p><em>negatives and the support.</em></p></li>
-</ul>
-</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">reduce</span></code> is not one of <code class="docutils literal notranslate"><span class="pre">micro</span></code>, <code class="docutils literal notranslate"><span class="pre">macro</span></code> or <code class="docutils literal notranslate"><span class="pre">samples</span></code>.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">threshold</span></code> is not between <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p></li>
-</ul>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">threshold</span></code> is not between <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cyclops.evaluation.metrics.functional</span> <span class="kn">import</span> <span class="n">multilabel_stat_scores</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preds</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">multilabel_stat_scores</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">array([[1, 0, 1, 0, 1],</span>
+<span class="go">       [1, 0, 1, 0, 1],</span>
+<span class="go">       [2, 0, 0, 0, 2]])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cyclops.evaluation.metrics.functional.stat_scores.stat_scores">
-<span class="sig-name descname"><span class="pre">stat_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classwise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduce</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'micro'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/stat_scores.html#stat_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.stat_scores.stat_scores" title="Permalink to this definition"></a></dt>
-<dd><p>Compute true positives, false positives, true negatives and false negatives.</p>
-<p>Concatenates the results in a single array, along with the support. This
-function acts as an entry point for more specialized functions.</p>
+<span class="sig-name descname"><span class="pre">stat_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classwise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelwise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/stat_scores.html#stat_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.stat_scores.stat_scores" title="Permalink to this definition"></a></dt>
+<dd><p>Compute stat scores for binary, multiclass or multilabel problems.</p>
+<p>This function acts as an entry point to the specialized functions for each
+task.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>preds</strong> (<em>ArrayLike</em>) – Predictions.</p></li>
 <li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth.</p></li>
-<li><p><strong>task</strong> (<em>String</em>) – <p>The task type. Can be either <code class="docutils literal notranslate"><span class="pre">binary</span></code>, <code class="docutils literal notranslate"><span class="pre">multiclass</span></code> or
-<code class="docutils literal notranslate"><span class="pre">multilabel</span></code>. One of:</p>
-<blockquote>
-<div><ul>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">binary</span></code>: binary classification.</dt><dd><p>Example: [0, 1, 1, 0, 1] or [0.1, 0.9, 0.8, 0.2, 0.4]</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">multiclass</span></code>: multiclass classification.</dt><dd><p>Example: [0, 1, 2, 0, 1] or [[0.1, 0.9, 0.0], [0.0, 0.8, 0.2], …]</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">multilabel</span></code>: multilabel classification.</dt><dd><p>Example: [[0, 1], [1, 0], [1, 1], [0, 0], [1, 0]] or
-[[0.1, 0.9], [0.0, 0.8], …]</p>
-</dd>
-</dl>
-</li>
-</ul>
-</div></blockquote>
-</p></li>
-<li><p><strong>pos_label</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The positive label. Defaults to 1. Only used for binary tasks.</p></li>
-<li><p><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of classes. Only used for multiclass tasks.</p></li>
-<li><p><strong>classwise</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to compute the stat scores classwise. Only used for multiclass
-tasks. Defaults to False.</p></li>
-<li><p><strong>top_k</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of top classes to consider. Used for multiclass and
-multilabel tasks. Defaults to None.</p></li>
-<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – The threshold to use for binarizing the predictions. Used for
-binary and multilabel tasks. Defaults to 0.5.</p></li>
+<li><p><strong>preds</strong> (<em>ArrayLike</em>) – Predictions.</p></li>
+<li><p><strong>task</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;binary&quot;</em><em>, </em><em>&quot;multiclass&quot;</em><em>, </em><em>&quot;multilabel&quot;</em><em>]</em>) – The task type. Can be either <code class="docutils literal notranslate"><span class="pre">binary</span></code>, <code class="docutils literal notranslate"><span class="pre">multiclass</span></code> or
+<code class="docutils literal notranslate"><span class="pre">multilabel</span></code>.</p></li>
+<li><p><strong>pos_label</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>default=1</em>) – The positive label to report. Only used for binary tasks.</p></li>
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>default=0.5</em>) – The threshold to use for binarizing the predictions if logits or
+probabilities are provided. If logits are provided, a sigmoid function
+is applied prior to binarization. Used for binary and multilabel tasks.</p></li>
+<li><p><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of classes for the problem. Required for multiclass tasks.</p></li>
+<li><p><strong>classwise</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default=True</em>) – Whether to return the stat scores for each class or sum over all
+classes. Only used for multiclass tasks.</p></li>
+<li><p><strong>top_k</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>default=None</em>) – The number of top predictions to consider when computing the statistics.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">top_k</span></code> is set to 1. Used for multiclass and multilabel
+tasks.</p></li>
 <li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of labels. Only used for multilabel tasks.</p></li>
-<li><p><strong>reduce</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;samples&quot;</em><em>]</em>) – <p>Reduction mode. Defaults to ‘micro’. Only used for multiclass and
-multilabel tasks. One of:</p>
-<blockquote>
-<div><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: compute the stat scores globally.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: compute the stat scores for each class.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">samples</span></code>: compute the stat scores for each sample.</p></li>
-</ul>
-</div></blockquote>
-</p></li>
-<li><p><strong>sample_weight</strong> (<em>ArrayLike</em>) – Sample weights.</p></li>
+<li><p><strong>labelwise</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default=False</em>) – Whether to compute the stat scores labelwise. Only used for multilabel
+tasks.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>The stat scores.</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>scores</strong> – The stat scores - true positives, false positives, true negatives,
+false negatives and support. For binary tasks, the shape is (5,).
+For multiclass tasks, the shape is (n_classes, 5) if <code class="docutils literal notranslate"><span class="pre">classwise</span></code> is
+True, otherwise (5,). For multilabel tasks, the shape is (n_labels, 5)
+if <code class="docutils literal notranslate"><span class="pre">labelwise</span></code> is True, otherwise (n_classes, 5).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -425,7 +431,7 @@ multilabel tasks. One of:</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="cyclops.evaluation.metrics.functional.specificity.html" class="btn btn-neutral float-left" title="cyclops.evaluation.metrics.functional.specificity module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="cyclops.evaluation.metrics.utils.html" class="btn btn-neutral float-right" title="cyclops.evaluation.metrics.utils module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cyclops.evaluation.metrics.accuracy.html" class="btn btn-neutral float-right" title="cyclops.evaluation.metrics.accuracy module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

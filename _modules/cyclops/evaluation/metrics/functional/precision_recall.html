@@ -168,6 +168,7 @@
              
   <h1>Source code for cyclops.evaluation.metrics.functional.precision_recall</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Functions for computing precision and recall scores on different input types.&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -175,9 +176,17 @@
 <span class="kn">from</span> <span class="nn">sklearn.metrics._classification</span> <span class="kn">import</span> <span class="n">_prf_divide</span>
 
 <span class="kn">from</span> <span class="nn">cyclops.evaluation.metrics.functional.stat_scores</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_binary_stat_scores_args_check</span><span class="p">,</span>
+    <span class="n">_binary_stat_scores_format</span><span class="p">,</span>
     <span class="n">_binary_stat_scores_update</span><span class="p">,</span>
+    <span class="n">_multiclass_stat_scores_format</span><span class="p">,</span>
     <span class="n">_multiclass_stat_scores_update</span><span class="p">,</span>
+    <span class="n">_multilabel_stat_scores_format</span><span class="p">,</span>
     <span class="n">_multilabel_stat_scores_update</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">cyclops.evaluation.metrics.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_check_average_arg</span><span class="p">,</span>
+    <span class="n">_get_value_if_singleton_array</span><span class="p">,</span>
 <span class="p">)</span>
 
 
@@ -186,33 +195,33 @@
     <span class="n">fp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">fn</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">metric</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;precision&quot;</span><span class="p">,</span> <span class="s2">&quot;recall&quot;</span><span class="p">],</span>
-    <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
-    <span class="n">sample_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
     <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Compute precision or recall scores and apply specified average.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        tp: np.ndarray</span>
+<span class="sd">        tp : numpy.ndarray</span>
 <span class="sd">            True positives.</span>
-<span class="sd">        fp: np.ndarray</span>
+<span class="sd">        fp : numpy.ndarray</span>
 <span class="sd">            False positives.</span>
-<span class="sd">        fn: np.ndarray</span>
+<span class="sd">        fn : numpy.ndarray</span>
 <span class="sd">            False negatives.</span>
-<span class="sd">        metric: Literal[&quot;precision&quot;, &quot;recall&quot;]</span>
+<span class="sd">        metric : Literal[&quot;precision&quot;, &quot;recall&quot;]</span>
 <span class="sd">            Metric to compute.</span>
-<span class="sd">        average: Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, &quot;samples&quot;, None]</span>
+<span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None]</span>
 <span class="sd">            Average to apply. If None, return scores for each class.</span>
-<span class="sd">        sample_weight: Optional[ArrayLike]</span>
-<span class="sd">            Sample weights.</span>
-<span class="sd">        zero_division: Literal[&quot;warn&quot;, 0, 1]</span>
+<span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1]</span>
 <span class="sd">            Value to return when there are no true positives or true negatives.</span>
 <span class="sd">            If set to &quot;warn&quot;, this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        scores: np.ndarray or float (if average is not None).</span>
+<span class="sd">        scores : numpy.ndarray or float</span>
+<span class="sd">            Precision or recall scores. If ``average`` is None, return scores for</span>
+<span class="sd">            each class as a numpy.ndarray. Otherwise, return the average as a</span>
+<span class="sd">            float.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">numerator</span> <span class="o">=</span> <span class="n">tp</span>
@@ -242,17 +251,241 @@
             <span class="k">if</span> <span class="n">zero_division</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">]:</span>
                 <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">result</span>
-    <span class="k">elif</span> <span class="n">average</span> <span class="o">==</span> <span class="s2">&quot;samples&quot;</span><span class="p">:</span>
-        <span class="n">weights</span> <span class="o">=</span> <span class="n">sample_weight</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">weights</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">average</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">score</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">score</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">score</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">_get_value_if_singleton_array</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">result</span>
+
+
+<div class="viewcode-block" id="binary_precision"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.precision_recall.html#cyclops.evaluation.metrics.functional.precision_recall.binary_precision">[docs]</a><span class="k">def</span> <span class="nf">binary_precision</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Compute precision score for binary classification.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        target : ArrayLike</span>
+<span class="sd">            Ground truth (correct) target values.</span>
+<span class="sd">        preds : ArrayLike</span>
+<span class="sd">            Predictions as returned by a classifier.</span>
+<span class="sd">        pos_label : int, default=1</span>
+<span class="sd">            The label of the positive class.</span>
+<span class="sd">        threshold : float, default=0.5</span>
+<span class="sd">            Threshold for deciding the positive class.</span>
+<span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1], default=&quot;warn&quot;</span>
+<span class="sd">            Value to return when there is a zero division. If set to &quot;warn&quot;, this</span>
+<span class="sd">            acts as 0, but warnings are also raised.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Precision score.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import binary_precision</span>
+<span class="sd">        &gt;&gt;&gt; target = [0, 1, 0, 1]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [0, 1, 1, 1]</span>
+<span class="sd">        &gt;&gt;&gt; binary_precision(target, preds)</span>
+<span class="sd">        0.6666666666666666</span>
+<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 0, 1], [0, 0, 1, 1]]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.9, 0.8, 0.2], [0.2, 0.3, 0.6, 0.1]]</span>
+<span class="sd">        &gt;&gt;&gt; binary_precision(target, preds)</span>
+<span class="sd">        0.6666666666666666</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_binary_stat_scores_args_check</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">)</span>
+
+    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_binary_stat_scores_format</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+
+    <span class="c1"># pylint: disable=invalid-name</span>
+    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_binary_stat_scores_update</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_precision_recall_reduce</span><span class="p">(</span>
+        <span class="n">tp</span><span class="p">,</span>
+        <span class="n">fp</span><span class="p">,</span>
+        <span class="n">fn</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;precision&quot;</span><span class="p">,</span>
+        <span class="n">average</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="multiclass_precision"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.precision_recall.html#cyclops.evaluation.metrics.functional.precision_recall.multiclass_precision">[docs]</a><span class="k">def</span> <span class="nf">multiclass_precision</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">top_k</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Compute precision score for multiclass classification tasks.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        target : ArrayLike</span>
+<span class="sd">            Ground truth (correct) target values.</span>
+<span class="sd">        preds : ArrayLike</span>
+<span class="sd">            Predictions as returned by a classifier.</span>
+<span class="sd">        num_classes : int</span>
+<span class="sd">            Number of classes in the dataset.</span>
+<span class="sd">        top_k : int, optional</span>
+<span class="sd">            If given, and predictions are probabilities/logits, the precision will</span>
+<span class="sd">            be computed only for the top k classes. Otherwise, ``top_k`` will be</span>
+<span class="sd">            set to 1.</span>
+<span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
+<span class="sd">           If ``None``, return the precision score for each class. Otherwise,</span>
+<span class="sd">           use one of the following options to compute the average precision score:</span>
+<span class="sd">                - ``micro``: Calculate metric globally from the total count of true</span>
+<span class="sd">                  positives and false positives.</span>
+<span class="sd">                - ``macro``: Calculate metric for each class, and find their</span>
+<span class="sd">                  unweighted mean. This does not take label imbalance into account.</span>
+<span class="sd">                - ``weighted``: Calculate metric for each class, and find their</span>
+<span class="sd">                  average weighted by the support (the number of true instances</span>
+<span class="sd">                  for each class). This alters &quot;macro&quot; to account for class</span>
+<span class="sd">                  imbalance.</span>
+<span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1], default=&quot;warn&quot;</span>
+<span class="sd">            Value to return when there is a zero division. If set to &quot;warn&quot;, this</span>
+<span class="sd">            acts as 0, but warnings are also raised.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        precision : float or numpy.ndarray</span>
+<span class="sd">            Precision score. If ``average`` is None, return a numpy.ndarray of</span>
+<span class="sd">            precision scores for each class.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``average`` is not one of ``micro``, ``macro``, ``weighted``</span>
+<span class="sd">            or ``None``.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multiclass_precision</span>
+<span class="sd">        &gt;&gt;&gt; target = [0, 1, 2, 0]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [0, 2, 1, 0]</span>
+<span class="sd">        &gt;&gt;&gt; multiclass_precision(target, preds, num_classes=3)</span>
+<span class="sd">        array([1., 0., 0.])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_check_average_arg</span><span class="p">(</span><span class="n">average</span><span class="p">)</span>
+
+    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_multiclass_stat_scores_format</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span>
+    <span class="p">)</span>
+
+    <span class="c1"># pylint: disable=invalid-name</span>
+    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_multiclass_stat_scores_update</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">preds</span><span class="p">,</span>
+        <span class="n">num_classes</span><span class="p">,</span>
+        <span class="n">classwise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_precision_recall_reduce</span><span class="p">(</span>
+        <span class="n">tp</span><span class="p">,</span>
+        <span class="n">fp</span><span class="p">,</span>
+        <span class="n">fn</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;precision&quot;</span><span class="p">,</span>
+        <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">,</span>
+        <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="multilabel_precision"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.precision_recall.html#cyclops.evaluation.metrics.functional.precision_recall.multilabel_precision">[docs]</a><span class="k">def</span> <span class="nf">multilabel_precision</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">top_k</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute precision score for multilabel classification tasks.</span>
+
+<span class="sd">    The input is expected to be an array-like of shape (N, L), where N is the</span>
+<span class="sd">    number of samples and L is the number of labels. The input is expected to</span>
+<span class="sd">    be a binary array-like, where 1 indicates the presence of a label and 0</span>
+<span class="sd">    indicates its absence.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        target : ArrayLike</span>
+<span class="sd">            Ground truth (correct) target values.</span>
+<span class="sd">        preds : ArrayLike</span>
+<span class="sd">            Predictions as returned by a classifier.</span>
+<span class="sd">        num_labels : int</span>
+<span class="sd">            Number of labels for the task.</span>
+<span class="sd">        threshold : float, default=0.5</span>
+<span class="sd">            Threshold for deciding the positive class.</span>
+<span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
+<span class="sd">            If ``None``, return the precision score for each label. Otherwise,</span>
+<span class="sd">            use one of the following options to compute the average precision score:</span>
+<span class="sd">                - ``micro``: Calculate metric globally from the total count of true</span>
+<span class="sd">                  positives and false positives.</span>
+<span class="sd">                - ``macro``: Calculate metric for each label, and find their</span>
+<span class="sd">                  unweighted mean. This does not take label imbalance into account.</span>
+<span class="sd">                - ``weighted``: Calculate metric for each label, and find their</span>
+<span class="sd">                  average weighted by the support (the number of true instances</span>
+<span class="sd">                  for each label). This alters &quot;macro&quot; to account for label</span>
+<span class="sd">                  imbalance.</span>
+<span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1], default=&quot;warn&quot;</span>
+<span class="sd">            Value to return when there is a zero division. If set to &quot;warn&quot;, this</span>
+<span class="sd">            acts as 0, but warnings are also raised.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        precision: float or numpy.ndarray</span>
+<span class="sd">            Precision score. If ``average`` is None, return a numpy.ndarray of</span>
+<span class="sd">            precision scores for each label.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If average is not one of ``micro``, ``macro``, ``weighted``,</span>
+<span class="sd">            or ``None``.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multilabel_precision</span>
+<span class="sd">        &gt;&gt;&gt; target = [[0, 1], [1, 1]]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.9], [0.2, 0.8]]</span>
+<span class="sd">        &gt;&gt;&gt; multilabel_precision(target, preds, num_labels=2)</span>
+<span class="sd">        array([0., 1. ])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_check_average_arg</span><span class="p">(</span><span class="n">average</span><span class="p">)</span>
+
+    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_multilabel_stat_scores_format</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span>
+    <span class="p">)</span>
+
+    <span class="c1"># pylint: disable=invalid-name</span>
+    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_multilabel_stat_scores_update</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">preds</span><span class="p">,</span>
+        <span class="n">num_labels</span><span class="p">,</span>
+        <span class="n">labelwise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_precision_recall_reduce</span><span class="p">(</span>
+        <span class="n">tp</span><span class="p">,</span>
+        <span class="n">fp</span><span class="p">,</span>
+        <span class="n">fn</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;precision&quot;</span><span class="p">,</span>
+        <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">,</span>
+        <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="precision"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.precision_recall.html#cyclops.evaluation.metrics.functional.precision_recall.precision">[docs]</a><span class="k">def</span> <span class="nf">precision</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
@@ -264,8 +497,7 @@
     <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">num_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">sample_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Compute precision score for different classification tasks.</span>
@@ -275,58 +507,76 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target: ArrayLike</span>
+<span class="sd">        target : ArrayLike</span>
 <span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds: ArrayLike</span>
+<span class="sd">        preds : ArrayLike</span>
 <span class="sd">            Predictions as returned by a classifier.</span>
-<span class="sd">        task: Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
-<span class="sd">            Classification task. One of:</span>
-<span class="sd">                - ``binary``: binary classification.</span>
-<span class="sd">                    Example: [0, 1, 1, 0, 1] or [0.1, 0.9, 0.8, 0.2, 0.4]</span>
-<span class="sd">                - ``multiclass``: multiclass classification.</span>
-<span class="sd">                    Example: [0, 1, 2, 0, 1] or [[0.1, 0.9, 0.0], [0.0, 0.8, 0.2], ...]</span>
-<span class="sd">                - ``multilabel``: multilabel classification.</span>
-<span class="sd">                    Example: [[0, 1], [1, 0], [1, 1], [0, 0], [1, 0]] or</span>
-<span class="sd">                    [[0.1, 0.9], [0.0, 0.8], ...]</span>
-<span class="sd">        pos_label: int</span>
+<span class="sd">        task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
+<span class="sd">            Task type.</span>
+<span class="sd">        pos_label : int</span>
 <span class="sd">            Label of the positive class. Only used for binary classification.</span>
-<span class="sd">        num_classes: Optional[int]</span>
+<span class="sd">        num_classes : Optional[int]</span>
 <span class="sd">            Number of classes. Only used for multiclass classification.</span>
-<span class="sd">        threshold: float</span>
+<span class="sd">        threshold : float</span>
 <span class="sd">            Threshold for positive class predictions. Default is 0.5.</span>
-<span class="sd">        top_k: Optional[int]</span>
+<span class="sd">        top_k : Optional[int]</span>
 <span class="sd">            Number of highest probability or logits predictions to consider when</span>
 <span class="sd">            computing multiclass or multilabel metrics. Default is None.</span>
-<span class="sd">        num_labels: Optional[int]</span>
+<span class="sd">        num_labels : Optional[int]</span>
 <span class="sd">            Number of labels. Only used for multilabel classification.</span>
-<span class="sd">        average: Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, &quot;samples&quot;, None]</span>
+<span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None]</span>
 <span class="sd">            Average to apply. If None, return scores for each class. Default is</span>
 <span class="sd">            None.</span>
 <span class="sd">            One of:</span>
 <span class="sd">                - ``micro``: Calculate metrics globally by counting the total true</span>
-<span class="sd">                  positives, false negatives and false positives.</span>
-<span class="sd">                - ``macro``: Calculate metrics for each label, and find their</span>
+<span class="sd">                  positives and and false positives.</span>
+<span class="sd">                - ``macro``: Calculate metrics for each label/class, and find their</span>
 <span class="sd">                  unweighted mean. This does not take label imbalance into account.</span>
 <span class="sd">                - ``weighted``: Calculate metrics for each label, and find their</span>
 <span class="sd">                  average weighted by support (the number of true instances for</span>
 <span class="sd">                  each label). This alters ``macro`` to account for label imbalance.</span>
-<span class="sd">                - ``samples``: Calculate metrics for each instance, and find their</span>
-<span class="sd">                  average (only meaningful for multilabel classification).</span>
-<span class="sd">        sample_weight: Optional[ArrayLike]</span>
-<span class="sd">            Sample weights.</span>
-<span class="sd">        zero_division: Literal[&quot;warn&quot;, 0, 1]</span>
+<span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1]</span>
 <span class="sd">            Value to return when there are no true positives or true negatives.</span>
 <span class="sd">            If set to ``warn``, this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        precision: float (if ``average`` is None or ``task`` is ``binary``) or</span>
-<span class="sd">        np.ndarray (if ``average`` is not None).</span>
+<span class="sd">        precision_score : numpy.ndarray or float</span>
+<span class="sd">            Precision score. If ``average`` is not None or task is ``binary``,</span>
+<span class="sd">            return a float. Otherwise, return a numpy.ndarray of precision scores</span>
+<span class="sd">            for each class/label.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">        ValueError</span>
 <span class="sd">            If task is not one of ``binary``, ``multiclass`` or ``multilabel``.</span>
+
+<span class="sd">    Examples (binary)</span>
+<span class="sd">    -----------------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import precision</span>
+<span class="sd">        &gt;&gt;&gt; target = [0, 1, 1, 0]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [0.1, 0.9, 0.8, 0.3]</span>
+<span class="sd">        &gt;&gt;&gt; precision(target, preds, task=&quot;binary&quot;)</span>
+<span class="sd">        1.</span>
+
+<span class="sd">    Examples (multiclass)</span>
+<span class="sd">    ---------------------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import precision</span>
+<span class="sd">        &gt;&gt;&gt; target = [0, 1, 2, 0, 1, 2]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.6, 0.3], [0.05, 0.95, 0], [0.1, 0.8, 0.1],</span>
+<span class="sd">        ...         [0.5, 0.3, 0.2],  [0.2, 0.5, 0.3], [0.2, 0.2, 0.6]]</span>
+<span class="sd">        &gt;&gt;&gt; precision(target, preds, task=&quot;multiclass&quot;, num_classes=3,</span>
+<span class="sd">        ...     average=&quot;macro&quot;)</span>
+<span class="sd">        0.8333333333333334</span>
+
+<span class="sd">    Examples (multilabel)</span>
+<span class="sd">    ---------------------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import precision</span>
+<span class="sd">        &gt;&gt;&gt; target = [[0, 1], [1, 1]]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.9], [0.2, 0.8]]</span>
+<span class="sd">        &gt;&gt;&gt; precision(target, preds, task=&quot;multilabel&quot;, num_labels=2,</span>
+<span class="sd">        ...     average=&quot;macro&quot;)</span>
+<span class="sd">        0.5</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;binary&quot;</span><span class="p">:</span>
@@ -335,10 +585,8 @@
             <span class="n">preds</span><span class="p">,</span>
             <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">,</span>
             <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
-            <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
             <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
         <span class="p">)</span>
-
     <span class="k">elif</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">:</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_classes</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_classes</span> <span class="o">&gt;</span> <span class="mi">0</span>
@@ -349,10 +597,8 @@
             <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
             <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
             <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
-            <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
             <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
         <span class="p">)</span>
-
     <span class="k">elif</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">:</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_labels</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_labels</span> <span class="o">&gt;</span> <span class="mi">0</span>
@@ -364,10 +610,8 @@
             <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
             <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">,</span>
             <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
-            <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
             <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
         <span class="p">)</span>
-
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Task &#39;</span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">&#39; not supported, expected &#39;binary&#39;, &#39;multiclass&#39; or &quot;</span>
@@ -377,105 +621,102 @@
     <span class="k">return</span> <span class="n">precision_score</span></div>
 
 
-<div class="viewcode-block" id="binary_precision"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.precision_recall.html#cyclops.evaluation.metrics.functional.precision_recall.binary_precision">[docs]</a><span class="k">def</span> <span class="nf">binary_precision</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+<div class="viewcode-block" id="binary_recall"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.precision_recall.html#cyclops.evaluation.metrics.functional.precision_recall.binary_recall">[docs]</a><span class="k">def</span> <span class="nf">binary_recall</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">sample_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Compute precision score for binary classification.</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute recall score for binary classification.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target: ArrayLike</span>
+<span class="sd">        target : ArrayLike</span>
 <span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds: ArrayLike</span>
+<span class="sd">        preds : ArrayLike</span>
 <span class="sd">            Predictions as returned by a classifier.</span>
-<span class="sd">        pos_label: int</span>
+<span class="sd">        pos_label : int, default=1</span>
 <span class="sd">            Label of the positive class.</span>
-<span class="sd">        threshold: float</span>
-<span class="sd">            Threshold for positive class predictions. Default is 0.5.</span>
-<span class="sd">        sample_weight: Optional[ArrayLike]</span>
-<span class="sd">            Sample weights.</span>
-<span class="sd">        zero_division: Literal[&quot;warn&quot;, 0, 1]</span>
-<span class="sd">            Value to return when there are no true positives or true negatives.</span>
-<span class="sd">            If set to ``warn``, this acts as 0, but warnings are also raised.</span>
+<span class="sd">        threshold : float, default=0.5</span>
+<span class="sd">            Threshold for deciding the positive class.</span>
+<span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1], default=&quot;warn&quot;</span>
+<span class="sd">            Value to return when there is a zero division. If set to &quot;warn&quot;, this</span>
+<span class="sd">            acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        precision: float</span>
+<span class="sd">        float</span>
+<span class="sd">            Recall score.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import binary_recall</span>
+<span class="sd">        &gt;&gt;&gt; target = [0, 1, 0, 1]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [0, 1, 1, 0]</span>
+<span class="sd">        &gt;&gt;&gt; binary_recall(target, preds)</span>
+<span class="sd">        0.5</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_binary_stat_scores_update</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span>
-        <span class="n">preds</span><span class="p">,</span>
-        <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">,</span>
-        <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
-        <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_binary_stat_scores_format</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
 
-    <span class="n">precision_score</span> <span class="o">=</span> <span class="n">_precision_recall_reduce</span><span class="p">(</span>
+    <span class="c1"># pylint: disable=invalid-name</span>
+    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_binary_stat_scores_update</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_precision_recall_reduce</span><span class="p">(</span>
         <span class="n">tp</span><span class="p">,</span>
         <span class="n">fp</span><span class="p">,</span>
         <span class="n">fn</span><span class="p">,</span>
-        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;precision&quot;</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;recall&quot;</span><span class="p">,</span>
         <span class="n">average</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
         <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">precision_score</span><span class="p">)</span></div>
+    <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="multiclass_precision"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.precision_recall.html#cyclops.evaluation.metrics.functional.precision_recall.multiclass_precision">[docs]</a><span class="k">def</span> <span class="nf">multiclass_precision</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+<div class="viewcode-block" id="multiclass_recall"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.precision_recall.html#cyclops.evaluation.metrics.functional.precision_recall.multiclass_recall">[docs]</a><span class="k">def</span> <span class="nf">multiclass_recall</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">sample_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Compute precision score for multiclass classification.</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute recall score for multiclass classification.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target: ArrayLike</span>
+<span class="sd">        target : ArrayLike</span>
 <span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds: ArrayLike</span>
+<span class="sd">        preds : ArrayLike</span>
 <span class="sd">            Predictions as returned by a classifier.</span>
-<span class="sd">        num_classes: int</span>
+<span class="sd">        num_classes : int</span>
 <span class="sd">            Number of classes.</span>
-<span class="sd">        top_k: Optional[int]</span>
-<span class="sd">            If not None, calculate precision only on the top k highest</span>
-<span class="sd">            probability predictions. Default is None. If None, calculate</span>
-<span class="sd">            precision on all predictions.</span>
-<span class="sd">        average: Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None]</span>
+<span class="sd">        top_k : Optional[int]</span>
+<span class="sd">            If given, and predictions are probabilities/logits, the recall will</span>
+<span class="sd">            be computed only for the top k classes. Otherwise, ``top_k`` will be</span>
+<span class="sd">            set to 1.</span>
+<span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None]</span>
 <span class="sd">            Average to apply. If None, return scores for each class. Default is</span>
 <span class="sd">            None. One of:</span>
 <span class="sd">                - ``micro``: Calculate metrics globally by counting the total true</span>
-<span class="sd">                  positives, false negatives and false positives.</span>
+<span class="sd">                  positives and false negatives.</span>
 <span class="sd">                - ``macro``: Calculate metrics for each label, and find their</span>
-<span class="sd">                  unweighted mean. This does not take label imbalance into account.</span>
+<span class="sd">                  unweighted mean. This does not take label imbalance into</span>
+<span class="sd">                  account.</span>
 <span class="sd">                - ``weighted``: Calculate metrics for each label, and find their</span>
 <span class="sd">                  average weighted by support (the number of true instances</span>
 <span class="sd">                  for each label). This alters &quot;macro&quot; to account for label</span>
 <span class="sd">                  imbalance.</span>
-
-<span class="sd">            Note that ``samples`` is not supported. Use multilabel_precision</span>
-<span class="sd">            instead.</span>
-<span class="sd">        sample_weight: Optional[ArrayLike]</span>
-<span class="sd">            Sample weights.</span>
-<span class="sd">        zero_division: Literal[&quot;warn&quot;, 0, 1]</span>
+<span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1]</span>
 <span class="sd">            Value to return when there are no true positives or true negatives.</span>
 <span class="sd">            If set to ``warn``, this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        precision: float or np.ndarray (if average is None).</span>
+<span class="sd">        float or numpy.ndarray</span>
+<span class="sd">            Recall score. If ``average`` is None, return a numpy.ndarray of</span>
+<span class="sd">            recall scores for each class.</span>
+
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -483,45 +724,50 @@
 <span class="sd">            If ``average`` is not one of ``micro``, ``macro``, ``weighted``</span>
 <span class="sd">            or ``None``.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="k">if</span> <span class="n">average</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Argument average has to be one of &#39;micro&#39;, &#39;macro&#39;, &#39;weighted&#39;, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;or None, got </span><span class="si">{</span><span class="n">average</span><span class="si">}</span><span class="s2">.&quot;</span>
-        <span class="p">)</span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multiclass_recall</span>
+<span class="sd">        &gt;&gt;&gt; target = [0, 1, 2, 0, 1, 2]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [[0.4, 0.1, 0.5], [0.1, 0.8, 0.1], [0.2, 0.2, 0.6],</span>
+<span class="sd">        ...     [0.5, 0.3, 0.2], [0.2, 0.5, 0.3], [0.2, 0.2, 0.6]]</span>
+<span class="sd">        &gt;&gt;&gt; multiclass_recall(target, preds, num_classes=3, average=&quot;macro&quot;)</span>
+<span class="sd">        0.8333333333333334</span>
 
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_check_average_arg</span><span class="p">(</span><span class="n">average</span><span class="p">)</span>
+
+    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_multiclass_stat_scores_format</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span>
+    <span class="p">)</span>
+
+    <span class="c1"># pylint: disable=invalid-name</span>
     <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_multiclass_stat_scores_update</span><span class="p">(</span>
         <span class="n">target</span><span class="p">,</span>
         <span class="n">preds</span><span class="p">,</span>
         <span class="n">num_classes</span><span class="p">,</span>
-        <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
         <span class="n">classwise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">_precision_recall_reduce</span><span class="p">(</span>
         <span class="n">tp</span><span class="p">,</span>
         <span class="n">fp</span><span class="p">,</span>
         <span class="n">fn</span><span class="p">,</span>
-        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;precision&quot;</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;recall&quot;</span><span class="p">,</span>
         <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">,</span>
-        <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
         <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="multilabel_precision"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.precision_recall.html#cyclops.evaluation.metrics.functional.precision_recall.multilabel_precision">[docs]</a><span class="k">def</span> <span class="nf">multilabel_precision</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+<div class="viewcode-block" id="multilabel_recall"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.precision_recall.html#cyclops.evaluation.metrics.functional.precision_recall.multilabel_recall">[docs]</a><span class="k">def</span> <span class="nf">multilabel_recall</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">sample_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Compute precision score for multilabel classification.</span>
+    <span class="sd">&quot;&quot;&quot;Compute recall score for multilabel classification tasks.</span>
 
 <span class="sd">    The input is expected to be an array-like of shape (N, L), where N is the</span>
 <span class="sd">    number of samples and L is the number of labels. The input is expected to</span>
@@ -530,73 +776,71 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target: ArrayLike</span>
+<span class="sd">        target : ArrayLike</span>
 <span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds: ArrayLike</span>
+<span class="sd">        preds : ArrayLike</span>
 <span class="sd">            Predictions as returned by a classifier.</span>
-<span class="sd">        num_labels: int</span>
-<span class="sd">            Number of labels.</span>
-<span class="sd">        threshold: float</span>
-<span class="sd">            Threshold for positive class predictions. Default is 0.5.</span>
-<span class="sd">        top_k: Optional[int]</span>
-<span class="sd">            If not None, calculate precision only on the top k highest</span>
-<span class="sd">            probability predictions. Default is None. If None, calculate</span>
-<span class="sd">            precision on all predictions.</span>
-<span class="sd">        average: Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;samples&quot;, &quot;weighted&quot;, None]</span>
-<span class="sd">            Average to apply. If None, return scores for each class. Default is</span>
-<span class="sd">            None. One of:</span>
-<span class="sd">                - ``micro``: Calculate metrics globally by counting the total true</span>
-<span class="sd">                  positives, false negatives and false positives.</span>
-<span class="sd">                - ``macro``: Calculate metrics for each label, and find their</span>
-<span class="sd">                  unweighted mean. This does not take label imbalance into</span>
-<span class="sd">                  account.</span>
-<span class="sd">                - ``weighted``: Calculate metrics for each label, and find their</span>
-<span class="sd">                  average weighted by support (the number of true instances</span>
-<span class="sd">                  for each label). This alters ``macro`` to account for label</span>
-<span class="sd">                  imbalance.</span>
-<span class="sd">                - ``samples``: Calculate metrics for each instance, and find their</span>
-<span class="sd">                  average (only meaningful for multilabel classification).</span>
-<span class="sd">        sample_weight: Optional[ArrayLike]</span>
-<span class="sd">            Sample weights.</span>
-<span class="sd">        zero_division: Literal[&quot;warn&quot;, 0, 1]</span>
-<span class="sd">            Value to return when there are no true positives or true negatives.</span>
-<span class="sd">            If set to ``warn``, this acts as 0, but warnings are also raised.</span>
+<span class="sd">        num_labels : int</span>
+<span class="sd">            Number of labels in the dataset.</span>
+<span class="sd">        threshold : float, default=0.5</span>
+<span class="sd">            Threshold for deciding the positive class.</span>
+<span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
+<span class="sd">            If ``None``, return the recall score for each class. Otherwise,</span>
+<span class="sd">            use one of the following options to compute the average score:</span>
+<span class="sd">                - ``micro``: Calculate metric globally from the total count of true</span>
+<span class="sd">                    positives and false negatives.</span>
+<span class="sd">                - ``macro``: Calculate metric for each label, and find their</span>
+<span class="sd">                    unweighted mean. This does not take label imbalance into account.</span>
+<span class="sd">                - ``weighted``: Calculate metric for each label, and find their</span>
+<span class="sd">                    average weighted by the support (the number of true instances</span>
+<span class="sd">                    for each label). This alters &quot;macro&quot; to account for label</span>
+<span class="sd">                    imbalance.</span>
+<span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1], default=&quot;warn&quot;</span>
+<span class="sd">            Value to return when there is a zero division. If set to &quot;warn&quot;, this</span>
+<span class="sd">            acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        precision: float or np.ndarray (if ``average`` is None).</span>
+<span class="sd">        float or numpy.ndarray</span>
+<span class="sd">            Recall score. If ``average`` is None, return a numpy.ndarray of</span>
+<span class="sd">            recall scores for each label.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">        ValueError</span>
-<span class="sd">            If average is not one of ``micro``, ``macro``, ``samples``, ``weighted``,</span>
+<span class="sd">            If ``average`` is not one of ``micro``, ``macro``, ``weighted``</span>
 <span class="sd">            or ``None``.</span>
 
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multilabel_recall</span>
+<span class="sd">        &gt;&gt;&gt; target = [1, 1, 2, 0, 2, 2]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [1, 2, 2, 0, 2, 0]</span>
+<span class="sd">        &gt;&gt;&gt; multilabel_recall(target, preds, num_classes=3)</span>
+<span class="sd">        array([1.        , 0.5       , 0.66666667])</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">average</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Argument `average` has to be one of &#39;micro&#39;, &#39;macro&#39;, &#39;samples&#39;, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;&#39;weighted&#39;, or None, got `</span><span class="si">{</span><span class="n">average</span><span class="si">}</span><span class="s2">.`&quot;</span>
-        <span class="p">)</span>
+    <span class="n">_check_average_arg</span><span class="p">(</span><span class="n">average</span><span class="p">)</span>
+
+    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_multilabel_stat_scores_format</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span>
+    <span class="p">)</span>
 
     <span class="c1"># pylint: disable=invalid-name</span>
     <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_multilabel_stat_scores_update</span><span class="p">(</span>
         <span class="n">target</span><span class="p">,</span>
         <span class="n">preds</span><span class="p">,</span>
         <span class="n">num_labels</span><span class="p">,</span>
-        <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
-        <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
-        <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
-        <span class="n">reduce</span><span class="o">=</span><span class="s2">&quot;samples&quot;</span> <span class="k">if</span> <span class="n">average</span> <span class="o">==</span> <span class="s2">&quot;samples&quot;</span> <span class="k">else</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span>
+        <span class="n">labelwise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">_precision_recall_reduce</span><span class="p">(</span>
         <span class="n">tp</span><span class="p">,</span>
         <span class="n">fp</span><span class="p">,</span>
         <span class="n">fn</span><span class="p">,</span>
-        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;precision&quot;</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;recall&quot;</span><span class="p">,</span>
         <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">,</span>
-        <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
         <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
     <span class="p">)</span></div>
 
@@ -610,8 +854,7 @@
     <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">sample_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Compute recall score for different classification tasks.</span>
@@ -622,58 +865,73 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target: ArrayLike</span>
+<span class="sd">        target : ArrayLike</span>
 <span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds: ArrayLike</span>
+<span class="sd">        preds : ArrayLike</span>
 <span class="sd">            Predictions as returned by a classifier.</span>
-<span class="sd">        task: Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
-<span class="sd">            Classification task. One of:</span>
-<span class="sd">                - ``binary``: binary classification.</span>
-<span class="sd">                    Example: [0, 1, 1, 0, 1] or [0.1, 0.9, 0.8, 0.2, 0.4]</span>
-<span class="sd">                - ``multiclass``: multiclass classification.</span>
-<span class="sd">                    Example: [0, 1, 2, 0, 1] or [[0.1, 0.9, 0.0], [0.0, 0.8, 0.2], ...]</span>
-<span class="sd">                - ``multilabel``: multilabel classification.</span>
-<span class="sd">                    Example: [[0, 1], [1, 0], [1, 1], [0, 0], [1, 0]] or</span>
-<span class="sd">                    [[0.1, 0.9], [0.0, 0.8], ...]</span>
-<span class="sd">        pos_label: int</span>
+<span class="sd">        task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
+<span class="sd">            Task type.</span>
+<span class="sd">        pos_label : int</span>
 <span class="sd">            Label of the positive class. Only used for binary classification.</span>
-<span class="sd">        num_classes: Optional[int]</span>
+<span class="sd">        num_classes : Optional[int]</span>
 <span class="sd">            Number of classes. Only used for multiclass classification.</span>
-<span class="sd">        threshold: float</span>
-<span class="sd">            Threshold for positive class predictions. Default is 0.5.</span>
-<span class="sd">        top_k: Optional[int]</span>
+<span class="sd">        threshold : float, default=0.5</span>
+<span class="sd">            Threshold for positive class predictions.</span>
+<span class="sd">        top_k : Optional[int]</span>
 <span class="sd">            Number of highest probability or logits predictions to consider when</span>
 <span class="sd">            computing multiclass or multilabel metrics. Default is None.</span>
-<span class="sd">        num_labels: Optional[int]</span>
+<span class="sd">        num_labels : Optional[int]</span>
 <span class="sd">            Number of labels. Only used for multilabel classification.</span>
-<span class="sd">        average: Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, &quot;samples&quot;, None]</span>
+<span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None]</span>
 <span class="sd">            Average to apply. If None, return scores for each class. Default is</span>
 <span class="sd">            None.</span>
 <span class="sd">            One of:</span>
 <span class="sd">                - ``micro``: Calculate metrics globally by counting the total true</span>
-<span class="sd">                  positives, false negatives and false positives.</span>
+<span class="sd">                  positives and false negatives.</span>
 <span class="sd">                - ``macro``: Calculate metrics for each label, and find their</span>
 <span class="sd">                  unweighted mean. This does not take label imbalance into account.</span>
 <span class="sd">                - ``weighted``: Calculate metrics for each label, and find their</span>
 <span class="sd">                  average weighted by support (the number of true instances for</span>
 <span class="sd">                  each label). This alters ``macro`` to account for label imbalance.</span>
-<span class="sd">                - ``samples``: Calculate metrics for each instance, and find their</span>
-<span class="sd">                  average (only meaningful for multilabel classification).</span>
-<span class="sd">        sample_weight: Optional[ArrayLike]</span>
-<span class="sd">            Sample weights.</span>
-<span class="sd">        zero_division: Literal[&quot;warn&quot;, 0, 1]</span>
+<span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1]</span>
 <span class="sd">            Value to return when there are no true positives or true negatives.</span>
 <span class="sd">            If set to ``warn``, this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        recall: float (if ``average`` is None or ``task`` is ``binary``) or np.ndarray</span>
-<span class="sd">        (if ``average`` is not None).</span>
+<span class="sd">        recall_score : float or numpy.ndarray</span>
+<span class="sd">            Recall score. If ``average`` is not None or ``task`` is ``binary``,</span>
+<span class="sd">            return a float. Otherwise, return a numpy.ndarray of recall scores</span>
+<span class="sd">            for each class/label.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">        ValueError</span>
 <span class="sd">            If ``task`` is not one of ``binary``, ``multiclass`` or ``multilabel``.</span>
+
+<span class="sd">    Examples (binary)</span>
+<span class="sd">    -----------------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import recall</span>
+<span class="sd">        &gt;&gt;&gt; target = [0, 1, 1, 0, 1]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [0.4, 0.2, 0.0, 0.6, 0.9]</span>
+<span class="sd">        &gt;&gt;&gt; recall(target, preds, task=&quot;binary&quot;)</span>
+<span class="sd">        0.3333333333333333</span>
+
+<span class="sd">    Examples (multiclass)</span>
+<span class="sd">    ---------------------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import recall</span>
+<span class="sd">        &gt;&gt;&gt; target = [1, 1, 2, 0, 2, 2]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [1, 2, 2, 0, 2, 0]</span>
+<span class="sd">        &gt;&gt;&gt; recall(target, preds, task=&quot;multiclass&quot;, num_classes=3)</span>
+<span class="sd">        array([1.        , 0.5       , 0.66666667])</span>
+
+<span class="sd">    Examples (multilabel)</span>
+<span class="sd">    ---------------------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import recall</span>
+<span class="sd">        &gt;&gt;&gt; target = [[1, 0, 1], [0, 1, 0]]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [[0.4, 0.2, 0.0], [0.6, 0.9, 0.1]]</span>
+<span class="sd">        &gt;&gt;&gt; recall(target, preds, task=&quot;multilabel&quot;, num_labels=3)</span>
+<span class="sd">        array([0., 1., 0.])</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;binary&quot;</span><span class="p">:</span>
@@ -682,10 +940,8 @@
             <span class="n">preds</span><span class="p">,</span>
             <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">,</span>
             <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
-            <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
             <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
         <span class="p">)</span>
-
     <span class="k">elif</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">:</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_classes</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_classes</span> <span class="o">&gt;</span> <span class="mi">0</span>
@@ -696,10 +952,8 @@
             <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
             <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
             <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
-            <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
             <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
         <span class="p">)</span>
-
     <span class="k">elif</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">:</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_labels</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_labels</span> <span class="o">&gt;</span> <span class="mi">0</span>
@@ -711,10 +965,8 @@
             <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
             <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">,</span>
             <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
-            <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
             <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
         <span class="p">)</span>
-
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Task &#39;</span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">&#39; not supported, expected &#39;binary&#39;, &#39;multiclass&#39; or &quot;</span>
@@ -722,230 +974,6 @@
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">recall_score</span></div>
-
-
-<div class="viewcode-block" id="binary_recall"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.precision_recall.html#cyclops.evaluation.metrics.functional.precision_recall.binary_recall">[docs]</a><span class="k">def</span> <span class="nf">binary_recall</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
-    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">sample_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Compute recall score for binary classification.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">        target: ArrayLike</span>
-<span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds: ArrayLike</span>
-<span class="sd">            Predictions as returned by a classifier.</span>
-<span class="sd">        pos_label: int</span>
-<span class="sd">            Label considered as positive. Default is 1.</span>
-<span class="sd">        threshold: float</span>
-<span class="sd">            Threshold for positive class predictions. Default is 0.5.</span>
-<span class="sd">        sample_weight: Optional[ArrayLike]</span>
-<span class="sd">            Sample weights.</span>
-<span class="sd">        zero_division: Literal[&quot;warn&quot;, 0, 1]</span>
-<span class="sd">            Value to return when there are no true positives or true negatives.</span>
-<span class="sd">            If set to ``warn``, this acts as 0, but warnings are also raised.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">        recall: float</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_binary_stat_scores_update</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span>
-        <span class="n">preds</span><span class="p">,</span>
-        <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">,</span>
-        <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
-        <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">recall_score</span> <span class="o">=</span> <span class="n">_precision_recall_reduce</span><span class="p">(</span>
-        <span class="n">tp</span><span class="p">,</span>
-        <span class="n">fp</span><span class="p">,</span>
-        <span class="n">fn</span><span class="p">,</span>
-        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;recall&quot;</span><span class="p">,</span>
-        <span class="n">average</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
-        <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">recall_score</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="multiclass_recall"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.precision_recall.html#cyclops.evaluation.metrics.functional.precision_recall.multiclass_recall">[docs]</a><span class="k">def</span> <span class="nf">multiclass_recall</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
-    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">top_k</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">sample_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Compute recall score for multiclass classification.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">        target: ArrayLike</span>
-<span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds: ArrayLike</span>
-<span class="sd">            Predictions as returned by a classifier.</span>
-<span class="sd">        num_classes: int</span>
-<span class="sd">            Number of classes.</span>
-<span class="sd">        top_k: Optional[int]</span>
-<span class="sd">            If not None, calculate recall only on the top k highest</span>
-<span class="sd">            probability predictions. Default is None. If None, calculate</span>
-<span class="sd">            recall on all predictions.</span>
-<span class="sd">        average: Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None]</span>
-<span class="sd">            Average to apply. If None, return scores for each class. Default is</span>
-<span class="sd">            None. One of:</span>
-<span class="sd">                - ``micro``: Calculate metrics globally by counting the total true</span>
-<span class="sd">                  positives, false negatives and false positives.</span>
-<span class="sd">                - ``macro``: Calculate metrics for each label, and find their</span>
-<span class="sd">                  unweighted mean. This does not take label imbalance into</span>
-<span class="sd">                  account.</span>
-<span class="sd">                - ``weighted``: Calculate metrics for each label, and find their</span>
-<span class="sd">                  average weighted by support (the number of true instances</span>
-<span class="sd">                  for each label). This alters &quot;macro&quot; to account for label</span>
-<span class="sd">                  imbalance.</span>
-
-<span class="sd">        sample_weight: Optional[ArrayLike]</span>
-<span class="sd">            Sample weights.</span>
-<span class="sd">        zero_division: Literal[&quot;warn&quot;, 0, 1]</span>
-<span class="sd">            Value to return when there are no true positives or true negatives.</span>
-<span class="sd">            If set to ``warn``, this acts as 0, but warnings are also raised.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">        recall: float or np.ndarray (if average is None).</span>
-
-<span class="sd">    Raises</span>
-<span class="sd">    ------</span>
-<span class="sd">        ValueError</span>
-<span class="sd">            If ``average`` is not one of ``micro``, ``macro``, ``weighted``</span>
-<span class="sd">            or ``None``.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">average</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Argument `average` has to be one of &#39;micro&#39;, &#39;macro&#39;, &#39;weighted&#39;, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;or None, got `</span><span class="si">{</span><span class="n">average</span><span class="si">}</span><span class="s2">`.&quot;</span>
-        <span class="p">)</span>
-
-    <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_multiclass_stat_scores_update</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span>
-        <span class="n">preds</span><span class="p">,</span>
-        <span class="n">num_classes</span><span class="p">,</span>
-        <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
-        <span class="n">classwise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">_precision_recall_reduce</span><span class="p">(</span>
-        <span class="n">tp</span><span class="p">,</span>
-        <span class="n">fp</span><span class="p">,</span>
-        <span class="n">fn</span><span class="p">,</span>
-        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;recall&quot;</span><span class="p">,</span>
-        <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">,</span>
-        <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
-        <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
-    <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="multilabel_recall"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.precision_recall.html#cyclops.evaluation.metrics.functional.precision_recall.multilabel_recall">[docs]</a><span class="k">def</span> <span class="nf">multilabel_recall</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
-    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">top_k</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">sample_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Compute recall score for multilabel classification.</span>
-
-<span class="sd">    The input is expected to be an array-like of shape (N, L), where N is the</span>
-<span class="sd">    number of samples and L is the number of labels. The input is expected to</span>
-<span class="sd">    be a binary array-like, where 1 indicates the presence of a label and 0</span>
-<span class="sd">    indicates its absence.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">        target: ArrayLike</span>
-<span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds: ArrayLike</span>
-<span class="sd">            Predictions as returned by a classifier.</span>
-<span class="sd">        num_labels: int</span>
-<span class="sd">            Number of labels.</span>
-<span class="sd">        threshold: float</span>
-<span class="sd">            Threshold for positive class predictions. Default is 0.5.</span>
-<span class="sd">        top_k: Optional[int]</span>
-<span class="sd">            If not None, calculate recall only on the top k highest</span>
-<span class="sd">            probability predictions. Default is None. If None, calculate</span>
-<span class="sd">            recall on all predictions.</span>
-<span class="sd">        average: Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;samples&quot;, &quot;weighted&quot;, None]</span>
-<span class="sd">            Average to apply. If None, return scores for each class. Default is</span>
-<span class="sd">            None. One of:</span>
-<span class="sd">                - ``micro``: Calculate metrics globally by counting the total true</span>
-<span class="sd">                  positives, false negatives and false positives.</span>
-<span class="sd">                - ``macro``: Calculate metrics for each label, and find their</span>
-<span class="sd">                  unweighted mean. This does not take label imbalance into</span>
-<span class="sd">                  account.</span>
-<span class="sd">                - ``samples``: Calculate metrics for each instance, and find their</span>
-<span class="sd">                  average (only meaningful for multilabel classification where</span>
-<span class="sd">                  this differs from accuracy_score).</span>
-<span class="sd">                - ``weighted``: Calculate metrics for each label, and find their</span>
-<span class="sd">                  average weighted by support (the number of true instances</span>
-<span class="sd">                  for each label). This alters ``macro`` to account for label</span>
-<span class="sd">                  imbalance.</span>
-<span class="sd">        sample_weight: Optional[ArrayLike]</span>
-<span class="sd">            Sample weights.</span>
-<span class="sd">        zero_division: Literal[&quot;warn&quot;, 0, 1]</span>
-<span class="sd">            Value to return when there are no true positives or true negatives.</span>
-<span class="sd">            If set to ``warn``, this acts as 0, but warnings are also raised.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">        recall: float or np.ndarray (if ``average`` is None).</span>
-
-<span class="sd">    Raises</span>
-<span class="sd">    ------</span>
-<span class="sd">        ValueError</span>
-<span class="sd">            If ``average`` is not one of ``micro``, ``macro``, ``samples``, ``weighted``</span>
-<span class="sd">            or ``None``.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">average</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Argument average has to be one of &#39;micro&#39;, &#39;macro&#39;, &#39;samples&#39;, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;&#39;weighted&#39;, or None, got </span><span class="si">{</span><span class="n">average</span><span class="si">}</span><span class="s2">.&quot;</span>
-        <span class="p">)</span>
-
-    <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_multilabel_stat_scores_update</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span>
-        <span class="n">preds</span><span class="p">,</span>
-        <span class="n">num_labels</span><span class="p">,</span>
-        <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
-        <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
-        <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
-        <span class="n">reduce</span><span class="o">=</span><span class="s2">&quot;samples&quot;</span> <span class="k">if</span> <span class="n">average</span> <span class="o">==</span> <span class="s2">&quot;samples&quot;</span> <span class="k">else</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">_precision_recall_reduce</span><span class="p">(</span>
-        <span class="n">tp</span><span class="p">,</span>
-        <span class="n">fp</span><span class="p">,</span>
-        <span class="n">fn</span><span class="p">,</span>
-        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;recall&quot;</span><span class="p">,</span>
-        <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">,</span>
-        <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
-        <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
-    <span class="p">)</span></div>
 </pre></div>
 
            </div>

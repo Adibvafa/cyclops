@@ -146,6 +146,9 @@
 <li class="toctree-l3"><a class="reference internal" href="cyclops.evaluation.metrics.html#submodules">Submodules</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.accuracy.html">cyclops.evaluation.metrics.accuracy module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.auroc.html">cyclops.evaluation.metrics.auroc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.f_beta.html">cyclops.evaluation.metrics.f_beta module</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="cyclops.evaluation.metrics.functional.html">cyclops.evaluation.metrics.functional package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="cyclops.evaluation.metrics.functional.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.accuracy.html">cyclops.evaluation.metrics.functional.accuracy module</a></li>
@@ -154,6 +157,7 @@
 <li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.precision_recall.html">cyclops.evaluation.metrics.functional.precision_recall module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.precision_recall_curve.html">cyclops.evaluation.metrics.functional.precision_recall_curve module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.roc.html">cyclops.evaluation.metrics.functional.roc module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.sensitivity.html">cyclops.evaluation.metrics.functional.sensitivity module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.specificity.html">cyclops.evaluation.metrics.functional.specificity module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.stat_scores.html">cyclops.evaluation.metrics.functional.stat_scores module</a></li>
 </ul>
@@ -166,8 +170,16 @@
 <li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.precision_recall.html">cyclops.evaluation.metrics.functional.precision_recall module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.precision_recall_curve.html">cyclops.evaluation.metrics.functional.precision_recall_curve module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.roc.html">cyclops.evaluation.metrics.functional.roc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.sensitivity.html">cyclops.evaluation.metrics.functional.sensitivity module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.specificity.html">cyclops.evaluation.metrics.functional.specificity module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.stat_scores.html">cyclops.evaluation.metrics.functional.stat_scores module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.metric.html">cyclops.evaluation.metrics.metric module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.precision_recall.html">cyclops.evaluation.metrics.precision_recall module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.precision_recall_curve.html">cyclops.evaluation.metrics.precision_recall_curve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.roc.html">cyclops.evaluation.metrics.roc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.sensitivity.html">cyclops.evaluation.metrics.sensitivity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.specificity.html">cyclops.evaluation.metrics.specificity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.stat_scores.html">cyclops.evaluation.metrics.stat_scores module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.utils.html">cyclops.evaluation.metrics.utils module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.plotter.html">cyclops.plotter module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.processors.html">cyclops.processors package</a></li>
@@ -260,10 +272,8 @@
 <dd><p>Compute the area under the ROC curve for different tasks.</p>
 <blockquote>
 <div><dl>
-<dt>target<span class="classifier">ArrayLike</span></dt><dd><blockquote>
-<div><p>Ground truth (correct) target values.</p>
-</div></blockquote>
-<dl class="simple">
+<dt>target<span class="classifier">ArrayLike</span></dt><dd><p>Ground truth (correct) target values.</p>
+</dd>
 <dt>preds<span class="classifier">ArrayLike</span></dt><dd><p>Estimated probabilities or decision function. If <code class="docutils literal notranslate"><span class="pre">preds</span></code> is not in
 the range [0, 1], a sigmoid function is applied to transform it to
 the range [0, 1].</p>
@@ -274,7 +284,7 @@ the range [0, 1].</p>
 a partial AUC in the range [0, max_fpr] is returned. Only used for
 binary classification.</p>
 </dd>
-<dt>thresholds<span class="classifier">int or list of floats or np.ndarray of floats, default=None</span></dt><dd><p>Thresholds used for binarizing the values of <code class="docutils literal notranslate"><span class="pre">preds</span></code>.
+<dt>thresholds<span class="classifier">int or list of floats or numpy.ndarray of floats, default=None</span></dt><dd><p>Thresholds used for binarizing the values of <code class="docutils literal notranslate"><span class="pre">preds</span></code>.
 If int, then the number of thresholds to use.
 If list or array, then the thresholds to use.
 If None, then the thresholds are automatically determined by the
@@ -288,25 +298,27 @@ task.</p>
 </dd>
 <dt>average<span class="classifier">Literal[“micro”, “macro”, “weighted”], default=None</span></dt><dd><p>If not None, apply the method to compute the average area under the
 ROC curve. Only applicable for the <code class="docutils literal notranslate"><span class="pre">multiclass</span></code> and <code class="docutils literal notranslate"><span class="pre">multilabel</span></code>
-tasks. One of:
-- <code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true
-positives, false negatives and false positives.
-- <code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each label, and find their unweighted
-mean. This does not take label imbalance into account.
-- <code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their average,
-weighted by support (accounting for label imbalance).</p>
-</dd>
-</dl>
+tasks. One of:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true
+positives, false negatives and false positives.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each label, and find their unweighted
+mean. This does not take label imbalance into account.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their
+average, weighted by support (accounting for label imbalance).</p></li>
+</ul>
+</div></blockquote>
 </dd>
 </dl>
 </div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>auroc</strong> – Area under the ROC curve. If <code class="docutils literal notranslate"><span class="pre">average</span></code> is None or task is <code class="docutils literal notranslate"><span class="pre">binary</span></code>,
+<dd class="field-odd"><p><strong>auroc_score</strong> – Area under the ROC curve. If <code class="docutils literal notranslate"><span class="pre">average</span></code> is None or task is <code class="docutils literal notranslate"><span class="pre">binary</span></code>,
 <code class="docutils literal notranslate"><span class="pre">auroc</span></code> is a float. Otherwise, <code class="docutils literal notranslate"><span class="pre">auroc</span></code> is a numpy array.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)">float</a> or np.ndarray</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -324,7 +336,7 @@ are not in the range [0, 1], then they will be transformed to this range
 via a sigmoid function.</p></li>
 <li><p><strong>max_fpr</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>default=None</em>) – The maximum value of the false positive rate. If not None, then
 the partial AUCROC in the range [0, max_fpr] is returned.</p></li>
-<li><p><strong>thresholds</strong> (<em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>]</em><em>, </em><em>np.ndarray</em><em>]</em><em>, </em><em>default=None</em>) – Thresholds used for binarizing the values of <code class="docutils literal notranslate"><span class="pre">preds</span></code>.
+<li><p><strong>thresholds</strong> (<em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>]</em><em>, </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><em>numpy.ndarray</em></a><em>]</em><em>, </em><em>default=None</em>) – Thresholds used for binarizing the values of <code class="docutils literal notranslate"><span class="pre">preds</span></code>.
 If int, then the number of thresholds to use.
 If list or array, then the thresholds to use.
 If None, then the thresholds are automatically determined by the
@@ -360,7 +372,7 @@ unique values in <code class="docutils literal notranslate"><span class="pre">pr
 are not in the range [0, 1], then they will be transformed to this range
 via a softmax function.</p></li>
 <li><p><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of classes.</p></li>
-<li><p><strong>thresholds</strong> (<em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>]</em><em>, </em><em>np.ndarray</em><em>]</em><em>, </em><em>default=None</em>) – Thresholds used for binarizing the values of <code class="docutils literal notranslate"><span class="pre">preds</span></code>.
+<li><p><strong>thresholds</strong> (<em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>]</em><em>, </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><em>numpy.ndarray</em></a><em>]</em><em>, </em><em>default=None</em>) – Thresholds used for binarizing the values of <code class="docutils literal notranslate"><span class="pre">preds</span></code>.
 If int, then the number of thresholds to use.
 If list or array, then the thresholds to use.
 If None, then the thresholds are automatically determined by the
@@ -372,11 +384,8 @@ this determines the type of averaging performed on the scores. One of
 <div><p>mean. This does not take class imbalance into account.</p>
 </div></blockquote>
 <ul>
-<li><dl class="simple">
-<dt><cite>weighted</cite>: Calculate metrics for each class, and find their average,</dt><dd><p>weighted by support (the number of true instances for each class).</p>
-</dd>
-</dl>
-</li>
+<li><p><cite>weighted</cite>: Calculate metrics for each class, and find their average,
+weighted by support (the number of true instances for each class).</p></li>
 </ul>
 </p></li>
 </ul>
@@ -386,7 +395,7 @@ this determines the type of averaging performed on the scores. One of
 of shape (num_classes,) is returned, otherwise a float is returned.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Union[<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)">float</a>, np.ndarray]</p>
+<dd class="field-odd"><p>Union[<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)">float</a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a>]</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -414,7 +423,7 @@ of shape (num_classes,) is returned, otherwise a float is returned.</p>
 are not in the range [0, 1], then they will be transformed to this range
 via a softmax function.</p></li>
 <li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of labels.</p></li>
-<li><p><strong>thresholds</strong> (<em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>]</em><em>, </em><em>np.ndarray</em><em>]</em><em>, </em><em>default=None</em>) – Thresholds used for binarizing the values of <code class="docutils literal notranslate"><span class="pre">preds</span></code>.
+<li><p><strong>thresholds</strong> (<em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>]</em><em>, </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><em>numpy.ndarray</em></a><em>]</em><em>, </em><em>default=None</em>) – Thresholds used for binarizing the values of <code class="docutils literal notranslate"><span class="pre">preds</span></code>.
 If int, then the number of thresholds to use.
 If list or array, then the thresholds to use.
 If None, then the thresholds are automatically determined by the
@@ -441,11 +450,11 @@ this determines the type of averaging performed on the scores. One of
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>auroc</strong> – Area under the ROC curve. If <code class="docutils literal notranslate"><span class="pre">average</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, then a numpy array
+<dd class="field-even"><p>Area under the ROC curve. If <code class="docutils literal notranslate"><span class="pre">average</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, then a numpy array
 of shape (num_labels,) is returned, otherwise a float is returned.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Union[<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)">float</a>, np.ndarray]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>

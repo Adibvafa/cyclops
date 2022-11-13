@@ -174,7 +174,8 @@
 <span class="sd">and probabilities.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">scipy</span> <span class="k">as</span> <span class="nn">sp</span>
@@ -190,161 +191,11 @@
 <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_stat_scores_update</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
-    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">task</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">,</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">],</span>
-    <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="n">num_classes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">classwise</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">top_k</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">num_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">sample_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">reduce</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;micro&quot;</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Update the stat scores for a given task.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">        preds: ArrayLike</span>
-<span class="sd">            Predictions.</span>
-<span class="sd">        target: ArrayLike</span>
-<span class="sd">            Ground truth.</span>
-<span class="sd">        task: String</span>
-<span class="sd">            The task type. Can be either &#39;binary&#39;, &#39;multiclass&#39; or &#39;multilabel&#39;.</span>
-<span class="sd">        pos_label: int</span>
-<span class="sd">            The positive label to report. Defaults to 1. Can be either 0, 1.</span>
-<span class="sd">            Only applicable to binary data.</span>
-<span class="sd">        num_classes: int</span>
-<span class="sd">            The number of classes. Only used for multiclass tasks.</span>
-<span class="sd">        num_labels: int</span>
-<span class="sd">            The number of labels. Only used for multilabel tasks.</span>
-<span class="sd">        sample_weight: ArrayLike</span>
-<span class="sd">            Sample weights.</span>
-<span class="sd">        classwise: bool</span>
-<span class="sd">            Whether to compute the stat scores classwise. Defaults to False. Only</span>
-<span class="sd">            used for multiclass tasks.</span>
-<span class="sd">        reduce: String</span>
-<span class="sd">            Reduction mode. Defaults to &#39;macro&#39;. One of:</span>
-<span class="sd">            &#39;micro&#39;: sum the statistics over all samples and labels to compute the</span>
-<span class="sd">                global score.</span>
-<span class="sd">            &#39;macro&#39;: Calculate metrics for each label/class.</span>
-<span class="sd">            &#39;samples&#39;: Calculate metrics for each instance/sample.</span>
-<span class="sd">        threshold: float</span>
-<span class="sd">            Threshold for binarizing the predictions. Defaults to 0.5. Only used</span>
-<span class="sd">            for binary and multilabel tasks.</span>
-<span class="sd">        top_k: int</span>
-<span class="sd">            Number of top elements to look at for computing accuracy. Only used</span>
-<span class="sd">            for multiclass and multilabel tasks.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">        The stat scores.</span>
-
-<span class="sd">    Raises</span>
-<span class="sd">    ------</span>
-<span class="sd">        ValueError</span>
-<span class="sd">            If the task is not one of &#39;binary&#39;, &#39;multiclass&#39; or &#39;multilabel&#39;.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;binary&quot;</span><span class="p">:</span>
-        <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_binary_stat_scores_update</span><span class="p">(</span>
-            <span class="n">target</span><span class="p">,</span>
-            <span class="n">preds</span><span class="p">,</span>
-            <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">,</span>
-            <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
-            <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
-        <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_classes</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_classes</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="p">),</span> <span class="s2">&quot;Number of classes must be a positive integer.&quot;</span>
-        <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_multiclass_stat_scores_update</span><span class="p">(</span>
-            <span class="n">target</span><span class="p">,</span>
-            <span class="n">preds</span><span class="p">,</span>
-            <span class="n">num_classes</span><span class="p">,</span>
-            <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
-            <span class="n">classwise</span><span class="o">=</span><span class="n">classwise</span><span class="p">,</span>
-            <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
-        <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_labels</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_labels</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="p">),</span> <span class="s2">&quot;Number of labels must be a positive integer.&quot;</span>
-        <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_multilabel_stat_scores_update</span><span class="p">(</span>
-            <span class="n">target</span><span class="p">,</span>
-            <span class="n">preds</span><span class="p">,</span>
-            <span class="n">num_labels</span><span class="p">,</span>
-            <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
-            <span class="n">reduce</span><span class="o">=</span><span class="n">reduce</span><span class="p">,</span>
-            <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
-            <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
-        <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Unsupported task: </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">, expected one of &#39;binary&#39;, &#39;multiclass&#39; or &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;&#39;multilabel&#39;.&quot;</span>
-        <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span>
-
-
-<span class="k">def</span> <span class="nf">_stat_scores</span><span class="p">(</span>
-    <span class="n">target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">preds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">sample_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">reduce</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;micro&quot;</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Compute true positives, false positives, true negatives and false negatives.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">        preds: np.ndarray</span>
-<span class="sd">            Predictions.</span>
-<span class="sd">        target: np.ndarray</span>
-<span class="sd">            Ground truth.</span>
-<span class="sd">        sample_weight: np.ndarray</span>
-<span class="sd">            Sample weights.</span>
-<span class="sd">        labels: np.ndarray</span>
-<span class="sd">            The set of labels to include.</span>
-<span class="sd">        reduce: String</span>
-<span class="sd">            Reduction mode. Defaults to &#39;micro&#39;.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">        The stat scores.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="n">samplewise</span> <span class="o">=</span> <span class="n">reduce</span> <span class="o">==</span> <span class="s2">&quot;samples&quot;</span>
-    <span class="n">confmat</span> <span class="o">=</span> <span class="n">multilabel_confusion_matrix</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">samplewise</span><span class="o">=</span><span class="n">samplewise</span>
-    <span class="p">)</span>  <span class="c1"># shape: (num_outputs, 2, 2)</span>
-
-    <span class="n">tn</span> <span class="o">=</span> <span class="n">confmat</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># shape: (num_outputs,)</span>
-    <span class="n">fn</span> <span class="o">=</span> <span class="n">confmat</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-    <span class="n">tp</span> <span class="o">=</span> <span class="n">confmat</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-    <span class="n">fp</span> <span class="o">=</span> <span class="n">confmat</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-
-    <span class="k">if</span> <span class="n">reduce</span> <span class="o">==</span> <span class="s2">&quot;micro&quot;</span><span class="p">:</span>
-        <span class="n">tp</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-        <span class="n">fp</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-        <span class="n">tn</span> <span class="o">=</span> <span class="n">tn</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-        <span class="n">fn</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-
-    <span class="k">return</span> <span class="p">(</span>
-        <span class="n">tp</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
-        <span class="n">fp</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
-        <span class="n">tn</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
-        <span class="n">fn</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
-    <span class="p">)</span>
-
-
 <span class="k">def</span> <span class="nf">_stat_scores_compute</span><span class="p">(</span>  <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="n">tp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tn</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">tp</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+    <span class="n">fp</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+    <span class="n">tn</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+    <span class="n">fn</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Compute true positives, false positives, true negatives and false negatives.</span>
 
@@ -352,13 +203,13 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        tp: np.ndarray</span>
+<span class="sd">        tp : numpy.ndarray or numpy.int_</span>
 <span class="sd">            True positives.</span>
-<span class="sd">        fp: np.ndarray</span>
+<span class="sd">        fp : numpy.ndarray or numpy.int_</span>
 <span class="sd">            False positives.</span>
-<span class="sd">        tn: np.ndarray</span>
+<span class="sd">        tn : numpy.ndarray or numpy.int_</span>
 <span class="sd">            True negatives.</span>
-<span class="sd">        fn: np.ndarray</span>
+<span class="sd">        fn : numpy.ndarray or numpy.int_</span>
 <span class="sd">            False negatives.</span>
 
 <span class="sd">    Returns</span>
@@ -366,128 +217,134 @@
 <span class="sd">        The stat scores.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">stats</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">tn</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>  <span class="c1"># support</span>
-    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">tp</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">tp</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># 1D array with 1 element</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="p">[</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span> <span class="o">+</span> <span class="n">fn</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">tn</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>  <span class="c1"># support</span>
+        <span class="p">]</span>
 
     <span class="n">output</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">output</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">output</span>
 
 
-<div class="viewcode-block" id="stat_scores"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.stat_scores.html#cyclops.evaluation.metrics.functional.stat_scores.stat_scores">[docs]</a><span class="k">def</span> <span class="nf">stat_scores</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
-    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">task</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">,</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">],</span>
-    <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="n">num_classes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="k">def</span> <span class="nf">_stat_scores_from_confmat</span><span class="p">(</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">classwise</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">top_k</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">num_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">reduce</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;micro&quot;</span><span class="p">,</span>
-    <span class="n">sample_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>
+    <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+    <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+    <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+    <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+<span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Compute true positives, false positives, true negatives and false negatives.</span>
-
-<span class="sd">    Concatenates the results in a single array, along with the support. This</span>
-<span class="sd">    function acts as an entry point for more specialized functions.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        preds: ArrayLike</span>
+<span class="sd">        preds : numpy.ndarray</span>
 <span class="sd">            Predictions.</span>
-<span class="sd">        target: ArrayLike</span>
+<span class="sd">        target : numpy.ndarray</span>
 <span class="sd">            Ground truth.</span>
-<span class="sd">        task: String</span>
-<span class="sd">            The task type. Can be either ``binary``, ``multiclass`` or</span>
-<span class="sd">            ``multilabel``. One of:</span>
-<span class="sd">                - ``binary``: binary classification.</span>
-<span class="sd">                    Example: [0, 1, 1, 0, 1] or [0.1, 0.9, 0.8, 0.2, 0.4]</span>
-<span class="sd">                - ``multiclass``: multiclass classification.</span>
-<span class="sd">                    Example: [0, 1, 2, 0, 1] or [[0.1, 0.9, 0.0], [0.0, 0.8, 0.2], ...]</span>
-<span class="sd">                - ``multilabel``: multilabel classification.</span>
-<span class="sd">                    Example: [[0, 1], [1, 0], [1, 1], [0, 0], [1, 0]] or</span>
-<span class="sd">                    [[0.1, 0.9], [0.0, 0.8], ...]</span>
-
-<span class="sd">        pos_label: int</span>
-<span class="sd">            The positive label. Defaults to 1. Only used for binary tasks.</span>
-<span class="sd">        num_classes: int</span>
-<span class="sd">            The number of classes. Only used for multiclass tasks.</span>
-<span class="sd">        classwise: bool</span>
-<span class="sd">            Whether to compute the stat scores classwise. Only used for multiclass</span>
-<span class="sd">            tasks. Defaults to False.</span>
-<span class="sd">        top_k: int</span>
-<span class="sd">            The number of top classes to consider. Used for multiclass and</span>
-<span class="sd">            multilabel tasks. Defaults to None.</span>
-<span class="sd">        threshold: float</span>
-<span class="sd">            The threshold to use for binarizing the predictions. Used for</span>
-<span class="sd">            binary and multilabel tasks. Defaults to 0.5.</span>
-<span class="sd">        num_labels: int</span>
-<span class="sd">            The number of labels. Only used for multilabel tasks.</span>
-<span class="sd">        reduce: Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;samples&quot;]</span>
-<span class="sd">            Reduction mode. Defaults to &#39;micro&#39;. Only used for multiclass and</span>
-<span class="sd">            multilabel tasks. One of:</span>
-<span class="sd">                - ``micro``: compute the stat scores globally.</span>
-<span class="sd">                - ``macro``: compute the stat scores for each class.</span>
-<span class="sd">                - ``samples``: compute the stat scores for each sample.</span>
-
-<span class="sd">        sample_weight: ArrayLike</span>
-<span class="sd">            Sample weights.</span>
+<span class="sd">        labels : numpy.ndarray, default=None</span>
+<span class="sd">            The set of labels to include.</span>
+<span class="sd">        classwise : bool, default=True</span>
+<span class="sd">            If True, compute the stat scores for each class separately. Otherwise,</span>
+<span class="sd">            compute the stat scores for the whole array.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        The stat scores.</span>
+<span class="sd">        Tuple of true positives, false positives, true negatives and false negatives.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_stat_scores_update</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span>
-        <span class="n">preds</span><span class="p">,</span>
-        <span class="n">task</span><span class="p">,</span>
-        <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">,</span>
-        <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
-        <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">,</span>
-        <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
-        <span class="n">classwise</span><span class="o">=</span><span class="n">classwise</span><span class="p">,</span>
-        <span class="n">reduce</span><span class="o">=</span><span class="n">reduce</span><span class="p">,</span>
-        <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
-        <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
+    <span class="n">confmat</span> <span class="o">=</span> <span class="n">multilabel_confusion_matrix</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span>
+    <span class="p">)</span>  <span class="c1"># shape: (n_classes, 2, 2)</span>
+
+    <span class="n">tn</span> <span class="o">=</span> <span class="n">confmat</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># shape: (n_classes,)</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="n">confmat</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">tp</span> <span class="o">=</span> <span class="n">confmat</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">fp</span> <span class="o">=</span> <span class="n">confmat</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">classwise</span><span class="p">:</span>
+        <span class="n">tp</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">fp</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">tn</span> <span class="o">=</span> <span class="n">tn</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">fn</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">tp</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">),</span>
+        <span class="n">fp</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">),</span>
+        <span class="n">tn</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">),</span>
+        <span class="n">fn</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">),</span>
     <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">_stat_scores_compute</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span></div>
 
-
-<span class="k">def</span> <span class="nf">_binary_stat_scores_format</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Format the input for computing binary stat scores.</span>
-
-<span class="sd">    Converts the target and preds to binary and checks the shape.</span>
+<span class="k">def</span> <span class="nf">_binary_stat_scores_args_check</span><span class="p">(</span><span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Check the arguments for binary stat scores.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target: ArrayLike</span>
+<span class="sd">        threshold : float</span>
+<span class="sd">            Threshold for converting logits and probability predictions to binary</span>
+<span class="sd">            [1, 0].</span>
+<span class="sd">        pos_label : int</span>
+<span class="sd">            The positive label to report.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the threshold is not in [0, 1] or if the pos_label is not 0 or 1.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">threshold</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Threshold must be in [0, 1], got </span><span class="si">{</span><span class="n">threshold</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">pos_label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Positive label must be 0 or 1, got </span><span class="si">{</span><span class="n">pos_label</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_binary_stat_scores_format</span><span class="p">(</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Format the input for computing binary stat scores.</span>
+
+<span class="sd">    Checks that ``target`` and ``preds`` are binary and have the same shape.</span>
+<span class="sd">    If ``preds`` is in continuous form, it is binarized using the given threshold.</span>
+<span class="sd">    Logits are converted to probabilities using the sigmoid function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        target : ArrayLike</span>
 <span class="sd">            Ground truth.</span>
-<span class="sd">        preds: ArrayLike</span>
+<span class="sd">        preds : ArrayLike</span>
 <span class="sd">            Predictions.</span>
-<span class="sd">        threshold: float</span>
+<span class="sd">        threshold : float</span>
 <span class="sd">            Threshold for converting logits and probability predictions to binary</span>
 <span class="sd">            [1, 0].</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        The formatted target and preds.</span>
+<span class="sd">        Tuple[numpy.ndarray, numpy.ndarray]</span>
+<span class="sd">            The formatted target and preds as numpy.ndarray.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">        ValueError</span>
 <span class="sd">            If the target and preds are not binary.</span>
 
-<span class="sd">        RuntimeError</span>
+<span class="sd">        ValueError</span>
 <span class="sd">            If the target and preds have non-binary values.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -505,7 +362,7 @@
     <span class="n">unique_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
     <span class="n">check</span> <span class="o">=</span> <span class="nb">any</span><span class="p">((</span><span class="n">unique_values</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">unique_values</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">check</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Detected the following values in `target`: </span><span class="si">{</span><span class="n">unique_values</span><span class="si">}</span><span class="s2"> but&quot;</span>
             <span class="sa">f</span><span class="s2">&quot; expected only the following values </span><span class="si">{</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="p">)</span>
@@ -514,7 +371,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">type_preds</span> <span class="o">==</span> <span class="s2">&quot;continuous&quot;</span><span class="p">:</span>
         <span class="n">unique_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">any</span><span class="p">((</span><span class="n">unique_values</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">unique_values</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Detected the following values in `preds`: </span><span class="si">{</span><span class="n">unique_values</span><span class="si">}</span><span class="s2"> but&quot;</span>
                 <span class="sa">f</span><span class="s2">&quot; expected only [0,1] values since `preds` is a label array.&quot;</span>
             <span class="p">)</span>
@@ -523,37 +380,37 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">preds</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">preds</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">)):</span>
             <span class="n">preds</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span>  <span class="c1"># convert logits to probabilities</span>
 
-        <span class="n">preds</span> <span class="o">=</span> <span class="p">(</span><span class="n">preds</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="p">(</span><span class="n">preds</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">target</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span> <span class="n">preds</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">target</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">),</span> <span class="n">preds</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_binary_stat_scores_update</span><span class="p">(</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">sample_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>
+    <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+    <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+    <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+    <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+<span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Compute the statistics for binary inputs.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target: ArrayLike</span>
+<span class="sd">        target : ArrayLike</span>
 <span class="sd">            Ground truth.</span>
-<span class="sd">        preds: ArrayLike</span>
+<span class="sd">        preds : ArrayLike</span>
 <span class="sd">            Predictions.</span>
-<span class="sd">        pos_label: int</span>
-<span class="sd">            The positive label to report. Defaults to 1. Can be either 0, 1.</span>
-<span class="sd">        threshold: float</span>
-<span class="sd">            Threshold for converting logits and probability predictions to binary</span>
-<span class="sd">            [1, 0]. Defaults to 0.5.</span>
-<span class="sd">        sample_weight: ArrayLike</span>
-<span class="sd">            Sample weights.</span>
+<span class="sd">        pos_label : int, default=1</span>
+<span class="sd">            The positive label to report. Can be either 0, 1.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        The true positives, false positives, true negatives and false negatives.</span>
+<span class="sd">        Tuple[Union[numpy.ndarray, numpy.int_], Union[numpy.ndarray, numpy.int_],</span>
+<span class="sd">        Union[numpy.ndarray, numpy.int_], Union[numpy.ndarray, numpy.int_]]</span>
+<span class="sd">            The true positives, false positives, true negatives and false negatives.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -561,99 +418,62 @@
 <span class="sd">            If the target and preds are not numeric.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_binary_stat_scores_format</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">pos_label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;The argument `pos_label` must be either 0 or 1, got </span><span class="si">{</span><span class="n">pos_label</span><span class="si">}</span><span class="s2">.&quot;</span>
-        <span class="p">)</span>
-
-    <span class="n">confmat</span> <span class="o">=</span> <span class="n">multilabel_confusion_matrix</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="n">pos_label</span><span class="p">]</span>
-    <span class="p">)</span>
-
-    <span class="n">tn</span> <span class="o">=</span> <span class="n">confmat</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-    <span class="n">fn</span> <span class="o">=</span> <span class="n">confmat</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-    <span class="n">tp</span> <span class="o">=</span> <span class="n">confmat</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-    <span class="n">fp</span> <span class="o">=</span> <span class="n">confmat</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">_binary_stat_scores_compute</span><span class="p">(</span>  <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="n">tp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tn</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return the stat scores for binary inputs.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">        tp: np.ndarray</span>
-<span class="sd">            True positives.</span>
-<span class="sd">        fp: np.ndarray</span>
-<span class="sd">            False positives.</span>
-<span class="sd">        tn: np.ndarray</span>
-<span class="sd">            True negatives.</span>
-<span class="sd">        fn: np.ndarray</span>
-<span class="sd">            False negatives.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">        The stat scores.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_stat_scores_compute</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_stat_scores_from_confmat</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="n">pos_label</span><span class="p">],</span> <span class="n">classwise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="binary_stat_scores"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.stat_scores.html#cyclops.evaluation.metrics.functional.stat_scores.binary_stat_scores">[docs]</a><span class="k">def</span> <span class="nf">binary_stat_scores</span><span class="p">(</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="n">threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">sample_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Compute the stat scores for binary inputs.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target: ArrayLike</span>
+<span class="sd">        target : ArrayLike</span>
 <span class="sd">            Ground truth.</span>
-<span class="sd">        preds: ArrayLike</span>
+<span class="sd">        preds : ArrayLike</span>
 <span class="sd">            Predictions.</span>
-<span class="sd">        pos_label: int</span>
-<span class="sd">            The positive label to report. Defaults to 1. Can be either 0, 1.</span>
-<span class="sd">        threshold: float</span>
-<span class="sd">            Threshold for converting logits and probability predictions to binary</span>
-<span class="sd">            [1, 0]. Defaults to 0.5.</span>
-<span class="sd">        sample_weight: ArrayLike</span>
-<span class="sd">            Sample weights.</span>
+<span class="sd">        pos_label : int, default=1</span>
+<span class="sd">            The label to use for the positive class.</span>
+<span class="sd">        threshold : float, default=0.5</span>
+<span class="sd">            The threshold to use for converting the predictions to binary</span>
+<span class="sd">            values. Logits will be converted to probabilities using the sigmoid</span>
+<span class="sd">            function.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        The true positives, false positives, true negatives and false negatives.</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            The true positives, false positives, true negatives and false negatives</span>
+<span class="sd">            and support in that order.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">        ValueError</span>
-<span class="sd">            If threshold is not a float and not in [0,1].</span>
+<span class="sd">            If the threshold is not in [0, 1] or if the pos_label is not 0 or 1.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import binary_stat_scores</span>
+<span class="sd">        &gt;&gt;&gt; target = [0, 1, 1, 0]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [0, 1, 0, 0]</span>
+<span class="sd">        &gt;&gt;&gt; binary_stat_scores(target, preds)</span>
+<span class="sd">        array([1, 0, 2, 1, 2])</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">threshold</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Expected argument `threshold` to be a float in the [0,1] range, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;but got </span><span class="si">{</span><span class="n">threshold</span><span class="si">}</span><span class="s2">.&quot;</span>
-        <span class="p">)</span>
+    <span class="n">_binary_stat_scores_args_check</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">)</span>
 
-    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_binary_stat_scores_update</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span>
-        <span class="n">preds</span><span class="p">,</span>
-        <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">,</span>
-        <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
-        <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_binary_stat_scores_format</span><span class="p">(</span>
+        <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="o">=</span><span class="n">preds</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span>
     <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">_binary_stat_scores_compute</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span></div>
+    <span class="c1"># pylint: disable=invalid-name</span>
+    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_binary_stat_scores_update</span><span class="p">(</span>
+        <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="o">=</span><span class="n">preds</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_stat_scores_compute</span><span class="p">(</span><span class="n">tp</span><span class="o">=</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="o">=</span><span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="o">=</span><span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">)</span></div>
 
 
 <span class="k">def</span> <span class="nf">_multiclass_stat_scores_format</span><span class="p">(</span>
@@ -667,19 +487,20 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target: ArrayLike</span>
+<span class="sd">        target : ArrayLike</span>
 <span class="sd">            Ground truth.</span>
-<span class="sd">        preds: ArrayLike</span>
+<span class="sd">        preds : ArrayLike</span>
 <span class="sd">            Predictions.</span>
-<span class="sd">        num_classes: int</span>
+<span class="sd">        num_classes : int</span>
 <span class="sd">            The total number of classes for the problem.</span>
-<span class="sd">        top_k: int</span>
+<span class="sd">        top_k : int</span>
 <span class="sd">            The number of top predictions to consider when computing the statistics.</span>
 <span class="sd">            Defaults to 1.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        The formatted target and preds.</span>
+<span class="sd">        Tuple[numpy.ndarray, numpy.ndarray]</span>
+<span class="sd">            The formatted target and preds.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -703,12 +524,12 @@
     <span class="c1"># check the target</span>
     <span class="k">if</span> <span class="n">type_target</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;The argument `target` must be binary or multiclass, got </span><span class="si">{</span><span class="n">type_target</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;The argument `target` must be multiclass, got </span><span class="si">{</span><span class="n">type_target</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="p">)</span>
 
     <span class="n">num_implied_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">target</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">num_implied_classes</span> <span class="o">&gt;</span> <span class="n">num_classes</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;Detected more unique values in `target` than `num_classes`. Expected only &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">num_classes</span><span class="si">}</span><span class="s2"> but found </span><span class="si">{</span><span class="n">num_implied_classes</span><span class="si">}</span><span class="s2"> in `target`.&quot;</span>
         <span class="p">)</span>
@@ -725,7 +546,7 @@
     <span class="k">if</span> <span class="n">type_preds</span> <span class="o">!=</span> <span class="s2">&quot;continuous-multioutput&quot;</span><span class="p">:</span>
         <span class="n">num_implied_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">preds</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">num_implied_classes</span> <span class="o">&gt;</span> <span class="n">num_classes</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Detected more unique values in `preds` than `num_classes`. Expected &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;only </span><span class="si">{</span><span class="n">num_classes</span><span class="si">}</span><span class="s2"> but found </span><span class="si">{</span><span class="n">num_implied_classes</span><span class="si">}</span><span class="s2"> in `preds`.&quot;</span>
             <span class="p">)</span>
@@ -735,48 +556,52 @@
         <span class="n">check_topk</span><span class="p">(</span><span class="n">top_k</span><span class="p">,</span> <span class="n">type_preds</span><span class="p">,</span> <span class="n">type_target</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
 
     <span class="c1"># handle probabilities and logits</span>
-    <span class="k">if</span> <span class="n">type_preds</span> <span class="o">==</span> <span class="s2">&quot;continuous-multioutput&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">preds</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">preds</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">)</span>
-    <span class="p">):</span>
-        <span class="n">preds</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># convert logits to probabilities</span>
+    <span class="k">if</span> <span class="n">type_preds</span> <span class="o">==</span> <span class="s2">&quot;continuous-multioutput&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">preds</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">preds</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">)):</span>
+            <span class="n">preds</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># convert logits to probabilities</span>
 
-    <span class="k">if</span> <span class="n">type_preds</span> <span class="o">==</span> <span class="s2">&quot;continuous-multioutput&quot;</span> <span class="ow">and</span> <span class="n">type_target</span> <span class="o">==</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">preds</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;``preds`` need to be probabilities for multiclass problems&quot;</span>
+                <span class="s2">&quot; i.e. they should sum up to 1.0 over classes&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># convert ``preds`` and ``target`` to multilabel-indicator format</span>
         <span class="n">preds</span> <span class="o">=</span> <span class="n">select_topk</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">top_k</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">target</span> <span class="o">=</span> <span class="n">label_binarize</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_classes</span><span class="p">))</span>
 
-    <span class="k">return</span> <span class="n">target</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span> <span class="n">preds</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">target</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">),</span> <span class="n">preds</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_multiclass_stat_scores_update</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
-    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">top_k</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">classwise</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">sample_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="n">classwise</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>
+    <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+    <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+    <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+    <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+<span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Update the stat scores for multiclass inputs.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target: ArrayLike</span>
+<span class="sd">        target : numpy.ndarray</span>
 <span class="sd">            Ground truth.</span>
-<span class="sd">        preds: ArrayLike</span>
+<span class="sd">        preds : numpy.ndarray</span>
 <span class="sd">            Predictions.</span>
-<span class="sd">        num_classes: int</span>
+<span class="sd">        num_classes : int</span>
 <span class="sd">            The total number of classes for the problem.</span>
-<span class="sd">        top_k: int</span>
-<span class="sd">            The number of top predictions to consider when computing the statistics.</span>
-<span class="sd">            Defaults to ``None``.</span>
-<span class="sd">        classwise: bool</span>
+<span class="sd">        classwise : bool, default=True</span>
 <span class="sd">            Whether to return the statistics for each class or sum over all classes.</span>
-<span class="sd">            Defaults to ``False``.</span>
-<span class="sd">        sample_weight: ArrayLike</span>
-<span class="sd">            Sample weights.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        The true positives, false positives, true negatives and false negatives.</span>
+<span class="sd">        Tuple[Union[numpy.ndarray, numpy.int_], Union[numpy.ndarray, numpy.int_],</span>
+<span class="sd">        Union[numpy.ndarray, numpy.int_], Union[numpy.ndarray, numpy.int_]]</span>
+<span class="sd">            The true positives, false positives, true negatives and false negatives.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -784,40 +609,9 @@
 <span class="sd">            If the input target and preds are not numeric.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_multiclass_stat_scores_format</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span> <span class="n">top_k</span><span class="p">)</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_classes</span><span class="p">)</span>
-
-    <span class="n">reduce</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;macro&quot;</span> <span class="k">if</span> <span class="n">classwise</span> <span class="k">else</span> <span class="s2">&quot;micro&quot;</span>
-    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_stat_scores</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">reduce</span><span class="o">=</span><span class="n">reduce</span>
+    <span class="k">return</span> <span class="n">_stat_scores_from_confmat</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_classes</span><span class="p">),</span> <span class="n">classwise</span><span class="o">=</span><span class="n">classwise</span>
     <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span>
-
-
-<span class="k">def</span> <span class="nf">_multiclass_stat_scores_compute</span><span class="p">(</span>  <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="n">tp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tn</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Compute the stat scores for multiclass inputs.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">        tp: np.ndarray</span>
-<span class="sd">            True positives.</span>
-<span class="sd">        fp: np.ndarray</span>
-<span class="sd">            False positives.</span>
-<span class="sd">        tn: np.ndarray</span>
-<span class="sd">            True negatives.</span>
-<span class="sd">        fn: np.ndarray</span>
-<span class="sd">            False negatives.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">        The true positives, false positives, true negatives and false negatives.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_stat_scores_compute</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="multiclass_stat_scores"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.stat_scores.html#cyclops.evaluation.metrics.functional.stat_scores.multiclass_stat_scores">[docs]</a><span class="k">def</span> <span class="nf">multiclass_stat_scores</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
@@ -825,45 +619,57 @@
     <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">classwise</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">sample_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">classwise</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Compute stat scores for multiclass inputs.</span>
+    <span class="sd">&quot;&quot;&quot;Compute stat scores for multiclass targets.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target: ArrayLike</span>
-<span class="sd">            Ground truth.</span>
-<span class="sd">        preds: ArrayLike</span>
-<span class="sd">            Predictions.</span>
-<span class="sd">        num_classes: int</span>
+<span class="sd">        target : ArrayLike</span>
+<span class="sd">            The ground truth values.</span>
+<span class="sd">        preds : ArrayLike</span>
+<span class="sd">            The predictions. If determined to be in continuous format, will be</span>
+<span class="sd">            converted to multiclass using the ``top_k`` parameter.</span>
+<span class="sd">        num_classes : int</span>
 <span class="sd">            The total number of classes for the problem.</span>
-<span class="sd">        top_k: int</span>
-<span class="sd">            The number of top predictions to consider when computing the statistics.</span>
-<span class="sd">            Defaults to ``None``.</span>
-<span class="sd">        classwise: bool</span>
-<span class="sd">            Whether to return the statistics for each class or sum over all classes.</span>
-<span class="sd">            Defaults to ``False``.</span>
-<span class="sd">        sample_weight: ArrayLike</span>
-<span class="sd">            Sample weights.</span>
+<span class="sd">        top_k : Optional[int], default=None</span>
+<span class="sd">            The number of top predictions to consider when computing the</span>
+<span class="sd">            stat scores. If ``None``, it is assumed to be 1.</span>
+<span class="sd">        classwise : bool, default=True</span>
+<span class="sd">            Whether to return the stat scores for each class or sum over all</span>
+<span class="sd">            classes.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        The number of true positives, false positives, true negatives and false</span>
-<span class="sd">        negatives.</span>
+<span class="sd">        numpy.nadarray</span>
+<span class="sd">            The number of true positives, false positives, true negatives, false</span>
+<span class="sd">            negatives and support. If ``classwise`` is ``True``, the shape is</span>
+<span class="sd">            ``(num_classes, 5)``. Otherwise, the shape is ``(5,)``</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multiclass_stat_scores</span>
+<span class="sd">        &gt;&gt;&gt; target = [0, 1, 2, 2, 2]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [0, 2, 1, 2, 0]</span>
+<span class="sd">        &gt;&gt;&gt; multiclass_stat_scores(target, preds, num_classes=3)</span>
+<span class="sd">        array([[1, 1, 3, 0, 1],</span>
+<span class="sd">               [0, 1, 3, 1, 1],</span>
+<span class="sd">               [1, 1, 1, 2, 3]])</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_multiclass_stat_scores_update</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span>
-        <span class="n">preds</span><span class="p">,</span>
-        <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
-        <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
-        <span class="n">classwise</span><span class="o">=</span><span class="n">classwise</span><span class="p">,</span>
-        <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_multiclass_stat_scores_format</span><span class="p">(</span>
+        <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="o">=</span><span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span>
     <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">_multiclass_stat_scores_compute</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span></div>
+    <span class="c1"># pylint: disable=invalid-name</span>
+    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_multiclass_stat_scores_update</span><span class="p">(</span>
+        <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
+        <span class="n">preds</span><span class="o">=</span><span class="n">preds</span><span class="p">,</span>
+        <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
+        <span class="n">classwise</span><span class="o">=</span><span class="n">classwise</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_stat_scores_compute</span><span class="p">(</span><span class="n">tp</span><span class="o">=</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="o">=</span><span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="o">=</span><span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">)</span></div>
 
 
 <span class="k">def</span> <span class="nf">_multilabel_stat_scores_format</span><span class="p">(</span>
@@ -877,20 +683,21 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target: ArrayLike</span>
+<span class="sd">        target : ArrayLike</span>
 <span class="sd">            Ground truth.</span>
-<span class="sd">        preds: ArrayLike</span>
+<span class="sd">        preds : ArrayLike</span>
 <span class="sd">            Predictions.</span>
-<span class="sd">        num_labels: int</span>
+<span class="sd">        num_labels : int</span>
 <span class="sd">            The total number of labels for the problem.</span>
-<span class="sd">        threshold: float</span>
-<span class="sd">            Threshold value for binarizing the predictions. Defaults to ``0.5``.</span>
-<span class="sd">        top_k: int</span>
+<span class="sd">        threshold : float, default=0.5</span>
+<span class="sd">            Threshold value for binarizing the predictions.</span>
+<span class="sd">        top_k : int, default=None</span>
 <span class="sd">            The number of top predictions to consider when computing the statistics.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        The formatted target and preds.</span>
+<span class="sd">        Tuple[numpy.ndarray, numpy.ndarray]</span>
+<span class="sd">            The formatted target and preds.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -921,7 +728,7 @@
 
     <span class="n">implied_num_labels</span> <span class="o">=</span> <span class="n">preds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">implied_num_labels</span> <span class="o">!=</span> <span class="n">num_labels</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Detected </span><span class="si">{</span><span class="n">implied_num_labels</span><span class="si">}</span><span class="s2"> labels in `preds` but expected &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">num_labels</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="p">)</span>
@@ -938,49 +745,40 @@
         <span class="k">if</span> <span class="n">top_k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">preds</span> <span class="o">=</span> <span class="n">select_topk</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">top_k</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">preds</span> <span class="o">=</span> <span class="p">(</span><span class="n">preds</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+            <span class="n">preds</span> <span class="o">=</span> <span class="p">(</span><span class="n">preds</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">target</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span> <span class="n">preds</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">target</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">),</span> <span class="n">preds</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_multilabel_stat_scores_update</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">top_k</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">reduce</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;micro&quot;</span><span class="p">,</span>
-    <span class="n">sample_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="n">labelwise</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>
+    <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+    <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+    <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+    <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+<span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Update the stat scores for multilabel inputs.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target: ArrayLike</span>
+<span class="sd">        target : ArrayLike</span>
 <span class="sd">            Ground truth.</span>
-<span class="sd">        preds: ArrayLike</span>
+<span class="sd">        preds : ArrayLike</span>
 <span class="sd">            Predictions.</span>
-<span class="sd">        num_labels: int</span>
+<span class="sd">        num_labels : int</span>
 <span class="sd">            The total number of labels for the problem.</span>
-<span class="sd">        threshold: float</span>
-<span class="sd">            Threshold value for binarizing the predictions. Defaults to ``0.5``.</span>
-<span class="sd">        top_k: int</span>
-<span class="sd">            The number of top predictions to consider when computing the statistics.</span>
-<span class="sd">            Defaults to ``None``.</span>
-<span class="sd">         reduce: str</span>
-<span class="sd">            The reduction method to use. Defaults to ``&quot;micro&quot;``. Can be one of</span>
-<span class="sd">                * ``&quot;micro&quot;`` - sum the statistics over all labels.</span>
-<span class="sd">                * ``&quot;macro&quot;`` - compute the unweighted mean of the per-label</span>
-<span class="sd">                statistics.</span>
-<span class="sd">                * ``&quot;samples&quot;`` - compute the unweighted mean of the per-sample</span>
-<span class="sd">                statistics.</span>
-<span class="sd">        sample_weight: ArrayLike</span>
-<span class="sd">            Sample weights.</span>
+<span class="sd">         labelwise : bool, default=False</span>
+<span class="sd">            Whether to return the statistics for each label or sum over all labels.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        The number of true positives, false positives, true negatives and false</span>
-<span class="sd">        negatives.</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            The number of true positives, false positives, true negatives and false</span>
+<span class="sd">            negatives.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -988,113 +786,203 @@
 <span class="sd">            If the input target and preds are not numeric.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_multilabel_stat_scores_format</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_labels</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">top_k</span>
+    <span class="k">return</span> <span class="n">_stat_scores_from_confmat</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_labels</span><span class="p">),</span> <span class="n">classwise</span><span class="o">=</span><span class="n">labelwise</span>
     <span class="p">)</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_labels</span><span class="p">)</span>
-
-    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_stat_scores</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">reduce</span><span class="o">=</span><span class="n">reduce</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span>
-
-
-<span class="k">def</span> <span class="nf">_multilabel_stat_scores_compute</span><span class="p">(</span>  <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="n">tp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tn</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Compute the stat scores for multilabel inputs.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">        tp: np.ndarray</span>
-<span class="sd">            The number of true positives.</span>
-<span class="sd">        fp: np.ndarray</span>
-<span class="sd">            The number of false positives.</span>
-<span class="sd">        tn: np.ndarray</span>
-<span class="sd">            The number of true negatives.</span>
-<span class="sd">        fn: np.ndarray</span>
-<span class="sd">            The number of false negatives.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">        The number of true positives, false positives, true negatives and false</span>
-<span class="sd">        negatives.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_stat_scores_compute</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="multilabel_stat_scores"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.stat_scores.html#cyclops.evaluation.metrics.functional.stat_scores.multilabel_stat_scores">[docs]</a><span class="k">def</span> <span class="nf">multilabel_stat_scores</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">reduce</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;micro&quot;</span><span class="p">,</span>
-    <span class="n">sample_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">labelwise</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Compute the stat scores for multilabel inputs.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target: ArrayLike</span>
+<span class="sd">        target : ArrayLike</span>
 <span class="sd">            Ground truth.</span>
-<span class="sd">        preds: ArrayLike</span>
+<span class="sd">        preds : ArrayLike</span>
 <span class="sd">            Predictions.</span>
-<span class="sd">        num_labels: int</span>
+<span class="sd">        num_labels : int</span>
 <span class="sd">            The total number of labels for the problem.</span>
-<span class="sd">        threshold: float</span>
-<span class="sd">            Threshold value for binarizing the predictions. Defaults to ``0.5``.</span>
-<span class="sd">        top_k: int</span>
+<span class="sd">        threshold : float, default=0.5</span>
+<span class="sd">            Threshold value for binarizing predictions that are probabilities or</span>
+<span class="sd">            logits. A sigmoid function is applied if the predictions are logits.</span>
+<span class="sd">        top_k : int, default=None</span>
 <span class="sd">            The number of top predictions to consider when computing the statistics.</span>
-<span class="sd">            Defaults to ``None``.</span>
-<span class="sd">        reduce: Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;samples&quot;]</span>
-<span class="sd">            The reduction method to use. Defaults to ``micro``. Can be one of:</span>
-<span class="sd">                - ``micro`` - sum the statistics over all labels.</span>
-<span class="sd">                - ``macro`` - compute the unweighted mean of the per-label statistics.</span>
-<span class="sd">                - ``samples`` - compute the unweighted mean of the per-sample</span>
-<span class="sd">                  statistics.</span>
-<span class="sd">        sample_weight: ArrayLike</span>
-<span class="sd">            Sample weights.</span>
+<span class="sd">        labelwise : bool, default=False</span>
+<span class="sd">            Whether to return the stat scores for each label or sum over all labels.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        The number of true positives, false positives, true negatives and false</span>
-<span class="sd">        negatives and the support.</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            The number of true positives, false positives, true negatives and false</span>
+<span class="sd">            negatives and the support. The shape of the array is ``(5, num_labels)``</span>
+<span class="sd">            if ``labelwise=True`` and ``(5,)`` otherwise.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">        ValueError</span>
-<span class="sd">            If ``reduce`` is not one of ``micro``, ``macro`` or ``samples``.</span>
-<span class="sd">        ValueError</span>
 <span class="sd">            If ``threshold`` is not between ``0`` and ``1``.</span>
 
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multilabel_stat_scores</span>
+<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 1]]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]]</span>
+<span class="sd">        &gt;&gt;&gt; multilabel_stat_scores(target, preds, num_labels=3)</span>
+<span class="sd">        array([[1, 0, 1, 0, 1],</span>
+<span class="sd">               [1, 0, 1, 0, 1],</span>
+<span class="sd">               [2, 0, 0, 0, 2]])</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">reduce</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;The argument `reduce` must be one of &#39;micro&#39;, &#39;macro&#39;, &#39;samples&#39;&quot;</span>
-        <span class="p">)</span>
+    <span class="n">_binary_stat_scores_args_check</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">threshold</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Expected argument `threshold` to be a float in the [0,1] range, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;but got </span><span class="si">{</span><span class="n">threshold</span><span class="si">}</span><span class="s2">.&quot;</span>
-        <span class="p">)</span>
-
-    <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_multilabel_stat_scores_update</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span>
-        <span class="n">preds</span><span class="p">,</span>
-        <span class="n">num_labels</span><span class="p">,</span>
-        <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
-        <span class="n">reduce</span><span class="o">=</span><span class="n">reduce</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_multilabel_stat_scores_format</span><span class="p">(</span>
+        <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
+        <span class="n">preds</span><span class="o">=</span><span class="n">preds</span><span class="p">,</span>
+        <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">,</span>
         <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
         <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">_multilabel_stat_scores_compute</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span></div>
+    <span class="c1"># pylint: disable=invalid-name</span>
+    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_multilabel_stat_scores_update</span><span class="p">(</span>
+        <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
+        <span class="n">preds</span><span class="o">=</span><span class="n">preds</span><span class="p">,</span>
+        <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">,</span>
+        <span class="n">labelwise</span><span class="o">=</span><span class="n">labelwise</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_stat_scores_compute</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="stat_scores"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.stat_scores.html#cyclops.evaluation.metrics.functional.stat_scores.stat_scores">[docs]</a><span class="k">def</span> <span class="nf">stat_scores</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">task</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">,</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">],</span>
+    <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">num_classes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">classwise</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">top_k</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">num_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">labelwise</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Compute stat scores for binary, multiclass or multilabel problems.</span>
+
+<span class="sd">    This function acts as an entry point to the specialized functions for each</span>
+<span class="sd">    task.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        target : ArrayLike</span>
+<span class="sd">            Ground truth.</span>
+<span class="sd">        preds : ArrayLike</span>
+<span class="sd">            Predictions.</span>
+<span class="sd">        task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
+<span class="sd">            The task type. Can be either ``binary``, ``multiclass`` or</span>
+<span class="sd">            ``multilabel``.</span>
+<span class="sd">        pos_label : int, default=1</span>
+<span class="sd">            The positive label to report. Only used for binary tasks.</span>
+<span class="sd">        threshold : float, default=0.5</span>
+<span class="sd">            The threshold to use for binarizing the predictions if logits or</span>
+<span class="sd">            probabilities are provided. If logits are provided, a sigmoid function</span>
+<span class="sd">            is applied prior to binarization. Used for binary and multilabel tasks.</span>
+<span class="sd">        num_classes : int</span>
+<span class="sd">            The number of classes for the problem. Required for multiclass tasks.</span>
+<span class="sd">        classwise : bool, default=True</span>
+<span class="sd">            Whether to return the stat scores for each class or sum over all</span>
+<span class="sd">            classes. Only used for multiclass tasks.</span>
+<span class="sd">        top_k : int, default=None</span>
+<span class="sd">            The number of top predictions to consider when computing the statistics.</span>
+<span class="sd">            If ``None``, ``top_k`` is set to 1. Used for multiclass and multilabel</span>
+<span class="sd">            tasks.</span>
+<span class="sd">        num_labels : int</span>
+<span class="sd">            The number of labels. Only used for multilabel tasks.</span>
+<span class="sd">        labelwise : bool, default=False</span>
+<span class="sd">            Whether to compute the stat scores labelwise. Only used for multilabel</span>
+<span class="sd">            tasks.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        scores : numpy.ndarray</span>
+<span class="sd">            The stat scores - true positives, false positives, true negatives,</span>
+<span class="sd">            false negatives and support. For binary tasks, the shape is (5,).</span>
+<span class="sd">            For multiclass tasks, the shape is (n_classes, 5) if ``classwise`` is</span>
+<span class="sd">            True, otherwise (5,). For multilabel tasks, the shape is (n_labels, 5)</span>
+<span class="sd">            if ``labelwise`` is True, otherwise (n_classes, 5).</span>
+
+<span class="sd">    Examples (binary)</span>
+<span class="sd">    -----------------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import tat_scores</span>
+<span class="sd">        &gt;&gt;&gt; target = [0, 1, 1, 0]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [0, 1, 0, 0]</span>
+<span class="sd">        &gt;&gt;&gt; stat_scores(target, preds, task=&quot;binary&quot;)</span>
+<span class="sd">        array([1, 0, 2, 1, 2])</span>
+
+<span class="sd">    Examples (multiclass)</span>
+<span class="sd">    ---------------------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multiclass_stat_scores</span>
+<span class="sd">        &gt;&gt;&gt; target = [0, 1, 2, 2, 2]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [0, 2, 1, 2, 0]</span>
+<span class="sd">        &gt;&gt;&gt; stat_scores(target, preds, task=&quot;multiclass&quot;, num_classes=3)</span>
+<span class="sd">        array([[1, 1, 3, 0, 1],</span>
+<span class="sd">               [0, 1, 3, 1, 1],</span>
+<span class="sd">               [1, 1, 1, 2, 3]])</span>
+
+<span class="sd">    Examples (multilabel)</span>
+<span class="sd">    ---------------------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import stat_scores</span>
+<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 1]]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]]</span>
+<span class="sd">        &gt;&gt;&gt; stat_scores(target, preds, task=&quot;multilabel&quot;, num_labels=3)</span>
+<span class="sd">        array([[1, 0, 1, 0, 1],</span>
+<span class="sd">               [1, 0, 1, 0, 1],</span>
+<span class="sd">               [2, 0, 0, 0, 2]])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;binary&quot;</span><span class="p">:</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">binary_stat_scores</span><span class="p">(</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="n">preds</span><span class="p">,</span>
+            <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">,</span>
+            <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_classes</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_classes</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="p">),</span> <span class="s2">&quot;Number of classes must be a positive integer.&quot;</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">multiclass_stat_scores</span><span class="p">(</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="n">preds</span><span class="p">,</span>
+            <span class="n">num_classes</span><span class="p">,</span>
+            <span class="n">classwise</span><span class="o">=</span><span class="n">classwise</span><span class="p">,</span>
+            <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_labels</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_labels</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="p">),</span> <span class="s2">&quot;Number of labels must be a positive integer.&quot;</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">multilabel_stat_scores</span><span class="p">(</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="n">preds</span><span class="p">,</span>
+            <span class="n">num_labels</span><span class="p">,</span>
+            <span class="n">labelwise</span><span class="o">=</span><span class="n">labelwise</span><span class="p">,</span>
+            <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+            <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unsupported task: </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">, expected one of &#39;binary&#39;, &#39;multiclass&#39; or &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;&#39;multilabel&#39;.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">scores</span></div>
 </pre></div>
 
            </div>

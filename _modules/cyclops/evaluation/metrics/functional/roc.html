@@ -168,6 +168,7 @@
              
   <h1>Source code for cyclops.evaluation.metrics.functional.roc</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Functions for computing the receiver operating characteristic (ROC) curve.&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
@@ -178,6 +179,7 @@
 <span class="kn">from</span> <span class="nn">cyclops.evaluation.metrics.functional.precision_recall_curve</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">_binary_precision_recall_curve_format</span><span class="p">,</span>
     <span class="n">_binary_precision_recall_curve_update</span><span class="p">,</span>
+    <span class="n">_format_thresholds</span><span class="p">,</span>
     <span class="n">_multiclass_precision_recall_curve_format</span><span class="p">,</span>
     <span class="n">_multiclass_precision_recall_curve_update</span><span class="p">,</span>
     <span class="n">_multilabel_precision_recall_curve_format</span><span class="p">,</span>
@@ -194,18 +196,18 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        confmat : np.ndarray</span>
+<span class="sd">        confmat : numpy.ndarray</span>
 <span class="sd">            A multi-threshold confusion matrix of size (num_thresholds, 2, 2) or</span>
 <span class="sd">            (num_thresholds, num_classes, 2, 2).</span>
-<span class="sd">        thresholds : np.ndarray of floats, default=None</span>
+<span class="sd">        thresholds : numpy.ndarray of floats, default=None</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        fpr : np.ndarray</span>
+<span class="sd">        fpr : numpy.ndarray</span>
 <span class="sd">            False positive rate.</span>
-<span class="sd">        tpr : np.ndarray</span>
+<span class="sd">        tpr : numpy.ndarray</span>
 <span class="sd">            True positive rate.</span>
-<span class="sd">        thresholds : np.ndarray</span>
+<span class="sd">        thresholds : numpy.ndarray</span>
 <span class="sd">            Thresholds used to compute fpr and tpr.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -227,6 +229,390 @@
     <span class="n">thresholds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">thresholds</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span>
+
+
+<span class="k">def</span> <span class="nf">_binary_roc_compute</span><span class="p">(</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Compute the ROC curve for binary classification.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        state : tuple of numpy.ndarray or numpy.ndarray</span>
+<span class="sd">            If ``thresholds`` is not None, ``state`` is a multi-threshold confusion</span>
+<span class="sd">            matrix. If ``thresholds`` is None, ``state`` is a tuple of (target, preds).</span>
+<span class="sd">            probabilities.</span>
+<span class="sd">        thresholds : numpy.ndarray, default=None</span>
+<span class="sd">            Thresholds used to binarize the predicted probabilities. If None,</span>
+<span class="sd">            the unique values of the predicted probabilities are used as</span>
+<span class="sd">            thresholds.</span>
+<span class="sd">        pos_label : int, optional</span>
+<span class="sd">            The label of the positive class.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        fpr : numpy.ndarray</span>
+<span class="sd">            False positive rate.</span>
+<span class="sd">        tpr : numpy.ndarray</span>
+<span class="sd">            True positive rate.</span>
+<span class="sd">        thresholds : numpy.ndarray</span>
+<span class="sd">            Thresholds used to compute fpr and tpr.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">thresholds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_roc_compute_from_confmat</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fps</span><span class="p">,</span> <span class="n">tps</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_binary_clf_curve</span><span class="p">(</span>
+            <span class="n">y_true</span><span class="o">=</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y_score</span><span class="o">=</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">)</span>
+
+        <span class="c1"># start the curve at (0, 0)</span>
+        <span class="n">fps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">fps</span><span class="p">))</span>
+        <span class="n">tps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">tps</span><span class="p">))</span>
+        <span class="n">thresholds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">fps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;No negative samples in `target`, false positive value should be&quot;</span>
+                <span class="s2">&quot; meaningless. Returning zero array in false positive score&quot;</span><span class="p">,</span>
+                <span class="ne">UserWarning</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">fpr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fpr</span> <span class="o">=</span> <span class="n">fps</span> <span class="o">/</span> <span class="n">fps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">tps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;No positive samples in `target`, true positive value should be&quot;</span>
+                <span class="s2">&quot; meaningless. Returning zero array in true positive score&quot;</span><span class="p">,</span>
+                <span class="ne">UserWarning</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">tpr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tpr</span> <span class="o">=</span> <span class="n">tps</span> <span class="o">/</span> <span class="n">tps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span>
+
+
+<div class="viewcode-block" id="binary_roc_curve"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.roc.html#cyclops.evaluation.metrics.functional.roc.binary_roc_curve">[docs]</a><span class="k">def</span> <span class="nf">binary_roc_curve</span><span class="p">(</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">thresholds</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Compute the ROC curve for binary classification tasks.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        target : ArrayLike</span>
+<span class="sd">            Ground truth (correct) target values.</span>
+<span class="sd">        preds : ArrayLike</span>
+<span class="sd">            Estimated probabilities or decision function. If ``preds`` is not in</span>
+<span class="sd">            the range [0, 1], a sigmoid function is applied to transform it to</span>
+<span class="sd">            the range [0, 1].</span>
+<span class="sd">        thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
+<span class="sd">            Thresholds used for computing the precision and recall scores.</span>
+<span class="sd">            If int, then the number of thresholds to use.</span>
+<span class="sd">            If list or array, then the thresholds to use.</span>
+<span class="sd">            If None, then the thresholds are automatically determined by the</span>
+<span class="sd">            unique values in ``preds``.</span>
+<span class="sd">        pos_label : int, optional</span>
+<span class="sd">            The label of the positive class.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        fpr : numpy.ndarray</span>
+<span class="sd">            False positive rate.</span>
+<span class="sd">        tpr : numpy.ndarray</span>
+<span class="sd">            True positive rate.</span>
+<span class="sd">        thresholds : numpy.ndarray</span>
+<span class="sd">            Thresholds used to compute fpr and tpr.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import binary_roc_curve</span>
+<span class="sd">        &gt;&gt;&gt; target = [1, 0, 1, 0]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [0.9, 0.2, 0.8, 0.3]</span>
+<span class="sd">        &gt;&gt;&gt; fpr, tpr, thresholds = binary_roc_curve(target, preds, thresholds=5)</span>
+<span class="sd">        &gt;&gt;&gt; fpr</span>
+<span class="sd">        array([0. , 0. , 0. , 0.5, 1. ])</span>
+<span class="sd">        &gt;&gt;&gt; tpr</span>
+<span class="sd">        array([0., 1., 1., 1., 1.])</span>
+<span class="sd">        &gt;&gt;&gt; thresholds</span>
+<span class="sd">        array([1.  , 0.75, 0.5 , 0.25, 0.  ])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_check_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
+
+    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_binary_precision_recall_curve_format</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span>
+    <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_format_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
+
+    <span class="n">state</span> <span class="o">=</span> <span class="n">_binary_precision_recall_curve_update</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_binary_roc_compute</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_multiclass_roc_compute</span><span class="p">(</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span>
+    <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span>
+    <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span>
+<span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Compute the ROC curve for multiclass classification tasks.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        state : numpy.ndarray or tuple of numpy.ndarray</span>
+<span class="sd">            If ``thresholds`` is not None, ``state`` is a multi-threshold confusion</span>
+<span class="sd">            matrix. If ``thresholds`` is None, ``state`` is a tuple of (target, preds).</span>
+<span class="sd">        num_classes : int</span>
+<span class="sd">            Number of classes.</span>
+<span class="sd">        thresholds : numpy.ndarray, default=None</span>
+<span class="sd">            Thresholds used for binarizing the predicted probabilities. If not</span>
+<span class="sd">            None, must be a 1D numpy array of floats in the [0, 1] range and</span>
+<span class="sd">            monotonically increasing.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        fpr : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">            False positive rate. If ``threshold`` is not None, ``fpr`` is a 1d numpy</span>
+<span class="sd">            array. Otherwise, ``fpr`` is a list of 1d numpy arrays, one for each</span>
+<span class="sd">            class.</span>
+<span class="sd">        tpr : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">            True positive rate. If ``threshold`` is not None, ``tpr`` is a 1d numpy</span>
+<span class="sd">            array. Otherwise, ``tpr`` is a list of 1d numpy arrays, one for each class.</span>
+<span class="sd">        thresholds : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">            Thresholds used to compute fpr and tpr. ``threshold`` is not None,</span>
+<span class="sd">            thresholds is a 1d numpy array. Otherwise, thresholds is a list of</span>
+<span class="sd">            1d numpy arrays, one for each class.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">thresholds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_roc_compute_from_confmat</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span>
+
+        <span class="n">tpr</span> <span class="o">=</span> <span class="n">tpr</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">fpr</span> <span class="o">=</span> <span class="n">fpr</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_classes</span><span class="p">):</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">_binary_roc_compute</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">][:,</span> <span class="n">i</span><span class="p">]],</span> <span class="n">thresholds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">i</span>
+            <span class="p">)</span>
+            <span class="n">fpr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">tpr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">thresholds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span>
+
+
+<div class="viewcode-block" id="multiclass_roc_curve"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.roc.html#cyclops.evaluation.metrics.functional.roc.multiclass_roc_curve">[docs]</a><span class="k">def</span> <span class="nf">multiclass_roc_curve</span><span class="p">(</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">thresholds</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span>
+    <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span>
+<span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Compute the ROC curve for multiclass classification tasks.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        target : ArrayLike</span>
+<span class="sd">            Ground truth (correct) target values.</span>
+<span class="sd">        preds : ArrayLike</span>
+<span class="sd">            Estimated probabilities or decision function. If ``preds`` is not in</span>
+<span class="sd">            the range [0, 1], a softmax function is applied to transform it to</span>
+<span class="sd">            the range [0, 1].</span>
+<span class="sd">        num_classes : int</span>
+<span class="sd">            Number of classes.</span>
+<span class="sd">        thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
+<span class="sd">            Thresholds used for binarizing the predicted probabilities.</span>
+<span class="sd">            If int, then the number of thresholds to use.</span>
+<span class="sd">            If list or array, then the thresholds to use.</span>
+<span class="sd">            If None, then the thresholds are automatically determined by the</span>
+<span class="sd">            unique values in ``preds``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        fpr : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">            False positive rate. If ``threshold`` is not None, ``fpr`` is a 1d numpy</span>
+<span class="sd">            array. Otherwise, ``fpr`` is a list of 1d numpy arrays, one for each</span>
+<span class="sd">            class.</span>
+<span class="sd">        tpr : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">            True positive rate. If ``threshold`` is not None, ``tpr`` is a 1d numpy</span>
+<span class="sd">            array. Otherwise, ``tpr`` is a list of 1d numpy arrays, one for each class.</span>
+<span class="sd">        thresholds : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">            Thresholds used to compute fpr and tpr. ``threshold`` is not None,</span>
+<span class="sd">            thresholds is a 1d numpy array. Otherwise, thresholds is a list of</span>
+<span class="sd">            1d numpy arrays, one for each class.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multiclass_roc_curve</span>
+<span class="sd">        &gt;&gt;&gt; target = [1, 0, 2, 0]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05],</span>
+<span class="sd">        ...         [0.05, 0.05, 0.9], [0.9, 0.05, 0.05]]</span>
+<span class="sd">        &gt;&gt;&gt; fpr, tpr, thresholds = multiclass_roc_curve(target, preds,</span>
+<span class="sd">        ...     num_classes=3, thresholds=5</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; fpr</span>
+<span class="sd">        array([[0.        , 0.5       , 0.5       , 0.5       , 1.        ],</span>
+<span class="sd">        [0.        , 0.33333333, 0.33333333, 0.33333333, 1.        ],</span>
+<span class="sd">        [0.        , 0.        , 0.        , 0.        , 1.        ]])</span>
+<span class="sd">        &gt;&gt;&gt; tpr</span>
+<span class="sd">        array([[0. , 0.5, 0.5, 0.5, 1. ],</span>
+<span class="sd">        [0. , 0. , 0. , 0. , 1. ],</span>
+<span class="sd">        [0. , 1. , 1. , 1. , 1. ]])</span>
+<span class="sd">        &gt;&gt;&gt; thresholds</span>
+<span class="sd">        array([1.  , 0.75, 0.5 , 0.25, 0.  ])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_check_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
+    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_multiclass_precision_recall_curve_format</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span>
+    <span class="p">)</span>
+    <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_format_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
+
+    <span class="n">state</span> <span class="o">=</span> <span class="n">_multiclass_precision_recall_curve_update</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_multiclass_roc_compute</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_multilabel_roc_compute</span><span class="p">(</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span>
+    <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span>
+<span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Compute the ROC curve for multilabel classification tasks.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        state : numpy.ndarray or tuple of numpy.ndarray</span>
+<span class="sd">            If ``thresholds`` is not None, ``state`` is a multi-threshold confusion</span>
+<span class="sd">            matrix. Otherwise, ``state`` is a tuple of (target, preds).</span>
+<span class="sd">        num_labels : int</span>
+<span class="sd">            Number of labels.</span>
+<span class="sd">        thresholds : numpy.ndarray, default=None</span>
+<span class="sd">            Thresholds used for binarizing the predicted probabilities. If not</span>
+<span class="sd">            None, must be a 1D numpy array of floats in the [0, 1] range and</span>
+<span class="sd">            monotonically increasing.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        fpr : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">            False positive rate. If ``threshold`` is not None, ``fpr`` is a 1d numpy</span>
+<span class="sd">            array. Otherwise, ``fpr`` is a list of 1d numpy arrays, one for each</span>
+<span class="sd">            label.</span>
+<span class="sd">        tpr : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">            True positive rate. If ``threshold`` is not None, ``tpr`` is a 1d numpy</span>
+<span class="sd">            array. Otherwise, ``tpr`` is a list of 1d numpy arrays, one for each label.</span>
+<span class="sd">        thresholds : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">            Thresholds used to compute fpr and tpr. ``threshold`` is not None,</span>
+<span class="sd">            thresholds is a 1d numpy array. Otherwise, thresholds is a list of</span>
+<span class="sd">            1d numpy arrays, one for each label.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">thresholds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_roc_compute_from_confmat</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span>
+
+        <span class="n">tpr</span> <span class="o">=</span> <span class="n">tpr</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">fpr</span> <span class="o">=</span> <span class="n">fpr</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_labels</span><span class="p">):</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">_binary_roc_compute</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">][:,</span> <span class="n">i</span><span class="p">]],</span> <span class="n">thresholds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">i</span>
+            <span class="p">)</span>
+            <span class="n">fpr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">tpr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">thresholds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span>
+
+
+<div class="viewcode-block" id="multilabel_roc_curve"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.roc.html#cyclops.evaluation.metrics.functional.roc.multilabel_roc_curve">[docs]</a><span class="k">def</span> <span class="nf">multilabel_roc_curve</span><span class="p">(</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">thresholds</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span>
+    <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span>
+<span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Compute the ROC curve for multilabel classification tasks.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        target : ArrayLike</span>
+<span class="sd">            Ground truth (correct) target values.</span>
+<span class="sd">        preds : ArrayLike</span>
+<span class="sd">            Estimated probabilities or decision function. If ``preds`` is not in</span>
+<span class="sd">            the range [0, 1], a sigmoid function is applied to transform it to</span>
+<span class="sd">            the range [0, 1].</span>
+<span class="sd">        num_labels : int</span>
+<span class="sd">            The number of labels in the dataset.</span>
+<span class="sd">        thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
+<span class="sd">            Thresholds used for binarizing the values of ``preds``.</span>
+<span class="sd">            If int, then the number of thresholds to use.</span>
+<span class="sd">            If list or array, then the thresholds to use.</span>
+<span class="sd">            If None, then the thresholds are automatically determined by the</span>
+<span class="sd">            unique values in ``preds``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        fpr : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">            False positive rate. If ``threshold`` is not None, ``fpr`` is a 1d numpy</span>
+<span class="sd">            array. Otherwise, ``fpr`` is a list of 1d numpy arrays, one for each</span>
+<span class="sd">            label.</span>
+<span class="sd">        tpr : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">            True positive rate. If ``threshold`` is not None, ``tpr`` is a 1d numpy</span>
+<span class="sd">            array. Otherwise, ``tpr`` is a list of 1d numpy arrays, one for each label.</span>
+<span class="sd">        thresholds : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">            Thresholds used to compute fpr and tpr. ``threshold`` is not None,</span>
+<span class="sd">            thresholds is a 1d numpy array. Otherwise, thresholds is a list of</span>
+<span class="sd">            1d numpy arrays, one for each label.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multilabel_roc_curve</span>
+<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 0], [0, 1, 1], [1, 0, 1]]</span>
+<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.05, 0.1, 0.9], [0.8, 0.2, 0.3]]</span>
+<span class="sd">        &gt;&gt;&gt; fpr, tpr, thresholds = multilabel_roc_curve(target, preds, num_labels=3,</span>
+<span class="sd">        ...     thresholds=5</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; fpr</span>
+<span class="sd">        array([[0., 0., 0., 0., 1.],</span>
+<span class="sd">        [0., 0., 0., 0., 1.],</span>
+<span class="sd">        [0., 1., 1., 1., 1.]])</span>
+<span class="sd">        &gt;&gt;&gt; tpr</span>
+<span class="sd">        array([[0. , 1. , 1. , 1. , 1. ],</span>
+<span class="sd">        [0. , 0.5, 0.5, 0.5, 1. ],</span>
+<span class="sd">        [0. , 0.5, 0.5, 1. , 1. ]])</span>
+<span class="sd">        &gt;&gt;&gt; thresholds</span>
+<span class="sd">        array([1.  , 0.75, 0.5 , 0.25, 0.  ])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_check_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
+    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_multilabel_precision_recall_curve_format</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span>
+    <span class="p">)</span>
+    <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_format_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
+
+    <span class="n">state</span> <span class="o">=</span> <span class="n">_multilabel_precision_recall_curve_update</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_multilabel_roc_compute</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">num_labels</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="roc_curve"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.roc.html#cyclops.evaluation.metrics.functional.roc.roc_curve">[docs]</a><span class="k">def</span> <span class="nf">roc_curve</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
@@ -257,16 +643,16 @@
 <span class="sd">        task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
 <span class="sd">            The type of task for the input data. One of &#39;binary&#39;, &#39;multiclass&#39;</span>
 <span class="sd">            or &#39;multilabel&#39;.</span>
-<span class="sd">        thresholds : int or list of floats or np.ndarray of floats, default=None</span>
+<span class="sd">        thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
 <span class="sd">            Thresholds used for computing the ROC curve. Can be one of:</span>
-<span class="sd">            - None: use the unique values of ``preds`` as thresholds</span>
-<span class="sd">            - int: generate ``thresholds`` number of evenly spaced values between</span>
-<span class="sd">            0 and 1 as thresholds.</span>
-<span class="sd">            - list of floats: use the values in the list as thresholds. The list</span>
-<span class="sd">            of values should be monotonically increasing. The list will be converted</span>
-<span class="sd">            into a numpy array.</span>
-<span class="sd">            - np.ndarray of floats: use the values in the array as thresholds. The</span>
-<span class="sd">            array should be 1d and monotonically increasing.</span>
+<span class="sd">                - None: use the unique values of ``preds`` as thresholds</span>
+<span class="sd">                - int: generate ``thresholds`` number of evenly spaced values between</span>
+<span class="sd">                  0 and 1 as thresholds.</span>
+<span class="sd">                - list of floats: use the values in the list as thresholds. The list</span>
+<span class="sd">                  of values should be monotonically increasing. The list will be</span>
+<span class="sd">                  converted into a numpy array.</span>
+<span class="sd">                - numpy.ndarray of floats: use the values in the array as thresholds.</span>
+<span class="sd">                  The array should be 1d and monotonically increasing.</span>
 <span class="sd">        pos_label : int, default=1</span>
 <span class="sd">            The label of the positive class.</span>
 <span class="sd">        num_classes : int, optional</span>
@@ -276,17 +662,17 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        fpr : np.ndarray or list of np.ndarray</span>
+<span class="sd">        fpr : numpy.ndarray or list of numpy.ndarray</span>
 <span class="sd">            False positive rate. If ``task`` is &#39;binary&#39; or ``threshold`` is not None,</span>
 <span class="sd">            ``fpr`` is a 1d numpy array. If ``task`` is &#39;multiclass&#39; or &#39;multilabel&#39;,</span>
 <span class="sd">            and ``threshold`` is None, then ``fpr`` is a list of 1d numpy</span>
 <span class="sd">            arrays, one for each class or label.</span>
-<span class="sd">        tpr : np.ndarray or list of np.ndarray</span>
+<span class="sd">        tpr : numpy.ndarray or list of numpy.ndarray</span>
 <span class="sd">            True positive rate. If ``task`` is &#39;binary&#39; or ``threshold`` is not None,</span>
 <span class="sd">            ``tpr`` is a 1d numpy array. If ``task`` is &#39;multiclass&#39; or &#39;multilabel&#39;,</span>
 <span class="sd">            and ``threshold`` is None, then ``tpr`` is a list of 1d numpy</span>
 <span class="sd">            arrays, one for each class or label.</span>
-<span class="sd">        thresholds : np.ndarray or list of np.ndarray</span>
+<span class="sd">        thresholds : numpy.ndarray or list of numpy.ndarray</span>
 <span class="sd">            Thresholds used to compute fpr and tpr. If ``task`` is &#39;binary&#39; or</span>
 <span class="sd">            ``threshold`` is not None, ``thresholds`` is a 1d numpy array. If</span>
 <span class="sd">            ``task`` is &#39;multiclass&#39; or &#39;multilabel&#39;, and ``threshold`` is None,</span>
@@ -376,391 +762,6 @@
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span></div>
-
-
-<span class="k">def</span> <span class="nf">_binary_roc_compute</span><span class="p">(</span>
-    <span class="n">state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-    <span class="n">thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Compute the ROC curve for binary classification.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">        state : tuple of np.ndarray or np.ndarray</span>
-<span class="sd">            If ``thresholds`` is not None, ``state`` is a multi-threshold confusion</span>
-<span class="sd">            matrix. If ``thresholds`` is None, ``state`` is a tuple of (target, preds).</span>
-<span class="sd">            probabilities.</span>
-<span class="sd">        thresholds : np.ndarray, default=None</span>
-<span class="sd">            Thresholds used to binarize the predicted probabilities. If None,</span>
-<span class="sd">            the unique values of the predicted probabilities are used as</span>
-<span class="sd">            thresholds.</span>
-<span class="sd">        pos_label : int, optional</span>
-<span class="sd">            The label of the positive class.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">        fpr : np.ndarray</span>
-<span class="sd">            False positive rate.</span>
-<span class="sd">        tpr : np.ndarray</span>
-<span class="sd">            True positive rate.</span>
-<span class="sd">        thresholds : np.ndarray</span>
-<span class="sd">            Thresholds used to compute fpr and tpr.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">thresholds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_roc_compute_from_confmat</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">fps</span><span class="p">,</span> <span class="n">tps</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_binary_clf_curve</span><span class="p">(</span>
-            <span class="n">y_true</span><span class="o">=</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y_score</span><span class="o">=</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span>
-        <span class="p">)</span>
-
-        <span class="c1"># start the curve at (0, 0)</span>
-        <span class="n">fps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">fps</span><span class="p">))</span>
-        <span class="n">tps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">tps</span><span class="p">))</span>
-        <span class="n">thresholds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">))</span>
-
-        <span class="k">if</span> <span class="n">fps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;No negative samples in `target`, false positive value should be&quot;</span>
-                <span class="s2">&quot; meaningless. Returning zero array in false positive score&quot;</span><span class="p">,</span>
-                <span class="ne">UserWarning</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">fpr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">fpr</span> <span class="o">=</span> <span class="n">fps</span> <span class="o">/</span> <span class="n">fps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-        <span class="k">if</span> <span class="n">tps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;No positive samples in `target`, true positive value should be&quot;</span>
-                <span class="s2">&quot; meaningless. Returning zero array in true positive score&quot;</span><span class="p">,</span>
-                <span class="ne">UserWarning</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">tpr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">tpr</span> <span class="o">=</span> <span class="n">tps</span> <span class="o">/</span> <span class="n">tps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span>
-
-
-<div class="viewcode-block" id="binary_roc_curve"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.roc.html#cyclops.evaluation.metrics.functional.roc.binary_roc_curve">[docs]</a><span class="k">def</span> <span class="nf">binary_roc_curve</span><span class="p">(</span>
-    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">thresholds</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Compute the ROC curve for binary classification tasks.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">        target : ArrayLike</span>
-<span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds : ArrayLike</span>
-<span class="sd">            Estimated probabilities or decision function. If ``preds`` is not in</span>
-<span class="sd">            the range [0, 1], a sigmoid function is applied to transform it to</span>
-<span class="sd">            the range [0, 1].</span>
-<span class="sd">        thresholds : int or list of floats or np.ndarray of floats, default=None</span>
-<span class="sd">            Thresholds used for computing the precision and recall scores.</span>
-<span class="sd">            If int, then the number of thresholds to use.</span>
-<span class="sd">            If list or array, then the thresholds to use.</span>
-<span class="sd">            If None, then the thresholds are automatically determined by the</span>
-<span class="sd">            unique values in ``preds``.</span>
-<span class="sd">        pos_label : int, optional</span>
-<span class="sd">            The label of the positive class.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">        fpr : np.ndarray</span>
-<span class="sd">            False positive rate.</span>
-<span class="sd">        tpr : np.ndarray</span>
-<span class="sd">            True positive rate.</span>
-<span class="sd">        thresholds : np.ndarray</span>
-<span class="sd">            Thresholds used to compute fpr and tpr.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import binary_roc_curve</span>
-<span class="sd">        &gt;&gt;&gt; target = [1, 0, 1, 0]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [0.9, 0.2, 0.8, 0.3]</span>
-<span class="sd">        &gt;&gt;&gt; fpr, tpr, thresholds = binary_roc_curve(target, preds, thresholds=5)</span>
-<span class="sd">        &gt;&gt;&gt; fpr</span>
-<span class="sd">        array([0. , 0. , 0. , 0.5, 1. ])</span>
-<span class="sd">        &gt;&gt;&gt; tpr</span>
-<span class="sd">        array([0., 1., 1., 1., 1.])</span>
-<span class="sd">        &gt;&gt;&gt; thresholds</span>
-<span class="sd">        array([1.  , 0.75, 0.5 , 0.25, 0.  ])</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_check_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
-
-    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_binary_precision_recall_curve_format</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">thresholds</span>
-    <span class="p">)</span>
-
-    <span class="n">state</span> <span class="o">=</span> <span class="n">_binary_precision_recall_curve_update</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">_binary_roc_compute</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">)</span></div>
-
-
-<span class="k">def</span> <span class="nf">_multiclass_roc_compute</span><span class="p">(</span>
-    <span class="n">state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span>
-    <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span>
-    <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-    <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span>
-<span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Compute the ROC curve for multiclass classification tasks.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">        state : np.ndarray or tuple of np.ndarray</span>
-<span class="sd">            If ``thresholds`` is not None, ``state`` is a multi-threshold confusion</span>
-<span class="sd">            matrix. If ``thresholds`` is None, ``state`` is a tuple of (target, preds).</span>
-<span class="sd">        num_classes : int</span>
-<span class="sd">            Number of classes.</span>
-<span class="sd">        thresholds : np.ndarray, default=None</span>
-<span class="sd">            Thresholds used for binarizing the predicted probabilities. If not</span>
-<span class="sd">            None, must be a 1D numpy array of floats in the [0, 1] range and</span>
-<span class="sd">            monotonically increasing.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">        fpr : np.ndarray or list of np.ndarray</span>
-<span class="sd">            False positive rate. If ``threshold`` is not None, ``fpr`` is a 1d numpy</span>
-<span class="sd">            array. Otherwise, ``fpr`` is a list of 1d numpy arrays, one for each</span>
-<span class="sd">            class.</span>
-<span class="sd">        tpr : np.ndarray or list of np.ndarray</span>
-<span class="sd">            True positive rate. If ``threshold`` is not None, ``tpr`` is a 1d numpy</span>
-<span class="sd">            array. Otherwise, ``tpr`` is a list of 1d numpy arrays, one for each class.</span>
-<span class="sd">        thresholds : np.ndarray or list of np.ndarray</span>
-<span class="sd">            Thresholds used to compute fpr and tpr. ``threshold`` is not None,</span>
-<span class="sd">            thresholds is a 1d numpy array. Otherwise, thresholds is a list of</span>
-<span class="sd">            1d numpy arrays, one for each class.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">thresholds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_roc_compute_from_confmat</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span>
-
-        <span class="n">tpr</span> <span class="o">=</span> <span class="n">tpr</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">fpr</span> <span class="o">=</span> <span class="n">fpr</span><span class="o">.</span><span class="n">T</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_classes</span><span class="p">):</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="n">_binary_roc_compute</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">][:,</span> <span class="n">i</span><span class="p">]],</span> <span class="n">thresholds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">i</span>
-            <span class="p">)</span>
-            <span class="n">fpr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="n">tpr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-            <span class="n">thresholds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-
-    <span class="k">return</span> <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span>
-
-
-<div class="viewcode-block" id="multiclass_roc_curve"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.roc.html#cyclops.evaluation.metrics.functional.roc.multiclass_roc_curve">[docs]</a><span class="k">def</span> <span class="nf">multiclass_roc_curve</span><span class="p">(</span>
-    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">thresholds</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span>
-    <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-    <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span>
-<span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Compute the ROC curve for multiclass classification tasks.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">        target : ArrayLike</span>
-<span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds : ArrayLike</span>
-<span class="sd">            Estimated probabilities or decision function. If ``preds`` is not in</span>
-<span class="sd">            the range [0, 1], a softmax function is applied to transform it to</span>
-<span class="sd">            the range [0, 1].</span>
-<span class="sd">        num_classes : int</span>
-<span class="sd">            Number of classes.</span>
-<span class="sd">        thresholds : int or list of floats or np.ndarray of floats, default=None</span>
-<span class="sd">            Thresholds used for binarizing the predicted probabilities.</span>
-<span class="sd">            If int, then the number of thresholds to use.</span>
-<span class="sd">            If list or array, then the thresholds to use.</span>
-<span class="sd">            If None, then the thresholds are automatically determined by the</span>
-<span class="sd">            unique values in ``preds``.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">        fpr : np.ndarray or list of np.ndarray</span>
-<span class="sd">            False positive rate. If ``threshold`` is not None, ``fpr`` is a 1d numpy</span>
-<span class="sd">            array. Otherwise, ``fpr`` is a list of 1d numpy arrays, one for each</span>
-<span class="sd">            class.</span>
-<span class="sd">        tpr : np.ndarray or list of np.ndarray</span>
-<span class="sd">            True positive rate. If ``threshold`` is not None, ``tpr`` is a 1d numpy</span>
-<span class="sd">            array. Otherwise, ``tpr`` is a list of 1d numpy arrays, one for each class.</span>
-<span class="sd">        thresholds : np.ndarray or list of np.ndarray</span>
-<span class="sd">            Thresholds used to compute fpr and tpr. ``threshold`` is not None,</span>
-<span class="sd">            thresholds is a 1d numpy array. Otherwise, thresholds is a list of</span>
-<span class="sd">            1d numpy arrays, one for each class.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multiclass_roc_curve</span>
-<span class="sd">        &gt;&gt;&gt; target = [1, 0, 2, 0]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05],</span>
-<span class="sd">        ...         [0.05, 0.05, 0.9], [0.9, 0.05, 0.05]]</span>
-<span class="sd">        &gt;&gt;&gt; fpr, tpr, thresholds = multiclass_roc_curve(target, preds,</span>
-<span class="sd">        ...     num_classes=3, thresholds=5</span>
-<span class="sd">        ... )</span>
-<span class="sd">        &gt;&gt;&gt; fpr</span>
-<span class="sd">        array([[0.        , 0.5       , 0.5       , 0.5       , 1.        ],</span>
-<span class="sd">        [0.        , 0.33333333, 0.33333333, 0.33333333, 1.        ],</span>
-<span class="sd">        [0.        , 0.        , 0.        , 0.        , 1.        ]])</span>
-<span class="sd">        &gt;&gt;&gt; tpr</span>
-<span class="sd">        array([[0. , 0.5, 0.5, 0.5, 1. ],</span>
-<span class="sd">        [0. , 0. , 0. , 0. , 1. ],</span>
-<span class="sd">        [0. , 1. , 1. , 1. , 1. ]])</span>
-<span class="sd">        &gt;&gt;&gt; thresholds</span>
-<span class="sd">        array([1.  , 0.75, 0.5 , 0.25, 0.  ])</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_check_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
-
-    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_multiclass_precision_recall_curve_format</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span>
-    <span class="p">)</span>
-
-    <span class="n">state</span> <span class="o">=</span> <span class="n">_multiclass_precision_recall_curve_update</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">_multiclass_roc_compute</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span></div>
-
-
-<span class="k">def</span> <span class="nf">_multilabel_roc_compute</span><span class="p">(</span>
-    <span class="n">state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-    <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span>
-    <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-    <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span>
-<span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Compute the ROC curve for multilabel classification tasks.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">        state : np.ndarray or tuple of np.ndarray</span>
-<span class="sd">            If ``thresholds`` is not None, ``state`` is a multi-threshold confusion</span>
-<span class="sd">            matrix. Otherwise, ``state`` is a tuple of (target, preds).</span>
-<span class="sd">        num_labels : int</span>
-<span class="sd">            Number of labels.</span>
-<span class="sd">        thresholds : np.ndarray, default=None</span>
-<span class="sd">            Thresholds used for binarizing the predicted probabilities. If not</span>
-<span class="sd">            None, must be a 1D numpy array of floats in the [0, 1] range and</span>
-<span class="sd">            monotonically increasing.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">        fpr : np.ndarray or list of np.ndarray</span>
-<span class="sd">            False positive rate. If ``threshold`` is not None, ``fpr`` is a 1d numpy</span>
-<span class="sd">            array. Otherwise, ``fpr`` is a list of 1d numpy arrays, one for each</span>
-<span class="sd">            label.</span>
-<span class="sd">        tpr : np.ndarray or list of np.ndarray</span>
-<span class="sd">            True positive rate. If ``threshold`` is not None, ``tpr`` is a 1d numpy</span>
-<span class="sd">            array. Otherwise, ``tpr`` is a list of 1d numpy arrays, one for each label.</span>
-<span class="sd">        thresholds : np.ndarray or list of np.ndarray</span>
-<span class="sd">            Thresholds used to compute fpr and tpr. ``threshold`` is not None,</span>
-<span class="sd">            thresholds is a 1d numpy array. Otherwise, thresholds is a list of</span>
-<span class="sd">            1d numpy arrays, one for each label.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">thresholds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_roc_compute_from_confmat</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span>
-
-        <span class="n">tpr</span> <span class="o">=</span> <span class="n">tpr</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">fpr</span> <span class="o">=</span> <span class="n">fpr</span><span class="o">.</span><span class="n">T</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_labels</span><span class="p">):</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="n">_binary_roc_compute</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">][:,</span> <span class="n">i</span><span class="p">]],</span> <span class="n">thresholds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">i</span>
-            <span class="p">)</span>
-            <span class="n">fpr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="n">tpr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-            <span class="n">thresholds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-
-    <span class="k">return</span> <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span>
-
-
-<div class="viewcode-block" id="multilabel_roc_curve"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluation.metrics.functional.roc.html#cyclops.evaluation.metrics.functional.roc.multilabel_roc_curve">[docs]</a><span class="k">def</span> <span class="nf">multilabel_roc_curve</span><span class="p">(</span>
-    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">thresholds</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span>
-    <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-    <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span>
-<span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Compute the ROC curve for multilabel classification tasks.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">        target : ArrayLike</span>
-<span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds : ArrayLike</span>
-<span class="sd">            Estimated probabilities or decision function. If ``preds`` is not in</span>
-<span class="sd">            the range [0, 1], a sigmoid function is applied to transform it to</span>
-<span class="sd">            the range [0, 1].</span>
-<span class="sd">        num_labels : int</span>
-<span class="sd">            Number of labels.</span>
-<span class="sd">        thresholds : int or list of floats or np.ndarray of floats, default=None</span>
-<span class="sd">            Thresholds used for binarizing the values of ``preds``.</span>
-<span class="sd">            If int, then the number of thresholds to use.</span>
-<span class="sd">            If list or array, then the thresholds to use.</span>
-<span class="sd">            If None, then the thresholds are automatically determined by the</span>
-<span class="sd">            unique values in ``preds``.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">        fpr : np.ndarray or list of np.ndarray</span>
-<span class="sd">            False positive rate. If ``threshold`` is not None, ``fpr`` is a 1d numpy</span>
-<span class="sd">            array. Otherwise, ``fpr`` is a list of 1d numpy arrays, one for each</span>
-<span class="sd">            label.</span>
-<span class="sd">        tpr : np.ndarray or list of np.ndarray</span>
-<span class="sd">            True positive rate. If ``threshold`` is not None, ``tpr`` is a 1d numpy</span>
-<span class="sd">            array. Otherwise, ``tpr`` is a list of 1d numpy arrays, one for each label.</span>
-<span class="sd">        thresholds : np.ndarray or list of np.ndarray</span>
-<span class="sd">            Thresholds used to compute fpr and tpr. ``threshold`` is not None,</span>
-<span class="sd">            thresholds is a 1d numpy array. Otherwise, thresholds is a list of</span>
-<span class="sd">            1d numpy arrays, one for each label.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multilabel_roc_curve</span>
-<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 0], [0, 1, 1], [1, 0, 1]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.05, 0.1, 0.9], [0.8, 0.2, 0.3]]</span>
-<span class="sd">        &gt;&gt;&gt; fpr, tpr, thresholds = multilabel_roc_curve(target, preds, num_labels=3,</span>
-<span class="sd">        ...     thresholds=5</span>
-<span class="sd">        ... )</span>
-<span class="sd">        &gt;&gt;&gt; fpr</span>
-<span class="sd">        array([[0., 0., 0., 0., 1.],</span>
-<span class="sd">        [0., 0., 0., 0., 1.],</span>
-<span class="sd">        [0., 1., 1., 1., 1.]])</span>
-<span class="sd">        &gt;&gt;&gt; tpr</span>
-<span class="sd">        array([[0. , 1. , 1. , 1. , 1. ],</span>
-<span class="sd">        [0. , 0.5, 0.5, 0.5, 1. ],</span>
-<span class="sd">        [0. , 0.5, 0.5, 1. , 1. ]])</span>
-<span class="sd">        &gt;&gt;&gt; thresholds</span>
-<span class="sd">        array([1.  , 0.75, 0.5 , 0.25, 0.  ])</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_check_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
-
-    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_multilabel_precision_recall_curve_format</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span>
-    <span class="p">)</span>
-
-    <span class="n">state</span> <span class="o">=</span> <span class="n">_multilabel_precision_recall_curve_update</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">_multilabel_roc_compute</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">num_labels</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

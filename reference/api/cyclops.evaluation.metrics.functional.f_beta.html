@@ -146,6 +146,9 @@
 <li class="toctree-l3"><a class="reference internal" href="cyclops.evaluation.metrics.html#submodules">Submodules</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.accuracy.html">cyclops.evaluation.metrics.accuracy module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.auroc.html">cyclops.evaluation.metrics.auroc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.f_beta.html">cyclops.evaluation.metrics.f_beta module</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="cyclops.evaluation.metrics.functional.html">cyclops.evaluation.metrics.functional package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="cyclops.evaluation.metrics.functional.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.accuracy.html">cyclops.evaluation.metrics.functional.accuracy module</a></li>
@@ -154,6 +157,7 @@
 <li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.precision_recall.html">cyclops.evaluation.metrics.functional.precision_recall module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.precision_recall_curve.html">cyclops.evaluation.metrics.functional.precision_recall_curve module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.roc.html">cyclops.evaluation.metrics.functional.roc module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.sensitivity.html">cyclops.evaluation.metrics.functional.sensitivity module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.specificity.html">cyclops.evaluation.metrics.functional.specificity module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.evaluation.metrics.functional.stat_scores.html">cyclops.evaluation.metrics.functional.stat_scores module</a></li>
 </ul>
@@ -166,8 +170,16 @@
 <li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.precision_recall.html">cyclops.evaluation.metrics.functional.precision_recall module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.precision_recall_curve.html">cyclops.evaluation.metrics.functional.precision_recall_curve module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.roc.html">cyclops.evaluation.metrics.functional.roc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.sensitivity.html">cyclops.evaluation.metrics.functional.sensitivity module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.specificity.html">cyclops.evaluation.metrics.functional.specificity module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.functional.stat_scores.html">cyclops.evaluation.metrics.functional.stat_scores module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.metric.html">cyclops.evaluation.metrics.metric module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.precision_recall.html">cyclops.evaluation.metrics.precision_recall module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.precision_recall_curve.html">cyclops.evaluation.metrics.precision_recall_curve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.roc.html">cyclops.evaluation.metrics.roc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.sensitivity.html">cyclops.evaluation.metrics.sensitivity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.specificity.html">cyclops.evaluation.metrics.specificity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.stat_scores.html">cyclops.evaluation.metrics.stat_scores module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.evaluation.metrics.utils.html">cyclops.evaluation.metrics.utils module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.plotter.html">cyclops.plotter module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cyclops.processors.html">cyclops.processors package</a></li>
@@ -256,50 +268,55 @@
 <p>Functions for computing F-beta and F1 scores for different input types.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="cyclops.evaluation.metrics.functional.f_beta.binary_f1_score">
-<span class="sig-name descname"><span class="pre">binary_f1_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_division</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/f_beta.html#binary_f1_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.f_beta.binary_f1_score" title="Permalink to this definition"></a></dt>
-<dd><p>Compute the F1 score for binary data.</p>
+<span class="sig-name descname"><span class="pre">binary_f1_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_division</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/f_beta.html#binary_f1_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.f_beta.binary_f1_score" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the F1 score for binary classification tasks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth (correct) target values.</p></li>
 <li><p><strong>preds</strong> (<em>ArrayLike</em>) – Predictions as returned by a classifier.</p></li>
-<li><p><strong>pos_label</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The class to report. Defaults to 1. One of 0 or 1</p></li>
-<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Threshold value for converting probabilities and logits to binary.
-Default: 0.5</p></li>
-<li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em>) – Sample weights.</p></li>
-<li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em>) – Value to return when there are no true positives or true negatives.
-If set to <code class="docutils literal notranslate"><span class="pre">warn</span></code>, this acts as 0, but warnings are also raised.</p></li>
+<li><p><strong>pos_label</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>default=1</em>) – The label of the positive class.</p></li>
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>default=0.5</em>) – Threshold value for binarizing predictions in form of logits or
+probability scores.</p></li>
+<li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em><em>, </em><em>default=&quot;warn&quot;</em>) – Value to return when there is a zero division. If set to “warn”, this
+acts as 0, but warnings are also raised.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>F1 score</strong></p>
+<dd class="field-even"><p>The F1 score.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)">float</a></p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cyclops.evaluation.metrics.functional</span> <span class="kn">import</span> <span class="n">binary_f1_score</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preds</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">binary_f1_score</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span>
+<span class="go">0.6666666666666666</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cyclops.evaluation.metrics.functional.f_beta.binary_fbeta_score">
-<span class="sig-name descname"><span class="pre">binary_fbeta_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_division</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/f_beta.html#binary_fbeta_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.f_beta.binary_fbeta_score" title="Permalink to this definition"></a></dt>
-<dd><p>Compute the F-beta score for binary data.</p>
+<span class="sig-name descname"><span class="pre">binary_fbeta_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_division</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/f_beta.html#binary_fbeta_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.f_beta.binary_fbeta_score" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the F-beta score for binary classification tasks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth (correct) target values.</p></li>
 <li><p><strong>preds</strong> (<em>ArrayLike</em>) – Predictions as returned by a classifier.</p></li>
 <li><p><strong>beta</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Weight of precision in harmonic mean.</p></li>
-<li><p><strong>pos_label</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The positive class label. Default is 1. One of [0, 1].</p></li>
-<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Threshold value for converting probabilities and logits to binary.
-Default: 0.5</p></li>
-<li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em>) – Sample weights.</p></li>
-<li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em>) – Value to return when there are no true positives or true negatives.
+<li><p><strong>pos_label</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>default=1</em>) – The positive class label. One of [0, 1].</p></li>
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>default=0.5</em>) – Threshold value for converting probabilities and logits to binary.</p></li>
+<li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em><em>, </em><em>default=&quot;warn&quot;</em>) – Value to return when there are no true positives or true negatives.
 If set to <code class="docutils literal notranslate"><span class="pre">warn</span></code>, this acts as 0, but warnings are also raised.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>F-beta score</strong></p>
+<dd class="field-even"><p>The binary F-beta score.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)">float</a></p>
@@ -308,155 +325,109 @@ If set to <code class="docutils literal notranslate"><span class="pre">warn</spa
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – beta is less than 0.</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cyclops.evaluation.metrics.functional</span> <span class="kn">import</span> <span class="n">binary_fbeta_score</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preds</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">binary_fbeta_score</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="go">0.7142857142857143</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cyclops.evaluation.metrics.functional.f_beta.f1_score">
-<span class="sig-name descname"><span class="pre">f1_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_division</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/f_beta.html#f1_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.f_beta.f1_score" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">f1_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_division</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/f_beta.html#f1_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.f_beta.f1_score" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the F1 score for multiclass data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth (correct) target values.</p></li>
 <li><p><strong>preds</strong> (<em>ArrayLike</em>) – Estimated targets as returned by a classifier.</p></li>
-<li><p><strong>task</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;binary&quot;</em><em>, </em><em>&quot;multiclass&quot;</em><em>, </em><em>&quot;multilabel&quot;</em><em>]</em>) – <dl class="simple">
-<dt>The task type. One of:</dt><dd><ul>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">binary</span></code>: binary classification.</dt><dd><p>Example: [0, 1, 1, 0, 1] or [0.1, 0.9, 0.8, 0.2, 0.4]</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">multiclass</span></code>: multiclass classification.</dt><dd><p>Example: [0, 1, 2, 0, 1] or [[0.1, 0.9, 0.0], [0.0, 0.8, 0.2], …]</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">multilabel</span></code>: multilabel classification.</dt><dd><p>Example: [[0, 1], [1, 0], [1, 1], [0, 0], [1, 0]] or
-[[0.1, 0.9], [0.0, 0.8], …]</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>pos_label</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The class to report if task is binary. Defaults to 1.</p></li>
-<li><p><strong>num_classes</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – Number of classes. Necessary for multiclass task.</p></li>
-<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Threshold value for binary or multilabel probabilities. Defaults to
-0.5</p></li>
-<li><p><strong>top_k</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – Number of highest probability entries for multiclass. Defaults to None.</p></li>
-<li><p><strong>num_labels</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – Number of labels for multilabel task. Defaults to None.</p></li>
-<li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>&quot;samples&quot;</em><em>, </em><em>None</em><em>]</em>) – <dl class="simple">
-<dt>If not None, this determines the type of averaging performed on the data:</dt><dd><ul>
+<li><p><strong>task</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;binary&quot;</em><em>, </em><em>&quot;multiclass&quot;</em><em>, </em><em>&quot;multilabel&quot;</em><em>]</em>) – Type of classification task.</p></li>
+<li><p><strong>pos_label</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>default=1</em>) – Label to consider as positive for binary classification tasks.</p></li>
+<li><p><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>default=None</em>) – Number of classes for the task. Required if <code class="docutils literal notranslate"><span class="pre">task</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;multiclass&quot;</span></code>.</p></li>
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>default=0.5</em>) – Threshold for deciding the positive class. Only used if <code class="docutils literal notranslate"><span class="pre">task</span></code> is
+<code class="docutils literal notranslate"><span class="pre">&quot;binary&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;multilabel&quot;</span></code>.</p></li>
+<li><p><strong>top_k</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – If given, and predictions are probabilities/logits, the precision will
+be computed only for the top k classes. Otherwise, <code class="docutils literal notranslate"><span class="pre">top_k</span></code> will be
+set to 1. Only used if <code class="docutils literal notranslate"><span class="pre">task</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;multiclass&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;multilabel&quot;</span></code>.</p></li>
+<li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>default=None</em>) – Number of labels for the task. Required if <code class="docutils literal notranslate"><span class="pre">task</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;multilabel&quot;</span></code>.</p></li>
+<li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em><em>, </em><em>default=None</em>) – <p>If <code class="docutils literal notranslate"><span class="pre">None</span></code>, return the score for each label/class. Otherwise,
+use one of the following options to compute the average score:</p>
+<blockquote>
+<div><ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true
-positives, false negatives and false positives.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each label, and find their unweighted
-mean.  This does not take label imbalance into account.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their
-average, weighted by support (the number of true instances for each
-label). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for label imbalance; it can
-result in an F-score that is not between precision and recall.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">samples</span></code>: Calculate metrics for each instance, and find their
-average (only meaningful for multilabel classification).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: The scores for each class are returned.</p></li>
+positives, false positives and false negatives.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each class/label, and find their
+unweighted mean. This does not take label/class imbalance into
+account.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label/class, and find
+their average weighted by support (the number of true instances
+for each label/class). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for
+label/class imbalance.</p></li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
 </p></li>
-<li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em>) – Sample weights.</p></li>
-<li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em>) – Value to return when there are no true positives or true negatives.
-If set to <code class="docutils literal notranslate"><span class="pre">warn</span></code>, this acts as 0, but warnings are also raised.</p></li>
+<li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em><em>, </em><em>default=&quot;warn&quot;</em>) – Value to return when there is a zero division. If set to “warn”, this
+acts as 0, but warnings are also raised.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The F1 score. If <code class="docutils literal notranslate"><span class="pre">average</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> and <code class="docutils literal notranslate"><span class="pre">task</span></code> is not <code class="docutils literal notranslate"><span class="pre">binary</span></code>,
+a numpy.ndarray of shape (<code class="docutils literal notranslate"><span class="pre">num_classes</span></code> or <code class="docutils literal notranslate"><span class="pre">num_labels</span></code>,) is returned.</p>
 </dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p><strong>F1 score</strong> (<em>float (if average is not None or task is binary) or</em>)</p></li>
-<li><p><em>np.ndarray (if average is None).</em></p></li>
-</ul>
-</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cyclops.evaluation.metrics.functional.f_beta.fbeta_score">
-<span class="sig-name descname"><span class="pre">fbeta_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_division</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/f_beta.html#fbeta_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.f_beta.fbeta_score" title="Permalink to this definition"></a></dt>
-<dd><p>Compute the F-beta score, a generalization of F-measure.</p>
-<p>The F-beta score is the weighted harmonic mean of precision and recall,
-reaching its optimal value at 1 and its worst value at 0. The relative
-contribution of precision and recall to the F-beta score are determined
-by the <cite>beta</cite> parameter, beta = 1.0 means recall and precision are equally
-important. <code class="docutils literal notranslate"><span class="pre">beta</span> <span class="pre">&lt;</span> <span class="pre">1</span></code> lends more weight to precision, while <code class="docutils literal notranslate"><span class="pre">beta</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>
-favors recall (beta -&gt; inf: precision, beta -&gt; 0: recall).</p>
+<span class="sig-name descname"><span class="pre">fbeta_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_division</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/f_beta.html#fbeta_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.f_beta.fbeta_score" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the F-beta score for binary, multiclass, or multilabel data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth (correct) target values.</p></li>
 <li><p><strong>preds</strong> (<em>ArrayLike</em>) – Estimated targets as returned by a classifier.</p></li>
 <li><p><strong>beta</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Weight of precision in harmonic mean.</p></li>
-<li><p><strong>task</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;binary&quot;</em><em>, </em><em>&quot;multiclass&quot;</em><em>, </em><em>&quot;multilabel&quot;</em><em>]</em>) – <dl class="simple">
-<dt>The task type. One of:</dt><dd><ul>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">binary</span></code>: binary classification.</dt><dd><p>Example: [0, 1, 1, 0, 1] or [0.1, 0.9, 0.8, 0.2, 0.4]</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">multiclass</span></code>: multiclass classification.</dt><dd><p>Example: [0, 1, 2, 0, 1] or [[0.1, 0.9, 0.0], [0.0, 0.8, 0.2], …]</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">multilabel</span></code>: multilabel classification.</dt><dd><p>Example: [[0, 1], [1, 0], [1, 1], [0, 0], [1, 0]] or
-[[0.1, 0.9], [0.0, 0.8], …]</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>pos_label</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The class to report if task is binary. Defaults to 1.</p></li>
-<li><p><strong>num_classes</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – Number of classes. Necessary for multiclass task.</p></li>
-<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Threshold value for binary or multilabel probabilities. Defaults to
-0.5</p></li>
-<li><p><strong>top_k</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – Number of highest probability entries for multiclass. Defaults to None.</p></li>
-<li><p><strong>num_labels</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – Number of labels for multilabel task. Defaults to None.</p></li>
-<li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>&quot;samples&quot;</em><em>, </em><em>None</em><em>]</em>) – <dl class="simple">
-<dt>If not None, this determines the type of averaging performed on the data:</dt><dd><ul>
+<li><p><strong>task</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;binary&quot;</em><em>, </em><em>&quot;multiclass&quot;</em><em>, </em><em>&quot;multilabel&quot;</em><em>]</em>) – Type of classification task.</p></li>
+<li><p><strong>pos_label</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>default=1</em>) – Label to consider as positive for binary classification tasks.</p></li>
+<li><p><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of classes for the task. Required if <code class="docutils literal notranslate"><span class="pre">task</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;multiclass&quot;</span></code>.</p></li>
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>default=0.5</em>) – Threshold for deciding the positive class. Only used if <code class="docutils literal notranslate"><span class="pre">task</span></code> is
+<code class="docutils literal notranslate"><span class="pre">&quot;binary&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;multilabel&quot;</span></code>.</p></li>
+<li><p><strong>top_k</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – If given, and predictions are probabilities/logits, the precision will
+be computed only for the top k classes. Otherwise, <code class="docutils literal notranslate"><span class="pre">top_k</span></code> will be
+set to 1. Only used if <code class="docutils literal notranslate"><span class="pre">task</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;multiclass&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;multilabel&quot;</span></code>.</p></li>
+<li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of labels for the task. Required if <code class="docutils literal notranslate"><span class="pre">task</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;multilabel&quot;</span></code>.</p></li>
+<li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em><em>, </em><em>default=None</em>) – <p>If <code class="docutils literal notranslate"><span class="pre">None</span></code>, return the score for each label/class. Otherwise,
+use one of the following options to compute the average score:</p>
+<blockquote>
+<div><ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true
-positives, false negatives and false positives.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each label, and find their unweighted
-mean.  This does not take label imbalance into account.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their
-average, weighted by support (the number of true instances for
-each label). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for label imbalance;
-it can result in an F-score that is not between precision and recall.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">samples</span></code>: Calculate metrics for each instance, and find their
-average (only meaningful for multilabel classification).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: The scores for each class are returned.</p></li>
+positives, false positives and false negatives.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each class/label, and find their
+unweighted mean. This does not take label/class imbalance into
+account.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label/class, and find
+their average weighted by support (the number of true instances
+for each label/class). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for
+label/class imbalance.</p></li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
 </p></li>
-<li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em>) – Sample weights.</p></li>
-<li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em>) – Value to return when there are no true positives or true negatives.
-If set to <code class="docutils literal notranslate"><span class="pre">warn</span></code>, this acts as 0, but warnings are also raised.</p></li>
+<li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em><em>, </em><em>default=&quot;warn&quot;</em>) – Value to return when there is a zero division. If set to “warn”, this
+acts as 0, but warnings are also raised.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>score</strong> – The F-beta score. If <code class="docutils literal notranslate"><span class="pre">average</span></code> is not <code class="docutils literal notranslate"><span class="pre">None</span></code> and <code class="docutils literal notranslate"><span class="pre">task</span></code> is not
+<code class="docutils literal notranslate"><span class="pre">binary</span></code>, a numpy array of shape (num_classes,) is returned.</p>
 </dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p><strong>F-beta score</strong> (<em>float (if average is not None or task is binary) or</em>)</p></li>
-<li><p><em>np.ndarray (if average is None).</em></p></li>
-</ul>
-</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">task</span></code> is not one of <code class="docutils literal notranslate"><span class="pre">binary</span></code>, <code class="docutils literal notranslate"><span class="pre">multiclass</span></code>, or
@@ -467,48 +438,58 @@ If set to <code class="docutils literal notranslate"><span class="pre">warn</spa
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cyclops.evaluation.metrics.functional.f_beta.multiclass_f1_score">
-<span class="sig-name descname"><span class="pre">multiclass_f1_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_division</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/f_beta.html#multiclass_f1_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.f_beta.multiclass_f1_score" title="Permalink to this definition"></a></dt>
-<dd><p>Compute the F1 score for multiclass data.</p>
+<span class="sig-name descname"><span class="pre">multiclass_f1_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_division</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/f_beta.html#multiclass_f1_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.f_beta.multiclass_f1_score" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the F1 score for multiclass classification tasks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth (correct) target values.</p></li>
 <li><p><strong>preds</strong> (<em>ArrayLike</em>) – Predictions as returned by a classifier.</p></li>
-<li><p><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of classes.</p></li>
-<li><p><strong>top_k</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – Number of highest probability entries for each sample to convert
-to 1s. If not set, top_k = 1.</p></li>
-<li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em>) – Sample weights.</p></li>
-<li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em>) – <dl class="simple">
-<dt>If not None, this determines the type of averaging performed on the data:</dt><dd><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true
-positives, false negatives and false positives.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each label, and find their unweighted
-mean.  This does not take label imbalance into account.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their
-average, weighted by support (the number of true instances for each
-label). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for label imbalance;
-it can result in an F-score that is not between precision and recall.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: The scores for each class are returned. Default: None.</p></li>
+<li><p><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of classes in the dataset.</p></li>
+<li><p><strong>top_k</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – If given, and predictions are probabilities/logits, the precision will
+be computed only for the top k classes. Otherwise, <code class="docutils literal notranslate"><span class="pre">top_k</span></code> will be
+set to 1.</p></li>
+<li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em><em>, </em><em>default=None</em>) – <p>If <code class="docutils literal notranslate"><span class="pre">None</span></code>, return the score for each class. Otherwise, use one of
+the following options to compute the average score:</p>
+<blockquote>
+<div><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metric globally from the total count of true
+positives, false positives and false negatives.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metric for each class, and find their
+unweighted mean. This does not take class imbalance into account.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metric for each class, and find their
+average weighted by the support (the number of true instances
+for each class). This alters “macro” to account for class
+imbalance. It can result in an F-score that is not between
+precision and recall.</p></li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
 </p></li>
-<li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em>) – Value to return when there are no true positives or true negatives.
-If set to <code class="docutils literal notranslate"><span class="pre">warn</span></code>, this acts as 0, but warnings are also raised.</p></li>
+<li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em><em>, </em><em>default=&quot;warn&quot;</em>) – Value to return when there is a zero division. If set to “warn”, this
+acts as 0, but warnings are also raised.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>F1 score</strong></p>
+<dd class="field-even"><p>The F1 score. If <code class="docutils literal notranslate"><span class="pre">average</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, a numpy.ndarray of shape
+(<code class="docutils literal notranslate"><span class="pre">num_classes</span></code>,) is returned.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)">float</a> or np.ndarray (if average is None).</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cyclops.evaluation.metrics.functional</span> <span class="kn">import</span> <span class="n">multiclass_f1_score</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preds</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">multiclass_f1_score</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">array([0.66666667, 0.5       , 0.        ])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cyclops.evaluation.metrics.functional.f_beta.multiclass_fbeta_score">
-<span class="sig-name descname"><span class="pre">multiclass_fbeta_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_division</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/f_beta.html#multiclass_fbeta_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.f_beta.multiclass_fbeta_score" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">multiclass_fbeta_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_division</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/f_beta.html#multiclass_fbeta_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.f_beta.multiclass_fbeta_score" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the F-beta score for multiclass data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -516,89 +497,105 @@ If set to <code class="docutils literal notranslate"><span class="pre">warn</spa
 <li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth (correct) target values.</p></li>
 <li><p><strong>preds</strong> (<em>ArrayLike</em>) – Predictions as returned by a classifier.</p></li>
 <li><p><strong>beta</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Weight of precision in harmonic mean.</p></li>
-<li><p><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of classes.</p></li>
-<li><p><strong>top_k</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – Number of highest probability entries for each sample to convert
-to 1s. If not set, top_k = 1.</p></li>
-<li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em>) – Sample weights.</p></li>
-<li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em>) – <dl class="simple">
-<dt>If not None, this determines the type of averaging performed on the data:</dt><dd><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true
-positives, false negatives and false positives.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each label, and find their unweighted
-mean.  This does not take label imbalance into account.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their
-average, weighted by support (the number of true instances for each
-label). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for label imbalance;
-it can result in an F-score that is not between precision and recall.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: The scores for each class are returned.</p></li>
+<li><p><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of classes in the dataset.</p></li>
+<li><p><strong>top_k</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – If given, and predictions are probabilities/logits, the score will
+be computed only for the top k classes. Otherwise, <code class="docutils literal notranslate"><span class="pre">top_k</span></code> will be
+set to 1.</p></li>
+<li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em><em>, </em><em>default=None</em>) – <p>If <code class="docutils literal notranslate"><span class="pre">None</span></code>, return the score for each class. Otherwise,
+use one of the following options to compute the average score:</p>
+<blockquote>
+<div><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metric globally from the total count of true
+positives, false positives and false negatives.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metric for each class, and find their
+unweighted mean. This does not take label imbalance into account.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metric for each class, and find their
+average weighted by the support (the number of true instances
+for each class). This alters “macro” to account for class
+imbalance.</p></li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
 </p></li>
-<li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em>) – Value to return when there are no true positives or true negatives.
-If set to <code class="docutils literal notranslate"><span class="pre">warn</span></code>, this acts as 0, but warnings are also raised.</p></li>
+<li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em><em>, </em><em>default=&quot;warn&quot;</em>) – Value to return when there is a zero division. If set to “warn”, this
+acts as 0, but warnings are also raised.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>F-beta score</strong></p>
+<dd class="field-even"><p>The multiclass F-beta score. If <code class="docutils literal notranslate"><span class="pre">average</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, a numpy array
+of shape (num_classes,) is returned.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float or np.ndarray (if average is <code class="docutils literal notranslate"><span class="pre">None</span></code>).</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – <code class="docutils literal notranslate"><span class="pre">average</span></code> is not one of <code class="docutils literal notranslate"><span class="pre">micro</span></code>, <code class="docutils literal notranslate"><span class="pre">macro</span></code>, <code class="docutils literal notranslate"><span class="pre">weighted</span></code>, or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – <code class="docutils literal notranslate"><span class="pre">average</span></code> is not one of <code class="docutils literal notranslate"><span class="pre">micro</span></code>, <code class="docutils literal notranslate"><span class="pre">macro</span></code>, <code class="docutils literal notranslate"><span class="pre">weighted</span></code>, or <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+or <code class="docutils literal notranslate"><span class="pre">beta</span></code> is less than 0.</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cyclops.evaluation.metrics.functional</span> <span class="kn">import</span> <span class="n">multiclass_fbeta_score</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preds</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">multiclass_fbeta_score</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">array([1., 0., 0.])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cyclops.evaluation.metrics.functional.f_beta.multilabel_f1_score">
-<span class="sig-name descname"><span class="pre">multilabel_f1_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_division</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/f_beta.html#multilabel_f1_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.f_beta.multilabel_f1_score" title="Permalink to this definition"></a></dt>
-<dd><p>Compute the F1 score for multilabel data.</p>
+<span class="sig-name descname"><span class="pre">multilabel_f1_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_division</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/f_beta.html#multilabel_f1_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.f_beta.multilabel_f1_score" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the F1 score for multilabel classification tasks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth (correct) target values.</p></li>
 <li><p><strong>preds</strong> (<em>ArrayLike</em>) – Predictions as returned by a classifier.</p></li>
-<li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of labels.</p></li>
-<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Threshold value for converting probabilities and logits to binary.
-Default: 0.5.</p></li>
-<li><p><strong>top_k</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – Number of highest probability entries for each sample to convert
-to 1s. If not set, top_k = 1.</p></li>
-<li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em>) – Sample weights.</p></li>
-<li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;samples&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em>) – <dl class="simple">
-<dt>If not None, this determines the type of averaging performed on the data:</dt><dd><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true
-positives, false negatives and false positives.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each label, and find their unweighted
-mean.  This does not take label imbalance into account.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">samples</span></code>: Calculate metrics for each instance, and find their
-average.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their
-average, weighted by support (the number of true instances for each
-label). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for label imbalance;
-it can result in an F-score that is not between precision and recall.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: The scores for each class are returned. Default: None.</p></li>
+<li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of labels for the task.</p></li>
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>default=0.5</em>) – Threshold for deciding the positive class.</p></li>
+<li><p><strong>top_k</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – If given, and predictions are probabilities/logits, the precision will
+be computed only for the top k classes. Otherwise, <code class="docutils literal notranslate"><span class="pre">top_k</span></code> will be
+set to 1.</p></li>
+<li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em><em>, </em><em>default=None</em>) – <p>If <code class="docutils literal notranslate"><span class="pre">None</span></code>, return the score for each label. Otherwise, use one of
+the following options to compute the average score:</p>
+<blockquote>
+<div><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metric globally from the total count of true
+positives, false positives and false negatives.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metric for each label, and find their
+unweighted mean. This does not take label imbalance into account.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metric for each label, and find their
+average weighted by the support (the number of true instances
+for each label). This alters “macro” to account for label
+imbalance.</p></li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
 </p></li>
-<li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em>) – Value to return when there are no true positives or true negatives.
-If set to <code class="docutils literal notranslate"><span class="pre">warn</span></code>, this acts as 0, but warnings are also raised.</p></li>
+<li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em><em>, </em><em>default=&quot;warn&quot;</em>) – Value to return when there is a zero division. If set to “warn”, this
+acts as 0, but warnings are also raised.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>F1 score</strong></p>
+<dd class="field-even"><p>The F1 score. If <code class="docutils literal notranslate"><span class="pre">average</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, a numpy.ndarray of shape
+(<code class="docutils literal notranslate"><span class="pre">num_labels</span></code>,) is returned.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)">float</a> or np.ndarray (if average is None).</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cyclops.evaluation.metrics.functional</span> <span class="kn">import</span> <span class="n">multilabel_f1_score</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preds</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">multilabel_f1_score</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">array([0., 1., 1.])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cyclops.evaluation.metrics.functional.f_beta.multilabel_fbeta_score">
-<span class="sig-name descname"><span class="pre">multilabel_fbeta_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_division</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/f_beta.html#multilabel_fbeta_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.f_beta.multilabel_fbeta_score" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">multilabel_fbeta_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_division</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluation/metrics/functional/f_beta.html#multilabel_fbeta_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluation.metrics.functional.f_beta.multilabel_fbeta_score" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the F-beta score for multilabel data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -606,44 +603,50 @@ If set to <code class="docutils literal notranslate"><span class="pre">warn</spa
 <li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth (correct) target values.</p></li>
 <li><p><strong>preds</strong> (<em>ArrayLike</em>) – Predictions as returned by a classifier.</p></li>
 <li><p><strong>beta</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Weight of precision in harmonic mean.</p></li>
-<li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of labels.</p></li>
-<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Threshold value for converting probabilities and logits to binary.
-Default: 0.5.</p></li>
-<li><p><strong>top_k</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – Number of highest probability entries for each sample to convert
-to 1s. If not set, top_k = 1.</p></li>
-<li><p><strong>sample_weight</strong> (<em>Optional</em><em>[</em><em>ArrayLike</em><em>]</em>) – Sample weights.</p></li>
-<li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;samples&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em>) – <dl class="simple">
-<dt>If not None, this determines the type of averaging performed on the data:</dt><dd><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true
-positives, false negatives and false positives.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each label, and find their unweighted
-mean.  This does not take label imbalance into account.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">samples</span></code>: Calculate metrics for each instance, and find their
-average.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their
-average, weighted by support (the number of true instances for each
-label). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for label imbalance;
-it can result in an F-score that is not between precision and recall.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: The scores for each class are returned. Default: None.</p></li>
+<li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of labels for the task.</p></li>
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>default=0.5</em>) – Threshold for deciding the positive class.</p></li>
+<li><p><strong>top_k</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – If given, and predictions are probabilities/logits, the score will
+be computed only for the top k classes. Otherwise, <code class="docutils literal notranslate"><span class="pre">top_k</span></code> will be
+set to 1.</p></li>
+<li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em><em>, </em><em>default=None</em>) – <p>If <code class="docutils literal notranslate"><span class="pre">None</span></code>, return the score for each label. Otherwise,
+use one of the following options to compute the average score:</p>
+<blockquote>
+<div><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metric globally from the total count of true
+positives, false positives and false negatives.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metric for each label, and find their
+unweighted mean. This does not take label imbalance into account.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metric for each label, and find their
+average weighted by the support (the number of true instances
+for each label). This alters “macro” to account for label
+imbalance.</p></li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
 </p></li>
-<li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em>) – Value to return when there are no true positives or true negatives.
-If set to <code class="docutils literal notranslate"><span class="pre">warn</span></code>, this acts as 0, but warnings are also raised.</p></li>
+<li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em><em>, </em><em>default=&quot;warn&quot;</em>) – Value to return when there is a zero division. If set to “warn”, this
+acts as 0, but warnings are also raised.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>F-beta score</strong></p>
+<dd class="field-even"><p>The multilabel F-beta score. If <code class="docutils literal notranslate"><span class="pre">average</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, a numpy array
+of shape (num_labels,) is returned.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float or np.ndarray (if average is <code class="docutils literal notranslate"><span class="pre">None</span></code>).</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – <code class="docutils literal notranslate"><span class="pre">average</span></code> is not one of <code class="docutils literal notranslate"><span class="pre">micro</span></code>, <code class="docutils literal notranslate"><span class="pre">macro</span></code>, <code class="docutils literal notranslate"><span class="pre">samples</span></code>,
-<code class="docutils literal notranslate"><span class="pre">weighted</span></code>, or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – <code class="docutils literal notranslate"><span class="pre">average</span></code> is not one of <code class="docutils literal notranslate"><span class="pre">micro</span></code>, <code class="docutils literal notranslate"><span class="pre">macro</span></code>, <code class="docutils literal notranslate"><span class="pre">weighted</span></code>, or <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+or <code class="docutils literal notranslate"><span class="pre">beta</span></code> is less than 0.</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cyclops.evaluation.metrics.functional</span> <span class="kn">import</span> <span class="n">multilabel_fbeta_score</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preds</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">multilabel_fbeta_score</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">array([1.        , 0.83333333])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
