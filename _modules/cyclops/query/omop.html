@@ -126,7 +126,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../design.html">Framework Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to cyclops</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../coverage.html">Coverage report</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Documentation</a></li>
 </ul>
 
@@ -170,7 +169,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;OMOP Query API.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span> <span class="nn">sqlalchemy.sql.selectable</span> <span class="kn">import</span> <span class="n">Subquery</span>
 
@@ -194,17 +193,6 @@
 <span class="n">CONCEPT</span> <span class="o">=</span> <span class="s2">&quot;concept&quot;</span>
 <span class="n">OBSERVATION</span> <span class="o">=</span> <span class="s2">&quot;observation&quot;</span>
 <span class="n">CARE_SITE</span> <span class="o">=</span> <span class="s2">&quot;care_site&quot;</span>
-
-<span class="c1"># Table map.</span>
-<span class="n">TABLE_MAP</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="n">VISIT_OCCURRENCE</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">ods</span><span class="o">.</span><span class="n">visit_occurrence</span><span class="p">,</span>
-    <span class="n">VISIT_DETAIL</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">ods</span><span class="o">.</span><span class="n">visit_detail</span><span class="p">,</span>
-    <span class="n">PERSON</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">ods</span><span class="o">.</span><span class="n">person</span><span class="p">,</span>
-    <span class="n">MEASUREMENT</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">ods</span><span class="o">.</span><span class="n">measurement</span><span class="p">,</span>
-    <span class="n">OBSERVATION</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">ods</span><span class="o">.</span><span class="n">observation</span><span class="p">,</span>
-    <span class="n">CONCEPT</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">ods</span><span class="o">.</span><span class="n">concept</span><span class="p">,</span>
-    <span class="n">CARE_SITE</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">ods</span><span class="o">.</span><span class="n">care_site</span><span class="p">,</span>
-<span class="p">}</span>
 
 <span class="c1"># OMOP column names.</span>
 <span class="n">VISIT_OCCURRENCE_ID</span> <span class="o">=</span> <span class="s2">&quot;visit_occurrence_id&quot;</span>
@@ -245,10 +233,39 @@
 <span class="n">NAME</span> <span class="o">=</span> <span class="s2">&quot;name&quot;</span>
 
 
+<span class="k">def</span> <span class="nf">_get_table_map</span><span class="p">(</span><span class="n">schema_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Get table map.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    schema_name: str</span>
+<span class="sd">        Name of schema.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Dict</span>
+<span class="sd">        A mapping of table names to the ORM table objects.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="n">VISIT_OCCURRENCE</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">schema_name</span><span class="p">)</span><span class="o">.</span><span class="n">visit_occurrence</span><span class="p">,</span>
+        <span class="n">VISIT_DETAIL</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">schema_name</span><span class="p">)</span><span class="o">.</span><span class="n">visit_detail</span><span class="p">,</span>
+        <span class="n">PERSON</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">schema_name</span><span class="p">)</span><span class="o">.</span><span class="n">person</span><span class="p">,</span>
+        <span class="n">MEASUREMENT</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">schema_name</span><span class="p">)</span><span class="o">.</span><span class="n">measurement</span><span class="p">,</span>
+        <span class="n">OBSERVATION</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">schema_name</span><span class="p">)</span><span class="o">.</span><span class="n">observation</span><span class="p">,</span>
+        <span class="n">CONCEPT</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">schema_name</span><span class="p">)</span><span class="o">.</span><span class="n">concept</span><span class="p">,</span>
+        <span class="n">CARE_SITE</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">schema_name</span><span class="p">)</span><span class="o">.</span><span class="n">care_site</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
 <div class="viewcode-block" id="OMOPQuerier"><a class="viewcode-back" href="../../../reference/api/cyclops.query.omop.html#cyclops.query.omop.OMOPQuerier">[docs]</a><span class="k">class</span> <span class="nc">OMOPQuerier</span><span class="p">(</span><span class="n">DatasetQuerier</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;OMOP querier.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="OMOPQuerier.__init__"><a class="viewcode-back" href="../../../reference/api/cyclops.query.omop.html#cyclops.query.omop.OMOPQuerier.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_overrides</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="OMOPQuerier.__init__"><a class="viewcode-back" href="../../../reference/api/cyclops.query.omop.html#cyclops.query.omop.OMOPQuerier.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">schema_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">config_overrides</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize.</span>
 
 <span class="sd">        Parameters</span>
@@ -259,7 +276,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">config_overrides</span><span class="p">:</span>
             <span class="n">config_overrides</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">TABLE_MAP</span><span class="p">,</span> <span class="n">COLUMN_MAP</span><span class="p">,</span> <span class="n">config_overrides</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">_get_table_map</span><span class="p">(</span><span class="n">schema_name</span><span class="p">),</span> <span class="n">COLUMN_MAP</span><span class="p">,</span> <span class="n">config_overrides</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_map_concept_ids_to_name</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">source_table</span><span class="p">:</span> <span class="n">Subquery</span><span class="p">,</span> <span class="n">source_cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
