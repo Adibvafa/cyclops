@@ -1,0 +1,1252 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.process.feature.feature &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/cyclops.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/copybutton.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/clipboard.min.js"></script>
+        <script src="../../../../_static/copybutton.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+    document.body.innerHTML = document.body.innerHTML.replace(/ package/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav">
+  <!--
+    Lie about what theme we really are when some RTD-injected JS fetches the
+    full versions panel from the RTD API.  RTD's JS replaces the stub versions
+    panel in the Sphinx-generated HTML with the full versions panel it fetches
+    from the RTD API.  If the API thinks we're not sphinx_rtd_theme, it will
+    serve us the wrong HTML and the panel will float as a "badge" when it
+    shouldn't.  As a customized version of sphinx_rtd_theme, we really do want
+    the same HTML it gets.  See also the diagnoses in
+    <https://github.com/nextstrain/docs.nextstrain.org/issues/76>.
+
+    This bit of JS finds the data RTD injects into the page and modifies it
+    before the code that RTD injects runs and looks at the data.  RTD's
+    <script>s (in <head>) run before this JS, but they wait until the DOM is
+    ready to actually do any work.  This gives us a chance to modify the data
+    during DOM load before the RTD code actually uses it.
+
+      -trs, 27 Jan 2022
+  -->
+  <script>
+    (() => {
+      try {
+        console.log("Lying about the theme to RTD's JS so the versions panel works properly. 🙈");
+
+        /* Update global variable, which is used in the request to get the RTD
+         * "footer" that includes the versions panel.
+         */
+        if (window.READTHEDOCS_DATA)
+          window.READTHEDOCS_DATA.theme = "sphinx_rtd_theme";
+
+        /* Update stored JSON in case anything else deserializes it later.
+         * Comments in the RTD-injected HTML source claim the global variable
+         * above is deprecated.
+         */
+        var script = document.querySelector("#READTHEDOCS_DATA");
+        if (script)
+          script.innerHTML = JSON.stringify({ ...JSON.parse(script.innerHTML), theme: "sphinx_rtd_theme" });
+      }
+      catch (err) {
+        console.log("Lying about the theme to RTD's JS failed… oh well. 🤷", err);
+      }
+    })();
+  </script>
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+
+
+
+
+  <a href="https://vectorinstitute.github.io/cyclops/">
+    <img src="../../../../_static/cyclops_logo-dark.png" class="logo" alt="Logo"/>
+  </a>
+
+
+
+  <div class="subproject">
+    <a href="../../../../index.html" class="project-name" alt="Documentation Home">
+      cyclops
+    </a>
+
+    
+    
+    
+
+  </div>
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+  
+
+  
+  
+    <li><a href="https://vectorinstitute.github.io/cyclops/">Home</a></li>
+    <li><a href="../../../../index.html">cyclops</a></li>
+  
+
+  
+  
+    <li><a href="../../../index.html">Module code</a></li>
+  
+
+  
+
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cyclops.process.feature.feature</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Feature processing.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">cyclops.plotter</span> <span class="kn">import</span> <span class="n">plot_histogram</span><span class="p">,</span> <span class="n">plot_temporal_features</span>
+<span class="kn">from</span> <span class="nn">cyclops.process.aggregate</span> <span class="kn">import</span> <span class="n">Aggregator</span>
+<span class="kn">from</span> <span class="nn">cyclops.process.constants</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BINARY</span><span class="p">,</span>
+    <span class="n">CATEGORICAL_INDICATOR</span><span class="p">,</span>
+    <span class="n">FEATURE_INDICATOR_ATTR</span><span class="p">,</span>
+    <span class="n">FEATURE_MAPPING_ATTR</span><span class="p">,</span>
+    <span class="n">FEATURE_META_ATTR_DEFAULTS</span><span class="p">,</span>
+    <span class="n">FEATURE_META_ATTRS</span><span class="p">,</span>
+    <span class="n">FEATURE_TARGET_ATTR</span><span class="p">,</span>
+    <span class="n">FEATURE_TYPE_ATTR</span><span class="p">,</span>
+    <span class="n">FEATURE_TYPES</span><span class="p">,</span>
+    <span class="n">FEATURES</span><span class="p">,</span>
+    <span class="n">NUMERIC</span><span class="p">,</span>
+    <span class="n">ORDINAL</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">cyclops.process.feature.handle_types</span> <span class="kn">import</span> <span class="n">infer_types</span><span class="p">,</span> <span class="n">normalize_data</span><span class="p">,</span> <span class="n">to_types</span>
+<span class="kn">from</span> <span class="nn">cyclops.process.feature.normalize</span> <span class="kn">import</span> <span class="n">GroupbyNormalizer</span>
+<span class="kn">from</span> <span class="nn">cyclops.process.feature.split</span> <span class="kn">import</span> <span class="n">split_idx</span>
+<span class="kn">from</span> <span class="nn">cyclops.process.feature.vectorized</span> <span class="kn">import</span> <span class="n">Vectorized</span>
+<span class="kn">from</span> <span class="nn">cyclops.process.util</span> <span class="kn">import</span> <span class="n">has_columns</span><span class="p">,</span> <span class="n">has_range_index</span><span class="p">,</span> <span class="n">to_range_index</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.common</span> <span class="kn">import</span> <span class="n">to_list</span><span class="p">,</span> <span class="n">to_list_optional</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.file</span> <span class="kn">import</span> <span class="n">save_dataframe</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.log</span> <span class="kn">import</span> <span class="n">setup_logging</span>
+
+<span class="c1"># Logging.</span>
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">setup_logging</span><span class="p">(</span><span class="n">print_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">)</span>
+
+
+<span class="c1"># mypy: ignore-errors</span>
+
+
+<div class="viewcode-block" id="FeatureMeta"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.FeatureMeta">[docs]</a><span class="k">class</span> <span class="nc">FeatureMeta</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Feature metadata class.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    feature_type: str</span>
+<span class="sd">        Feature type.</span>
+<span class="sd">    target: bool</span>
+<span class="sd">        Whether the feature a target variable.</span>
+<span class="sd">    indicator_of: str, optional</span>
+<span class="sd">        If not None, the feature from which this indicator was generated.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FeatureMeta.__init__"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.FeatureMeta.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="c1"># Feature type checking</span>
+        <span class="k">if</span> <span class="n">FEATURE_TYPE_ATTR</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must specify feature type.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">FEATURE_TYPE_ATTR</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">FEATURE_TYPES</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Feature type &#39;</span><span class="si">{</span><span class="n">kwargs</span><span class="p">[</span><span class="n">FEATURE_TYPE_ATTR</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;</span>
+<span class="s2">                not in </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">FEATURE_TYPES</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;&quot;&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Set attributes</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">FEATURE_META_ATTRS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">attr</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">FEATURE_META_ATTR_DEFAULTS</span><span class="p">[</span><span class="n">attr</span><span class="p">])</span>
+
+        <span class="c1"># Check for invalid parameters</span>
+        <span class="n">invalid_params</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwarg</span> <span class="k">for</span> <span class="n">kwarg</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">if</span> <span class="n">kwarg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">FEATURE_META_ATTRS</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">invalid_params</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid feature meta parameters </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">invalid_params</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="FeatureMeta.get_type"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.FeatureMeta.get_type">[docs]</a>    <span class="k">def</span> <span class="nf">get_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the feature type.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Feature type.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">FEATURE_TYPE_ATTR</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FeatureMeta.is_target"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.FeatureMeta.is_target">[docs]</a>    <span class="k">def</span> <span class="nf">is_target</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get whether the feature is a target.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            Whether the feature is a target.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">FEATURE_TARGET_ATTR</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FeatureMeta.indicator_of"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.FeatureMeta.indicator_of">[docs]</a>    <span class="k">def</span> <span class="nf">indicator_of</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get the name of an indicator&#39;s original categorical feature.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str, optional</span>
+<span class="sd">            The categorical column from which an indicator was generated, or None if</span>
+<span class="sd">            not a categorical indicator.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">FEATURE_INDICATOR_ATTR</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FeatureMeta.get_mapping"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.FeatureMeta.get_mapping">[docs]</a>    <span class="k">def</span> <span class="nf">get_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get the category value map for binary and ordinal categories.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict, optional</span>
+<span class="sd">            A mapping from the integer categories to the original values, or None if</span>
+<span class="sd">            there is no mapping.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">FEATURE_MAPPING_ATTR</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FeatureMeta.update"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.FeatureMeta.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Update meta attributes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        meta: list of tuple</span>
+<span class="sd">            List of tuples in the format (attribute name, attribute value).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">info</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Features"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.Features">[docs]</a><span class="k">class</span> <span class="nc">Features</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Features.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data: pandas.DataFrame</span>
+<span class="sd">        Features data.</span>
+<span class="sd">    features: list of str</span>
+<span class="sd">        List of feature columns. The remaining columns are treated as metadata.</span>
+<span class="sd">    by: list of str</span>
+<span class="sd">        Columns to groupby during processing, affecting how the features are treated.</span>
+<span class="sd">    targets: list of str</span>
+<span class="sd">        Column names to specify as target features.</span>
+<span class="sd">    meta: dict</span>
+<span class="sd">        Feature metadata.</span>
+<span class="sd">    normalizers: dict</span>
+<span class="sd">        Organize normalization objects with different keys, e.g.,</span>
+<span class="sd">        having separate normalizers for keys &quot;features&quot; and &quot;targets&quot;.</span>
+<span class="sd">    normalized: dict</span>
+<span class="sd">        Track for each normalizer whether normalization has been performed.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Features.__init__"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.Features.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">features</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+        <span class="n">by</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]],</span>  <span class="c1"># pylint: disable=invalid-name</span>
+        <span class="n">targets</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">force_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">normalizers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">GroupbyNormalizer</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="c1"># Check data</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Feature data must be a pandas.DataFrame.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_range_index</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Data required to have a range index. Try resetting the index.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Force a range index</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">to_range_index</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="n">feature_list</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+        <span class="n">target_list</span> <span class="o">=</span> <span class="n">to_list_optional</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">none_to_empty</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must specify at least one feature.&quot;</span><span class="p">)</span>
+
+        <span class="n">has_columns</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">feature_list</span><span class="p">,</span> <span class="n">raise_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">has_columns</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">target_list</span><span class="p">,</span> <span class="n">raise_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">by</span> <span class="o">=</span> <span class="n">to_list_optional</span><span class="p">(</span><span class="n">by</span><span class="p">)</span>  <span class="c1"># pylint: disable=invalid-name</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">by</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">has_columns</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">by</span><span class="p">,</span> <span class="n">raise_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">by</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">feature_list</span><span class="p">)))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Columns in &#39;by&#39; cannot be considered features.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Add targets to the list of features if they were not included</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">feature_list</span> <span class="o">+</span> <span class="n">target_list</span><span class="p">))</span>
+
+        <span class="c1"># Type checking and inference</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">normalize_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">FeatureMeta</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_infer_feature_types</span><span class="p">(</span><span class="n">force_types</span><span class="o">=</span><span class="n">force_types</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">GroupbyNormalizer</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalized</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">normalizers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">normalizer</span> <span class="ow">in</span> <span class="n">normalizers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_normalizer</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">normalizer</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Features.get_data"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.Features.get_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">features_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">to_binary_indicators</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the features data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        features_only: bool, default = True</span>
+<span class="sd">            Whether to return only the by and feature columns.</span>
+<span class="sd">        to_indicators: str or list of str, optional</span>
+<span class="sd">            Ordinal features to convert to categorical indicators.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            Features data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="c1"># Take only the feature columns</span>
+        <span class="k">if</span> <span class="n">features_only</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">+</span> <span class="n">to_list_optional</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">by</span><span class="p">,</span> <span class="n">none_to_empty</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
+
+        <span class="c1"># Convert to binary categorical indicators</span>
+        <span class="k">if</span> <span class="n">to_binary_indicators</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ordinal_to_indicators</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">to_list</span><span class="p">(</span><span class="n">to_binary_indicators</span><span class="p">))</span>
+
+        <span class="c1"># Convert binary columns from boolean to integer</span>
+        <span class="n">binary_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="n">BINARY</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">binary_cols</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">by</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">columns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Access as attribute, data columns.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of str</span>
+<span class="sd">            List of all column names.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span>
+
+<div class="viewcode-block" id="Features.feature_names"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.Features.feature_names">[docs]</a>    <span class="k">def</span> <span class="nf">feature_names</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">feature_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Access as attribute, feature names.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        feature_type: str, optional</span>
+<span class="sd">            Filter by feature type.</span>
+<span class="sd">        target: bool, optional</span>
+<span class="sd">            Filter by whether the feature is a target.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of str</span>
+<span class="sd">            List of the desired feature names.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span>
+
+        <span class="k">if</span> <span class="n">feature_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">features</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">col</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">feature_type</span>
+            <span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">features</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">is_target</span><span class="p">()]</span>
+
+        <span class="k">return</span> <span class="n">features</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Access as attribute, feature type names.</span>
+
+<span class="sd">        Note: These are framework-specific feature names.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Feature type mapped for each feature.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">meta</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">meta</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Access as attribute, names of target features.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of str</span>
+<span class="sd">            Names of target features.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">meta</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">meta</span><span class="o">.</span><span class="n">is_target</span><span class="p">()]</span>
+
+<div class="viewcode-block" id="Features.features_by_type"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.Features.features_by_type">[docs]</a>    <span class="k">def</span> <span class="nf">features_by_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get feature names of a given type.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        type_: str</span>
+<span class="sd">            Feature type.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of str</span>
+<span class="sd">            Names of all features with the given type.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">ftype</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">ftype</span> <span class="o">==</span> <span class="n">type_</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Features.split_by_values"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.Features.split_by_values">[docs]</a>    <span class="k">def</span> <span class="nf">split_by_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_splits</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Split the data into multiple datasets by values.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value_splits: list of numpy.ndarray</span>
+<span class="sd">            A list with an element for each split, where the elements are numpy.ndarray</span>
+<span class="sd">            with values determined how the splits are segmented.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            A tuple of Features objects with the split data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">on_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">by</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">unique</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">on_col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="n">unique</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="n">all_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">value_splits</span><span class="p">)</span>
+        <span class="n">all_vals</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">unique</span><span class="p">,</span> <span class="n">all_vals</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid split values.&quot;</span><span class="p">)</span>
+
+        <span class="n">datas</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">split</span> <span class="ow">in</span> <span class="n">value_splits</span><span class="p">:</span>
+            <span class="n">data_copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">datas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data_copy</span><span class="p">[</span><span class="n">data_copy</span><span class="p">[</span><span class="n">on_col</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">split</span><span class="p">)])</span>
+
+        <span class="n">save_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">splits</span> <span class="o">=</span> <span class="p">[</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">value_splits</span><span class="p">))]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">split</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">splits</span><span class="p">):</span>
+            <span class="n">split</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">datas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">save_data</span>
+
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">splits</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Features.split"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.Features.split">[docs]</a>    <span class="k">def</span> <span class="nf">split</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">fractions</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">randomize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Split the data into multiple datasets by fractions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        fractions: list of float or float, optional</span>
+<span class="sd">            Fraction(s) of samples between 0 and 1 to use for each split.</span>
+<span class="sd">        randomize: bool, default = True</span>
+<span class="sd">            Whether to randomize the data in the splits.</span>
+<span class="sd">        seed: int, optional</span>
+<span class="sd">            Seed for random number generator.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            A tuple of Features objects with the split data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">value_splits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_value_splits</span><span class="p">(</span><span class="n">fractions</span><span class="p">,</span> <span class="n">randomize</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_by_values</span><span class="p">(</span><span class="n">value_splits</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Features.compute_value_splits"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.Features.compute_value_splits">[docs]</a>    <span class="k">def</span> <span class="nf">compute_value_splits</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">fractions</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">randomize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Compute the value splits given fractions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        fractions: list of float or float, optional</span>
+<span class="sd">            Fraction(s) of samples between 0 and 1 to use for each split.</span>
+<span class="sd">        randomize: bool, default = True</span>
+<span class="sd">            Whether to randomize the data in the splits.</span>
+<span class="sd">        seed: int, optional</span>
+<span class="sd">            Seed for random number generator.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of numpy.ndarray</span>
+<span class="sd">            A list with an element for each split, where the elements are numpy.ndarray</span>
+<span class="sd">            with values determined how the splits are segmented.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">on_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">by</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">unique</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">on_col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="n">unique</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="n">idx_splits</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">split_idx</span><span class="p">(</span><span class="n">fractions</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique</span><span class="p">),</span> <span class="n">randomize</span><span class="o">=</span><span class="n">randomize</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">value_splits</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">unique</span><span class="p">,</span> <span class="n">split</span><span class="p">)</span> <span class="k">for</span> <span class="n">split</span> <span class="ow">in</span> <span class="n">idx_splits</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">value_splits</span></div>
+
+    <span class="k">def</span> <span class="nf">_update_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_update</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Update feature metadata.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        meta_update: dict</span>
+<span class="sd">            A dictionary in which the values will add/update</span>
+<span class="sd">            the existing feature metadata dictionary.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">meta_update</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">FeatureMeta</span><span class="p">(</span><span class="o">**</span><span class="n">info</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_to_feature_types</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">new_types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">inplace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Convert feature types.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: pandas.DataFrame</span>
+<span class="sd">            Features data.</span>
+<span class="sd">        new_types: dict</span>
+<span class="sd">            A map from the feature name to the new feature type.</span>
+<span class="sd">        inplace: bool</span>
+<span class="sd">            Whether to perform in-place, or to simply return the DataFrame.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            The features data with the relevant conversions.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">invalid</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">new_types</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">invalid</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unrecognized features: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">invalid</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">new_type</span> <span class="ow">in</span> <span class="n">new_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">:</span>
+                <span class="c1"># Do not allow converting to categorical indicators inplace</span>
+                <span class="k">if</span> <span class="n">inplace</span> <span class="ow">and</span> <span class="n">new_type</span> <span class="o">==</span> <span class="n">CATEGORICAL_INDICATOR</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Cannot convert </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2"> to binary categorical indicators.&quot;</span>
+                    <span class="p">)</span>
+
+        <span class="n">data</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">to_types</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">new_types</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">inplace</span><span class="p">:</span>
+            <span class="c1"># Append any new indicator features</span>
+            <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">fmeta</span> <span class="ow">in</span> <span class="n">meta</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">FEATURE_INDICATOR_ATTR</span> <span class="ow">in</span> <span class="n">fmeta</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_meta</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">_infer_feature_types</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">force_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Infer feature types.</span>
+
+<span class="sd">        Can optionally force certain types on specified features.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        force_types: dict</span>
+<span class="sd">            A map from the feature name to the forced feature type.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">infer_features</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span>
+            <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">to_list_optional</span><span class="p">(</span><span class="n">force_types</span><span class="p">,</span> <span class="n">none_to_empty</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="p">)</span>
+
+        <span class="n">new_types</span> <span class="o">=</span> <span class="n">infer_types</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">infer_features</span><span class="p">)</span>
+
+        <span class="c1"># Force certain features to be specific types</span>
+        <span class="k">if</span> <span class="n">force_types</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">feature</span><span class="p">,</span> <span class="n">type_</span> <span class="ow">in</span> <span class="n">force_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">new_types</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span> <span class="o">=</span> <span class="n">type_</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_to_feature_types</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">new_types</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Features.add_normalizer"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.Features.add_normalizer">[docs]</a>    <span class="k">def</span> <span class="nf">add_normalizer</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">normalizer</span><span class="p">:</span> <span class="n">GroupbyNormalizer</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add a normalization object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        key: str</span>
+<span class="sd">            Unique name of the normalizer.</span>
+<span class="sd">        normalizer: GroupbyNormalizer</span>
+<span class="sd">            Normalization object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;A normalizer with this key already exists. Consider first removing it.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">by</span> <span class="o">=</span> <span class="n">normalizer</span><span class="o">.</span><span class="n">get_by</span><span class="p">()</span>  <span class="c1"># pylint: disable=invalid-name</span>
+        <span class="k">if</span> <span class="n">by</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">has_columns</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">raise_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">normalizer_map</span> <span class="o">=</span> <span class="n">normalizer</span><span class="o">.</span><span class="n">get_map</span><span class="p">()</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">normalizer_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="c1"># Check to make sure none of the feature exist in another normalizer</span>
+        <span class="k">for</span> <span class="n">norm_key</span><span class="p">,</span> <span class="n">norm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">norm_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">norm</span><span class="o">.</span><span class="n">normalizer_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">intersect</span> <span class="o">=</span> <span class="n">norm_set</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">intersect</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Features </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">intersect</span><span class="p">)</span><span class="si">}</span><span class="s2"> exist in normalizer </span><span class="si">{</span><span class="n">norm_key</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Check for non-existent columns in the map</span>
+        <span class="n">nonexistent</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">normalizer_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonexistent</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The following columns are not features: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">nonexistent</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Check for invalid non-numeric columns</span>
+        <span class="n">is_numeric</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">NUMERIC</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">normalizer_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">is_numeric</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Only numeric features may be normalized. Confirm feature choice/type.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">gbn</span> <span class="o">=</span> <span class="n">GroupbyNormalizer</span><span class="p">(</span><span class="n">normalizer_map</span><span class="p">,</span> <span class="n">by</span><span class="p">)</span>
+        <span class="n">gbn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">gbn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalized</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="Features.remove_normalizer"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.Features.remove_normalizer">[docs]</a>    <span class="k">def</span> <span class="nf">remove_normalizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Remove a normalization object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        key: str</span>
+<span class="sd">            Unique name of the normalizer.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No normalizer with this key exists.&quot;</span><span class="p">)</span>
+
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Features.normalize"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.Features.normalize">[docs]</a>    <span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inplace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Normalize.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        key: str</span>
+<span class="sd">            Unique name of the normalizer.</span>
+<span class="sd">        inplace: bool</span>
+<span class="sd">            Whether to perform in-place, or to simply return the DataFrame.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            The normalized features data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalized</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot normalize </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">. It has already been normalized.&quot;</span><span class="p">)</span>
+
+        <span class="n">gbn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">gbn</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">inplace</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normalized</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="Features.inverse_normalize"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.Features.inverse_normalize">[docs]</a>    <span class="k">def</span> <span class="nf">inverse_normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inplace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Inverse normalize.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        key: str</span>
+<span class="sd">            Unique name of the normalizer.</span>
+<span class="sd">        inplace: bool</span>
+<span class="sd">            Whether to perform in-place, or to simply return the DataFrame.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            The inversely normalized data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalized</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cannot inverse normalize </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">. It has not been normalized.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">gbn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizers</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">gbn</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">inplace</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normalized</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+
+    <span class="k">def</span> <span class="nf">_ordinal_to_indicators</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">features</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Convert ordinal features to binary categorical indicators.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: pandas.DataFrame</span>
+<span class="sd">            Features data.</span>
+<span class="sd">        features: str or list of str, optional</span>
+<span class="sd">            Ordinal features to convert. If not provided, convert all ordinal features.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            Features data with the relevant conversions.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">features</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">feat</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Feature </span><span class="si">{</span><span class="n">feat</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="n">feat</span><span class="p">]</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="o">!=</span> <span class="n">ORDINAL</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feat</span><span class="si">}</span><span class="s2"> must be an ordinal feature to convert to indicators.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Map back to original values</span>
+        <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">features</span><span class="p">:</span>
+            <span class="n">mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="n">feat</span><span class="p">]</span><span class="o">.</span><span class="n">get_mapping</span><span class="p">()</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">feat</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Convert to binary categorical indicators</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_feature_types</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span> <span class="p">{</span><span class="n">feat</span><span class="p">:</span> <span class="n">CATEGORICAL_INDICATOR</span> <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">features</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Features.save"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.Features.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;parquet&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Save data to file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        save_path: str</span>
+<span class="sd">            Path where the file will be saved.</span>
+<span class="sd">        file_format: str</span>
+<span class="sd">            File format of the file to save.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Processed save path for upstream use.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">save_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="n">file_format</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Features.slice"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.Features.slice">[docs]</a>    <span class="k">def</span> <span class="nf">slice</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">slice_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">slice_query</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">replace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Slice the data across column(s), given values.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        slice_map: Dict, optional</span>
+<span class="sd">            Dictionary with column name(s) as keys, and value or list of values</span>
+<span class="sd">            to filter on as values.</span>
+<span class="sd">        slice_query: str, optional</span>
+<span class="sd">            A string to specify conditions that uses the Pandas DataFrame query API.</span>
+<span class="sd">            If specified along with slice_map, the slice_map is applied first.</span>
+<span class="sd">        replace: bool, optional</span>
+<span class="sd">            If set to True, the data is replaced with the sliced data, and the</span>
+<span class="sd">            the values (by column) of the sliced dataset are returned.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            Array of the values of the by column, in the sliced dataset.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sliced_indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">slice_map</span><span class="p">:</span>
+            <span class="n">slice_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">slice_col</span><span class="p">,</span> <span class="n">slice_vals</span> <span class="ow">in</span> <span class="n">slice_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">sliced_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">slice_col</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">to_list</span><span class="p">(</span><span class="n">slice_vals</span><span class="p">))][</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">by</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">sliced_indices</span><span class="p">:</span>
+            <span class="n">intersect_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="o">*</span><span class="nb">map</span><span class="p">(</span><span class="nb">set</span><span class="p">,</span> <span class="n">sliced_indices</span><span class="p">))</span>
+            <span class="n">sliced_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">by</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">intersect_indices</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sliced_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="k">if</span> <span class="n">slice_query</span><span class="p">:</span>
+            <span class="n">sliced_data</span> <span class="o">=</span> <span class="n">sliced_data</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">slice_query</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">replace</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">sliced_data</span>
+
+        <span class="k">return</span> <span class="n">sliced_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">by</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span></div></div>
+
+
+<div class="viewcode-block" id="TabularFeatures"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.TabularFeatures">[docs]</a><span class="k">class</span> <span class="nc">TabularFeatures</span><span class="p">(</span><span class="n">Features</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Tabular features.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TabularFeatures.__init__"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.TabularFeatures.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">features</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+        <span class="n">by</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">targets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">force_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">by</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Tabular features index input as a string representing a column.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span>
+            <span class="n">features</span><span class="p">,</span>
+            <span class="n">by</span><span class="p">,</span>
+            <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
+            <span class="n">force_types</span><span class="o">=</span><span class="n">force_types</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="TabularFeatures.vectorize"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.TabularFeatures.vectorize">[docs]</a>    <span class="k">def</span> <span class="nf">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">get_data_kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vectorized</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Vectorize the tabular data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        **get_data_kwargs</span>
+<span class="sd">            Keyword arguments to be fed to get_data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            (data, by_map, feat_map), (pandas.DataFrame, dict, dict)</span>
+<span class="sd">            feat_map is the feature order and by_map is the order of</span>
+<span class="sd">            the by column, or None if no by was provided.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;features_only&quot;</span> <span class="ow">in</span> <span class="n">get_data_kwargs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot specify &#39;features_only&#39;. It will be set to True by default.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">get_data_kwargs</span><span class="p">[</span><span class="s2">&quot;features_only&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="o">**</span><span class="n">get_data_kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+        <span class="n">by_map</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">by</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">by</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">feat_map</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Vectorized</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">indexes</span><span class="o">=</span><span class="p">[</span><span class="n">by_map</span><span class="p">,</span> <span class="n">feat_map</span><span class="p">],</span> <span class="n">axis_names</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">by</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">FEATURES</span><span class="p">]</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="TabularFeatures.plot_features"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.TabularFeatures.plot_features">[docs]</a>    <span class="k">def</span> <span class="nf">plot_features</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">features</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Plot features.</span>
+
+<span class="sd">        High-level plotting function for features.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        features: str or list of str, optional</span>
+<span class="sd">            Names of features to plot.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">features</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">plot_histogram</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plot_histogram</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">features</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="TemporalFeatures"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.TemporalFeatures">[docs]</a><span class="k">class</span> <span class="nc">TemporalFeatures</span><span class="p">(</span><span class="n">Features</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Temporal features.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TemporalFeatures.__init__"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.TemporalFeatures.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">features</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+        <span class="n">by</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+        <span class="n">timestamp_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">targets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">force_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">aggregator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Aggregator</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span>
+            <span class="n">features</span><span class="p">,</span>
+            <span class="n">by</span><span class="p">,</span>
+            <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
+            <span class="n">force_types</span><span class="o">=</span><span class="n">force_types</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span> <span class="o">=</span> <span class="n">timestamp_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aggregator</span> <span class="o">=</span> <span class="n">aggregator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_aggregator</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_check_aggregator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregator</span><span class="o">.</span><span class="n">get_timestamp_col</span><span class="p">()</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Features and aggregator timestamp columns must be the same.&quot;</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="TemporalFeatures.plot_features"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.TemporalFeatures.plot_features">[docs]</a>    <span class="k">def</span> <span class="nf">plot_features</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">features</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Plot features.</span>
+
+<span class="sd">        High-level plotting function for features.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        features: list or str, optional</span>
+<span class="sd">            Names of features to plot.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">features</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">plot_temporal_features</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plot_temporal_features</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">features</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TemporalFeatures.aggregate"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.TemporalFeatures.aggregate">[docs]</a>    <span class="k">def</span> <span class="nf">aggregate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">aggregate_kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Aggregate the data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        **aggregate_kwargs</span>
+<span class="sd">            Keywords to pass to the aggregation function.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            Aggregated data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Must pass an aggregator when creating features to aggregate.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">agg_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregator</span><span class="o">.</span><span class="n">get_aggfuncs</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+        <span class="c1"># Check for non-existent columns in the map</span>
+        <span class="n">nonexistent</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">agg_features</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonexistent</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The following columns are not features: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">nonexistent</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">aggregate_kwargs</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="split_features"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.feature.html#cyclops.process.feature.feature.split_features">[docs]</a><span class="k">def</span> <span class="nf">split_features</span><span class="p">(</span>
+    <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Features</span><span class="p">,</span> <span class="n">TabularFeatures</span><span class="p">,</span> <span class="n">TemporalFeatures</span><span class="p">]],</span>
+    <span class="n">fractions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">randomize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Split a set of features using the same uniquely identifying values.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    features: list of Features or TabularFeatures or TemporalFeatures</span>
+<span class="sd">        List of feature objects.</span>
+<span class="sd">    fractions: list, optional</span>
+<span class="sd">        Fraction(s) of samples between 0 and 1 to use for each split.</span>
+<span class="sd">    randomize: bool, default = True</span>
+<span class="sd">        Whether to randomize the data in the splits.</span>
+<span class="sd">    seed: int, optional</span>
+<span class="sd">        Seed for random number generator.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        A tuple of the dataset splits, where each contains a tuple of splits.</span>
+<span class="sd">        e.g., split1, split2 = split_features([features1, features2], 0.5)</span>
+<span class="sd">        train1, test1 = split1</span>
+<span class="sd">        train2, test2 = split2</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">value_splits</span> <span class="o">=</span> <span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">compute_value_splits</span><span class="p">(</span>
+        <span class="n">fractions</span><span class="p">,</span> <span class="n">randomize</span><span class="o">=</span><span class="n">randomize</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span>
+    <span class="p">)</span>
+    <span class="n">feature_splits</span> <span class="o">=</span> <span class="p">[</span><span class="n">feat</span><span class="o">.</span><span class="n">split_by_values</span><span class="p">(</span><span class="n">value_splits</span><span class="p">)</span> <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">features</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">feature_splits</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  
+
+  <div class="citation">
+    CyclOps team <i>et al.,</i>
+    <a href="https://vectorinstitute.github.io/cyclops/">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, TBD</i> (2022)
+  </def>
+
+
+  <p class="avatar">cyclops is built by</p>
+  <div class="avatar">
+    
+    
+    <span>
+      <a href="https://github.com/amrit110">
+        <img src="../../../../_static/team/amrit-krishnan.jpg" width="32"/>
+        Amrit Krishnan
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/KadenMc">
+        <img src="../../../../_static/team/kaden-mckeen.jpg" width="32"/>
+        Kaden McKeen
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/vsubasri">
+        <img src="../../../../_static/team/valli-subasri.jpg" width="32"/>
+        Valli Subasri
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/a-kore">
+        <img src="../../../../_static/team/ali-kore.jpg" width="32"/>
+        Ali Kore
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/fcogidi">
+        <img src="../../../../_static/team/franklin-ogidi.jpg" width="32"/>
+        Franklin Ogidi
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/dhrumilp15">
+        <img src="../../../../_static/team/dhrumil-patel.jpg" width="32"/>
+        Dhrumil Patel
+      </a>
+    </span>
+    ,
+  </div>
+
+
+  <div class="footer-small-text">
+    All <a href="https://github.com/VectorInstitute/cyclops">source code for cyclops</a> is freely available under the terms of an <a href="https://opensource.org/licenses/Apache-2.0">Apache-2.0</a> license.
+  </div>
+
+  <div class="footer-small-text">
+    This work is made possible due to the data obtained from the
+    General Medicine Inpatient Initiative (GEMINI).
+  </div>
+
+  <hr/>
+
+  <div class="logo">
+    <a class="logo" href="https://vectorinstitute.ai/">
+      <span class="logo"></span>
+      <img alt="Logo of the Vector Institute" style="width:90px; max-width:90px;" src="../../../../_static/logos/vector_logo.png" />
+    </a>
+    <a class="logo" href="https://www.geminimedicine.ca/">
+      <span class="logo"></span>
+      <img alt="Logo of GEMINI" style="width:90px; max-width:90px;" src="../../../../_static/logos/gemini_logo.png" />
+    </a>
+  </div>
+
+  <div class="copyright">
+    &copy; Copyright 2022, Vector AI Engineering
+  </div>
+
+  <div class="copyright">
+    </p>
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using customised version of
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">base theme</a> provided by
+    <a href="https://readthedocs.org">Read the Docs</a>.
+  </div>
+
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

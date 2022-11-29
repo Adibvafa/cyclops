@@ -1,0 +1,764 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.process.impute module &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/cyclops.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="cyclops.process.string_ops module" href="cyclops.process.string_ops.html" />
+    <link rel="prev" title="cyclops.process.diagnoses module" href="cyclops.process.diagnoses.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+    document.body.innerHTML = document.body.innerHTML.replace(/ package/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav">
+  <!--
+    Lie about what theme we really are when some RTD-injected JS fetches the
+    full versions panel from the RTD API.  RTD's JS replaces the stub versions
+    panel in the Sphinx-generated HTML with the full versions panel it fetches
+    from the RTD API.  If the API thinks we're not sphinx_rtd_theme, it will
+    serve us the wrong HTML and the panel will float as a "badge" when it
+    shouldn't.  As a customized version of sphinx_rtd_theme, we really do want
+    the same HTML it gets.  See also the diagnoses in
+    <https://github.com/nextstrain/docs.nextstrain.org/issues/76>.
+
+    This bit of JS finds the data RTD injects into the page and modifies it
+    before the code that RTD injects runs and looks at the data.  RTD's
+    <script>s (in <head>) run before this JS, but they wait until the DOM is
+    ready to actually do any work.  This gives us a chance to modify the data
+    during DOM load before the RTD code actually uses it.
+
+      -trs, 27 Jan 2022
+  -->
+  <script>
+    (() => {
+      try {
+        console.log("Lying about the theme to RTD's JS so the versions panel works properly. 🙈");
+
+        /* Update global variable, which is used in the request to get the RTD
+         * "footer" that includes the versions panel.
+         */
+        if (window.READTHEDOCS_DATA)
+          window.READTHEDOCS_DATA.theme = "sphinx_rtd_theme";
+
+        /* Update stored JSON in case anything else deserializes it later.
+         * Comments in the RTD-injected HTML source claim the global variable
+         * above is deprecated.
+         */
+        var script = document.querySelector("#READTHEDOCS_DATA");
+        if (script)
+          script.innerHTML = JSON.stringify({ ...JSON.parse(script.innerHTML), theme: "sphinx_rtd_theme" });
+      }
+      catch (err) {
+        console.log("Lying about the theme to RTD's JS failed… oh well. 🤷", err);
+      }
+    })();
+  </script>
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+
+
+
+
+  <a href="https://vectorinstitute.github.io/cyclops/">
+    <img src="../../_static/cyclops_logo-dark.png" class="logo" alt="Logo"/>
+  </a>
+
+
+
+  <div class="subproject">
+    <a href="../../index.html" class="project-name" alt="Documentation Home">
+      cyclops
+    </a>
+
+    
+    
+    
+
+  </div>
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../api.html">API Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.html">cyclops.evaluate package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.html">cyclops.evaluate.metrics package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.accuracy.html">cyclops.evaluate.metrics.accuracy module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.auroc.html">cyclops.evaluate.metrics.auroc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.f_beta.html">cyclops.evaluate.metrics.f_beta module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.html">cyclops.evaluate.metrics.functional package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.accuracy.html">cyclops.evaluate.metrics.functional.accuracy module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.auroc.html">cyclops.evaluate.metrics.functional.auroc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.f_beta.html">cyclops.evaluate.metrics.functional.f_beta module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.precision_recall.html">cyclops.evaluate.metrics.functional.precision_recall module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.precision_recall_curve.html">cyclops.evaluate.metrics.functional.precision_recall_curve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.roc.html">cyclops.evaluate.metrics.functional.roc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.sensitivity.html">cyclops.evaluate.metrics.functional.sensitivity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.specificity.html">cyclops.evaluate.metrics.functional.specificity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.stat_scores.html">cyclops.evaluate.metrics.functional.stat_scores module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.metric.html">cyclops.evaluate.metrics.metric module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.precision_recall.html">cyclops.evaluate.metrics.precision_recall module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.precision_recall_curve.html">cyclops.evaluate.metrics.precision_recall_curve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.roc.html">cyclops.evaluate.metrics.roc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.sensitivity.html">cyclops.evaluate.metrics.sensitivity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.specificity.html">cyclops.evaluate.metrics.specificity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.stat_scores.html">cyclops.evaluate.metrics.stat_scores module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.utils.html">cyclops.evaluate.metrics.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.plotter.html">cyclops.plotter module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cyclops.process.html">cyclops.process package</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cyclops.process.html#subpackages">Subpackages</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="cyclops.process.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="cyclops.process.aggregate.html">cyclops.process.aggregate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.process.clean.html">cyclops.process.clean module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.process.diagnoses.html">cyclops.process.diagnoses module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">cyclops.process.impute module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.process.string_ops.html">cyclops.process.string_ops module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.process.util.html">cyclops.process.util module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.aggregate.html">cyclops.process.aggregate module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.clean.html">cyclops.process.clean module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.diagnoses.html">cyclops.process.diagnoses module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.feature.html">cyclops.process.feature package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.feature.feature.html">cyclops.process.feature.feature module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.feature.handle_types.html">cyclops.process.feature.handle_types module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.feature.normalize.html">cyclops.process.feature.normalize module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.feature.split.html">cyclops.process.feature.split module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.feature.vectorized.html">cyclops.process.feature.vectorized module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">cyclops.process.impute module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.string_ops.html">cyclops.process.string_ops module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.util.html">cyclops.process.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.html">cyclops.query package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.base.html">cyclops.query.base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.gemini.html">cyclops.query.gemini module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.interface.html">cyclops.query.interface module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.mimiciv.html">cyclops.query.mimiciv module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.omop.html">cyclops.query.omop module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.orm.html">cyclops.query.orm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.html">cyclops.query.postprocess package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.gemini.html">cyclops.query.postprocess.gemini module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.mimiciv.html">cyclops.query.postprocess.mimiciv module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.util.html">cyclops.query.postprocess.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.process.html">cyclops.query.process module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.util.html">cyclops.query.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.html">cyclops.utils package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.common.html">cyclops.utils.common module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.file.html">cyclops.utils.file module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.indexing.html">cyclops.utils.indexing module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.log.html">cyclops.utils.log module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.profile.html">cyclops.utils.profile module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.workflow.html">cyclops.workflow package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.workflow.task.html">cyclops.workflow.task module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+  
+
+  
+  
+    <li><a href="https://vectorinstitute.github.io/cyclops/">Home</a></li>
+    <li><a href="../../index.html">cyclops</a></li>
+  
+
+  
+  
+    <li><a href="../../api.html">API Documentation</a></li>
+  
+    <li><a href="cyclops.process.html">cyclops.process package</a></li>
+  
+
+  
+
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reference/api/cyclops.process.impute.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-cyclops.process.impute">
+<span id="cyclops-process-impute-module"></span><h1>cyclops.process.impute module<a class="headerlink" href="#module-cyclops.process.impute" title="Permalink to this headline"></a></h1>
+<p>Imputation functions.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cyclops.process.impute.AggregatedImputer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AggregatedImputer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intra_imputer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inter_imputer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_imputer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#AggregatedImputer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.AggregatedImputer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.9/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Imputation of data being aggregated.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.process.impute.AggregatedImputer.intra_imputer">
+<span class="sig-name descname"><span class="pre">intra_imputer</span></span><a class="headerlink" href="#cyclops.process.impute.AggregatedImputer.intra_imputer" title="Permalink to this definition"></a></dt>
+<dd><p>Intra imputer for imputation within a timestep, or bucket.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>cyclops.processors.impute.Imputer, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.process.impute.AggregatedImputer.inter_imputer">
+<span class="sig-name descname"><span class="pre">inter_imputer</span></span><a class="headerlink" href="#cyclops.process.impute.AggregatedImputer.inter_imputer" title="Permalink to this definition"></a></dt>
+<dd><p>Inter imputer for imputation between timesteps, or buckets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>cyclops.processors.impute.Imputer, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.process.impute.AggregatedImputer.extra_imputer">
+<span class="sig-name descname"><span class="pre">extra_imputer</span></span><a class="headerlink" href="#cyclops.process.impute.AggregatedImputer.extra_imputer" title="Permalink to this definition"></a></dt>
+<dd><p>Extra imputer for imputation beyond existing timesteps, or buckets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>cyclops.processors.impute.Imputer, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.process.impute.AggregatedImputer.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intra_imputer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inter_imputer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_imputer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#AggregatedImputer.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.AggregatedImputer.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Init.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.process.impute.AggregatedImputer.extra">
+<span class="sig-name descname"><span class="pre">extra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#AggregatedImputer.extra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.AggregatedImputer.extra" title="Permalink to this definition"></a></dt>
+<dd><p>Perform extrapolation imputation.</p>
+<p>Extra imputation describes the imputation occurring after the last observed
+timestep. This is typically desired after padding to fill the resultant missing
+values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>group</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.5.2)"><em>pandas.Series</em></a>) – The group of aggregated timesteps being imputed which may have missing
+timesteps extending beyond the last observation.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The imputed group.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.5.2)">pandas.Series</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.process.impute.AggregatedImputer.inter">
+<span class="sig-name descname"><span class="pre">inter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#AggregatedImputer.inter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.AggregatedImputer.inter" title="Permalink to this definition"></a></dt>
+<dd><p>Perform interpolation imputation.</p>
+<p>Inter imputation describes the imputation occurring between timesteps, or
+buckets, where for “missing” timesteps, it fills in information. A “missing”
+timestep is one with no occurences, or where all the occurences were null.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>group</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.5.2)"><em>pandas.Series</em></a>) – The group of aggregated timesteps being imputed which may have missing
+timesteps.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The imputed group.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.5.2)">pandas.Series</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.process.impute.AggregatedImputer.intra">
+<span class="sig-name descname"><span class="pre">intra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#AggregatedImputer.intra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.AggregatedImputer.intra" title="Permalink to this definition"></a></dt>
+<dd><p>Perform intra-imputation.</p>
+<p>Intra imputation describes the imputation occurring within a single timestep,
+or bucket, before the aggregation of values takes place.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>group</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.5.2)"><em>pandas.Series</em></a>) – The group of non-aggregated data being imputed, which will subsequently
+be aggregated.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The imputed group.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.5.2)">pandas.Series</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cyclops.process.impute.SeriesImputer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SeriesImputer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imputefunc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_nulls_returned</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_area</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#SeriesImputer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.SeriesImputer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.9/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Imputation of a Pandas Series.</p>
+<p>It may seem counter-intuitive to allow the return of nulls, but many imputation
+functions such as filling with mean/median will return nulls if the series is all
+null, i.e., where no fill value can be computed.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.process.impute.SeriesImputer.imputefunc">
+<span class="sig-name descname"><span class="pre">imputefunc</span></span><a class="headerlink" href="#cyclops.process.impute.SeriesImputer.imputefunc" title="Permalink to this definition"></a></dt>
+<dd><p>Imputation function. Either function or string, e.g., MEAN.
+If a function, it should accept a series and return a series of same length
+unless the DROP function is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a> or callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.process.impute.SeriesImputer.using_drop">
+<span class="sig-name descname"><span class="pre">using_drop</span></span><a class="headerlink" href="#cyclops.process.impute.SeriesImputer.using_drop" title="Permalink to this definition"></a></dt>
+<dd><p>Whether the DROP imputation was used. This is necessary to track to ensure
+no values are otherwise dropped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.process.impute.SeriesImputer.allow_nulls_returned">
+<span class="sig-name descname"><span class="pre">allow_nulls_returned</span></span><a class="headerlink" href="#cyclops.process.impute.SeriesImputer.allow_nulls_returned" title="Permalink to this definition"></a></dt>
+<dd><p>Whether to allow the returning of nulls from an imputation function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)">bool</a>, default = True</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.process.impute.SeriesImputer.limit_area">
+<span class="sig-name descname"><span class="pre">limit_area</span></span><a class="headerlink" href="#cyclops.process.impute.SeriesImputer.limit_area" title="Permalink to this definition"></a></dt>
+<dd><p>Can specify ‘inter’ or ‘extra’.
+‘inter’: Only fill NaNs surrounded by valid values (interpolate).
+‘extra’: Only fill NaNs outside valid values (extrapolate).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.process.impute.SeriesImputer.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imputefunc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_nulls_returned</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_area</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#SeriesImputer.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.SeriesImputer.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Init.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.process.impute.SeriesImputer.is_using_drop">
+<span class="sig-name descname"><span class="pre">is_using_drop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#SeriesImputer.is_using_drop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.SeriesImputer.is_using_drop" title="Permalink to this definition"></a></dt>
+<dd><p>Return whether the imputer is using the DROP strategy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Whether the imputer is using the DROP strategy.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cyclops.process.impute.TabularImputer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TabularImputer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imputers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#TabularImputer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.TabularImputer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.9/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Imputation of tabular data.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.process.impute.TabularImputer.imputers">
+<span class="sig-name descname"><span class="pre">imputers</span></span><a class="headerlink" href="#cyclops.process.impute.TabularImputer.imputers" title="Permalink to this definition"></a></dt>
+<dd><p>Aggregation functions mapped from column to imputer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.process.impute.TabularImputer.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imputers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#TabularImputer.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.TabularImputer.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Init.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.process.impute.compute_inter_range">
+<span class="sig-name descname"><span class="pre">compute_inter_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">null</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#compute_inter_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.compute_inter_range" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the range of values to be interpolated.</p>
+<p>Computed using the first and last non-null values in the series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>null</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.5.2)"><em>pandas.Series</em></a>) – A boolean mask array indicated the positions of nulls. True is a null.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A tuple of (int, int) with (inter start, inter stop).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.process.impute.efficient_ffill_bfill">
+<span class="sig-name descname"><span class="pre">efficient_ffill_bfill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">null</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#efficient_ffill_bfill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.efficient_ffill_bfill" title="Permalink to this definition"></a></dt>
+<dd><p>Forward and backward fill nulls in an efficient manner.</p>
+<p>An efficient implementation equivalent to forward filling a series and subsequently
+backwards filling to remove any nulls at the very beginning of the series. This
+ensures no nulls are returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>series</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.5.2)"><em>pandas.Series</em></a>) – Series for which to fill the nulls.</p></li>
+<li><p><strong>null</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.5.2)"><em>pandas.Series</em></a>) – A boolean mask array indicated the positions of nulls. True is a null.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Imputed series.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.5.2)">pandas.Series</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.process.impute.fill_null_with">
+<span class="sig-name descname"><span class="pre">fill_null_with</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">null</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#fill_null_with"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.fill_null_with" title="Permalink to this definition"></a></dt>
+<dd><p>Fill null values with a specified value when the nulls were already located.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>series</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.5.2)"><em>pandas.Series</em></a>) – Series for which to fill the nulls.</p></li>
+<li><p><strong>null</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.5.2)"><em>pandas.Series</em></a>) – A boolean mask array indicated the positions of nulls. True is a null.</p></li>
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – The value to replace the nulls.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Imputed series.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.5.2)">pandas.Series</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.process.impute.np_bfill">
+<span class="sig-name descname"><span class="pre">np_bfill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#np_bfill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.np_bfill" title="Permalink to this definition"></a></dt>
+<dd><p>Backward fill a 1D array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><em>numpy.ndarray</em></a>) – Array to impute.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Imputed array.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.process.impute.np_ffill">
+<span class="sig-name descname"><span class="pre">np_ffill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#np_ffill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.np_ffill" title="Permalink to this definition"></a></dt>
+<dd><p>Forward fill a 1D array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><em>numpy.ndarray</em></a>) – Array to impute.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.process.impute.np_ffill_bfill">
+<span class="sig-name descname"><span class="pre">np_ffill_bfill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#np_ffill_bfill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.np_ffill_bfill" title="Permalink to this definition"></a></dt>
+<dd><p>Equivalent to forward filling and then backward filling a 1D array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><em>numpy.ndarray</em></a>) – Array to impute.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Imputed array.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.process.impute.np_fill_null_mean">
+<span class="sig-name descname"><span class="pre">np_fill_null_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#np_fill_null_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.np_fill_null_mean" title="Permalink to this definition"></a></dt>
+<dd><p>Fill null values with the array mean.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><em>numpy.ndarray</em></a>) – Array to impute.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Imputed array.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.process.impute.np_fill_null_num">
+<span class="sig-name descname"><span class="pre">np_fill_null_num</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#np_fill_null_num"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.np_fill_null_num" title="Permalink to this definition"></a></dt>
+<dd><p>Fill null values with a number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><em>numpy.ndarray</em></a>) – Array to impute.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Imputed array.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.process.impute.np_fill_null_zero">
+<span class="sig-name descname"><span class="pre">np_fill_null_zero</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#np_fill_null_zero"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.np_fill_null_zero" title="Permalink to this definition"></a></dt>
+<dd><p>Fill null values with zero.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><em>numpy.ndarray</em></a>) – Array to impute.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Imputed array.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.process.impute.numpy_2d_ffill">
+<span class="sig-name descname"><span class="pre">numpy_2d_ffill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/process/impute.html#numpy_2d_ffill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.impute.numpy_2d_ffill" title="Permalink to this definition"></a></dt>
+<dd><p>Foward fill a 2D array in a row-wise fashion, i.e., filling each row separately.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><em>numpy.ndarray</em></a>) – A 2-dimensional array.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The row-wise forward filled array.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cyclops.process.diagnoses.html" class="btn btn-neutral float-left" title="cyclops.process.diagnoses module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cyclops.process.string_ops.html" class="btn btn-neutral float-right" title="cyclops.process.string_ops module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  
+
+  <div class="citation">
+    CyclOps team <i>et al.,</i>
+    <a href="https://vectorinstitute.github.io/cyclops/">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, TBD</i> (2022)
+  </def>
+
+
+  <p class="avatar">cyclops is built by</p>
+  <div class="avatar">
+    
+    
+    <span>
+      <a href="https://github.com/amrit110">
+        <img src="../../_static/team/amrit-krishnan.jpg" width="32"/>
+        Amrit Krishnan
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/KadenMc">
+        <img src="../../_static/team/kaden-mckeen.jpg" width="32"/>
+        Kaden McKeen
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/vsubasri">
+        <img src="../../_static/team/valli-subasri.jpg" width="32"/>
+        Valli Subasri
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/a-kore">
+        <img src="../../_static/team/ali-kore.jpg" width="32"/>
+        Ali Kore
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/fcogidi">
+        <img src="../../_static/team/franklin-ogidi.jpg" width="32"/>
+        Franklin Ogidi
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/dhrumilp15">
+        <img src="../../_static/team/dhrumil-patel.jpg" width="32"/>
+        Dhrumil Patel
+      </a>
+    </span>
+    ,
+  </div>
+
+
+  <div class="footer-small-text">
+    All <a href="https://github.com/VectorInstitute/cyclops">source code for cyclops</a> is freely available under the terms of an <a href="https://opensource.org/licenses/Apache-2.0">Apache-2.0</a> license.
+  </div>
+
+  <div class="footer-small-text">
+    This work is made possible due to the data obtained from the
+    General Medicine Inpatient Initiative (GEMINI).
+  </div>
+
+  <hr/>
+
+  <div class="logo">
+    <a class="logo" href="https://vectorinstitute.ai/">
+      <span class="logo"></span>
+      <img alt="Logo of the Vector Institute" style="width:90px; max-width:90px;" src="../../_static/logos/vector_logo.png" />
+    </a>
+    <a class="logo" href="https://www.geminimedicine.ca/">
+      <span class="logo"></span>
+      <img alt="Logo of GEMINI" style="width:90px; max-width:90px;" src="../../_static/logos/gemini_logo.png" />
+    </a>
+  </div>
+
+  <div class="copyright">
+    &copy; Copyright 2022, Vector AI Engineering
+  </div>
+
+  <div class="copyright">
+    </p>
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using customised version of
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">base theme</a> provided by
+    <a href="https://readthedocs.org">Read the Docs</a>.
+  </div>
+
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
