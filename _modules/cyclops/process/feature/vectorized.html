@@ -178,6 +178,7 @@
 
 <span class="kn">from</span> <span class="nn">cyclops.process.feature.normalize</span> <span class="kn">import</span> <span class="n">VectorizedNormalizer</span>
 <span class="kn">from</span> <span class="nn">cyclops.process.feature.split</span> <span class="kn">import</span> <span class="n">split_idx</span>
+<span class="kn">from</span> <span class="nn">cyclops.process.impute</span> <span class="kn">import</span> <span class="n">np_fill_null_num</span>
 <span class="kn">from</span> <span class="nn">cyclops.utils.common</span> <span class="kn">import</span> <span class="n">list_swap</span>
 <span class="kn">from</span> <span class="nn">cyclops.utils.file</span> <span class="kn">import</span> <span class="n">save_array</span>
 <span class="kn">from</span> <span class="nn">cyclops.utils.indexing</span> <span class="kn">import</span> <span class="n">take_indices_over_axis</span>
@@ -990,6 +991,37 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">impute_fn</span><span class="p">,</span> <span class="n">axis_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Vectorized.impute"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.vectorized.html#cyclops.process.feature.vectorized.Vectorized.impute">[docs]</a>    <span class="k">def</span> <span class="nf">impute</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">impute_axis</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+        <span class="n">data_axis</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+        <span class="n">impute_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Impute values with forward fill and/or backward fill and fill null values \</span>
+<span class="sd">        with feature mean.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        impute_axis : Union[str, int]</span>
+<span class="sd">            Axis index or name over which to impute.</span>
+<span class="sd">        data_axis : Union[str, int]</span>
+<span class="sd">            Axis index or name over which to iterate.</span>
+<span class="sd">        impute_fn : Callable</span>
+<span class="sd">            An imputation function, which takes in and outputs a same-size 1D array.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">impute_over_axis</span><span class="p">(</span><span class="n">impute_axis</span><span class="p">,</span> <span class="n">impute_fn</span><span class="p">)</span>
+
+        <span class="n">axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_axis</span><span class="p">(</span><span class="n">data_axis</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">axis</span><span class="p">]):</span>
+            <span class="n">index_exp</span> <span class="o">=</span> <span class="n">vec_index_exp</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">]</span>
+            <span class="n">data_slice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">index_exp</span><span class="p">]</span>
+            <span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">data_slice</span><span class="p">)</span>
+            <span class="c1"># pylint: disable=C3001, W0640</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np_fill_null_num</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mean</span><span class="p">)</span>  <span class="c1"># noqa: E731</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">impute_over_axis</span><span class="p">(</span><span class="n">impute_axis</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">index_exp</span><span class="o">=</span><span class="n">index_exp</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Vectorized.concat_over_axis"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.vectorized.html#cyclops.process.feature.vectorized.Vectorized.concat_over_axis">[docs]</a>    <span class="k">def</span> <span class="nf">concat_over_axis</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
