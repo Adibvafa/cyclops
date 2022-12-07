@@ -1,0 +1,501 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.monitor.baseline_models.temporal.pytorch.metrics &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../../_static/css/cyclops.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../../_static/copybutton.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../../" id="documentation_options" src="../../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../../_static/jquery.js"></script>
+        <script src="../../../../../../_static/underscore.js"></script>
+        <script src="../../../../../../_static/doctools.js"></script>
+        <script src="../../../../../../_static/clipboard.min.js"></script>
+        <script src="../../../../../../_static/copybutton.js"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+    document.body.innerHTML = document.body.innerHTML.replace(/ package/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav">
+  <!--
+    Lie about what theme we really are when some RTD-injected JS fetches the
+    full versions panel from the RTD API.  RTD's JS replaces the stub versions
+    panel in the Sphinx-generated HTML with the full versions panel it fetches
+    from the RTD API.  If the API thinks we're not sphinx_rtd_theme, it will
+    serve us the wrong HTML and the panel will float as a "badge" when it
+    shouldn't.  As a customized version of sphinx_rtd_theme, we really do want
+    the same HTML it gets.  See also the diagnoses in
+    <https://github.com/nextstrain/docs.nextstrain.org/issues/76>.
+
+    This bit of JS finds the data RTD injects into the page and modifies it
+    before the code that RTD injects runs and looks at the data.  RTD's
+    <script>s (in <head>) run before this JS, but they wait until the DOM is
+    ready to actually do any work.  This gives us a chance to modify the data
+    during DOM load before the RTD code actually uses it.
+
+      -trs, 27 Jan 2022
+  -->
+  <script>
+    (() => {
+      try {
+        console.log("Lying about the theme to RTD's JS so the versions panel works properly. 🙈");
+
+        /* Update global variable, which is used in the request to get the RTD
+         * "footer" that includes the versions panel.
+         */
+        if (window.READTHEDOCS_DATA)
+          window.READTHEDOCS_DATA.theme = "sphinx_rtd_theme";
+
+        /* Update stored JSON in case anything else deserializes it later.
+         * Comments in the RTD-injected HTML source claim the global variable
+         * above is deprecated.
+         */
+        var script = document.querySelector("#READTHEDOCS_DATA");
+        if (script)
+          script.innerHTML = JSON.stringify({ ...JSON.parse(script.innerHTML), theme: "sphinx_rtd_theme" });
+      }
+      catch (err) {
+        console.log("Lying about the theme to RTD's JS failed… oh well. 🤷", err);
+      }
+    })();
+  </script>
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+
+
+
+
+  <a href="https://vectorinstitute.github.io/cyclops/">
+    <img src="../../../../../../_static/cyclops_logo-dark.png" class="logo" alt="Logo"/>
+  </a>
+
+
+
+  <div class="subproject">
+    <a href="../../../../../../index.html" class="project-name" alt="Documentation Home">
+      cyclops
+    </a>
+
+    
+    
+    
+
+  </div>
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../intro.html">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../api.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+  
+
+  
+  
+    <li><a href="https://vectorinstitute.github.io/cyclops/">Home</a></li>
+    <li><a href="../../../../../../index.html">cyclops</a></li>
+  
+
+  
+  
+    <li><a href="../../../../../index.html">Module code</a></li>
+  
+
+  
+
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cyclops.monitor.baseline_models.temporal.pytorch.metrics</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Metrics for temporal pytorch models.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">plotly.graph_objects</span> <span class="k">as</span> <span class="nn">go</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+
+<div class="viewcode-block" id="plot_pretty_confusion_matrix"><a class="viewcode-back" href="../../../../../../reference/api/cyclops.monitor.baseline_models.temporal.pytorch.metrics.html#cyclops.monitor.baseline_models.temporal.pytorch.metrics.plot_pretty_confusion_matrix">[docs]</a><span class="k">def</span> <span class="nf">plot_pretty_confusion_matrix</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot a confusion matrix with seaborn heatmap.&quot;&quot;&quot;</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
+        <span class="n">annot</span><span class="o">=</span><span class="n">confusion_matrix</span><span class="p">,</span>
+        <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span>
+        <span class="n">annot_kws</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">},</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">([</span><span class="s2">&quot;tomato&quot;</span><span class="p">,</span> <span class="s2">&quot;palegreen&quot;</span><span class="p">],</span> <span class="n">as_cmap</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">cbar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">yticklabels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;True&quot;</span><span class="p">,</span> <span class="s2">&quot;False&quot;</span><span class="p">],</span>
+        <span class="n">xticklabels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;True&quot;</span><span class="p">,</span> <span class="s2">&quot;False&quot;</span><span class="p">],</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">tick_top</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_label_position</span><span class="p">(</span><span class="s2">&quot;top&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Confusion Matrix for Test Set&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Predicted Values&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Actual Values&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+    <span class="n">additional_texts</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;(True Positive)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;(False Negative)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;(False Positive)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;(True Negative)&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">text_elt</span><span class="p">,</span> <span class="n">additional_text</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">texts</span><span class="p">,</span> <span class="n">additional_texts</span><span class="p">):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+            <span class="o">*</span><span class="n">text_elt</span><span class="o">.</span><span class="n">get_position</span><span class="p">(),</span>
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">additional_text</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">text_elt</span><span class="o">.</span><span class="n">get_color</span><span class="p">(),</span>
+            <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+            <span class="n">va</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span>
+            <span class="n">size</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="plot_confusion_matrix"><a class="viewcode-back" href="../../../../../../reference/api/cyclops.monitor.baseline_models.temporal.pytorch.metrics.html#cyclops.monitor.baseline_models.temporal.pytorch.metrics.plot_confusion_matrix">[docs]</a><span class="k">def</span> <span class="nf">plot_confusion_matrix</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">class_names</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot a confusion matrix with seaborn heatmap.&quot;&quot;&quot;</span>
+    <span class="n">confusion_matrix</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="n">layout</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Confusion Matrix&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;xaxis&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Predicted value&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;yaxis&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Real value&quot;</span><span class="p">},</span>
+    <span class="p">}</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">go</span><span class="o">.</span><span class="n">Heatmap</span><span class="p">(</span>
+            <span class="n">z</span><span class="o">=</span><span class="n">confusion_matrix</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">class_names</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">class_names</span><span class="p">,</span>
+            <span class="n">hoverongaps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">colorscale</span><span class="o">=</span><span class="s2">&quot;Greens&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="plot_auroc_across_timesteps"><a class="viewcode-back" href="../../../../../../reference/api/cyclops.monitor.baseline_models.temporal.pytorch.metrics.html#cyclops.monitor.baseline_models.temporal.pytorch.metrics.plot_auroc_across_timesteps">[docs]</a><span class="k">def</span> <span class="nf">plot_auroc_across_timesteps</span><span class="p">(</span>
+    <span class="n">y_pred_labels</span><span class="p">,</span>
+    <span class="n">y_test_labels</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot AUROC across timesteps.&quot;&quot;&quot;</span>
+    <span class="n">num_timesteps</span> <span class="o">=</span> <span class="n">y_pred_labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">auroc_timesteps</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_timesteps</span><span class="p">):</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">y_test_labels</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+        <span class="c1"># y_pred_values is not defined</span>
+        <span class="c1"># pred_vals = y_pred_values[:, i]</span>
+        <span class="n">pred_vals</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="n">y_pred_labels</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+        <span class="n">pred_vals</span> <span class="o">=</span> <span class="n">pred_vals</span><span class="p">[</span><span class="n">labels</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="n">preds</span><span class="p">[</span><span class="n">labels</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">labels</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">pred_metrics</span> <span class="o">=</span> <span class="n">print_metrics_binary</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">pred_vals</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">auroc_timesteps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pred_metrics</span><span class="p">[</span><span class="s2">&quot;auroc&quot;</span><span class="p">])</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">auroc_timesteps</span><span class="p">)</span>
+
+    <span class="n">prediction_hours</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">168</span><span class="p">,</span> <span class="mi">24</span><span class="p">))</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">go</span><span class="o">.</span><span class="n">Bar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">prediction_hours</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">auroc_timesteps</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;model confidence&quot;</span><span class="p">)]</span>
+    <span class="p">)</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span><span class="n">tickvals</span><span class="o">=</span><span class="n">prediction_hours</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">auroc_timesteps</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.05</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">auroc_timesteps</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.05</span><span class="p">])</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;AUROC split by no. of hours after admission&quot;</span><span class="p">,</span>
+        <span class="n">autosize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">xaxis_title</span><span class="o">=</span><span class="s2">&quot;No. of hours after admission&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_risk_mortality"><a class="viewcode-back" href="../../../../../../reference/api/cyclops.monitor.baseline_models.temporal.pytorch.metrics.html#cyclops.monitor.baseline_models.temporal.pytorch.metrics.plot_risk_mortality">[docs]</a><span class="k">def</span> <span class="nf">plot_risk_mortality</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot risk of mortality across timesteps.&quot;&quot;&quot;</span>
+    <span class="n">prediction_hours</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">168</span><span class="p">,</span> <span class="mi">24</span><span class="p">))</span>
+    <span class="n">is_mortality</span> <span class="o">=</span> <span class="n">labels</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="n">after_mortality</span> <span class="o">=</span> <span class="n">labels</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">label_h</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.2</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+                <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;markers&quot;</span><span class="p">,</span>
+                <span class="n">x</span><span class="o">=</span><span class="n">prediction_hours</span><span class="p">,</span>
+                <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="n">label_h</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">prediction_hours</span><span class="p">],</span>
+                <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;Black&quot;</span><span class="p">),</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;low risk of mortality label&quot;</span><span class="p">,</span>
+                <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;Green&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;Black&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">)),</span>
+            <span class="p">),</span>
+            <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+                <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;markers&quot;</span><span class="p">,</span>
+                <span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">prediction_hours</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">is_mortality</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span><span class="p">],</span>
+                <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="n">label_h</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">is_mortality</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span><span class="p">],</span>
+                <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;Red&quot;</span><span class="p">),</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;high risk of mortality label&quot;</span><span class="p">,</span>
+                <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;Red&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;Black&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">)),</span>
+            <span class="p">),</span>
+            <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+                <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;markers&quot;</span><span class="p">,</span>
+                <span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">prediction_hours</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">after_mortality</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span><span class="p">],</span>
+                <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="n">label_h</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">after_mortality</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span><span class="p">],</span>
+                <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;Grey&quot;</span><span class="p">),</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;post mortality label&quot;</span><span class="p">,</span>
+                <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;Grey&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;Black&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">)),</span>
+            <span class="p">),</span>
+            <span class="n">go</span><span class="o">.</span><span class="n">Bar</span><span class="p">(</span>
+                <span class="n">x</span><span class="o">=</span><span class="n">prediction_hours</span><span class="p">,</span>
+                <span class="n">y</span><span class="o">=</span><span class="n">predictions</span><span class="p">,</span>
+                <span class="n">marker_color</span><span class="o">=</span><span class="s2">&quot;Red&quot;</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;model confidence&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="n">label_h</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span><span class="n">tickvals</span><span class="o">=</span><span class="n">prediction_hours</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span><span class="n">showline</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">linecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">add_hline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Model output visualization&quot;</span><span class="p">,</span>
+        <span class="n">autosize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">xaxis_title</span><span class="o">=</span><span class="s2">&quot;No. of hours after admission&quot;</span><span class="p">,</span>
+        <span class="n">yaxis_title</span><span class="o">=</span><span class="s2">&quot;Model confidence&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="print_metrics_binary"><a class="viewcode-back" href="../../../../../../reference/api/cyclops.monitor.baseline_models.temporal.pytorch.metrics.html#cyclops.monitor.baseline_models.temporal.pytorch.metrics.print_metrics_binary">[docs]</a><span class="k">def</span> <span class="nf">print_metrics_binary</span><span class="p">(</span><span class="n">y_test_labels</span><span class="p">,</span> <span class="n">y_pred_values</span><span class="p">,</span> <span class="n">y_pred_labels</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Print metrics for binary classification.&quot;&quot;&quot;</span>
+    <span class="n">conf_matrix</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_test_labels</span><span class="p">,</span> <span class="n">y_pred_labels</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;confusion matrix:&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">conf_matrix</span><span class="p">)</span>
+    <span class="n">conf_matrix</span> <span class="o">=</span> <span class="n">conf_matrix</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span> <span class="o">=</span> <span class="n">conf_matrix</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="p">(</span><span class="n">tn</span> <span class="o">+</span> <span class="n">tp</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">conf_matrix</span><span class="p">)</span>
+    <span class="n">prec0</span> <span class="o">=</span> <span class="n">tn</span> <span class="o">/</span> <span class="p">(</span><span class="n">tn</span> <span class="o">+</span> <span class="n">fn</span><span class="p">)</span>
+    <span class="n">prec1</span> <span class="o">=</span> <span class="n">tp</span> <span class="o">/</span> <span class="p">(</span><span class="n">tp</span> <span class="o">+</span> <span class="n">fp</span><span class="p">)</span>
+    <span class="n">rec0</span> <span class="o">=</span> <span class="n">tn</span> <span class="o">/</span> <span class="p">(</span><span class="n">tn</span> <span class="o">+</span> <span class="n">fp</span><span class="p">)</span>
+    <span class="n">rec1</span> <span class="o">=</span> <span class="n">tp</span> <span class="o">/</span> <span class="p">(</span><span class="n">tp</span> <span class="o">+</span> <span class="n">fn</span><span class="p">)</span>
+
+    <span class="n">auroc</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y_test_labels</span><span class="p">,</span> <span class="n">y_pred_values</span><span class="p">)</span>
+
+    <span class="p">(</span><span class="n">precisions</span><span class="p">,</span> <span class="n">recalls</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">precision_recall_curve</span><span class="p">(</span>
+        <span class="n">y_test_labels</span><span class="p">,</span> <span class="n">y_pred_values</span>
+    <span class="p">)</span>
+    <span class="n">auprc</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">auc</span><span class="p">(</span><span class="n">recalls</span><span class="p">,</span> <span class="n">precisions</span><span class="p">)</span>
+    <span class="n">minpse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">precisions</span><span class="p">,</span> <span class="n">recalls</span><span class="p">)])</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;accuracy: </span><span class="si">{</span><span class="n">acc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;precision class 0: </span><span class="si">{</span><span class="n">prec0</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;precision class 1: </span><span class="si">{</span><span class="n">prec1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;recall class 0: </span><span class="si">{</span><span class="n">rec0</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;recall class 1: </span><span class="si">{</span><span class="n">rec1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC of ROC: </span><span class="si">{</span><span class="n">auroc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AUC of PRC: </span><span class="si">{</span><span class="n">auprc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;min(+P, Se): </span><span class="si">{</span><span class="n">minpse</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;acc&quot;</span><span class="p">:</span> <span class="n">acc</span><span class="p">,</span>
+        <span class="s2">&quot;prec0&quot;</span><span class="p">:</span> <span class="n">prec0</span><span class="p">,</span>
+        <span class="s2">&quot;prec1&quot;</span><span class="p">:</span> <span class="n">prec1</span><span class="p">,</span>
+        <span class="s2">&quot;rec0&quot;</span><span class="p">:</span> <span class="n">rec0</span><span class="p">,</span>
+        <span class="s2">&quot;rec1&quot;</span><span class="p">:</span> <span class="n">rec1</span><span class="p">,</span>
+        <span class="s2">&quot;auroc&quot;</span><span class="p">:</span> <span class="n">auroc</span><span class="p">,</span>
+        <span class="s2">&quot;auprc&quot;</span><span class="p">:</span> <span class="n">auprc</span><span class="p">,</span>
+        <span class="s2">&quot;minpse&quot;</span><span class="p">:</span> <span class="n">minpse</span><span class="p">,</span>
+    <span class="p">}</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  
+
+  <div class="citation">
+    CyclOps team <i>et al.,</i>
+    <a href="https://vectorinstitute.github.io/cyclops/">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, TBD</i> (2022)
+  </def>
+
+
+  <p class="avatar">cyclops is built by</p>
+  <div class="avatar">
+    
+    
+    <span>
+      <a href="https://github.com/amrit110">
+        <img src="../../../../../../_static/team/amrit-krishnan.jpg" width="32"/>
+        Amrit Krishnan
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/KadenMc">
+        <img src="../../../../../../_static/team/kaden-mckeen.jpg" width="32"/>
+        Kaden McKeen
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/vsubasri">
+        <img src="../../../../../../_static/team/valli-subasri.jpg" width="32"/>
+        Valli Subasri
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/a-kore">
+        <img src="../../../../../../_static/team/ali-kore.jpg" width="32"/>
+        Ali Kore
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/fcogidi">
+        <img src="../../../../../../_static/team/franklin-ogidi.jpg" width="32"/>
+        Franklin Ogidi
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/dhrumilp15">
+        <img src="../../../../../../_static/team/dhrumil-patel.jpg" width="32"/>
+        Dhrumil Patel
+      </a>
+    </span>
+    ,
+  </div>
+
+
+  <div class="footer-small-text">
+    All <a href="https://github.com/VectorInstitute/cyclops">source code for cyclops</a> is freely available under the terms of an <a href="https://opensource.org/licenses/Apache-2.0">Apache-2.0</a> license.
+  </div>
+
+  <div class="footer-small-text">
+    This work is made possible due to the data obtained from the
+    General Medicine Inpatient Initiative (GEMINI).
+  </div>
+
+  <hr/>
+
+  <div class="logo">
+    <a class="logo" href="https://vectorinstitute.ai/">
+      <span class="logo"></span>
+      <img alt="Logo of the Vector Institute" style="width:90px; max-width:90px;" src="../../../../../../_static/logos/vector_logo.png" />
+    </a>
+    <a class="logo" href="https://www.geminimedicine.ca/">
+      <span class="logo"></span>
+      <img alt="Logo of GEMINI" style="width:90px; max-width:90px;" src="../../../../../../_static/logos/gemini_logo.png" />
+    </a>
+  </div>
+
+  <div class="copyright">
+    &copy; Copyright 2022, Vector AI Engineering
+  </div>
+
+  <div class="copyright">
+    </p>
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using customised version of
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">base theme</a> provided by
+    <a href="https://readthedocs.org">Read the Docs</a>.
+  </div>
+
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

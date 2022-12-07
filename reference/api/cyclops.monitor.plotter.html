@@ -1,0 +1,564 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.monitor.plotter module &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/cyclops.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="cyclops.monitor.reductor module" href="cyclops.monitor.reductor.html" />
+    <link rel="prev" title="cyclops.monitor.explainer module" href="cyclops.monitor.explainer.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+    document.body.innerHTML = document.body.innerHTML.replace(/ package/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav">
+  <!--
+    Lie about what theme we really are when some RTD-injected JS fetches the
+    full versions panel from the RTD API.  RTD's JS replaces the stub versions
+    panel in the Sphinx-generated HTML with the full versions panel it fetches
+    from the RTD API.  If the API thinks we're not sphinx_rtd_theme, it will
+    serve us the wrong HTML and the panel will float as a "badge" when it
+    shouldn't.  As a customized version of sphinx_rtd_theme, we really do want
+    the same HTML it gets.  See also the diagnoses in
+    <https://github.com/nextstrain/docs.nextstrain.org/issues/76>.
+
+    This bit of JS finds the data RTD injects into the page and modifies it
+    before the code that RTD injects runs and looks at the data.  RTD's
+    <script>s (in <head>) run before this JS, but they wait until the DOM is
+    ready to actually do any work.  This gives us a chance to modify the data
+    during DOM load before the RTD code actually uses it.
+
+      -trs, 27 Jan 2022
+  -->
+  <script>
+    (() => {
+      try {
+        console.log("Lying about the theme to RTD's JS so the versions panel works properly. 🙈");
+
+        /* Update global variable, which is used in the request to get the RTD
+         * "footer" that includes the versions panel.
+         */
+        if (window.READTHEDOCS_DATA)
+          window.READTHEDOCS_DATA.theme = "sphinx_rtd_theme";
+
+        /* Update stored JSON in case anything else deserializes it later.
+         * Comments in the RTD-injected HTML source claim the global variable
+         * above is deprecated.
+         */
+        var script = document.querySelector("#READTHEDOCS_DATA");
+        if (script)
+          script.innerHTML = JSON.stringify({ ...JSON.parse(script.innerHTML), theme: "sphinx_rtd_theme" });
+      }
+      catch (err) {
+        console.log("Lying about the theme to RTD's JS failed… oh well. 🤷", err);
+      }
+    })();
+  </script>
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+
+
+
+
+  <a href="https://vectorinstitute.github.io/cyclops/">
+    <img src="../../_static/cyclops_logo-dark.png" class="logo" alt="Logo"/>
+  </a>
+
+
+
+  <div class="subproject">
+    <a href="../../index.html" class="project-name" alt="Documentation Home">
+      cyclops
+    </a>
+
+    
+    
+    
+
+  </div>
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../api.html">API Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.html">cyclops.evaluate package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.html">cyclops.evaluate.metrics package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.accuracy.html">cyclops.evaluate.metrics.accuracy module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.auroc.html">cyclops.evaluate.metrics.auroc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.f_beta.html">cyclops.evaluate.metrics.f_beta module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.html">cyclops.evaluate.metrics.functional package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.accuracy.html">cyclops.evaluate.metrics.functional.accuracy module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.auroc.html">cyclops.evaluate.metrics.functional.auroc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.f_beta.html">cyclops.evaluate.metrics.functional.f_beta module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.precision_recall.html">cyclops.evaluate.metrics.functional.precision_recall module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.precision_recall_curve.html">cyclops.evaluate.metrics.functional.precision_recall_curve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.roc.html">cyclops.evaluate.metrics.functional.roc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.sensitivity.html">cyclops.evaluate.metrics.functional.sensitivity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.specificity.html">cyclops.evaluate.metrics.functional.specificity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.functional.stat_scores.html">cyclops.evaluate.metrics.functional.stat_scores module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.metric.html">cyclops.evaluate.metrics.metric module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.precision_recall.html">cyclops.evaluate.metrics.precision_recall module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.precision_recall_curve.html">cyclops.evaluate.metrics.precision_recall_curve module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.roc.html">cyclops.evaluate.metrics.roc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.sensitivity.html">cyclops.evaluate.metrics.sensitivity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.specificity.html">cyclops.evaluate.metrics.specificity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.stat_scores.html">cyclops.evaluate.metrics.stat_scores module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.metrics.utils.html">cyclops.evaluate.metrics.utils module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cyclops.monitor.html">cyclops.monitor package</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cyclops.monitor.html#subpackages">Subpackages</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="cyclops.monitor.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="cyclops.monitor.clinical_applicator.html">cyclops.monitor.clinical_applicator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.monitor.dataframe_mapping.html">cyclops.monitor.dataframe_mapping module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.monitor.detector.html">cyclops.monitor.detector module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.monitor.experimenter.html">cyclops.monitor.experimenter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.monitor.explainer.html">cyclops.monitor.explainer module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">cyclops.monitor.plotter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.monitor.reductor.html">cyclops.monitor.reductor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.monitor.retrainers.html">cyclops.monitor.retrainers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.monitor.rolling_window.html">cyclops.monitor.rolling_window module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.monitor.run_drift_detection.html">cyclops.monitor.run_drift_detection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.monitor.synthetic_applicator.html">cyclops.monitor.synthetic_applicator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.monitor.tester.html">cyclops.monitor.tester module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.monitor.utils.html">cyclops.monitor.utils module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.baseline_models.html">cyclops.monitor.baseline_models package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.baseline_models.static.html">cyclops.monitor.baseline_models.static package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.baseline_models.static.ffnn.html">cyclops.monitor.baseline_models.static.ffnn module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.baseline_models.static.gbt.html">cyclops.monitor.baseline_models.static.gbt module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.baseline_models.static.gp.html">cyclops.monitor.baseline_models.static.gp module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.baseline_models.static.lr.html">cyclops.monitor.baseline_models.static.lr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.baseline_models.static.mlp.html">cyclops.monitor.baseline_models.static.mlp module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.baseline_models.static.optimizer.html">cyclops.monitor.baseline_models.static.optimizer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.baseline_models.static.rf.html">cyclops.monitor.baseline_models.static.rf module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.baseline_models.static.utils.html">cyclops.monitor.baseline_models.static.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.baseline_models.temporal.html">cyclops.monitor.baseline_models.temporal package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.baseline_models.temporal.pytorch.html">cyclops.monitor.baseline_models.temporal.pytorch package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.baseline_models.temporal.pytorch.dataset.html">cyclops.monitor.baseline_models.temporal.pytorch.dataset module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.baseline_models.temporal.pytorch.metrics.html">cyclops.monitor.baseline_models.temporal.pytorch.metrics module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.baseline_models.temporal.pytorch.models.html">cyclops.monitor.baseline_models.temporal.pytorch.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.baseline_models.temporal.pytorch.optimizer.html">cyclops.monitor.baseline_models.temporal.pytorch.optimizer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.baseline_models.temporal.pytorch.utils.html">cyclops.monitor.baseline_models.temporal.pytorch.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.clinical_applicator.html">cyclops.monitor.clinical_applicator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.dataframe_mapping.html">cyclops.monitor.dataframe_mapping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.datasets.html">cyclops.monitor.datasets package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.datasets.gemini.html">cyclops.monitor.datasets.gemini module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.datasets.nihcxr.html">cyclops.monitor.datasets.nihcxr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.datasets.utils.html">cyclops.monitor.datasets.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.detector.html">cyclops.monitor.detector module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.experimenter.html">cyclops.monitor.experimenter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.explainer.html">cyclops.monitor.explainer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.gemini.html">cyclops.monitor.gemini package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.gemini.query.html">cyclops.monitor.gemini.query module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.gemini.utils.html">cyclops.monitor.gemini.utils module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">cyclops.monitor.plotter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.reductor.html">cyclops.monitor.reductor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.retrainers.html">cyclops.monitor.retrainers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.rolling_window.html">cyclops.monitor.rolling_window module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.run_drift_detection.html">cyclops.monitor.run_drift_detection module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.synthetic_applicator.html">cyclops.monitor.synthetic_applicator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.tester.html">cyclops.monitor.tester module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.monitor.utils.html">cyclops.monitor.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.plotter.html">cyclops.plotter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.html">cyclops.process package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.aggregate.html">cyclops.process.aggregate module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.clean.html">cyclops.process.clean module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.diagnoses.html">cyclops.process.diagnoses module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.feature.html">cyclops.process.feature package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.feature.feature.html">cyclops.process.feature.feature module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.feature.handle_types.html">cyclops.process.feature.handle_types module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.feature.normalize.html">cyclops.process.feature.normalize module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.feature.split.html">cyclops.process.feature.split module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.feature.vectorized.html">cyclops.process.feature.vectorized module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.impute.html">cyclops.process.impute module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.string_ops.html">cyclops.process.string_ops module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.process.util.html">cyclops.process.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.html">cyclops.query package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.base.html">cyclops.query.base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.gemini.html">cyclops.query.gemini module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.interface.html">cyclops.query.interface module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.mimiciv.html">cyclops.query.mimiciv module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.omop.html">cyclops.query.omop module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.orm.html">cyclops.query.orm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.html">cyclops.query.postprocess package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.gemini.html">cyclops.query.postprocess.gemini module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.mimiciv.html">cyclops.query.postprocess.mimiciv module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.postprocess.util.html">cyclops.query.postprocess.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.process.html">cyclops.query.process module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.query.util.html">cyclops.query.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.html">cyclops.utils package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.common.html">cyclops.utils.common module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.file.html">cyclops.utils.file module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.indexing.html">cyclops.utils.indexing module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.log.html">cyclops.utils.log module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.utils.profile.html">cyclops.utils.profile module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.workflow.html">cyclops.workflow package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.workflow.task.html">cyclops.workflow.task module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+  
+
+  
+  
+    <li><a href="https://vectorinstitute.github.io/cyclops/">Home</a></li>
+    <li><a href="../../index.html">cyclops</a></li>
+  
+
+  
+  
+    <li><a href="../../api.html">API Documentation</a></li>
+  
+    <li><a href="cyclops.monitor.html">cyclops.monitor package</a></li>
+  
+
+  
+
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reference/api/cyclops.monitor.plotter.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-cyclops.monitor.plotter">
+<span id="cyclops-monitor-plotter-module"></span><h1>cyclops.monitor.plotter module<a class="headerlink" href="#module-cyclops.monitor.plotter" title="Permalink to this headline"></a></h1>
+<p>Plotting functions for drift detection.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.monitor.plotter.clamp">
+<span class="sig-name descname"><span class="pre">clamp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">255</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/monitor/plotter.html#clamp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.monitor.plotter.clamp" title="Permalink to this definition"></a></dt>
+<dd><p>Ensure colour intensity is within a specified range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>clamped colour intensity.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.monitor.plotter.colorscale">
+<span class="sig-name descname"><span class="pre">colorscale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hexstr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalefactor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/monitor/plotter.html#colorscale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.monitor.plotter.colorscale" title="Permalink to this definition"></a></dt>
+<dd><p>Create color scale.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Color scale of hex codes.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>String</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.monitor.plotter.errorfill">
+<span class="sig-name descname"><span class="pre">errorfill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yerr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-o'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/monitor/plotter.html#errorfill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.monitor.plotter.errorfill" title="Permalink to this definition"></a></dt>
+<dd><p>Create custom error fill.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.monitor.plotter.plot_drift">
+<span class="sig-name descname"><span class="pre">plot_drift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_val_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/monitor/plotter.html#plot_drift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.monitor.plotter.plot_drift" title="Permalink to this definition"></a></dt>
+<dd><p>Plot drift results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>results</strong> (<em>pd.DataFrame</em>) – Dataframe containing drift p-values and distance metric.</p></li>
+<li><p><strong>p_val_threshold</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – P-Value threshold.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.monitor.plotter.plot_drift_samples_pval">
+<span class="sig-name descname"><span class="pre">plot_drift_samples_pval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_val_threshold</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/monitor/plotter.html#plot_drift_samples_pval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.monitor.plotter.plot_drift_samples_pval" title="Permalink to this definition"></a></dt>
+<dd><p>Plot drift experiement p-values.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.monitor.plotter.plot_label_distribution">
+<span class="sig-name descname"><span class="pre">plot_label_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/monitor/plotter.html#plot_label_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.monitor.plotter.plot_label_distribution" title="Permalink to this definition"></a></dt>
+<dd><p>Set color attribute for bars in bar plots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bars</strong> (<em>mpl.container.BarContainer</em>) – Bars.</p></li>
+<li><p><strong>X</strong> (<em>pd.DataFrame</em>) – Feature values.</p></li>
+<li><p><strong>y</strong> (<em>pd.DataFrame</em>) – Label outcome values.</p></li>
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Column name of outcome variable.</p></li>
+<li><p><strong>features</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – Names of features to plot.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.monitor.plotter.plot_performance">
+<span class="sig-name descname"><span class="pre">plot_performance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/monitor/plotter.html#plot_performance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.monitor.plotter.plot_performance" title="Permalink to this definition"></a></dt>
+<dd><p>Plot drift results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>results</strong> (<em>pd.DataFrame</em>) – Dataframe returned from rolling window containing dates and performance metric.</p></li>
+<li><p><strong>metric</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Column name of performance for plotting.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.monitor.plotter.plot_pr">
+<span class="sig-name descname"><span class="pre">plot_pr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recall</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roc_prc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/monitor/plotter.html#plot_pr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.monitor.plotter.plot_pr" title="Permalink to this definition"></a></dt>
+<dd><p>Plot Precision-Recall curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>PR subplot.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>mpl.axes.SubplotBase</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.monitor.plotter.plot_roc">
+<span class="sig-name descname"><span class="pre">plot_roc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fpr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roc_auc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/monitor/plotter.html#plot_roc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.monitor.plotter.plot_roc" title="Permalink to this definition"></a></dt>
+<dd><p>Plot ROC curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>ROC subplot.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>mpl.axes.SubplotBase</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.monitor.plotter.set_bars_color">
+<span class="sig-name descname"><span class="pre">set_bars_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/monitor/plotter.html#set_bars_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.monitor.plotter.set_bars_color" title="Permalink to this definition"></a></dt>
+<dd><p>Set color attribute for bars in bar plots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bars</strong> (<em>mpl.container.BarContainer</em>) – Bars for barplot.</p></li>
+<li><p><strong>color</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Color for bars in barplot.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.monitor.plotter.setup_plot">
+<span class="sig-name descname"><span class="pre">setup_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_handle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/monitor/plotter.html#setup_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.monitor.plotter.setup_plot" title="Permalink to this definition"></a></dt>
+<dd><p>Plot setup.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plot_handle</strong> (<em>mpl.axes.SubplotBase</em>) – Subplot handle.</p></li>
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Title of plot.</p></li>
+<li><p><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Label for x-axis.</p></li>
+<li><p><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Label for y-axis.</p></li>
+<li><p><strong>legend</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – Legend for different sub-groups.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cyclops.monitor.explainer.html" class="btn btn-neutral float-left" title="cyclops.monitor.explainer module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cyclops.monitor.reductor.html" class="btn btn-neutral float-right" title="cyclops.monitor.reductor module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  
+
+  <div class="citation">
+    CyclOps team <i>et al.,</i>
+    <a href="https://vectorinstitute.github.io/cyclops/">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, TBD</i> (2022)
+  </def>
+
+
+  <p class="avatar">cyclops is built by</p>
+  <div class="avatar">
+    
+    
+    <span>
+      <a href="https://github.com/amrit110">
+        <img src="../../_static/team/amrit-krishnan.jpg" width="32"/>
+        Amrit Krishnan
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/KadenMc">
+        <img src="../../_static/team/kaden-mckeen.jpg" width="32"/>
+        Kaden McKeen
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/vsubasri">
+        <img src="../../_static/team/valli-subasri.jpg" width="32"/>
+        Valli Subasri
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/a-kore">
+        <img src="../../_static/team/ali-kore.jpg" width="32"/>
+        Ali Kore
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/fcogidi">
+        <img src="../../_static/team/franklin-ogidi.jpg" width="32"/>
+        Franklin Ogidi
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/dhrumilp15">
+        <img src="../../_static/team/dhrumil-patel.jpg" width="32"/>
+        Dhrumil Patel
+      </a>
+    </span>
+    ,
+  </div>
+
+
+  <div class="footer-small-text">
+    All <a href="https://github.com/VectorInstitute/cyclops">source code for cyclops</a> is freely available under the terms of an <a href="https://opensource.org/licenses/Apache-2.0">Apache-2.0</a> license.
+  </div>
+
+  <div class="footer-small-text">
+    This work is made possible due to the data obtained from the
+    General Medicine Inpatient Initiative (GEMINI).
+  </div>
+
+  <hr/>
+
+  <div class="logo">
+    <a class="logo" href="https://vectorinstitute.ai/">
+      <span class="logo"></span>
+      <img alt="Logo of the Vector Institute" style="width:90px; max-width:90px;" src="../../_static/logos/vector_logo.png" />
+    </a>
+    <a class="logo" href="https://www.geminimedicine.ca/">
+      <span class="logo"></span>
+      <img alt="Logo of GEMINI" style="width:90px; max-width:90px;" src="../../_static/logos/gemini_logo.png" />
+    </a>
+  </div>
+
+  <div class="copyright">
+    &copy; Copyright 2022, Vector AI Engineering
+  </div>
+
+  <div class="copyright">
+    </p>
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using customised version of
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">base theme</a> provided by
+    <a href="https://readthedocs.org">Read the Docs</a>.
+  </div>
+
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
