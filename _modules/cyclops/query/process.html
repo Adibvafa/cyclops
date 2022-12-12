@@ -250,13 +250,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwarg_name</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Recover the value of the placeholder argument.</span>
 
-<span class="sd">        Attributes</span>
+<span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        kwargs: dict</span>
-<span class="sd">            Dictionary containing self.kwarg_name as a key with a</span>
+<span class="sd">        **kwargs: Any</span>
+<span class="sd">            kwarg which corresponds to self.kwarg_name as a key with a</span>
 <span class="sd">            corresponding value.</span>
 
 <span class="sd">        Returns</span>
@@ -359,7 +359,7 @@
         <span class="k">return</span> <span class="n">qap_kwargs</span>
 
     <span class="k">def</span> <span class="nf">process_args</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">arg</span><span class="p">(</span><span class="n">user_kwargs</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">QAP</span><span class="p">)</span> <span class="k">else</span> <span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">arg</span><span class="p">(</span><span class="o">**</span><span class="n">user_kwargs</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">QAP</span><span class="p">)</span> <span class="k">else</span> <span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">process_kwargs</span><span class="p">(</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -443,19 +443,27 @@
     <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">lst</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">remove_names</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="append_if_missing"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.append_if_missing">[docs]</a><span class="k">def</span> <span class="nf">append_if_missing</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">keep_cols</span><span class="p">,</span> <span class="n">force_include_cols</span><span class="p">):</span>
+<div class="viewcode-block" id="append_if_missing"><a class="viewcode-back" href="../../../reference/api/cyclops.query.process.html#cyclops.query.process.append_if_missing">[docs]</a><span class="k">def</span> <span class="nf">append_if_missing</span><span class="p">(</span>
+    <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span>
+    <span class="n">keep_cols</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">force_include_cols</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Keep only certain columns in a table, but must include certain columns.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    table:</span>
-<span class="sd">    keep_cols</span>
-<span class="sd">    force_include_cols</span>
+<span class="sd">    table : cyclops.query.util.TableTypes</span>
+<span class="sd">        Table on which to perform the operation.</span>
+<span class="sd">    keep_cols: str or list of str, optional</span>
+<span class="sd">        Columns to keep.</span>
+<span class="sd">    force_include_cols: str or list of str, optional</span>
+<span class="sd">        Columns to include (forcefully).</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">keep_cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">table</span>
-
+    <span class="n">keep_cols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">keep_cols</span><span class="p">)</span>
+    <span class="n">force_include_cols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">force_include_cols</span><span class="p">)</span>
     <span class="n">extend_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">force_include_cols</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keep_cols</span><span class="p">]</span>
     <span class="n">keep_cols</span> <span class="o">=</span> <span class="n">extend_cols</span> <span class="o">+</span> <span class="n">keep_cols</span>
     <span class="k">return</span> <span class="n">FilterColumns</span><span class="p">(</span><span class="n">keep_cols</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span></div>
