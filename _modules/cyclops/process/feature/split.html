@@ -225,20 +225,25 @@
     <span class="n">fractions</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
     <span class="n">data_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Turn a number of fractions into a dividing list of lengths at which to split.</span>
+    <span class="sd">&quot;&quot;&quot;Create an array of index split points useful for dataset splitting.</span>
+
+<span class="sd">    Created using the length of the data and the desired split fractions.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    fractions: float or list of float</span>
 <span class="sd">        Fraction(s) of samples between 0 and 1 to use for each split.</span>
+<span class="sd">        If fractions is a list, the elements must sum to 1.</span>
 <span class="sd">    data_len: int</span>
 <span class="sd">        The total number of samples in the data being split.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">frac_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fractions</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
-        <span class="n">frac_list</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">fractions</span><span class="p">)</span>
+        <span class="n">frac_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">fractions</span><span class="p">]</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fractions</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="n">frac_list</span> <span class="o">=</span> <span class="n">fractions</span>
+        <span class="c1"># Necessary so as to not mutate the original fractions list</span>
+        <span class="n">frac_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fractions</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;fractions must be a float or a list of floats.&quot;</span><span class="p">)</span>
 
@@ -253,7 +258,9 @@
 
     <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">frac_list</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">frac_list</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">frac_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">frac_list</span><span class="p">))</span>
+            <span class="c1"># Meant to handle floats e.g., 0.8 -&gt; [0.8], which is actually [0.8, 0.2]</span>
+            <span class="c1"># Doing it this way allows for directly entering [0.8] in list form</span>
+            <span class="n">frac_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">frac_list</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;fractions must sum to 1.&quot;</span><span class="p">)</span>
 
