@@ -170,12 +170,248 @@
   <h1>Source code for cyclops.process.feature.split</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Dataset split processing.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">cyclops.utils.common</span> <span class="kn">import</span> <span class="n">to_list</span>
+
+
+<div class="viewcode-block" id="fractions_to_split"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.split.html#cyclops.process.feature.split.fractions_to_split">[docs]</a><span class="k">def</span> <span class="nf">fractions_to_split</span><span class="p">(</span>
+    <span class="n">fractions</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
+    <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create an array of index split points useful for dataset splitting.</span>
+
+<span class="sd">    Created using the length of the data and the desired split fractions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fractions: float or list of float</span>
+<span class="sd">        Fraction(s) of samples between 0 and 1 to use for each split.</span>
+<span class="sd">    n_samples: int</span>
+<span class="sd">        The total number of samples in the data being split.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray</span>
+<span class="sd">        Split indices to use in creating the desired split sizes.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">frac_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fractions</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">fractions</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">fractions</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;As a float, fractions must be in the range (0, 1).&quot;</span><span class="p">)</span>
+        <span class="n">frac_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">fractions</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fractions</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="c1"># Necessary so as to not mutate the original fractions list</span>
+        <span class="n">frac_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fractions</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;fractions must be a float or a list of floats.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Element checking</span>
+    <span class="n">is_float</span> <span class="o">=</span> <span class="p">[</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">frac_list</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">is_float</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;fractions must be floats.&quot;</span><span class="p">)</span>
+
+    <span class="n">invalid</span> <span class="o">=</span> <span class="p">[</span><span class="n">frac</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">frac</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">frac</span> <span class="ow">in</span> <span class="n">frac_list</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">invalid</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;fractions must be between 0 and 1.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">frac_list</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">frac_list</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Meant to handle floats e.g., 0.8 -&gt; [0.8], which is actually [0.8, 0.2]</span>
+            <span class="c1"># Doing it this way allows for directly entering [0.8] in list form</span>
+            <span class="n">frac_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">frac_list</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;fractions must sum to 1.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Turn into dividing list of lengths to split and return</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">frac_list</span><span class="p">)):</span>
+        <span class="n">frac_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">frac_list</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">assert</span> <span class="n">frac_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">frac_list</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">n_samples</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="split_idx"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.split.html#cyclops.process.feature.split.split_idx">[docs]</a><span class="k">def</span> <span class="nf">split_idx</span><span class="p">(</span>
+    <span class="n">fractions</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
+    <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">randomize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create disjoint subsets of indices.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fractions: float or list of float</span>
+<span class="sd">        Fraction(s) of samples between 0 and 1 to use for each split.</span>
+<span class="sd">    n_samples: int</span>
+<span class="sd">        The length of the data.</span>
+<span class="sd">    randomize: bool, default = True</span>
+<span class="sd">        Whether to randomize the data in the splits.</span>
+<span class="sd">    seed: int, optional</span>
+<span class="sd">        Seed for random number generator.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple of numpy.ndarray</span>
+<span class="sd">        Disjoint subsets of indices.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">split</span> <span class="o">=</span> <span class="n">fractions_to_split</span><span class="p">(</span><span class="n">fractions</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)</span>
+
+    <span class="c1"># Optionally randomize</span>
+    <span class="k">if</span> <span class="n">randomize</span><span class="p">:</span>
+        <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">rng</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">split</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="split_idx_stratified"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.split.html#cyclops.process.feature.split.split_idx_stratified">[docs]</a><span class="k">def</span> <span class="nf">split_idx_stratified</span><span class="p">(</span>
+    <span class="n">fractions</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
+    <span class="n">stratify_labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">randomize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create disjoint, label-stratified subsets of indices.</span>
+
+<span class="sd">    There will be the equal label proportions in each subset.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fractions: float or list of float</span>
+<span class="sd">        Fraction(s) of samples between 0 and 1 to use for each split.</span>
+<span class="sd">    stratify_labels: numpy.ndarray</span>
+<span class="sd">        1D array of labels used for stratification.</span>
+<span class="sd">    randomize: bool, default = True</span>
+<span class="sd">        Whether to randomize the data in the splits.</span>
+<span class="sd">    seed: int, optional</span>
+<span class="sd">        Seed for random number generator.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple of numpy.ndarray</span>
+<span class="sd">        Disjoint, label-stratified subsets of indices.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">stratify_labels</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span>
+
+    <span class="c1"># Stratify by label values</span>
+    <span class="n">series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">stratify_labels</span><span class="p">)</span>
+    <span class="n">groups</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
+    <span class="n">stratified_idx</span> <span class="o">=</span> <span class="n">groups</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">group</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">group</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">split_idx</span><span class="p">(</span><span class="n">fractions</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="p">),</span> <span class="n">randomize</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Combine stratified into subsets</span>
+    <span class="n">n_subsets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stratified_idx</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">idxs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">subset_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_subsets</span><span class="p">):</span>
+        <span class="n">idxs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">ind</span><span class="p">[</span><span class="n">subset_i</span><span class="p">]</span> <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">stratified_idx</span><span class="o">.</span><span class="n">values</span><span class="p">]))</span>
+
+    <span class="c1"># Optionally randomize</span>
+    <span class="k">if</span> <span class="n">randomize</span><span class="p">:</span>
+        <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">:</span>
+            <span class="n">rng</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="split_kfold"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.split.html#cyclops.process.feature.split.split_kfold">[docs]</a><span class="k">def</span> <span class="nf">split_kfold</span><span class="p">(</span>
+    <span class="n">k_folds</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">randomize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create K disjoint subsets of indices equal in length.</span>
+
+<span class="sd">    These K equally sized folds are useful for K-fold cross validation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    k_folds: int</span>
+<span class="sd">        K, i.e., the number of folds.</span>
+<span class="sd">    n_samples: int</span>
+<span class="sd">        The number of samples.</span>
+<span class="sd">    randomize: bool, default = True</span>
+<span class="sd">        Whether to randomize the data in the splits.</span>
+<span class="sd">    seed: int, optional</span>
+<span class="sd">        Seed for random number generator.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple of numpy.ndarray</span>
+<span class="sd">        K disjoint subsets of indices equal in length.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fracs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="o">/</span> <span class="n">k_folds</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k_folds</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="n">idxs</span> <span class="o">=</span> <span class="n">split_idx</span><span class="p">(</span><span class="n">fracs</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">randomize</span><span class="o">=</span><span class="n">randomize</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">idxs</span></div>
+
+
+<div class="viewcode-block" id="idxs_to_splits"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.split.html#cyclops.process.feature.split.idxs_to_splits">[docs]</a><span class="k">def</span> <span class="nf">idxs_to_splits</span><span class="p">(</span>
+    <span class="n">samples</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">idxs</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create data subsets using subsets of indices.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    samples: numpy.ndarray</span>
+<span class="sd">        A NumPy array with the first dimension being over the samples.</span>
+<span class="sd">    idxs: tuple of numpy.ndarray</span>
+<span class="sd">        Subsets of indices.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple of numpy.ndarray</span>
+<span class="sd">        Dataset splits.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="kfold_cross_val"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.split.html#cyclops.process.feature.split.kfold_cross_val">[docs]</a><span class="k">def</span> <span class="nf">kfold_cross_val</span><span class="p">(</span>
+    <span class="n">k_folds</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">samples</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">randomize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Perform K-fold cross validation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    k_folds: int</span>
+<span class="sd">        Number of folds in the K-fold cross validation.</span>
+<span class="sd">    samples: numpy.ndarray</span>
+<span class="sd">        A NumPy array with the first dimension being over the samples.</span>
+<span class="sd">    randomize: bool, default = True</span>
+<span class="sd">        Whether to randomize the data in the splits.</span>
+<span class="sd">    seed: int, optional</span>
+<span class="sd">        Seed for random number generator.</span>
+
+<span class="sd">    Yields</span>
+<span class="sd">    ------</span>
+<span class="sd">    tuple of numpy.ndarray</span>
+<span class="sd">        Yields the training and validation splits.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">idxs</span> <span class="o">=</span> <span class="n">split_kfold</span><span class="p">(</span><span class="n">k_folds</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">),</span> <span class="n">randomize</span><span class="o">=</span><span class="n">randomize</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">folds</span> <span class="o">=</span> <span class="n">idxs_to_splits</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">idxs</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">fold</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k_folds</span><span class="p">):</span>
+        <span class="n">val_fold</span> <span class="o">=</span> <span class="n">folds</span><span class="p">[</span><span class="n">fold</span><span class="p">]</span>
+        <span class="n">train_fold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">f</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">folds</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">fold</span><span class="p">])</span>
+        <span class="k">yield</span> <span class="n">train_fold</span><span class="p">,</span> <span class="n">val_fold</span></div>
 
 
 <div class="viewcode-block" id="intersect_datasets"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.split.html#cyclops.process.feature.split.intersect_datasets">[docs]</a><span class="k">def</span> <span class="nf">intersect_datasets</span><span class="p">(</span>
@@ -219,94 +455,6 @@
         <span class="n">datas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
 
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">datas</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="fractions_to_split"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.split.html#cyclops.process.feature.split.fractions_to_split">[docs]</a><span class="k">def</span> <span class="nf">fractions_to_split</span><span class="p">(</span>
-    <span class="n">fractions</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
-    <span class="n">data_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Create an array of index split points useful for dataset splitting.</span>
-
-<span class="sd">    Created using the length of the data and the desired split fractions.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    fractions: float or list of float</span>
-<span class="sd">        Fraction(s) of samples between 0 and 1 to use for each split.</span>
-<span class="sd">        If fractions is a list, the elements must sum to 1.</span>
-<span class="sd">    data_len: int</span>
-<span class="sd">        The total number of samples in the data being split.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">frac_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fractions</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
-        <span class="n">frac_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">fractions</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fractions</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="c1"># Necessary so as to not mutate the original fractions list</span>
-        <span class="n">frac_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fractions</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;fractions must be a float or a list of floats.&quot;</span><span class="p">)</span>
-
-    <span class="c1"># Element checking</span>
-    <span class="n">is_float</span> <span class="o">=</span> <span class="p">[</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">frac_list</span><span class="p">]</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">is_float</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;fractions must be floats.&quot;</span><span class="p">)</span>
-
-    <span class="n">invalid</span> <span class="o">=</span> <span class="p">[</span><span class="n">frac</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">frac</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">frac</span> <span class="ow">in</span> <span class="n">frac_list</span><span class="p">]</span>
-    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">invalid</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;fractions must be between 0 and 1.&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">frac_list</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">frac_list</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="c1"># Meant to handle floats e.g., 0.8 -&gt; [0.8], which is actually [0.8, 0.2]</span>
-            <span class="c1"># Doing it this way allows for directly entering [0.8] in list form</span>
-            <span class="n">frac_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">frac_list</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;fractions must sum to 1.&quot;</span><span class="p">)</span>
-
-    <span class="c1"># Turn into dividing list of lengths to split and return</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">frac_list</span><span class="p">)):</span>
-        <span class="n">frac_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">frac_list</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-
-    <span class="k">assert</span> <span class="n">frac_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
-
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">frac_list</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">data_len</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="split_idx"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.split.html#cyclops.process.feature.split.split_idx">[docs]</a><span class="k">def</span> <span class="nf">split_idx</span><span class="p">(</span>
-    <span class="n">fractions</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
-    <span class="n">data_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">randomize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Split encounters into train/test.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    data: numpy.ndarray</span>
-<span class="sd">        Data.</span>
-<span class="sd">    fractions: list, optional</span>
-<span class="sd">        Fraction(s) of samples between 0 and 1 to use for each split.</span>
-<span class="sd">    randomize: bool, default = True</span>
-<span class="sd">        Whether to randomize the data in the splits.</span>
-<span class="sd">    seed: int, optional</span>
-<span class="sd">        Seed for random number generator.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    tuple of numpy.ndarray</span>
-<span class="sd">        Splits with indices of each split.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">split</span> <span class="o">=</span> <span class="n">fractions_to_split</span><span class="p">(</span><span class="n">fractions</span><span class="p">,</span> <span class="n">data_len</span><span class="p">)</span>
-    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">data_len</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">randomize</span><span class="p">:</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">split</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="split_datasets_by_idx"><a class="viewcode-back" href="../../../../reference/api/cyclops.process.feature.split.html#cyclops.process.feature.split.split_datasets_by_idx">[docs]</a><span class="k">def</span> <span class="nf">split_datasets_by_idx</span><span class="p">(</span>
@@ -369,7 +517,7 @@
     <span class="n">fractions</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
     <span class="n">axes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">randomize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Split a dataset into a number of datasets.</span>
 
@@ -385,7 +533,7 @@
 <span class="sd">        Whether to randomize the samples in the splits. Otherwise it splits</span>
 <span class="sd">        the samples in the current order.</span>
 <span class="sd">    seed: int, optional</span>
-<span class="sd">        A seed for the randomization.</span>
+<span class="sd">        Seed for random number generator.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
