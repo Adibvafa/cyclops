@@ -178,11 +178,11 @@
 <span class="c1"># pylint: disable=too-many-lines</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">and_</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">extract</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">or_</span><span class="p">,</span> <span class="n">select</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">and_</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">extract</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">literal_column</span><span class="p">,</span> <span class="n">or_</span><span class="p">,</span> <span class="n">select</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.sql.elements</span> <span class="kn">import</span> <span class="n">BinaryExpression</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.sql.expression</span> <span class="kn">import</span> <span class="n">literal</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.sql.selectable</span> <span class="kn">import</span> <span class="n">Select</span><span class="p">,</span> <span class="n">Subquery</span>
@@ -1961,14 +1961,26 @@
 <span class="sd">    aggfuncs: dict</span>
 <span class="sd">        Specify a dictionary of key-value pairs:</span>
 <span class="sd">        column name: aggfunc string or</span>
-<span class="sd">        column name: (aggfunc string, new column label)</span>
+<span class="sd">        column name: (aggfunc string, new column label) or</span>
 <span class="sd">        This labelling allows for the aggregation of the same column with</span>
 <span class="sd">        different functions.</span>
+<span class="sd">    aggseps: dict, optional</span>
+<span class="sd">        Specify a dictionary of key-value pairs:</span>
+<span class="sd">        column name: string_aggfunc separator</span>
+<span class="sd">        If string_agg used as aggfunc for a column, then a separator must be provided</span>
+<span class="sd">        for the same column.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; GroupByAggregate(&quot;person_id&quot;, {&quot;person_id&quot;: &quot;count&quot;})(table)</span>
+<span class="sd">    &gt;&gt;&gt; GroupByAggregate(&quot;person_id&quot;, {&quot;person_id&quot;: (&quot;count&quot;, &quot;visit_count&quot;)})(table)</span>
+<span class="sd">    &gt;&gt;&gt; GroupByAggregate(&quot;person_id&quot;, {&quot;lab_name&quot;: &quot;string_agg&quot;}, {&quot;lab_name&quot;: &quot;, &quot;})(table)  # noqa: E501, pylint: disable=line-too-long</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">groupby_cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
     <span class="n">aggfuncs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span>
+    <span class="n">aggseps</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Process the table.</span>
@@ -1991,6 +2003,7 @@
             <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="n">max</span><span class="p">,</span>
             <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">,</span>
             <span class="s2">&quot;median&quot;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="n">percentile_disc</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">within_group</span><span class="p">,</span>
+            <span class="s2">&quot;string_agg&quot;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="n">string_agg</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="n">aggfunc_tuples</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aggfuncs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
@@ -2011,12 +2024,17 @@
         <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">groupby_names</span> <span class="o">+</span> <span class="n">aggfunc_cols</span><span class="p">)</span>
 
         <span class="c1"># Error checking</span>
-        <span class="k">for</span> <span class="n">aggfunc_str</span> <span class="ow">in</span> <span class="n">aggfunc_strs</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">aggfunc_str</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">aggfunc_strs</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">aggfunc_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">str_to_aggfunc</span><span class="p">:</span>
                 <span class="n">allowed_strs</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">str_to_aggfunc</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Invalid aggfuncs specified. Allowed values are </span><span class="si">{</span><span class="n">allowed_strs</span><span class="si">}</span><span class="s2">.&quot;</span>
                 <span class="p">)</span>
+            <span class="k">if</span> <span class="n">aggfunc_str</span> <span class="o">==</span> <span class="s2">&quot;string_agg&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aggseps</span><span class="p">)</span> <span class="ow">or</span> <span class="n">aggfunc_cols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggseps</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Column </span><span class="si">{</span><span class="n">aggfunc_cols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2"> needs to be aggregated as string, must specify a separator!&quot;&quot;&quot;</span>  <span class="c1"># noqa: E501, pylint: disable=line-too-long</span>
+                    <span class="p">)</span>
 
         <span class="n">all_names</span> <span class="o">=</span> <span class="n">groupby_names</span> <span class="o">+</span> <span class="n">aggfunc_names</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_names</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">all_names</span><span class="p">)):</span>
@@ -2027,11 +2045,16 @@
 
         <span class="c1"># Perform group by</span>
         <span class="n">groupby_cols</span> <span class="o">=</span> <span class="n">get_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">groupby_names</span><span class="p">)</span>
-        <span class="n">agg_cols</span> <span class="o">=</span> <span class="n">get_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">aggfunc_cols</span><span class="p">)</span>
-        <span class="n">agg_cols</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">str_to_aggfunc</span><span class="p">[</span><span class="n">aggfunc_strs</span><span class="p">[</span><span class="n">i</span><span class="p">]](</span><span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="n">aggfunc_names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">agg_cols</span><span class="p">)</span>
-        <span class="p">]</span>
+        <span class="n">to_agg_cols</span> <span class="o">=</span> <span class="n">get_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">aggfunc_cols</span><span class="p">)</span>
+        <span class="n">agg_cols</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">to_agg_col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">to_agg_cols</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">aggfunc_strs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;string_agg&quot;</span><span class="p">:</span>
+                <span class="n">agg_col</span> <span class="o">=</span> <span class="n">str_to_aggfunc</span><span class="p">[</span><span class="n">aggfunc_strs</span><span class="p">[</span><span class="n">i</span><span class="p">]](</span>
+                    <span class="n">to_agg_col</span><span class="p">,</span> <span class="n">literal_column</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">aggseps</span><span class="p">[</span><span class="n">aggfunc_cols</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">agg_col</span> <span class="o">=</span> <span class="n">str_to_aggfunc</span><span class="p">[</span><span class="n">aggfunc_strs</span><span class="p">[</span><span class="n">i</span><span class="p">]](</span><span class="n">to_agg_col</span><span class="p">)</span>
+            <span class="n">agg_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agg_col</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="n">aggfunc_names</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
 
         <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="o">*</span><span class="n">groupby_cols</span><span class="p">,</span> <span class="o">*</span><span class="n">agg_cols</span><span class="p">)</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="o">*</span><span class="n">groupby_cols</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div>
 </pre></div>

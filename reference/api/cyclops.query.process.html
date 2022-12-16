@@ -726,7 +726,7 @@ is removed.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="cyclops.query.process.GroupByAggregate">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GroupByAggregate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">groupby_cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggfuncs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/query/process.html#GroupByAggregate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.process.GroupByAggregate" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GroupByAggregate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">groupby_cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggfuncs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggseps=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/query/process.html#GroupByAggregate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.process.GroupByAggregate" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.9/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Aggregate over a group by object.</p>
 <dl class="field-list simple">
@@ -735,15 +735,30 @@ is removed.</p>
 <li><p><strong>groupby_cols</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em>) – Columns by which to group.</p></li>
 <li><p><strong>aggfuncs</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – Specify a dictionary of key-value pairs:
 column name: aggfunc string or
-column name: (aggfunc string, new column label)
+column name: (aggfunc string, new column label) or
 This labelling allows for the aggregation of the same column with
 different functions.</p></li>
+<li><p><strong>aggseps</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em>, </em><em>optional</em>) – Specify a dictionary of key-value pairs:
+column name: string_aggfunc separator
+If string_agg used as aggfunc for a column, then a separator must be provided
+for the same column.</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">GroupByAggregate</span><span class="p">(</span><span class="s2">&quot;person_id&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;person_id&quot;</span><span class="p">:</span> <span class="s2">&quot;count&quot;</span><span class="p">})(</span><span class="n">table</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GroupByAggregate</span><span class="p">(</span><span class="s2">&quot;person_id&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;person_id&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;visit_count&quot;</span><span class="p">)})(</span><span class="n">table</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GroupByAggregate</span><span class="p">(</span><span class="s2">&quot;person_id&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;lab_name&quot;</span><span class="p">:</span> <span class="s2">&quot;string_agg&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;lab_name&quot;</span><span class="p">:</span> <span class="s2">&quot;, &quot;</span><span class="p">})(</span><span class="n">table</span><span class="p">)</span>  <span class="c1"># noqa: E501, pylint: disable=line-too-long</span>
+</pre></div>
+</div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="cyclops.query.process.GroupByAggregate.aggfuncs">
 <span class="sig-name descname"><span class="pre">aggfuncs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cyclops.query.process.GroupByAggregate.aggfuncs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.query.process.GroupByAggregate.aggseps">
+<span class="sig-name descname"><span class="pre">aggseps</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cyclops.query.process.GroupByAggregate.aggseps" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
