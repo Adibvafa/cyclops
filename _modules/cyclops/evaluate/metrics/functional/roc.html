@@ -197,19 +197,19 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        confmat : numpy.ndarray</span>
-<span class="sd">            A multi-threshold confusion matrix of size (num_thresholds, 2, 2) or</span>
-<span class="sd">            (num_thresholds, num_classes, 2, 2).</span>
-<span class="sd">        thresholds : numpy.ndarray of floats, default=None</span>
+<span class="sd">    confmat : numpy.ndarray</span>
+<span class="sd">        A multi-threshold confusion matrix of size (num_thresholds, 2, 2) or</span>
+<span class="sd">        (num_thresholds, num_classes, 2, 2).</span>
+<span class="sd">    thresholds : numpy.ndarray of floats, default=None</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        fpr : numpy.ndarray</span>
-<span class="sd">            False positive rate.</span>
-<span class="sd">        tpr : numpy.ndarray</span>
-<span class="sd">            True positive rate.</span>
-<span class="sd">        thresholds : numpy.ndarray</span>
-<span class="sd">            Thresholds used to compute fpr and tpr.</span>
+<span class="sd">    fpr : numpy.ndarray</span>
+<span class="sd">        False positive rate.</span>
+<span class="sd">    tpr : numpy.ndarray</span>
+<span class="sd">        True positive rate.</span>
+<span class="sd">    thresholds : numpy.ndarray</span>
+<span class="sd">        Thresholds used to compute fpr and tpr.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tps</span> <span class="o">=</span> <span class="n">confmat</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
@@ -241,25 +241,25 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        state : tuple of numpy.ndarray or numpy.ndarray</span>
-<span class="sd">            If ``thresholds`` is not None, ``state`` is a multi-threshold confusion</span>
-<span class="sd">            matrix. If ``thresholds`` is None, ``state`` is a tuple of (target, preds).</span>
-<span class="sd">            probabilities.</span>
-<span class="sd">        thresholds : numpy.ndarray, default=None</span>
-<span class="sd">            Thresholds used to binarize the predicted probabilities. If None,</span>
-<span class="sd">            the unique values of the predicted probabilities are used as</span>
-<span class="sd">            thresholds.</span>
-<span class="sd">        pos_label : int, optional</span>
-<span class="sd">            The label of the positive class.</span>
+<span class="sd">    state : tuple of numpy.ndarray or numpy.ndarray</span>
+<span class="sd">        If ``thresholds`` is not None, ``state`` is a multi-threshold confusion</span>
+<span class="sd">        matrix. If ``thresholds`` is None, ``state`` is a tuple of (target, preds).</span>
+<span class="sd">        probabilities.</span>
+<span class="sd">    thresholds : numpy.ndarray, default=None</span>
+<span class="sd">        Thresholds used to binarize the predicted probabilities. If None,</span>
+<span class="sd">        the unique values of the predicted probabilities are used as</span>
+<span class="sd">        thresholds.</span>
+<span class="sd">    pos_label : int, optional</span>
+<span class="sd">        The label of the positive class.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        fpr : numpy.ndarray</span>
-<span class="sd">            False positive rate.</span>
-<span class="sd">        tpr : numpy.ndarray</span>
-<span class="sd">            True positive rate.</span>
-<span class="sd">        thresholds : numpy.ndarray</span>
-<span class="sd">            Thresholds used to compute fpr and tpr.</span>
+<span class="sd">    fpr : numpy.ndarray</span>
+<span class="sd">        False positive rate.</span>
+<span class="sd">    tpr : numpy.ndarray</span>
+<span class="sd">        True positive rate.</span>
+<span class="sd">    thresholds : numpy.ndarray</span>
+<span class="sd">        Thresholds used to compute fpr and tpr.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">thresholds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -307,47 +307,49 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target : ArrayLike</span>
-<span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds : ArrayLike</span>
-<span class="sd">            Estimated probabilities or decision function. If ``preds`` is not in</span>
-<span class="sd">            the range [0, 1], a sigmoid function is applied to transform it to</span>
-<span class="sd">            the range [0, 1].</span>
-<span class="sd">        thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
-<span class="sd">            Thresholds used for computing the precision and recall scores.</span>
-<span class="sd">            If int, then the number of thresholds to use.</span>
-<span class="sd">            If list or array, then the thresholds to use.</span>
-<span class="sd">            If None, then the thresholds are automatically determined by the</span>
-<span class="sd">            unique values in ``preds``.</span>
-<span class="sd">        pos_label : int, optional</span>
-<span class="sd">            The label of the positive class.</span>
+<span class="sd">    target : ArrayLike</span>
+<span class="sd">        Ground truth (correct) target values.</span>
+<span class="sd">    preds : ArrayLike</span>
+<span class="sd">        Estimated probabilities or decision function. If ``preds`` is not in</span>
+<span class="sd">        the range [0, 1], a sigmoid function is applied to transform it to</span>
+<span class="sd">        the range [0, 1].</span>
+<span class="sd">    thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
+<span class="sd">        Thresholds used for computing the precision and recall scores.</span>
+<span class="sd">        If int, then the number of thresholds to use.</span>
+<span class="sd">        If list or array, then the thresholds to use.</span>
+<span class="sd">        If None, then the thresholds are automatically determined by the</span>
+<span class="sd">        unique values in ``preds``.</span>
+<span class="sd">    pos_label : int, optional</span>
+<span class="sd">        The label of the positive class.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        fpr : numpy.ndarray</span>
-<span class="sd">            False positive rate.</span>
-<span class="sd">        tpr : numpy.ndarray</span>
-<span class="sd">            True positive rate.</span>
-<span class="sd">        thresholds : numpy.ndarray</span>
-<span class="sd">            Thresholds used to compute fpr and tpr.</span>
+<span class="sd">    fpr : numpy.ndarray</span>
+<span class="sd">        False positive rate.</span>
+<span class="sd">    tpr : numpy.ndarray</span>
+<span class="sd">        True positive rate.</span>
+<span class="sd">    thresholds : numpy.ndarray</span>
+<span class="sd">        Thresholds used to compute fpr and tpr.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import binary_roc_curve</span>
-<span class="sd">        &gt;&gt;&gt; target = [1, 0, 1, 0]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [0.9, 0.2, 0.8, 0.3]</span>
-<span class="sd">        &gt;&gt;&gt; fpr, tpr, thresholds = binary_roc_curve(target, preds, thresholds=5)</span>
-<span class="sd">        &gt;&gt;&gt; fpr</span>
-<span class="sd">        array([0. , 0. , 0. , 0.5, 1. ])</span>
-<span class="sd">        &gt;&gt;&gt; tpr</span>
-<span class="sd">        array([0., 1., 1., 1., 1.])</span>
-<span class="sd">        &gt;&gt;&gt; thresholds</span>
-<span class="sd">        array([1.  , 0.75, 0.5 , 0.25, 0.  ])</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import binary_roc_curve</span>
+<span class="sd">    &gt;&gt;&gt; target = [1, 0, 1, 0]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [0.9, 0.2, 0.8, 0.3]</span>
+<span class="sd">    &gt;&gt;&gt; fpr, tpr, thresholds = binary_roc_curve(target, preds, thresholds=5)</span>
+<span class="sd">    &gt;&gt;&gt; fpr</span>
+<span class="sd">    array([0. , 0. , 0. , 0.5, 1. ])</span>
+<span class="sd">    &gt;&gt;&gt; tpr</span>
+<span class="sd">    array([0., 1., 1., 1., 1.])</span>
+<span class="sd">    &gt;&gt;&gt; thresholds</span>
+<span class="sd">    array([1.  , 0.75, 0.5 , 0.25, 0.  ])</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_check_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
 
-    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_binary_precision_recall_curve_format</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span>
+    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_binary_precision_recall_curve_format</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span>
+    <span class="p">)</span>
     <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_format_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
 
     <span class="n">state</span> <span class="o">=</span> <span class="n">_binary_precision_recall_curve_update</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span>
@@ -367,29 +369,29 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        state : numpy.ndarray or tuple of numpy.ndarray</span>
-<span class="sd">            If ``thresholds`` is not None, ``state`` is a multi-threshold confusion</span>
-<span class="sd">            matrix. If ``thresholds`` is None, ``state`` is a tuple of (target, preds).</span>
-<span class="sd">        num_classes : int</span>
-<span class="sd">            Number of classes.</span>
-<span class="sd">        thresholds : numpy.ndarray, default=None</span>
-<span class="sd">            Thresholds used for binarizing the predicted probabilities. If not</span>
-<span class="sd">            None, must be a 1D numpy array of floats in the [0, 1] range and</span>
-<span class="sd">            monotonically increasing.</span>
+<span class="sd">    state : numpy.ndarray or tuple of numpy.ndarray</span>
+<span class="sd">        If ``thresholds`` is not None, ``state`` is a multi-threshold confusion</span>
+<span class="sd">        matrix. If ``thresholds`` is None, ``state`` is a tuple of (target, preds).</span>
+<span class="sd">    num_classes : int</span>
+<span class="sd">        Number of classes.</span>
+<span class="sd">    thresholds : numpy.ndarray, default=None</span>
+<span class="sd">        Thresholds used for binarizing the predicted probabilities. If not</span>
+<span class="sd">        None, must be a 1D numpy array of floats in the [0, 1] range and</span>
+<span class="sd">        monotonically increasing.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        fpr : numpy.ndarray or list of numpy.ndarray</span>
-<span class="sd">            False positive rate. If ``threshold`` is not None, ``fpr`` is a 1d numpy</span>
-<span class="sd">            array. Otherwise, ``fpr`` is a list of 1d numpy arrays, one for each</span>
-<span class="sd">            class.</span>
-<span class="sd">        tpr : numpy.ndarray or list of numpy.ndarray</span>
-<span class="sd">            True positive rate. If ``threshold`` is not None, ``tpr`` is a 1d numpy</span>
-<span class="sd">            array. Otherwise, ``tpr`` is a list of 1d numpy arrays, one for each class.</span>
-<span class="sd">        thresholds : numpy.ndarray or list of numpy.ndarray</span>
-<span class="sd">            Thresholds used to compute fpr and tpr. ``threshold`` is not None,</span>
-<span class="sd">            thresholds is a 1d numpy array. Otherwise, thresholds is a list of</span>
-<span class="sd">            1d numpy arrays, one for each class.</span>
+<span class="sd">    fpr : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">        False positive rate. If ``threshold`` is not None, ``fpr`` is a 1d numpy</span>
+<span class="sd">        array. Otherwise, ``fpr`` is a list of 1d numpy arrays, one for each</span>
+<span class="sd">        class.</span>
+<span class="sd">    tpr : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">        True positive rate. If ``threshold`` is not None, ``tpr`` is a 1d numpy</span>
+<span class="sd">        array. Otherwise, ``tpr`` is a list of 1d numpy arrays, one for each class.</span>
+<span class="sd">    thresholds : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">        Thresholds used to compute fpr and tpr. ``threshold`` is not None,</span>
+<span class="sd">        thresholds is a 1d numpy array. Otherwise, thresholds is a list of</span>
+<span class="sd">        1d numpy arrays, one for each class.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">thresholds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -423,54 +425,54 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target : ArrayLike</span>
-<span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds : ArrayLike</span>
-<span class="sd">            Estimated probabilities or decision function. If ``preds`` is not in</span>
-<span class="sd">            the range [0, 1], a softmax function is applied to transform it to</span>
-<span class="sd">            the range [0, 1].</span>
-<span class="sd">        num_classes : int</span>
-<span class="sd">            Number of classes.</span>
-<span class="sd">        thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
-<span class="sd">            Thresholds used for binarizing the predicted probabilities.</span>
-<span class="sd">            If int, then the number of thresholds to use.</span>
-<span class="sd">            If list or array, then the thresholds to use.</span>
-<span class="sd">            If None, then the thresholds are automatically determined by the</span>
-<span class="sd">            unique values in ``preds``.</span>
+<span class="sd">    target : ArrayLike</span>
+<span class="sd">        Ground truth (correct) target values.</span>
+<span class="sd">    preds : ArrayLike</span>
+<span class="sd">        Estimated probabilities or decision function. If ``preds`` is not in</span>
+<span class="sd">        the range [0, 1], a softmax function is applied to transform it to</span>
+<span class="sd">        the range [0, 1].</span>
+<span class="sd">    num_classes : int</span>
+<span class="sd">        Number of classes.</span>
+<span class="sd">    thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
+<span class="sd">        Thresholds used for binarizing the predicted probabilities.</span>
+<span class="sd">        If int, then the number of thresholds to use.</span>
+<span class="sd">        If list or array, then the thresholds to use.</span>
+<span class="sd">        If None, then the thresholds are automatically determined by the</span>
+<span class="sd">        unique values in ``preds``.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        fpr : numpy.ndarray or list of numpy.ndarray</span>
-<span class="sd">            False positive rate. If ``threshold`` is not None, ``fpr`` is a 1d numpy</span>
-<span class="sd">            array. Otherwise, ``fpr`` is a list of 1d numpy arrays, one for each</span>
-<span class="sd">            class.</span>
-<span class="sd">        tpr : numpy.ndarray or list of numpy.ndarray</span>
-<span class="sd">            True positive rate. If ``threshold`` is not None, ``tpr`` is a 1d numpy</span>
-<span class="sd">            array. Otherwise, ``tpr`` is a list of 1d numpy arrays, one for each class.</span>
-<span class="sd">        thresholds : numpy.ndarray or list of numpy.ndarray</span>
-<span class="sd">            Thresholds used to compute fpr and tpr. ``threshold`` is not None,</span>
-<span class="sd">            thresholds is a 1d numpy array. Otherwise, thresholds is a list of</span>
-<span class="sd">            1d numpy arrays, one for each class.</span>
+<span class="sd">    fpr : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">        False positive rate. If ``threshold`` is not None, ``fpr`` is a 1d numpy</span>
+<span class="sd">        array. Otherwise, ``fpr`` is a list of 1d numpy arrays, one for each</span>
+<span class="sd">        class.</span>
+<span class="sd">    tpr : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">        True positive rate. If ``threshold`` is not None, ``tpr`` is a 1d numpy</span>
+<span class="sd">        array. Otherwise, ``tpr`` is a list of 1d numpy arrays, one for each class.</span>
+<span class="sd">    thresholds : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">        Thresholds used to compute fpr and tpr. ``threshold`` is not None,</span>
+<span class="sd">        thresholds is a 1d numpy array. Otherwise, thresholds is a list of</span>
+<span class="sd">        1d numpy arrays, one for each class.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multiclass_roc_curve</span>
-<span class="sd">        &gt;&gt;&gt; target = [1, 0, 2, 0]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05],</span>
-<span class="sd">        ...         [0.05, 0.05, 0.9], [0.9, 0.05, 0.05]]</span>
-<span class="sd">        &gt;&gt;&gt; fpr, tpr, thresholds = multiclass_roc_curve(target, preds,</span>
-<span class="sd">        ...     num_classes=3, thresholds=5</span>
-<span class="sd">        ... )</span>
-<span class="sd">        &gt;&gt;&gt; fpr</span>
-<span class="sd">        array([[0.        , 0.5       , 0.5       , 0.5       , 1.        ],</span>
-<span class="sd">        [0.        , 0.33333333, 0.33333333, 0.33333333, 1.        ],</span>
-<span class="sd">        [0.        , 0.        , 0.        , 0.        , 1.        ]])</span>
-<span class="sd">        &gt;&gt;&gt; tpr</span>
-<span class="sd">        array([[0. , 0.5, 0.5, 0.5, 1. ],</span>
-<span class="sd">        [0. , 0. , 0. , 0. , 1. ],</span>
-<span class="sd">        [0. , 1. , 1. , 1. , 1. ]])</span>
-<span class="sd">        &gt;&gt;&gt; thresholds</span>
-<span class="sd">        array([1.  , 0.75, 0.5 , 0.25, 0.  ])</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multiclass_roc_curve</span>
+<span class="sd">    &gt;&gt;&gt; target = [1, 0, 2, 0]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05],</span>
+<span class="sd">    ...         [0.05, 0.05, 0.9], [0.9, 0.05, 0.05]]</span>
+<span class="sd">    &gt;&gt;&gt; fpr, tpr, thresholds = multiclass_roc_curve(target, preds,</span>
+<span class="sd">    ...     num_classes=3, thresholds=5</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; fpr</span>
+<span class="sd">    array([[0.        , 0.5       , 0.5       , 0.5       , 1.        ],</span>
+<span class="sd">    [0.        , 0.33333333, 0.33333333, 0.33333333, 1.        ],</span>
+<span class="sd">    [0.        , 0.        , 0.        , 0.        , 1.        ]])</span>
+<span class="sd">    &gt;&gt;&gt; tpr</span>
+<span class="sd">    array([[0. , 0.5, 0.5, 0.5, 1. ],</span>
+<span class="sd">    [0. , 0. , 0. , 0. , 1. ],</span>
+<span class="sd">    [0. , 1. , 1. , 1. , 1. ]])</span>
+<span class="sd">    &gt;&gt;&gt; thresholds</span>
+<span class="sd">    array([1.  , 0.75, 0.5 , 0.25, 0.  ])</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_check_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
@@ -498,29 +500,29 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        state : numpy.ndarray or tuple of numpy.ndarray</span>
-<span class="sd">            If ``thresholds`` is not None, ``state`` is a multi-threshold confusion</span>
-<span class="sd">            matrix. Otherwise, ``state`` is a tuple of (target, preds).</span>
-<span class="sd">        num_labels : int</span>
-<span class="sd">            Number of labels.</span>
-<span class="sd">        thresholds : numpy.ndarray, default=None</span>
-<span class="sd">            Thresholds used for binarizing the predicted probabilities. If not</span>
-<span class="sd">            None, must be a 1D numpy array of floats in the [0, 1] range and</span>
-<span class="sd">            monotonically increasing.</span>
+<span class="sd">    state : numpy.ndarray or tuple of numpy.ndarray</span>
+<span class="sd">        If ``thresholds`` is not None, ``state`` is a multi-threshold confusion</span>
+<span class="sd">        matrix. Otherwise, ``state`` is a tuple of (target, preds).</span>
+<span class="sd">    num_labels : int</span>
+<span class="sd">        Number of labels.</span>
+<span class="sd">    thresholds : numpy.ndarray, default=None</span>
+<span class="sd">        Thresholds used for binarizing the predicted probabilities. If not</span>
+<span class="sd">        None, must be a 1D numpy array of floats in the [0, 1] range and</span>
+<span class="sd">        monotonically increasing.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        fpr : numpy.ndarray or list of numpy.ndarray</span>
-<span class="sd">            False positive rate. If ``threshold`` is not None, ``fpr`` is a 1d numpy</span>
-<span class="sd">            array. Otherwise, ``fpr`` is a list of 1d numpy arrays, one for each</span>
-<span class="sd">            label.</span>
-<span class="sd">        tpr : numpy.ndarray or list of numpy.ndarray</span>
-<span class="sd">            True positive rate. If ``threshold`` is not None, ``tpr`` is a 1d numpy</span>
-<span class="sd">            array. Otherwise, ``tpr`` is a list of 1d numpy arrays, one for each label.</span>
-<span class="sd">        thresholds : numpy.ndarray or list of numpy.ndarray</span>
-<span class="sd">            Thresholds used to compute fpr and tpr. ``threshold`` is not None,</span>
-<span class="sd">            thresholds is a 1d numpy array. Otherwise, thresholds is a list of</span>
-<span class="sd">            1d numpy arrays, one for each label.</span>
+<span class="sd">    fpr : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">        False positive rate. If ``threshold`` is not None, ``fpr`` is a 1d numpy</span>
+<span class="sd">        array. Otherwise, ``fpr`` is a list of 1d numpy arrays, one for each</span>
+<span class="sd">        label.</span>
+<span class="sd">    tpr : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">        True positive rate. If ``threshold`` is not None, ``tpr`` is a 1d numpy</span>
+<span class="sd">        array. Otherwise, ``tpr`` is a list of 1d numpy arrays, one for each label.</span>
+<span class="sd">    thresholds : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">        Thresholds used to compute fpr and tpr. ``threshold`` is not None,</span>
+<span class="sd">        thresholds is a 1d numpy array. Otherwise, thresholds is a list of</span>
+<span class="sd">        1d numpy arrays, one for each label.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">thresholds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -554,53 +556,53 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target : ArrayLike</span>
-<span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds : ArrayLike</span>
-<span class="sd">            Estimated probabilities or decision function. If ``preds`` is not in</span>
-<span class="sd">            the range [0, 1], a sigmoid function is applied to transform it to</span>
-<span class="sd">            the range [0, 1].</span>
-<span class="sd">        num_labels : int</span>
-<span class="sd">            The number of labels in the dataset.</span>
-<span class="sd">        thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
-<span class="sd">            Thresholds used for binarizing the values of ``preds``.</span>
-<span class="sd">            If int, then the number of thresholds to use.</span>
-<span class="sd">            If list or array, then the thresholds to use.</span>
-<span class="sd">            If None, then the thresholds are automatically determined by the</span>
-<span class="sd">            unique values in ``preds``.</span>
+<span class="sd">    target : ArrayLike</span>
+<span class="sd">        Ground truth (correct) target values.</span>
+<span class="sd">    preds : ArrayLike</span>
+<span class="sd">        Estimated probabilities or decision function. If ``preds`` is not in</span>
+<span class="sd">        the range [0, 1], a sigmoid function is applied to transform it to</span>
+<span class="sd">        the range [0, 1].</span>
+<span class="sd">    num_labels : int</span>
+<span class="sd">        The number of labels in the dataset.</span>
+<span class="sd">    thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
+<span class="sd">        Thresholds used for binarizing the values of ``preds``.</span>
+<span class="sd">        If int, then the number of thresholds to use.</span>
+<span class="sd">        If list or array, then the thresholds to use.</span>
+<span class="sd">        If None, then the thresholds are automatically determined by the</span>
+<span class="sd">        unique values in ``preds``.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        fpr : numpy.ndarray or list of numpy.ndarray</span>
-<span class="sd">            False positive rate. If ``threshold`` is not None, ``fpr`` is a 1d numpy</span>
-<span class="sd">            array. Otherwise, ``fpr`` is a list of 1d numpy arrays, one for each</span>
-<span class="sd">            label.</span>
-<span class="sd">        tpr : numpy.ndarray or list of numpy.ndarray</span>
-<span class="sd">            True positive rate. If ``threshold`` is not None, ``tpr`` is a 1d numpy</span>
-<span class="sd">            array. Otherwise, ``tpr`` is a list of 1d numpy arrays, one for each label.</span>
-<span class="sd">        thresholds : numpy.ndarray or list of numpy.ndarray</span>
-<span class="sd">            Thresholds used to compute fpr and tpr. ``threshold`` is not None,</span>
-<span class="sd">            thresholds is a 1d numpy array. Otherwise, thresholds is a list of</span>
-<span class="sd">            1d numpy arrays, one for each label.</span>
+<span class="sd">    fpr : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">        False positive rate. If ``threshold`` is not None, ``fpr`` is a 1d numpy</span>
+<span class="sd">        array. Otherwise, ``fpr`` is a list of 1d numpy arrays, one for each</span>
+<span class="sd">        label.</span>
+<span class="sd">    tpr : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">        True positive rate. If ``threshold`` is not None, ``tpr`` is a 1d numpy</span>
+<span class="sd">        array. Otherwise, ``tpr`` is a list of 1d numpy arrays, one for each label.</span>
+<span class="sd">    thresholds : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">        Thresholds used to compute fpr and tpr. ``threshold`` is not None,</span>
+<span class="sd">        thresholds is a 1d numpy array. Otherwise, thresholds is a list of</span>
+<span class="sd">        1d numpy arrays, one for each label.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multilabel_roc_curve</span>
-<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 0], [0, 1, 1], [1, 0, 1]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.05, 0.1, 0.9], [0.8, 0.2, 0.3]]</span>
-<span class="sd">        &gt;&gt;&gt; fpr, tpr, thresholds = multilabel_roc_curve(target, preds, num_labels=3,</span>
-<span class="sd">        ...     thresholds=5</span>
-<span class="sd">        ... )</span>
-<span class="sd">        &gt;&gt;&gt; fpr</span>
-<span class="sd">        array([[0., 0., 0., 0., 1.],</span>
-<span class="sd">        [0., 0., 0., 0., 1.],</span>
-<span class="sd">        [0., 1., 1., 1., 1.]])</span>
-<span class="sd">        &gt;&gt;&gt; tpr</span>
-<span class="sd">        array([[0. , 1. , 1. , 1. , 1. ],</span>
-<span class="sd">        [0. , 0.5, 0.5, 0.5, 1. ],</span>
-<span class="sd">        [0. , 0.5, 0.5, 1. , 1. ]])</span>
-<span class="sd">        &gt;&gt;&gt; thresholds</span>
-<span class="sd">        array([1.  , 0.75, 0.5 , 0.25, 0.  ])</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multilabel_roc_curve</span>
+<span class="sd">    &gt;&gt;&gt; target = [[0, 1, 0], [0, 1, 1], [1, 0, 1]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.05, 0.1, 0.9], [0.8, 0.2, 0.3]]</span>
+<span class="sd">    &gt;&gt;&gt; fpr, tpr, thresholds = multilabel_roc_curve(target, preds, num_labels=3,</span>
+<span class="sd">    ...     thresholds=5</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; fpr</span>
+<span class="sd">    array([[0., 0., 0., 0., 1.],</span>
+<span class="sd">    [0., 0., 0., 0., 1.],</span>
+<span class="sd">    [0., 1., 1., 1., 1.]])</span>
+<span class="sd">    &gt;&gt;&gt; tpr</span>
+<span class="sd">    array([[0. , 1. , 1. , 1. , 1. ],</span>
+<span class="sd">    [0. , 0.5, 0.5, 0.5, 1. ],</span>
+<span class="sd">    [0. , 0.5, 0.5, 1. , 1. ]])</span>
+<span class="sd">    &gt;&gt;&gt; thresholds</span>
+<span class="sd">    array([1.  , 0.75, 0.5 , 0.25, 0.  ])</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_check_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
@@ -632,109 +634,108 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target : ArrayLike</span>
-<span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds : ArrayLike</span>
-<span class="sd">            Estimated probabilities or non-thresholded output of decision function.</span>
-<span class="sd">            If ``task`` is ``multiclass`` and the values in ``preds`` are not</span>
-<span class="sd">            probabilities, they will be converted to probabilities using the softmax</span>
-<span class="sd">            function. If ``task`` is ``multilabel`` and the values in ``preds`` are</span>
-<span class="sd">            not probabilities, they will be converted to probabilities using the</span>
-<span class="sd">            sigmoid function.</span>
-<span class="sd">        task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
-<span class="sd">            The type of task for the input data. One of &#39;binary&#39;, &#39;multiclass&#39;</span>
-<span class="sd">            or &#39;multilabel&#39;.</span>
-<span class="sd">        thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
-<span class="sd">            Thresholds used for computing the ROC curve. Can be one of:</span>
-<span class="sd">                - None: use the unique values of ``preds`` as thresholds</span>
-<span class="sd">                - int: generate ``thresholds`` number of evenly spaced values between</span>
-<span class="sd">                  0 and 1 as thresholds.</span>
-<span class="sd">                - list of floats: use the values in the list as thresholds. The list</span>
-<span class="sd">                  of values should be monotonically increasing. The list will be</span>
-<span class="sd">                  converted into a numpy array.</span>
-<span class="sd">                - numpy.ndarray of floats: use the values in the array as thresholds.</span>
-<span class="sd">                  The array should be 1d and monotonically increasing.</span>
-<span class="sd">        pos_label : int, default=1</span>
-<span class="sd">            The label of the positive class.</span>
-<span class="sd">        num_classes : int, optional</span>
-<span class="sd">            The number of classes in the dataset. Required for multiclass tasks.</span>
-<span class="sd">        num_labels : int, optional</span>
-<span class="sd">            The number of labels in the dataset. Required for multilabel tasks.</span>
+<span class="sd">    target : ArrayLike</span>
+<span class="sd">        Ground truth (correct) target values.</span>
+<span class="sd">    preds : ArrayLike</span>
+<span class="sd">        Estimated probabilities or non-thresholded output of decision function.</span>
+<span class="sd">        If ``task`` is ``multiclass`` and the values in ``preds`` are not</span>
+<span class="sd">        probabilities, they will be converted to probabilities using the softmax</span>
+<span class="sd">        function. If ``task`` is ``multilabel`` and the values in ``preds`` are</span>
+<span class="sd">        not probabilities, they will be converted to probabilities using the</span>
+<span class="sd">        sigmoid function.</span>
+<span class="sd">    task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
+<span class="sd">        The type of task for the input data. One of &#39;binary&#39;, &#39;multiclass&#39;</span>
+<span class="sd">        or &#39;multilabel&#39;.</span>
+<span class="sd">    thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
+<span class="sd">        Thresholds used for computing the ROC curve. Can be one of:</span>
+<span class="sd">        - None: use the unique values of ``preds`` as thresholds</span>
+<span class="sd">        - int: generate ``thresholds`` number of evenly spaced values between</span>
+<span class="sd">            0 and 1 as thresholds.</span>
+<span class="sd">        - list of floats: use the values in the list as thresholds. The list</span>
+<span class="sd">            of values should be monotonically increasing. The list will be</span>
+<span class="sd">            converted into a numpy array.</span>
+<span class="sd">        - numpy.ndarray of floats: use the values in the array as thresholds.</span>
+<span class="sd">            The array should be 1d and monotonically increasing.</span>
+<span class="sd">    pos_label : int, default=1</span>
+<span class="sd">        The label of the positive class.</span>
+<span class="sd">    num_classes : int, optional</span>
+<span class="sd">        The number of classes in the dataset. Required for multiclass tasks.</span>
+<span class="sd">    num_labels : int, optional</span>
+<span class="sd">        The number of labels in the dataset. Required for multilabel tasks.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        fpr : numpy.ndarray or list of numpy.ndarray</span>
-<span class="sd">            False positive rate. If ``task`` is &#39;binary&#39; or ``threshold`` is not None,</span>
-<span class="sd">            ``fpr`` is a 1d numpy array. If ``task`` is &#39;multiclass&#39; or &#39;multilabel&#39;,</span>
-<span class="sd">            and ``threshold`` is None, then ``fpr`` is a list of 1d numpy</span>
-<span class="sd">            arrays, one for each class or label.</span>
-<span class="sd">        tpr : numpy.ndarray or list of numpy.ndarray</span>
-<span class="sd">            True positive rate. If ``task`` is &#39;binary&#39; or ``threshold`` is not None,</span>
-<span class="sd">            ``tpr`` is a 1d numpy array. If ``task`` is &#39;multiclass&#39; or &#39;multilabel&#39;,</span>
-<span class="sd">            and ``threshold`` is None, then ``tpr`` is a list of 1d numpy</span>
-<span class="sd">            arrays, one for each class or label.</span>
-<span class="sd">        thresholds : numpy.ndarray or list of numpy.ndarray</span>
-<span class="sd">            Thresholds used to compute fpr and tpr. If ``task`` is &#39;binary&#39; or</span>
-<span class="sd">            ``threshold`` is not None, ``thresholds`` is a 1d numpy array. If</span>
-<span class="sd">            ``task`` is &#39;multiclass&#39; or &#39;multilabel&#39;, and ``threshold`` is None,</span>
-<span class="sd">            then ``thresholds`` is a list of 1d numpy arrays, one for each class</span>
-<span class="sd">            or label.</span>
+<span class="sd">    fpr : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">        False positive rate. If ``task`` is &#39;binary&#39; or ``threshold`` is not None,</span>
+<span class="sd">        ``fpr`` is a 1d numpy array. If ``task`` is &#39;multiclass&#39; or &#39;multilabel&#39;,</span>
+<span class="sd">        and ``threshold`` is None, then ``fpr`` is a list of 1d numpy</span>
+<span class="sd">        arrays, one for each class or label.</span>
+<span class="sd">    tpr : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">        True positive rate. If ``task`` is &#39;binary&#39; or ``threshold`` is not None,</span>
+<span class="sd">        ``tpr`` is a 1d numpy array. If ``task`` is &#39;multiclass&#39; or &#39;multilabel&#39;,</span>
+<span class="sd">        and ``threshold`` is None, then ``tpr`` is a list of 1d numpy</span>
+<span class="sd">        arrays, one for each class or label.</span>
+<span class="sd">    thresholds : numpy.ndarray or list of numpy.ndarray</span>
+<span class="sd">        Thresholds used to compute fpr and tpr. If ``task`` is &#39;binary&#39; or</span>
+<span class="sd">        ``threshold`` is not None, ``thresholds`` is a 1d numpy array. If</span>
+<span class="sd">        ``task`` is &#39;multiclass&#39; or &#39;multilabel&#39;, and ``threshold`` is None,</span>
+<span class="sd">        then ``thresholds`` is a list of 1d numpy arrays, one for each class</span>
+<span class="sd">        or label.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
-<span class="sd">        ValueError</span>
-<span class="sd">            If ``task`` is not one of &#39;binary&#39;, &#39;multiclass&#39; or &#39;multilabel&#39;.</span>
-<span class="sd">        AssertionError</span>
-<span class="sd">            If ``task`` is ``multiclass`` and ``num_classes`` is not provided.</span>
-<span class="sd">        AssertionError</span>
-<span class="sd">            If ``task`` is ``multilabel`` and ``num_labels`` is not provided.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``task`` is not one of &#39;binary&#39;, &#39;multiclass&#39; or &#39;multilabel&#39;.</span>
+<span class="sd">    AssertionError</span>
+<span class="sd">        If ``task`` is ``multiclass`` and ``num_classes`` is not provided.</span>
+<span class="sd">    AssertionError</span>
+<span class="sd">        If ``task`` is ``multilabel`` and ``num_labels`` is not provided.</span>
 
-<span class="sd">    Example (binary)</span>
-<span class="sd">    ----------------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import roc_curve</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 0, 1, 1]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [0.1, 0.4, 0.35, 0.8]</span>
-<span class="sd">        &gt;&gt;&gt; fpr, tpr, thresholds = roc_curve(target, preds, task=&#39;binary&#39;)</span>
-<span class="sd">        &gt;&gt;&gt; fpr</span>
-<span class="sd">        array([0. , 0. , 0.5, 0.5, 1. ])</span>
-<span class="sd">        &gt;&gt;&gt; tpr</span>
-<span class="sd">        array([0. , 0.5, 0.5, 1. , 1. ])</span>
-<span class="sd">        &gt;&gt;&gt; thresholds</span>
-<span class="sd">        array([1.  , 0.8 , 0.4 , 0.35, 0.1 ])</span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    (binary)</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import roc_curve</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 0, 1, 1]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [0.1, 0.4, 0.35, 0.8]</span>
+<span class="sd">    &gt;&gt;&gt; fpr, tpr, thresholds = roc_curve(target, preds, task=&#39;binary&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; fpr</span>
+<span class="sd">    array([0. , 0. , 0.5, 0.5, 1. ])</span>
+<span class="sd">    &gt;&gt;&gt; tpr</span>
+<span class="sd">    array([0. , 0.5, 0.5, 1. , 1. ])</span>
+<span class="sd">    &gt;&gt;&gt; thresholds</span>
+<span class="sd">    array([1.  , 0.8 , 0.4 , 0.35, 0.1 ])</span>
 
-<span class="sd">    Example (multiclass)</span>
-<span class="sd">    --------------------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import roc_curve</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 1, 2]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.89, 0.06], [0.02, 0.03, 0.95]]</span>
-<span class="sd">        &gt;&gt;&gt; fpr, tpr, thresholds = roc_curve(target, preds, task=&#39;multiclass&#39;,</span>
-<span class="sd">        ...     num_classes=3</span>
-<span class="sd">        ... )</span>
-<span class="sd">        &gt;&gt;&gt; fpr</span>
-<span class="sd">        [array([0. , 0. , 0.5, 1. ]),</span>
-<span class="sd">        array([0. , 0. , 0.5, 1. ]),</span>
-<span class="sd">        array([0. , 0. , 0.5, 1. ])]</span>
-<span class="sd">        &gt;&gt;&gt; tpr</span>
-<span class="sd">        [array([0., 1., 1., 1.]), array([0., 1., 1., 1.]), array([0., 1., 1., 1.])]</span>
-<span class="sd">        &gt;&gt;&gt; thresholds</span>
-<span class="sd">        [array([1.  , 0.9 , 0.05, 0.02]),</span>
-<span class="sd">        array([1.  , 0.89, 0.05, 0.03]),</span>
-<span class="sd">        array([1.  , 0.95, 0.06, 0.05])]</span>
+<span class="sd">    (multiclass)</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import roc_curve</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 1, 2]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.89, 0.06], [0.02, 0.03, 0.95]]</span>
+<span class="sd">    &gt;&gt;&gt; fpr, tpr, thresholds = roc_curve(target, preds, task=&#39;multiclass&#39;,</span>
+<span class="sd">    ...     num_classes=3</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; fpr</span>
+<span class="sd">    [array([0. , 0. , 0.5, 1. ]),</span>
+<span class="sd">    array([0. , 0. , 0.5, 1. ]),</span>
+<span class="sd">    array([0. , 0. , 0.5, 1. ])]</span>
+<span class="sd">    &gt;&gt;&gt; tpr</span>
+<span class="sd">    [array([0., 1., 1., 1.]), array([0., 1., 1., 1.]), array([0., 1., 1., 1.])]</span>
+<span class="sd">    &gt;&gt;&gt; thresholds</span>
+<span class="sd">    [array([1.  , 0.9 , 0.05, 0.02]),</span>
+<span class="sd">    array([1.  , 0.89, 0.05, 0.03]),</span>
+<span class="sd">    array([1.  , 0.95, 0.06, 0.05])]</span>
 
-<span class="sd">    Example (multilabel)</span>
-<span class="sd">    --------------------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import roc_curve</span>
-<span class="sd">        &gt;&gt;&gt; target = [[1, 1], [0, 1], [1, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.9, 0.8], [0.2, 0.7], [0.8, 0.3]]</span>
-<span class="sd">        &gt;&gt;&gt; fpr, tpr, thresholds = roc_curve(target, preds, task=&#39;multilabel&#39;,</span>
-<span class="sd">        ...     num_labels=2</span>
-<span class="sd">        ... )</span>
-<span class="sd">        &gt;&gt;&gt; fpr</span>
-<span class="sd">        [array([0. , 0.5, 1. , 1. ]), array([0., 0., 0., 1.])]</span>
-<span class="sd">        &gt;&gt;&gt; tpr</span>
-<span class="sd">        [array([0., 0., 0., 1.]), array([0. , 0.5, 1. , 1. ])]</span>
-<span class="sd">        &gt;&gt;&gt; thresholds</span>
-<span class="sd">        [array([1. , 0.9, 0.8, 0.2]), array([1. , 0.8, 0.7, 0.3])]</span>
+<span class="sd">    (multilabel)</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import roc_curve</span>
+<span class="sd">    &gt;&gt;&gt; target = [[1, 1], [0, 1], [1, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.9, 0.8], [0.2, 0.7], [0.8, 0.3]]</span>
+<span class="sd">    &gt;&gt;&gt; fpr, tpr, thresholds = roc_curve(target, preds, task=&#39;multilabel&#39;,</span>
+<span class="sd">    ...     num_labels=2</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; fpr</span>
+<span class="sd">    [array([0. , 0.5, 1. , 1. ]), array([0., 0., 0., 1.])]</span>
+<span class="sd">    &gt;&gt;&gt; tpr</span>
+<span class="sd">    [array([0., 0., 0., 1.]), array([0. , 0.5, 1. , 1. ])]</span>
+<span class="sd">    &gt;&gt;&gt; thresholds</span>
+<span class="sd">    [array([1. , 0.9, 0.8, 0.2]), array([1. , 0.8, 0.7, 0.3])]</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_check_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>

@@ -137,8 +137,10 @@
 <li class="toctree-l4 current"><a class="reference internal" href="cyclops.evaluate.metrics.html">cyclops.evaluate.metrics package</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="cyclops.evaluate.html#submodules">Submodules</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.evaluator.html">cyclops.evaluate.evaluator module</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="cyclops.evaluate.metrics.html">cyclops.evaluate.metrics package</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="cyclops.evaluate.metrics.html#subpackages">Subpackages</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="cyclops.evaluate.metrics.html#submodules">Submodules</a><ul class="current">
@@ -372,8 +374,8 @@ unique values in <code class="docutils literal notranslate"><span class="pre">pr
 <span class="go">        [0.25      , 0.33333333, 0.        , 1.        ],</span>
 <span class="go">        [0.25      , 0.        , 0.        , 1.        ]]),</span>
 <span class="go">array([[1., 0., 0., 0.],</span>
-<span class="go">       [1., 1., 0., 0.],</span>
-<span class="go">       [1., 0., 0., 0.]]),</span>
+<span class="go">        [1., 1., 0., 0.],</span>
+<span class="go">        [1., 0., 0., 0.]]),</span>
 <span class="go">array([0. , 0.5, 1. ]))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">metric</span><span class="o">.</span><span class="n">reset_state</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
@@ -387,10 +389,10 @@ unique values in <code class="docutils literal notranslate"><span class="pre">pr
 <span class="go">(array([[0.375, 0.5  , 0.   , 1.   ],</span>
 <span class="go">        [0.375, 0.4  , 0.   , 1.   ],</span>
 <span class="go">        [0.25 , 0.   , 0.   , 1.   ]]),</span>
-<span class="go"> array([[1.        , 0.33333333, 0.        , 0.        ],</span>
+<span class="go">    array([[1.        , 0.33333333, 0.        , 0.        ],</span>
 <span class="go">        [1.        , 0.66666667, 0.        , 0.        ],</span>
 <span class="go">        [1.        , 0.        , 0.        , 0.        ]]),</span>
-<span class="go"> array([0. , 0.5, 1. ]))</span>
+<span class="go">    array([0. , 0.5, 1. ]))</span>
 </pre></div>
 </div>
 <dl class="py method">
@@ -507,6 +509,99 @@ determined by the sunique values in <code class="docutils literal notranslate"><
 </ul>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<p>(binary)
+&gt;&gt;&gt; from cyclops.evaluation.metrics import PrecisionRecallCurve
+&gt;&gt;&gt; target = [1, 1, 1, 0]
+&gt;&gt;&gt; preds = [0.6, 0.2, 0.3, 0.8]
+&gt;&gt;&gt; metric = PrecisionRecallCurve(task=”binary”, thresholds=None)
+&gt;&gt;&gt; metric(target, preds)
+(array([0.75      , 0.66666667, 0.5       , 0.        , 1.        ]),
+array([1.        , 0.66666667, 0.33333333, 0.        , 0.        ]),
+array([0.2, 0.3, 0.6, 0.8]))
+&gt;&gt;&gt; metric.reset_state()
+&gt;&gt;&gt; target = [[1, 0, 1, 1], [0, 0, 0, 1]]
+&gt;&gt;&gt; preds = [[0.5, 0.4, 0.1, 0.3], [0.9, 0.6, 0.45, 0.8]]
+&gt;&gt;&gt; for t, p in zip(target, preds):
+…     metric.update_state(t, p)
+&gt;&gt;&gt; metric.compute()
+(array([0.5       , 0.42857143, 0.33333333, 0.4       , 0.5       ,</p>
+<blockquote>
+<div><p>0.33333333, 0.5       , 0.        , 1.        ]),</p>
+</div></blockquote>
+<p>array([1.  , 0.75, 0.5 , 0.5 , 0.5 , 0.25, 0.25, 0.  , 0.  ]),
+array([0.1 , 0.3 , 0.4 , 0.45, 0.5 , 0.6 , 0.8 , 0.9 ]))</p>
+<p>(multiclass)
+&gt;&gt;&gt; from cyclops.evaluation.metrics import PrecisionRecallCurve
+&gt;&gt;&gt; target = [0, 1, 2, 2]
+&gt;&gt;&gt; preds = [[0.05, 0.95, 0], [0.1, 0.8, 0.1],
+…         [0.2, 0.2, 0.6], [0.2, 0.2, 0.6]]
+&gt;&gt;&gt; metric = PrecisionRecallCurve(task=”multiclass”, num_classes=3,
+…     thresholds=3)
+&gt;&gt;&gt; metric(target, preds)
+(array([[0.25, 0.  , 0.  , 1.  ],</p>
+<blockquote>
+<div><p>[0.25, 0.5 , 0.  , 1.  ],
+[0.5 , 1.  , 0.  , 1.  ]]),</p>
+</div></blockquote>
+<dl class="simple">
+<dt>array([[1., 0., 0., 0.],</dt><dd><p>[1., 1., 0., 0.],
+[1., 1., 0., 0.]]),</p>
+</dd>
+</dl>
+<p>array([0. , 0.5, 1. ]))
+&gt;&gt;&gt; metric.reset_state()
+&gt;&gt;&gt; target = [[0, 1, 2, 2], [1, 2, 0, 1]]
+&gt;&gt;&gt; preds = [[[0.05, 0.95, 0], [0.1, 0.8, 0.1],
+…         [0.2, 0.2, 0.6], [0.2, 0.2, 0.6]],
+…         [[0.05, 0.95, 0], [0.1, 0.8, 0.1],
+…         [0.2, 0.2, 0.6], [0.2, 0.2, 0.6]]]
+&gt;&gt;&gt; for t, p in zip(target, preds):
+…     metric.update_state(t, p)
+&gt;&gt;&gt; metric.compute()
+(array([[0.25 , 0.   , 0.   , 1.   ],</p>
+<blockquote>
+<div><p>[0.375, 0.5  , 0.   , 1.   ],
+[0.375, 0.5  , 0.   , 1.   ]]),</p>
+</div></blockquote>
+<dl class="simple">
+<dt>array([[1.        , 0.        , 0.        , 0.        ],</dt><dd><p>[1.        , 0.66666667, 0.        , 0.        ],
+[1.        , 0.66666667, 0.        , 0.        ]]),</p>
+</dd>
+</dl>
+<p>array([0. , 0.5, 1. ]))</p>
+<p>(multilabel)
+&gt;&gt;&gt; from cyclops.evaluation.metrics import PrecisionRecallCurve
+&gt;&gt;&gt; target = [[0, 1], [1, 0]]
+&gt;&gt;&gt; preds = [[0.1, 0.9], [0.8, 0.2]]
+&gt;&gt;&gt; metric = PrecisionRecallCurve(task=”multilabel”, num_labels=2,
+…     thresholds=3)
+&gt;&gt;&gt; metric(target, preds)
+(array([[0.5, 1. , 0. , 1. ],</p>
+<blockquote>
+<div><p>[0.5, 1. , 0. , 1. ]]),</p>
+</div></blockquote>
+<dl class="simple">
+<dt>array([[1., 1., 0., 0.],</dt><dd><p>[1., 1., 0., 0.]]),</p>
+</dd>
+</dl>
+<p>array([0. , 0.5, 1. ]))
+&gt;&gt;&gt; metric.reset_state()
+&gt;&gt;&gt; target = [[[0, 1], [1, 0]], [[1, 0], [0, 1]]]
+&gt;&gt;&gt; preds = [[[0.1, 0.9], [0.8, 0.2]],
+…         [[0.1, 0.9], [0.8, 0.2]]]
+&gt;&gt;&gt; for t, p in zip(target, preds):
+…     metric.update_state(t, p)
+&gt;&gt;&gt; metric.compute()
+(array([[0.5, 0.5, 0. , 1. ],</p>
+<blockquote>
+<div><p>[0.5, 0.5, 0. , 1. ]]),</p>
+</div></blockquote>
+<dl class="simple">
+<dt>array([[1. , 0.5, 0. , 0. ],</dt><dd><p>[1. , 0.5, 0. , 0. ]]),</p>
+</dd>
+</dl>
+<p>array([0. , 0.5, 1. ]))</p>
 </dd></dl>
 
 </section>

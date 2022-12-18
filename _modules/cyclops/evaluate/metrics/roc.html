@@ -189,39 +189,39 @@
 <span class="c1"># mypy: ignore-errors</span>
 
 
-<div class="viewcode-block" id="BinaryROCCurve"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.roc.html#cyclops.evaluate.metrics.roc.BinaryROCCurve">[docs]</a><span class="k">class</span> <span class="nc">BinaryROCCurve</span><span class="p">(</span><span class="n">BinaryPrecisionRecallCurve</span><span class="p">):</span>
+<div class="viewcode-block" id="BinaryROCCurve"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.roc.html#cyclops.evaluate.metrics.roc.BinaryROCCurve">[docs]</a><span class="k">class</span> <span class="nc">BinaryROCCurve</span><span class="p">(</span><span class="n">BinaryPrecisionRecallCurve</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;binary_roc_curve&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the ROC curve for binary classification tasks.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
-<span class="sd">            Thresholds used for computing the precision and recall scores.</span>
-<span class="sd">            If int, then the number of thresholds to use.</span>
-<span class="sd">            If list or array, then the thresholds to use.</span>
-<span class="sd">            If None, then the thresholds are automatically determined by the</span>
-<span class="sd">            unique values in ``preds``.</span>
-<span class="sd">        pos_label : int, default=1</span>
-<span class="sd">            The label of the positive class.</span>
+<span class="sd">    thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
+<span class="sd">        Thresholds used for computing the precision and recall scores.</span>
+<span class="sd">        If int, then the number of thresholds to use.</span>
+<span class="sd">        If list or array, then the thresholds to use.</span>
+<span class="sd">        If None, then the thresholds are automatically determined by the</span>
+<span class="sd">        unique values in ``preds``.</span>
+<span class="sd">    pos_label : int, default=1</span>
+<span class="sd">        The label of the positive class.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import BinaryROCCurve</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 0, 1, 1]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [0.1, 0.4, 0.35, 0.8]</span>
-<span class="sd">        &gt;&gt;&gt; metric = BinaryROCCurve()</span>
-<span class="sd">        &gt;&gt;&gt; metric(target, preds)</span>
-<span class="sd">        (array([0. , 0. , 0.5, 0.5, 1. ]),</span>
-<span class="sd">        array([0. , 0.5, 0.5, 1. , 1. ]),</span>
-<span class="sd">        array([1.  , 0.8 , 0.4 , 0.35, 0.1 ]))</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[1, 1, 0, 0], [0, 0, 1, 1]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.2, 0.3, 0.4], [0.6, 0.5, 0.4, 0.3]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(t, p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        (array([0.  , 0.25, 0.5 , 0.75, 1.  , 1.  , 1.  ]),</span>
-<span class="sd">        array([0.  , 0.  , 0.  , 0.25, 0.5 , 0.75, 1.  ]),</span>
-<span class="sd">        array([1. , 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]))</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import BinaryROCCurve</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 0, 1, 1]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [0.1, 0.4, 0.35, 0.8]</span>
+<span class="sd">    &gt;&gt;&gt; metric = BinaryROCCurve()</span>
+<span class="sd">    &gt;&gt;&gt; metric(target, preds)</span>
+<span class="sd">    (array([0. , 0. , 0.5, 0.5, 1. ]),</span>
+<span class="sd">    array([0. , 0.5, 0.5, 1. , 1. ]),</span>
+<span class="sd">    array([1.  , 0.8 , 0.4 , 0.35, 0.1 ]))</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[1, 1, 0, 0], [0, 0, 1, 1]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.1, 0.2, 0.3, 0.4], [0.6, 0.5, 0.4, 0.3]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(t, p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    (array([0.  , 0.25, 0.5 , 0.75, 1.  , 1.  , 1.  ]),</span>
+<span class="sd">    array([0.  , 0.  , 0.  , 0.25, 0.5 , 0.75, 1.  ]),</span>
+<span class="sd">    array([1. , 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]))</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -241,57 +241,59 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="MulticlassROCCurve"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.roc.html#cyclops.evaluate.metrics.roc.MulticlassROCCurve">[docs]</a><span class="k">class</span> <span class="nc">MulticlassROCCurve</span><span class="p">(</span><span class="n">MulticlassPrecisionRecallCurve</span><span class="p">):</span>
+<div class="viewcode-block" id="MulticlassROCCurve"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.roc.html#cyclops.evaluate.metrics.roc.MulticlassROCCurve">[docs]</a><span class="k">class</span> <span class="nc">MulticlassROCCurve</span><span class="p">(</span>
+    <span class="n">MulticlassPrecisionRecallCurve</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multiclass_roc_curve&quot;</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the ROC curve for multiclass classification tasks.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target : ArrayLike</span>
-<span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds : ArrayLike</span>
-<span class="sd">            Estimated probabilities or decision function. If ``preds`` is not in</span>
-<span class="sd">            the range [0, 1], a softmax function is applied to transform it to</span>
-<span class="sd">            the range [0, 1].</span>
-<span class="sd">        num_classes : int</span>
-<span class="sd">            Number of classes.</span>
-<span class="sd">        thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
-<span class="sd">            Thresholds used for binarizing the predicted probabilities.</span>
-<span class="sd">            If int, then the number of thresholds to use.</span>
-<span class="sd">            If list or array, then the thresholds to use.</span>
-<span class="sd">            If None, then the thresholds are automatically determined by the</span>
-<span class="sd">            unique values in ``preds``.</span>
+<span class="sd">    target : ArrayLike</span>
+<span class="sd">        Ground truth (correct) target values.</span>
+<span class="sd">    preds : ArrayLike</span>
+<span class="sd">        Estimated probabilities or decision function. If ``preds`` is not in</span>
+<span class="sd">        the range [0, 1], a softmax function is applied to transform it to</span>
+<span class="sd">        the range [0, 1].</span>
+<span class="sd">    num_classes : int</span>
+<span class="sd">        Number of classes.</span>
+<span class="sd">    thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
+<span class="sd">        Thresholds used for binarizing the predicted probabilities.</span>
+<span class="sd">        If int, then the number of thresholds to use.</span>
+<span class="sd">        If list or array, then the thresholds to use.</span>
+<span class="sd">        If None, then the thresholds are automatically determined by the</span>
+<span class="sd">        unique values in ``preds``.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import MulticlassROCCurve</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 1, 2, 0]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.05, 0.95, 0], [0.1, 0.8, 0.1],</span>
-<span class="sd">        ...         [0.2, 0.2, 0.6], [0.9, 0.1, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; metric = MulticlassROCCurve(num_classes=3, thresholds=4)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target, preds)</span>
-<span class="sd">        (array([[0.        , 0.        , 0.        , 1.        ],</span>
-<span class="sd">                [0.        , 0.33333333, 0.33333333, 1.        ],</span>
-<span class="sd">                [0.        , 0.        , 0.        , 1.        ]]),</span>
-<span class="sd">        array([[0. , 0.5, 0.5, 1. ],</span>
-<span class="sd">                [0. , 1. , 1. , 1. ],</span>
-<span class="sd">                [0. , 0. , 1. , 1. ]]),</span>
-<span class="sd">        array([1.        , 0.66666667, 0.33333333, 0.        ]))</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[1, 1, 0, 0], [0, 0, 1, 1]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[[0.1, 0.2, 0.7], [0.5, 0.4, 0.1],</span>
-<span class="sd">        ...         [0.2, 0.3, 0.5], [0.8, 0.1, 0.1]],</span>
-<span class="sd">        ...         [[0.1, 0.2, 0.7], [0.5, 0.4, 0.1],</span>
-<span class="sd">        ...         [0.2, 0.3, 0.5], [0.8, 0.1, 0.1]]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(t, p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        (array([[0.  , 0.25, 0.5 , 1.  ],</span>
-<span class="sd">                [0.  , 0.  , 0.25, 1.  ],</span>
-<span class="sd">                [0.  , 0.25, 0.5 , 1.  ]]),</span>
-<span class="sd">        array([[0.  , 0.25, 0.5 , 1.  ],</span>
-<span class="sd">                [0.  , 0.  , 0.25, 1.  ],</span>
-<span class="sd">                [0.  , 0.  , 0.  , 0.  ]]),</span>
-<span class="sd">        array([1.        , 0.66666667, 0.33333333, 0.        ]))</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import MulticlassROCCurve</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 1, 2, 0]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.05, 0.95, 0], [0.1, 0.8, 0.1],</span>
+<span class="sd">    ...         [0.2, 0.2, 0.6], [0.9, 0.1, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; metric = MulticlassROCCurve(num_classes=3, thresholds=4)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target, preds)</span>
+<span class="sd">    (array([[0.        , 0.        , 0.        , 1.        ],</span>
+<span class="sd">            [0.        , 0.33333333, 0.33333333, 1.        ],</span>
+<span class="sd">            [0.        , 0.        , 0.        , 1.        ]]),</span>
+<span class="sd">    array([[0. , 0.5, 0.5, 1. ],</span>
+<span class="sd">            [0. , 1. , 1. , 1. ],</span>
+<span class="sd">            [0. , 0. , 1. , 1. ]]),</span>
+<span class="sd">    array([1.        , 0.66666667, 0.33333333, 0.        ]))</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[1, 1, 0, 0], [0, 0, 1, 1]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[[0.1, 0.2, 0.7], [0.5, 0.4, 0.1],</span>
+<span class="sd">    ...         [0.2, 0.3, 0.5], [0.8, 0.1, 0.1]],</span>
+<span class="sd">    ...         [[0.1, 0.2, 0.7], [0.5, 0.4, 0.1],</span>
+<span class="sd">    ...         [0.2, 0.3, 0.5], [0.8, 0.1, 0.1]]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(t, p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    (array([[0.  , 0.25, 0.5 , 1.  ],</span>
+<span class="sd">            [0.  , 0.  , 0.25, 1.  ],</span>
+<span class="sd">            [0.  , 0.25, 0.5 , 1.  ]]),</span>
+<span class="sd">    array([[0.  , 0.25, 0.5 , 1.  ],</span>
+<span class="sd">            [0.  , 0.  , 0.25, 1.  ],</span>
+<span class="sd">            [0.  , 0.  , 0.  , 0.  ]]),</span>
+<span class="sd">    array([1.        , 0.66666667, 0.33333333, 0.        ]))</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -311,48 +313,50 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="MultilabelROCCurve"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.roc.html#cyclops.evaluate.metrics.roc.MultilabelROCCurve">[docs]</a><span class="k">class</span> <span class="nc">MultilabelROCCurve</span><span class="p">(</span><span class="n">MultilabelPrecisionRecallCurve</span><span class="p">):</span>
+<div class="viewcode-block" id="MultilabelROCCurve"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.roc.html#cyclops.evaluate.metrics.roc.MultilabelROCCurve">[docs]</a><span class="k">class</span> <span class="nc">MultilabelROCCurve</span><span class="p">(</span>
+    <span class="n">MultilabelPrecisionRecallCurve</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multilabel_roc_curve&quot;</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the ROC curve for multilabel classification tasks.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        num_labels : int</span>
-<span class="sd">            The number of labels in the dataset.</span>
-<span class="sd">        thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
-<span class="sd">            Thresholds used for binarizing the values of ``preds``.</span>
-<span class="sd">            If int, then the number of thresholds to use.</span>
-<span class="sd">            If list or array, then the thresholds to use.</span>
-<span class="sd">            If None, then the thresholds are automatically determined by the</span>
-<span class="sd">            unique values in ``preds``.</span>
+<span class="sd">    num_labels : int</span>
+<span class="sd">        The number of labels in the dataset.</span>
+<span class="sd">    thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
+<span class="sd">        Thresholds used for binarizing the values of ``preds``.</span>
+<span class="sd">        If int, then the number of thresholds to use.</span>
+<span class="sd">        If list or array, then the thresholds to use.</span>
+<span class="sd">        If None, then the thresholds are automatically determined by the</span>
+<span class="sd">        unique values in ``preds``.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import MultilabelROCCurve</span>
-<span class="sd">        &gt;&gt;&gt; target = [[1, 1, 0], [0, 1, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.05, 0.95, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; metric = MultilabelROCCurve(num_labels=3, thresholds=4)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target, preds)</span>
-<span class="sd">        (array([[0. , 0. , 0. , 1. ],</span>
-<span class="sd">                [0. , 0. , 0. , 0. ],</span>
-<span class="sd">                [0. , 0.5, 0.5, 1. ]]),</span>
-<span class="sd">        array([[0., 0., 0., 1.],</span>
-<span class="sd">                [0., 1., 1., 1.],</span>
-<span class="sd">                [0., 0., 0., 0.]]),</span>
-<span class="sd">        array([1.        , 0.66666667, 0.33333333, 0.        ]))</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[[1, 1, 0], [0, 1, 0]], [[1, 1, 0], [0, 1, 0]]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[[0.1, 0.9, 0.8], [0.05, 0.95, 0]],</span>
-<span class="sd">        ...         [[0.1, 0.9, 0.8], [0.05, 0.95, 0]]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(t, p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        (array([[0. , 0. , 0. , 1. ],</span>
-<span class="sd">                [0. , 0. , 0. , 0. ],</span>
-<span class="sd">                [0. , 0.5, 0.5, 1. ]]),</span>
-<span class="sd">        array([[0., 0., 0., 1.],</span>
-<span class="sd">                [0., 1., 1., 1.],</span>
-<span class="sd">                [0., 0., 0., 0.]]),</span>
-<span class="sd">        array([1.        , 0.66666667, 0.33333333, 0.        ]))</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import MultilabelROCCurve</span>
+<span class="sd">    &gt;&gt;&gt; target = [[1, 1, 0], [0, 1, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.05, 0.95, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; metric = MultilabelROCCurve(num_labels=3, thresholds=4)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target, preds)</span>
+<span class="sd">    (array([[0. , 0. , 0. , 1. ],</span>
+<span class="sd">            [0. , 0. , 0. , 0. ],</span>
+<span class="sd">            [0. , 0.5, 0.5, 1. ]]),</span>
+<span class="sd">    array([[0., 0., 0., 1.],</span>
+<span class="sd">            [0., 1., 1., 1.],</span>
+<span class="sd">            [0., 0., 0., 0.]]),</span>
+<span class="sd">    array([1.        , 0.66666667, 0.33333333, 0.        ]))</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[[1, 1, 0], [0, 1, 0]], [[1, 1, 0], [0, 1, 0]]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[[0.1, 0.9, 0.8], [0.05, 0.95, 0]],</span>
+<span class="sd">    ...         [[0.1, 0.9, 0.8], [0.05, 0.95, 0]]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(t, p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    (array([[0. , 0. , 0. , 1. ],</span>
+<span class="sd">            [0. , 0. , 0. , 0. ],</span>
+<span class="sd">            [0. , 0.5, 0.5, 1. ]]),</span>
+<span class="sd">    array([[0., 0., 0., 1.],</span>
+<span class="sd">            [0., 1., 1., 1.],</span>
+<span class="sd">            [0., 0., 0., 0.]]),</span>
+<span class="sd">    array([1.        , 0.66666667, 0.33333333, 0.        ]))</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -372,110 +376,109 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="ROCCurve"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.roc.html#cyclops.evaluate.metrics.roc.ROCCurve">[docs]</a><span class="k">class</span> <span class="nc">ROCCurve</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<div class="viewcode-block" id="ROCCurve"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.roc.html#cyclops.evaluate.metrics.roc.ROCCurve">[docs]</a><span class="k">class</span> <span class="nc">ROCCurve</span><span class="p">(</span><span class="n">Metric</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;roc_curve&quot;</span><span class="p">,</span> <span class="n">force_register</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the ROC curve for different types of classification tasks.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
-<span class="sd">            The type of task for the input data. One of &#39;binary&#39;, &#39;multiclass&#39;</span>
-<span class="sd">            or &#39;multilabel&#39;.</span>
-<span class="sd">        thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
-<span class="sd">            Thresholds used for computing the ROC curve. Can be one of:</span>
-<span class="sd">                - None: use the unique values of ``preds`` as thresholds</span>
-<span class="sd">                - int: generate ``thresholds`` number of evenly spaced values between</span>
-<span class="sd">                  0 and 1 as thresholds.</span>
-<span class="sd">                - list of floats: use the values in the list as thresholds. The list</span>
-<span class="sd">                  of values should be monotonically increasing. The list will be</span>
-<span class="sd">                  converted into a numpy array.</span>
-<span class="sd">                - numpy.ndarray of floats: use the values in the array as thresholds.</span>
-<span class="sd">                  The array should be 1d and monotonically increasing.</span>
-<span class="sd">        pos_label : int, default=1</span>
-<span class="sd">            Label to consider as positive for binary classification tasks.</span>
-<span class="sd">        num_classes : int, optional</span>
-<span class="sd">            The number of classes in the dataset. Required if ``task`` is</span>
-<span class="sd">            ``&quot;multiclass&quot;``.</span>
-<span class="sd">        num_labels : int, optional</span>
-<span class="sd">            The number of labels in the dataset. Required if ``task`` is</span>
-<span class="sd">            ``&quot;multilabel&quot;``.</span>
+<span class="sd">    task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
+<span class="sd">        The type of task for the input data. One of &#39;binary&#39;, &#39;multiclass&#39;</span>
+<span class="sd">        or &#39;multilabel&#39;.</span>
+<span class="sd">    thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
+<span class="sd">        Thresholds used for computing the ROC curve. Can be one of:</span>
+<span class="sd">        - None: use the unique values of ``preds`` as thresholds</span>
+<span class="sd">        - int: generate ``thresholds`` number of evenly spaced values between</span>
+<span class="sd">            0 and 1 as thresholds.</span>
+<span class="sd">        - list of floats: use the values in the list as thresholds. The list</span>
+<span class="sd">            of values should be monotonically increasing. The list will be</span>
+<span class="sd">            converted into a numpy array.</span>
+<span class="sd">        - numpy.ndarray of floats: use the values in the array as thresholds.</span>
+<span class="sd">            The array should be 1d and monotonically increasing.</span>
+<span class="sd">    pos_label : int, default=1</span>
+<span class="sd">        Label to consider as positive for binary classification tasks.</span>
+<span class="sd">    num_classes : int, optional</span>
+<span class="sd">        The number of classes in the dataset. Required if ``task`` is</span>
+<span class="sd">        ``&quot;multiclass&quot;``.</span>
+<span class="sd">    num_labels : int, optional</span>
+<span class="sd">        The number of labels in the dataset. Required if ``task`` is</span>
+<span class="sd">        ``&quot;multilabel&quot;``.</span>
 
-<span class="sd">    Examples (binary)</span>
-<span class="sd">    -----------------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import ROCCurve</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 0, 1, 1]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [0.1, 0.4, 0.35, 0.8]</span>
-<span class="sd">        &gt;&gt;&gt; metric = ROCCurve(task=&quot;binary&quot;, thresholds=None)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target, preds)</span>
-<span class="sd">        (array([0. , 0. , 0.5, 0.5, 1. ]),</span>
-<span class="sd">        array([0. , 0.5, 0.5, 1. , 1. ]),</span>
-<span class="sd">        array([1.  , 0.8 , 0.4 , 0.35, 0.1 ]))</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[1, 1, 0, 0], [0, 0, 1, 1]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.2, 0.3, 0.4], [0.6, 0.5, 0.4, 0.3]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(t, p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        (array([0.  , 0.25, 0.5 , 0.75, 1.  , 1.  , 1.  ]),</span>
-<span class="sd">        array([0.  , 0.  , 0.  , 0.25, 0.5 , 0.75, 1.  ]),</span>
-<span class="sd">        array([1. , 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]))</span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    (binary)</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import ROCCurve</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 0, 1, 1]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [0.1, 0.4, 0.35, 0.8]</span>
+<span class="sd">    &gt;&gt;&gt; metric = ROCCurve(task=&quot;binary&quot;, thresholds=None)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target, preds)</span>
+<span class="sd">    (array([0. , 0. , 0.5, 0.5, 1. ]),</span>
+<span class="sd">    array([0. , 0.5, 0.5, 1. , 1. ]),</span>
+<span class="sd">    array([1.  , 0.8 , 0.4 , 0.35, 0.1 ]))</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[1, 1, 0, 0], [0, 0, 1, 1]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.1, 0.2, 0.3, 0.4], [0.6, 0.5, 0.4, 0.3]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(t, p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    (array([0.  , 0.25, 0.5 , 0.75, 1.  , 1.  , 1.  ]),</span>
+<span class="sd">    array([0.  , 0.  , 0.  , 0.25, 0.5 , 0.75, 1.  ]),</span>
+<span class="sd">    array([1. , 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]))</span>
 
-<span class="sd">    Examples (multiclass)</span>
-<span class="sd">    ---------------------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import ROCCurve</span>
-<span class="sd">        &gt;&gt;&gt; target = [[1, 1, 0], [0, 1, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.05, 0.95, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; metric = ROCCurve(task=&quot;multiclass&quot;, num_classes=3, thresholds=4)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target, preds)</span>
-<span class="sd">        (array([[0. , 0. , 0. , 1. ],</span>
-<span class="sd">                [0. , 0. , 0. , 0. ],</span>
-<span class="sd">                [0. , 0.5, 0.5, 1. ]]),</span>
-<span class="sd">        array([[0., 0., 0., 1.],</span>
-<span class="sd">                [0., 1., 1., 1.],</span>
-<span class="sd">                [0., 0., 0., 0.]]),</span>
-<span class="sd">        array([1.        , 0.66666667, 0.33333333, 0.        ]))</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[[1, 1, 0], [0, 1, 0]], [[1, 1, 0], [0, 1, 0]]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[[0.1, 0.9, 0.8], [0.05, 0.95, 0]],</span>
-<span class="sd">        ...         [[0.1, 0.9, 0.8], [0.05, 0.95, 0]]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(t, p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        (array([[0. , 0. , 0. , 1. ],</span>
-<span class="sd">                [0. , 0. , 0. , 0. ],</span>
-<span class="sd">                [0. , 0.5, 0.5, 1. ]]),</span>
-<span class="sd">        array([[0., 0., 0., 1.],</span>
-<span class="sd">                [0., 1., 1., 1.],</span>
-<span class="sd">                [0., 0., 0., 0.]]),</span>
-<span class="sd">        array([1.        , 0.66666667, 0.33333333, 0.        ]))</span>
+<span class="sd">    (multiclass)</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import ROCCurve</span>
+<span class="sd">    &gt;&gt;&gt; target = [[1, 1, 0], [0, 1, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.05, 0.95, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; metric = ROCCurve(task=&quot;multiclass&quot;, num_classes=3, thresholds=4)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target, preds)</span>
+<span class="sd">    (array([[0. , 0. , 0. , 1. ],</span>
+<span class="sd">            [0. , 0. , 0. , 0. ],</span>
+<span class="sd">            [0. , 0.5, 0.5, 1. ]]),</span>
+<span class="sd">    array([[0., 0., 0., 1.],</span>
+<span class="sd">            [0., 1., 1., 1.],</span>
+<span class="sd">            [0., 0., 0., 0.]]),</span>
+<span class="sd">    array([1.        , 0.66666667, 0.33333333, 0.        ]))</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[[1, 1, 0], [0, 1, 0]], [[1, 1, 0], [0, 1, 0]]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[[0.1, 0.9, 0.8], [0.05, 0.95, 0]],</span>
+<span class="sd">    ...         [[0.1, 0.9, 0.8], [0.05, 0.95, 0]]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(t, p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    (array([[0. , 0. , 0. , 1. ],</span>
+<span class="sd">            [0. , 0. , 0. , 0. ],</span>
+<span class="sd">            [0. , 0.5, 0.5, 1. ]]),</span>
+<span class="sd">    array([[0., 0., 0., 1.],</span>
+<span class="sd">            [0., 1., 1., 1.],</span>
+<span class="sd">            [0., 0., 0., 0.]]),</span>
+<span class="sd">    array([1.        , 0.66666667, 0.33333333, 0.        ]))</span>
 
-<span class="sd">    Examples (multilabel)</span>
-<span class="sd">    ---------------------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import ROCCurve</span>
-<span class="sd">        &gt;&gt;&gt; target = [[1, 1, 0], [0, 1, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.05, 0.95, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; metric = ROCCurve(task=&quot;multilabel&quot;, num_labels=3, thresholds=4)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target, preds)</span>
-<span class="sd">        (array([[0. , 0. , 0. , 1. ],</span>
-<span class="sd">                [0. , 0. , 0. , 0. ],</span>
-<span class="sd">                [0. , 0.5, 0.5, 1. ]]),</span>
-<span class="sd">        array([[0., 0., 0., 1.],</span>
-<span class="sd">                [0., 1., 1., 1.],</span>
-<span class="sd">                [0., 0., 0., 0.]]),</span>
-<span class="sd">        array([1.        , 0.66666667, 0.33333333, 0.        ]))</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[[1, 1, 0], [0, 1, 0]], [[1, 1, 0], [0, 1, 0]]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[[0.1, 0.9, 0.8], [0.05, 0.95, 0]],</span>
-<span class="sd">        ...         [[0.1, 0.9, 0.8], [0.05, 0.95, 0]]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(t, p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        (array([[0. , 0. , 0. , 1. ],</span>
-<span class="sd">                [0. , 0. , 0. , 0. ],</span>
-<span class="sd">                [0. , 0.5, 0.5, 1. ]]),</span>
-<span class="sd">        array([[0., 0., 0., 1.],</span>
-<span class="sd">                [0., 1., 1., 1.],</span>
-<span class="sd">                [0., 0., 0., 0.]]),</span>
-<span class="sd">        array([1.        , 0.66666667, 0.33333333, 0.        ]))</span>
+<span class="sd">    (multilabel)</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import ROCCurve</span>
+<span class="sd">    &gt;&gt;&gt; target = [[1, 1, 0], [0, 1, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.05, 0.95, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; metric = ROCCurve(task=&quot;multilabel&quot;, num_labels=3, thresholds=4)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target, preds)</span>
+<span class="sd">    (array([[0. , 0. , 0. , 1. ],</span>
+<span class="sd">            [0. , 0. , 0. , 0. ],</span>
+<span class="sd">            [0. , 0.5, 0.5, 1. ]]),</span>
+<span class="sd">    array([[0., 0., 0., 1.],</span>
+<span class="sd">            [0., 1., 1., 1.],</span>
+<span class="sd">            [0., 0., 0., 0.]]),</span>
+<span class="sd">    array([1.        , 0.66666667, 0.33333333, 0.        ]))</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[[1, 1, 0], [0, 1, 0]], [[1, 1, 0], [0, 1, 0]]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[[0.1, 0.9, 0.8], [0.05, 0.95, 0]],</span>
+<span class="sd">    ...         [[0.1, 0.9, 0.8], [0.05, 0.95, 0]]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(t, p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    (array([[0. , 0. , 0. , 1. ],</span>
+<span class="sd">            [0. , 0. , 0. , 0. ],</span>
+<span class="sd">            [0. , 0.5, 0.5, 1. ]]),</span>
+<span class="sd">    array([[0., 0., 0., 1.],</span>
+<span class="sd">            [0., 1., 1., 1.],</span>
+<span class="sd">            [0., 0., 0., 0.]]),</span>
+<span class="sd">    array([1.        , 0.66666667, 0.33333333, 0.        ]))</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 

@@ -137,8 +137,10 @@
 <li class="toctree-l4 current"><a class="reference internal" href="cyclops.evaluate.metrics.html">cyclops.evaluate.metrics package</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="cyclops.evaluate.html#submodules">Submodules</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.evaluator.html">cyclops.evaluate.evaluator module</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="cyclops.evaluate.metrics.html">cyclops.evaluate.metrics package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="cyclops.evaluate.metrics.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l4 current"><a class="reference internal" href="cyclops.evaluate.metrics.functional.html">cyclops.evaluate.metrics.functional package</a></li>
@@ -377,20 +379,26 @@ be computed only for the top k classes. Otherwise, <code class="docutils literal
 set to 1. Only used if <code class="docutils literal notranslate"><span class="pre">task</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;multiclass&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;multilabel&quot;</span></code>.</p></li>
 <li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>default=None</em>) – Number of labels for the task. Required if <code class="docutils literal notranslate"><span class="pre">task</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;multilabel&quot;</span></code>.</p></li>
 <li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em><em>, </em><em>default=None</em>) – <p>If <code class="docutils literal notranslate"><span class="pre">None</span></code>, return the score for each label/class. Otherwise,
-use one of the following options to compute the average score:</p>
+use one of the following options to compute the average score:
+- <code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true</p>
 <blockquote>
-<div><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true
-positives, false positives and false negatives.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each class/label, and find their
-unweighted mean. This does not take label/class imbalance into
-account.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label/class, and find
-their average weighted by support (the number of true instances
-for each label/class). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for
-label/class imbalance.</p></li>
-</ul>
+<div><p>positives, false positives and false negatives.</p>
 </div></blockquote>
+<ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each class/label, and find their</dt><dd><p>unweighted mean. This does not take label/class imbalance into
+account.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label/class, and find</dt><dd><p>their average weighted by support (the number of true instances
+for each label/class). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for
+label/class imbalance.</p>
+</dd>
+</dl>
+</li>
+</ul>
 </p></li>
 <li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em><em>, </em><em>default=&quot;warn&quot;</em>) – Value to return when there is a zero division. If set to “warn”, this
 acts as 0, but warnings are also raised.</p></li>
@@ -404,6 +412,25 @@ a numpy.ndarray of shape (<code class="docutils literal notranslate"><span class
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<p>(binary)
+&gt;&gt;&gt; from cyclops.evaluation.metrics.functional import f1_score
+&gt;&gt;&gt; target = [0, 1, 0, 1]
+&gt;&gt;&gt; preds = [0.1, 0.9, 0.8, 0.2]
+&gt;&gt;&gt; f1_score(target, preds, task=”binary”)
+0.5</p>
+<p>(multiclass)
+&gt;&gt;&gt; from cyclops.evaluation.metrics.functional import f1_score
+&gt;&gt;&gt; target = [0, 1, 2, 0]
+&gt;&gt;&gt; preds = [[0.05, 0.95, 0], [0.1, 0.8, 0.1], [0.2, 0.2, 0.6], [0.9, 0.1, 0]]
+&gt;&gt;&gt; f1_score(target, preds, task=”multiclass”, num_classes=3)
+array([0.66666667, 0.8       , 0.        ])</p>
+<p>(multilabel)
+&gt;&gt;&gt; from cyclops.evaluation.metrics.functional import f1_score
+&gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 0]]
+&gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.05, 0.1, 0.2]]
+&gt;&gt;&gt; f1_score(target, preds, task=”multilabel”, num_labels=3)
+array([0., 1., 1.])</p>
 </dd></dl>
 
 <dl class="py function">
@@ -426,20 +453,26 @@ be computed only for the top k classes. Otherwise, <code class="docutils literal
 set to 1. Only used if <code class="docutils literal notranslate"><span class="pre">task</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;multiclass&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;multilabel&quot;</span></code>.</p></li>
 <li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of labels for the task. Required if <code class="docutils literal notranslate"><span class="pre">task</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;multilabel&quot;</span></code>.</p></li>
 <li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em><em>, </em><em>default=None</em>) – <p>If <code class="docutils literal notranslate"><span class="pre">None</span></code>, return the score for each label/class. Otherwise,
-use one of the following options to compute the average score:</p>
+use one of the following options to compute the average score:
+- <code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true</p>
 <blockquote>
-<div><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true
-positives, false positives and false negatives.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each class/label, and find their
-unweighted mean. This does not take label/class imbalance into
-account.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label/class, and find
-their average weighted by support (the number of true instances
-for each label/class). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for
-label/class imbalance.</p></li>
-</ul>
+<div><p>positives, false positives and false negatives.</p>
 </div></blockquote>
+<ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each class/label, and find their</dt><dd><p>unweighted mean. This does not take label/class imbalance into
+account.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label/class, and find</dt><dd><p>their average weighted by support (the number of true instances
+for each label/class). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for
+label/class imbalance.</p>
+</dd>
+</dl>
+</li>
+</ul>
 </p></li>
 <li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em><em>, </em><em>default=&quot;warn&quot;</em>) – Value to return when there is a zero division. If set to “warn”, this
 acts as 0, but warnings are also raised.</p></li>
@@ -457,6 +490,25 @@ acts as 0, but warnings are also raised.</p></li>
 <code class="docutils literal notranslate"><span class="pre">multilabel</span></code>.</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<p>(binary)
+&gt;&gt;&gt; from cyclops.evaluation.metrics.functional import fbeta_score
+&gt;&gt;&gt; target = [0, 1, 1, 0]
+&gt;&gt;&gt; preds = [0.1, 0.8, 0.4, 0.3]
+&gt;&gt;&gt; fbeta_score(target, preds, beta=0.5, task=”binary”)
+0.8333333333333334</p>
+<p>(multiclass)
+&gt;&gt;&gt; from cyclops.evaluation.metrics.functional import fbeta_score
+&gt;&gt;&gt; target = [0, 1, 2, 2]
+&gt;&gt;&gt; preds = [1 2, 2, 0]
+&gt;&gt;&gt; fbeta_score(target, preds, beta=0.5, task=”multiclass”, num_classes=3)
+array([0.83333333, 0.        , 0.55555556])</p>
+<p>(multilabel)
+&gt;&gt;&gt; from cyclops.evaluation.metrics.functional import fbeta_score
+&gt;&gt;&gt; target = [[0, 1], [1, 1]]
+&gt;&gt;&gt; preds = [[0.1, 0.9], [0.8, 0.2]]
+&gt;&gt;&gt; fbeta_score(target, preds, beta=0.5, task=”multilabel”, num_labels=2)
+array([1.        , 0.83333333])</p>
 </dd></dl>
 
 <dl class="py function">
@@ -473,20 +525,26 @@ acts as 0, but warnings are also raised.</p></li>
 be computed only for the top k classes. Otherwise, <code class="docutils literal notranslate"><span class="pre">top_k</span></code> will be
 set to 1.</p></li>
 <li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em><em>, </em><em>default=None</em>) – <p>If <code class="docutils literal notranslate"><span class="pre">None</span></code>, return the score for each class. Otherwise, use one of
-the following options to compute the average score:</p>
+the following options to compute the average score:
+- <code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metric globally from the total count of true</p>
 <blockquote>
-<div><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metric globally from the total count of true
-positives, false positives and false negatives.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metric for each class, and find their
-unweighted mean. This does not take class imbalance into account.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metric for each class, and find their
-average weighted by the support (the number of true instances
+<div><p>positives, false positives and false negatives.</p>
+</div></blockquote>
+<ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metric for each class, and find their</dt><dd><p>unweighted mean. This does not take class imbalance into account.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metric for each class, and find their</dt><dd><p>average weighted by the support (the number of true instances
 for each class). This alters “macro” to account for class
 imbalance. It can result in an F-score that is not between
-precision and recall.</p></li>
+precision and recall.</p>
+</dd>
+</dl>
+</li>
 </ul>
-</div></blockquote>
 </p></li>
 <li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em><em>, </em><em>default=&quot;warn&quot;</em>) – Value to return when there is a zero division. If set to “warn”, this
 acts as 0, but warnings are also raised.</p></li>
@@ -525,19 +583,24 @@ acts as 0, but warnings are also raised.</p></li>
 be computed only for the top k classes. Otherwise, <code class="docutils literal notranslate"><span class="pre">top_k</span></code> will be
 set to 1.</p></li>
 <li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em><em>, </em><em>default=None</em>) – <p>If <code class="docutils literal notranslate"><span class="pre">None</span></code>, return the score for each class. Otherwise,
-use one of the following options to compute the average score:</p>
+use one of the following options to compute the average score:
+- <code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metric globally from the total count of true</p>
 <blockquote>
-<div><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metric globally from the total count of true
-positives, false positives and false negatives.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metric for each class, and find their
-unweighted mean. This does not take label imbalance into account.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metric for each class, and find their
-average weighted by the support (the number of true instances
-for each class). This alters “macro” to account for class
-imbalance.</p></li>
-</ul>
+<div><p>positives, false positives and false negatives.</p>
 </div></blockquote>
+<ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metric for each class, and find their</dt><dd><p>unweighted mean. This does not take label imbalance into account.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metric for each class, and find their</dt><dd><p>average weighted by the support (the number of true instances
+for each class). This alters “macro” to account for class imbalance.</p>
+</dd>
+</dl>
+</li>
+</ul>
 </p></li>
 <li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em><em>, </em><em>default=&quot;warn&quot;</em>) – Value to return when there is a zero division. If set to “warn”, this
 acts as 0, but warnings are also raised.</p></li>
@@ -580,19 +643,24 @@ or <code class="docutils literal notranslate"><span class="pre">beta</span></cod
 be computed only for the top k classes. Otherwise, <code class="docutils literal notranslate"><span class="pre">top_k</span></code> will be
 set to 1.</p></li>
 <li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em><em>, </em><em>default=None</em>) – <p>If <code class="docutils literal notranslate"><span class="pre">None</span></code>, return the score for each label. Otherwise, use one of
-the following options to compute the average score:</p>
+the following options to compute the average score:
+- <code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metric globally from the total count of true</p>
 <blockquote>
-<div><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metric globally from the total count of true
-positives, false positives and false negatives.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metric for each label, and find their
-unweighted mean. This does not take label imbalance into account.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metric for each label, and find their
-average weighted by the support (the number of true instances
-for each label). This alters “macro” to account for label
-imbalance.</p></li>
-</ul>
+<div><p>positives, false positives and false negatives.</p>
 </div></blockquote>
+<ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metric for each label, and find their</dt><dd><p>unweighted mean. This does not take label imbalance into account.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metric for each label, and find their</dt><dd><p>average weighted by the support (the number of true instances
+for each label). This alters “macro” to account for label imbalance.</p>
+</dd>
+</dl>
+</li>
+</ul>
 </p></li>
 <li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em><em>, </em><em>default=&quot;warn&quot;</em>) – Value to return when there is a zero division. If set to “warn”, this
 acts as 0, but warnings are also raised.</p></li>
@@ -632,19 +700,25 @@ acts as 0, but warnings are also raised.</p></li>
 be computed only for the top k classes. Otherwise, <code class="docutils literal notranslate"><span class="pre">top_k</span></code> will be
 set to 1.</p></li>
 <li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em><em>, </em><em>default=None</em>) – <p>If <code class="docutils literal notranslate"><span class="pre">None</span></code>, return the score for each label. Otherwise,
-use one of the following options to compute the average score:</p>
+use one of the following options to compute the average score:
+- <code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metric globally from the total count of true</p>
 <blockquote>
-<div><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metric globally from the total count of true
-positives, false positives and false negatives.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metric for each label, and find their
-unweighted mean. This does not take label imbalance into account.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metric for each label, and find their
-average weighted by the support (the number of true instances
-for each label). This alters “macro” to account for label
-imbalance.</p></li>
-</ul>
+<div><p>positives, false positives and false negatives.</p>
 </div></blockquote>
+<ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metric for each label, and find their</dt><dd><p>unweighted mean. This does not take label imbalance into account.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metric for each label, and find their</dt><dd><p>average weighted by the support (the number of true instances
+for each label). This alters “macro” to account for label
+imbalance.</p>
+</dd>
+</dl>
+</li>
+</ul>
 </p></li>
 <li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em><em>, </em><em>default=&quot;warn&quot;</em>) – Value to return when there is a zero division. If set to “warn”, this
 acts as 0, but warnings are also raised.</p></li>

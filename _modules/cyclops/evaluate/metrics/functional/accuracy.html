@@ -204,23 +204,23 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        tp : numpy.ndarray or int</span>
-<span class="sd">            The number of true positives.</span>
-<span class="sd">        fp : numpy.ndarray or int</span>
-<span class="sd">            The number of false positives.</span>
-<span class="sd">        tn : numpy.ndarray or int</span>
-<span class="sd">            The number of true negatives.</span>
-<span class="sd">        fn : numpy.ndarray or int</span>
-<span class="sd">            The number of false negatives.</span>
-<span class="sd">        task_type : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
-<span class="sd">            The type of task for the input data. One of &#39;binary&#39;, &#39;multiclass&#39;</span>
-<span class="sd">            or &#39;multilabel&#39;.</span>
-<span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None]</span>
-<span class="sd">            The type of averaging to apply to the accuracy scores. One of</span>
-<span class="sd">            &#39;micro&#39;, &#39;macro&#39;, &#39;weighted&#39; or None.</span>
-<span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1]</span>
-<span class="sd">            Sets the value to return when there is a zero division. If set to &quot;warn&quot;,</span>
-<span class="sd">            this acts as 0, but warnings are also raised.</span>
+<span class="sd">    tp : numpy.ndarray or int</span>
+<span class="sd">        The number of true positives.</span>
+<span class="sd">    fp : numpy.ndarray or int</span>
+<span class="sd">        The number of false positives.</span>
+<span class="sd">    tn : numpy.ndarray or int</span>
+<span class="sd">        The number of true negatives.</span>
+<span class="sd">    fn : numpy.ndarray or int</span>
+<span class="sd">        The number of false negatives.</span>
+<span class="sd">    task_type : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
+<span class="sd">        The type of task for the input data. One of &#39;binary&#39;, &#39;multiclass&#39;</span>
+<span class="sd">        or &#39;multilabel&#39;.</span>
+<span class="sd">    average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None]</span>
+<span class="sd">        The type of averaging to apply to the accuracy scores. One of</span>
+<span class="sd">        &#39;micro&#39;, &#39;macro&#39;, &#39;weighted&#39; or None.</span>
+<span class="sd">    zero_division : Literal[&quot;warn&quot;, 0, 1]</span>
+<span class="sd">        Sets the value to return when there is a zero division. If set to &quot;warn&quot;,</span>
+<span class="sd">        this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -229,7 +229,6 @@
 <span class="sd">            accuracy score per class.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># pylint: disable=invalid-name</span>
     <span class="k">if</span> <span class="n">average</span> <span class="o">==</span> <span class="s2">&quot;micro&quot;</span><span class="p">:</span>
         <span class="n">tp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">tp</span><span class="p">))</span>
         <span class="n">fn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">fn</span><span class="p">))</span>
@@ -286,43 +285,44 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target : ArrayLike</span>
-<span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds : ArrayLike</span>
-<span class="sd">            Estimated targets (predictions) as returned by a classifier.</span>
-<span class="sd">        pos_label : int, default=1</span>
-<span class="sd">            The label of the positive class. Can be 0 or 1.</span>
-<span class="sd">        threshold : float, default=0.5</span>
-<span class="sd">            The threshold value for converting probability or logit scores to</span>
-<span class="sd">            binary. A sigmoid function is first applied to logits to convert them</span>
-<span class="sd">            to probabilities.</span>
-<span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1], default=&quot;warn&quot;</span>
-<span class="sd">            Sets the value to return when there is a zero division. If set to ``warn``,</span>
-<span class="sd">            this acts as 0, but warnings are also raised.</span>
+<span class="sd">    target : ArrayLike</span>
+<span class="sd">        Ground truth (correct) target values.</span>
+<span class="sd">    preds : ArrayLike</span>
+<span class="sd">        Estimated targets (predictions) as returned by a classifier.</span>
+<span class="sd">    pos_label : int, default=1</span>
+<span class="sd">        The label of the positive class. Can be 0 or 1.</span>
+<span class="sd">    threshold : float, default=0.5</span>
+<span class="sd">        The threshold value for converting probability or logit scores to</span>
+<span class="sd">        binary. A sigmoid function is first applied to logits to convert them</span>
+<span class="sd">        to probabilities.</span>
+<span class="sd">    zero_division : Literal[&quot;warn&quot;, 0, 1], default=&quot;warn&quot;</span>
+<span class="sd">        Sets the value to return when there is a zero division. If set to ``warn``,</span>
+<span class="sd">        this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        float</span>
-<span class="sd">            The accuracy score.</span>
+<span class="sd">    float</span>
+<span class="sd">        The accuracy score.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import binary_accuracy</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 1, 0, 1]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [0, 1, 1, 1]</span>
-<span class="sd">        &gt;&gt;&gt; binary_accuracy(target, preds)</span>
-<span class="sd">        0.75</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 1, 0, 1]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [0.1, 0.9, 0.8, 0.4]</span>
-<span class="sd">        &gt;&gt;&gt; binary_accuracy(target, preds, threshold=0.5)</span>
-<span class="sd">        0.5</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import binary_accuracy</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 1, 0, 1]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [0, 1, 1, 1]</span>
+<span class="sd">    &gt;&gt;&gt; binary_accuracy(target, preds)</span>
+<span class="sd">    0.75</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 1, 0, 1]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [0.1, 0.9, 0.8, 0.4]</span>
+<span class="sd">    &gt;&gt;&gt; binary_accuracy(target, preds, threshold=0.5)</span>
+<span class="sd">    0.5</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_binary_stat_scores_args_check</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">)</span>
 
-    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_binary_stat_scores_format</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+    <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_binary_stat_scores_format</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span>
+    <span class="p">)</span>
 
-    <span class="c1"># pylint: disable=invalid-name</span>
     <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_binary_stat_scores_update</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_accuracy_reduce</span><span class="p">(</span>
         <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">task_type</span><span class="o">=</span><span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span>
@@ -341,53 +341,53 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target : ArrayLike</span>
-<span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds : ArrayLike</span>
-<span class="sd">            Estimated targets (predictions) as returned by a classifier.</span>
-<span class="sd">        num_classes : int</span>
-<span class="sd">            Number of classes in the dataset.</span>
-<span class="sd">        top_k : int, default=None</span>
-<span class="sd">            Number of highest probability predictions or logits to consider when</span>
-<span class="sd">            computing the accuracy score.</span>
-<span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
-<span class="sd">            If not None, this determines the type of averaging performed on the data:</span>
-<span class="sd">                - ``micro``: Calculate metrics globally by counting the total</span>
-<span class="sd">                  true positives, false negatives, false positives and true</span>
-<span class="sd">                  negatives.</span>
-<span class="sd">                - ``macro``: Calculate metrics for each class, and find their</span>
-<span class="sd">                  unweighted mean. This does not take class imbalance into account.</span>
-<span class="sd">                - ``weighted``: Calculate metrics for each class, and find their</span>
-<span class="sd">                  average, weighted by support (the number of true instances for</span>
-<span class="sd">                  each class). This alters ``macro`` to account for class imbalance.</span>
-<span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1], default=&quot;warn&quot;</span>
-<span class="sd">            Sets the value to return when there is a zero division. If set to ``warn``,</span>
-<span class="sd">            this acts as 0, but warnings are also raised.</span>
+<span class="sd">    target : ArrayLike</span>
+<span class="sd">        Ground truth (correct) target values.</span>
+<span class="sd">    preds : ArrayLike</span>
+<span class="sd">        Estimated targets (predictions) as returned by a classifier.</span>
+<span class="sd">    num_classes : int</span>
+<span class="sd">        Number of classes in the dataset.</span>
+<span class="sd">    top_k : int, default=None</span>
+<span class="sd">        Number of highest probability predictions or logits to consider when</span>
+<span class="sd">        computing the accuracy score.</span>
+<span class="sd">    average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
+<span class="sd">        If not None, this determines the type of averaging performed on the data:</span>
+<span class="sd">        - ``micro``: Calculate metrics globally by counting the total</span>
+<span class="sd">            true positives, false negatives, false positives and true</span>
+<span class="sd">            negatives.</span>
+<span class="sd">        - ``macro``: Calculate metrics for each class, and find their</span>
+<span class="sd">            unweighted mean. This does not take class imbalance into account.</span>
+<span class="sd">        - ``weighted``: Calculate metrics for each class, and find their</span>
+<span class="sd">            average, weighted by support (the number of true instances for</span>
+<span class="sd">            each class). This alters ``macro`` to account for class imbalance.</span>
+<span class="sd">    zero_division : Literal[&quot;warn&quot;, 0, 1], default=&quot;warn&quot;</span>
+<span class="sd">        Sets the value to return when there is a zero division. If set to ``warn``,</span>
+<span class="sd">        this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        float or numpy.ndarray</span>
-<span class="sd">            The average accuracy score as a float if ``average`` is not None,</span>
-<span class="sd">            otherwise a numpy array of accuracy scores per class/label.</span>
+<span class="sd">    float or numpy.ndarray</span>
+<span class="sd">        The average accuracy score as a float if ``average`` is not None,</span>
+<span class="sd">        otherwise a numpy array of accuracy scores per class/label.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
-<span class="sd">        ValueError</span>
-<span class="sd">            If ``average`` is not one of ``micro``, ``macro``, ``weighted`` or ``None``.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``average`` is not one of ``micro``, ``macro``, ``weighted`` or ``None``.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multiclass_accuracy</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 1, 2, 2, 2]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [0, 0, 2, 2, 1]</span>
-<span class="sd">        &gt;&gt;&gt; multiclass_accuracy(target, preds, num_classes=3)</span>
-<span class="sd">        array([1.        , 0.        , 0.66666667])</span>
-<span class="sd">        &gt;&gt;&gt; multiclass_accuracy(target, preds, num_classes=3, average=&quot;micro&quot;)</span>
-<span class="sd">        0.6</span>
-<span class="sd">        &gt;&gt;&gt; multiclass_accuracy(target, preds, num_classes=3, average=&quot;macro&quot;)</span>
-<span class="sd">        0.5555555555555555</span>
-<span class="sd">        &gt;&gt;&gt; multiclass_accuracy(target, preds, num_classes=3, average=&quot;weighted&quot;)</span>
-<span class="sd">        0.6</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multiclass_accuracy</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 1, 2, 2, 2]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [0, 0, 2, 2, 1]</span>
+<span class="sd">    &gt;&gt;&gt; multiclass_accuracy(target, preds, num_classes=3)</span>
+<span class="sd">    array([1.        , 0.        , 0.66666667])</span>
+<span class="sd">    &gt;&gt;&gt; multiclass_accuracy(target, preds, num_classes=3, average=&quot;micro&quot;)</span>
+<span class="sd">    0.6</span>
+<span class="sd">    &gt;&gt;&gt; multiclass_accuracy(target, preds, num_classes=3, average=&quot;macro&quot;)</span>
+<span class="sd">    0.5555555555555555</span>
+<span class="sd">    &gt;&gt;&gt; multiclass_accuracy(target, preds, num_classes=3, average=&quot;weighted&quot;)</span>
+<span class="sd">    0.6</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_check_average_arg</span><span class="p">(</span><span class="n">average</span><span class="p">)</span>
@@ -397,12 +397,7 @@
     <span class="p">)</span>
 
     <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_multiclass_stat_scores_update</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span>
-        <span class="n">preds</span><span class="p">,</span>
-        <span class="n">num_classes</span><span class="p">,</span>
-        <span class="n">classwise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_multiclass_stat_scores_update</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">_accuracy_reduce</span><span class="p">(</span>
         <span class="n">tp</span><span class="p">,</span>
@@ -428,53 +423,53 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target : array-like of shape (num_samples, num_labels)</span>
-<span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds : array-like of shape (num_samples, num_labels)</span>
-<span class="sd">            Estimated targets as returned by a classifier.</span>
-<span class="sd">        num_labels : int</span>
-<span class="sd">            Number of labels in the multilabel classification task.</span>
-<span class="sd">        threshold : float, default=0.5</span>
-<span class="sd">            Threshold value for binarizing the output of the classifier.</span>
-<span class="sd">        top_k : int, optional, default=None</span>
-<span class="sd">            The number of highest probability or logit predictions considered</span>
-<span class="sd">            to find the correct label. Only works when ``preds`` contains</span>
-<span class="sd">            probabilities/logits.</span>
-<span class="sd">        average : Literal[&#39;micro&#39;, &#39;macro&#39;, &#39;weighted&#39;, None], default=None</span>
-<span class="sd">            If None, return the accuracy score per label, otherwise this determines</span>
-<span class="sd">            the type of averaging performed on the data:</span>
-<span class="sd">                - ``micro``: Calculate metrics globally by counting the total</span>
-<span class="sd">                  true positives, false negatives, true negatives and false positives.</span>
-<span class="sd">                - ``macro``: Calculate metrics for each label, and find their unweighted</span>
-<span class="sd">                  mean. This does not take label imbalance into account.</span>
-<span class="sd">                - ``weighted``: Calculate metrics for each label, and find their</span>
-<span class="sd">                  average, weighted by support (the number of true instances for</span>
-<span class="sd">                  each label).</span>
-<span class="sd">        zero_division : Literal[&#39;warn&#39;, 0, 1], default=&quot;warn&quot;</span>
-<span class="sd">            Sets the value to return when there is a zero division. If set to ``warn``,</span>
-<span class="sd">            this acts as 0, but warnings are also raised.</span>
+<span class="sd">    target : array-like of shape (num_samples, num_labels)</span>
+<span class="sd">        Ground truth (correct) target values.</span>
+<span class="sd">    preds : array-like of shape (num_samples, num_labels)</span>
+<span class="sd">        Estimated targets as returned by a classifier.</span>
+<span class="sd">    num_labels : int</span>
+<span class="sd">        Number of labels in the multilabel classification task.</span>
+<span class="sd">    threshold : float, default=0.5</span>
+<span class="sd">        Threshold value for binarizing the output of the classifier.</span>
+<span class="sd">    top_k : int, optional, default=None</span>
+<span class="sd">        The number of highest probability or logit predictions considered</span>
+<span class="sd">        to find the correct label. Only works when ``preds`` contains</span>
+<span class="sd">        probabilities/logits.</span>
+<span class="sd">    average : Literal[&#39;micro&#39;, &#39;macro&#39;, &#39;weighted&#39;, None], default=None</span>
+<span class="sd">        If None, return the accuracy score per label, otherwise this determines</span>
+<span class="sd">        the type of averaging performed on the data:</span>
+<span class="sd">        - ``micro``: Calculate metrics globally by counting the total</span>
+<span class="sd">            true positives, false negatives, true negatives and false positives.</span>
+<span class="sd">        - ``macro``: Calculate metrics for each label, and find their unweighted</span>
+<span class="sd">            mean. This does not take label imbalance into account.</span>
+<span class="sd">        - ``weighted``: Calculate metrics for each label, and find their</span>
+<span class="sd">            average, weighted by support (the number of true instances for</span>
+<span class="sd">            each label).</span>
+<span class="sd">    zero_division : Literal[&#39;warn&#39;, 0, 1], default=&quot;warn&quot;</span>
+<span class="sd">        Sets the value to return when there is a zero division. If set to ``warn``,</span>
+<span class="sd">        this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        float or numpy.ndarray</span>
-<span class="sd">            The average accuracy score as a flot if ``average`` is not None,</span>
-<span class="sd">            otherwise a numpy array of accuracy scores per label.</span>
+<span class="sd">    float or numpy.ndarray</span>
+<span class="sd">        The average accuracy score as a flot if ``average`` is not None,</span>
+<span class="sd">        otherwise a numpy array of accuracy scores per label.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
-<span class="sd">        ValueError</span>
-<span class="sd">            If ``average`` is not one of ``micro``, ``macro``, ``weighted``,</span>
-<span class="sd">            or ``None``.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``average`` is not one of ``micro``, ``macro``, ``weighted``,</span>
+<span class="sd">        or ``None``.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multilabel_accuracy</span>
-<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0, 1, 0], [1, 0, 1]]</span>
-<span class="sd">        &gt;&gt;&gt; multilabel_accuracy(target, preds, num_labels=3, average=None)</span>
-<span class="sd">        array([1., 1., 0.])</span>
-<span class="sd">        &gt;&gt;&gt; multilabel_accuracy(target, preds, num_labels=3, average=&quot;micro&quot;)</span>
-<span class="sd">        0.6666666666666666</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multilabel_accuracy</span>
+<span class="sd">    &gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0, 1, 0], [1, 0, 1]]</span>
+<span class="sd">    &gt;&gt;&gt; multilabel_accuracy(target, preds, num_labels=3, average=None)</span>
+<span class="sd">    array([1., 1., 0.])</span>
+<span class="sd">    &gt;&gt;&gt; multilabel_accuracy(target, preds, num_labels=3, average=&quot;micro&quot;)</span>
+<span class="sd">    0.6666666666666666</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_check_average_arg</span><span class="p">(</span><span class="n">average</span><span class="p">)</span>
@@ -484,12 +479,7 @@
     <span class="p">)</span>
 
     <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_multilabel_stat_scores_update</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span>
-        <span class="n">preds</span><span class="p">,</span>
-        <span class="n">num_labels</span><span class="p">,</span>
-        <span class="n">labelwise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_multilabel_stat_scores_update</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_labels</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">_accuracy_reduce</span><span class="p">(</span>
         <span class="n">tp</span><span class="p">,</span>
@@ -518,78 +508,78 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target : ArrayLike</span>
-<span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds : ArrayLike</span>
-<span class="sd">            Estimated targets (predictions) as returned by a classifier.</span>
-<span class="sd">        task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
-<span class="sd">            The type of task for the input data. One of &#39;binary&#39;, &#39;multiclass&#39;</span>
-<span class="sd">            or &#39;multilabel&#39;.</span>
-<span class="sd">        pos_label : int, default=1</span>
-<span class="sd">            Label to consider as positive for binary classification tasks.</span>
-<span class="sd">        num_classes : int, default=None</span>
-<span class="sd">            Number of classes for the task. Required if ``task`` is ``&quot;multiclass&quot;``.</span>
-<span class="sd">        threshold : float, default=0.5</span>
-<span class="sd">            Threshold for deciding the positive class. Only used if ``task`` is</span>
-<span class="sd">            ``&quot;binary&quot;`` or ``&quot;multilabel&quot;``.</span>
-<span class="sd">        top_k : int, optional</span>
-<span class="sd">            If given, and predictions are probabilities/logits, the precision will</span>
-<span class="sd">            be computed only for the top k classes. Otherwise, ``top_k`` will be</span>
-<span class="sd">            set to 1. Only used if ``task`` is ``&quot;multiclass&quot;`` or ``&quot;multilabel&quot;``.</span>
-<span class="sd">        num_labels : int, default=None</span>
-<span class="sd">            Number of labels for the task. Required if ``task`` is ``&quot;multilabel&quot;``.</span>
-<span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
-<span class="sd">            If ``None``, return the recall score for each label/class. Otherwise,</span>
-<span class="sd">            use one of the following options to compute the average score:</span>
-<span class="sd">                - ``micro``: Calculate metrics globally by counting the total true</span>
-<span class="sd">                  positives. false positives, true negatives and false negatives.</span>
-<span class="sd">                - ``macro``: Calculate metrics for each class/label, and find their</span>
-<span class="sd">                  unweighted mean. This does not take label imbalance into account.</span>
-<span class="sd">                - ``weighted``: Calculate metrics for each label/class, and find</span>
-<span class="sd">                  their average weighted by support (the number of true instances</span>
-<span class="sd">                  for each label/class). This alters ``macro`` to account for</span>
-<span class="sd">                  label/class imbalance.</span>
-<span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1], default=&quot;warn&quot;</span>
-<span class="sd">            Sets the value to return when there is a zero division. If set to ``warn``,</span>
-<span class="sd">            this acts as 0, but warnings are also raised.</span>
+<span class="sd">    target : ArrayLike</span>
+<span class="sd">        Ground truth (correct) target values.</span>
+<span class="sd">    preds : ArrayLike</span>
+<span class="sd">        Estimated targets (predictions) as returned by a classifier.</span>
+<span class="sd">    task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
+<span class="sd">        The type of task for the input data. One of &#39;binary&#39;, &#39;multiclass&#39;</span>
+<span class="sd">        or &#39;multilabel&#39;.</span>
+<span class="sd">    pos_label : int, default=1</span>
+<span class="sd">        Label to consider as positive for binary classification tasks.</span>
+<span class="sd">    num_classes : int, default=None</span>
+<span class="sd">        Number of classes for the task. Required if ``task`` is ``&quot;multiclass&quot;``.</span>
+<span class="sd">    threshold : float, default=0.5</span>
+<span class="sd">        Threshold for deciding the positive class. Only used if ``task`` is</span>
+<span class="sd">        ``&quot;binary&quot;`` or ``&quot;multilabel&quot;``.</span>
+<span class="sd">    top_k : int, optional</span>
+<span class="sd">        If given, and predictions are probabilities/logits, the precision will</span>
+<span class="sd">        be computed only for the top k classes. Otherwise, ``top_k`` will be</span>
+<span class="sd">        set to 1. Only used if ``task`` is ``&quot;multiclass&quot;`` or ``&quot;multilabel&quot;``.</span>
+<span class="sd">    num_labels : int, default=None</span>
+<span class="sd">        Number of labels for the task. Required if ``task`` is ``&quot;multilabel&quot;``.</span>
+<span class="sd">    average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
+<span class="sd">        If ``None``, return the recall score for each label/class. Otherwise,</span>
+<span class="sd">        use one of the following options to compute the average score:</span>
+<span class="sd">        - ``micro``: Calculate metrics globally by counting the total true</span>
+<span class="sd">            positives. false positives, true negatives and false negatives.</span>
+<span class="sd">        - ``macro``: Calculate metrics for each class/label, and find their</span>
+<span class="sd">            unweighted mean. This does not take label imbalance into account.</span>
+<span class="sd">        - ``weighted``: Calculate metrics for each label/class, and find</span>
+<span class="sd">            their average weighted by support (the number of true instances</span>
+<span class="sd">            for each label/class). This alters ``macro`` to account for</span>
+<span class="sd">            label/class imbalance.</span>
+<span class="sd">    zero_division : Literal[&quot;warn&quot;, 0, 1], default=&quot;warn&quot;</span>
+<span class="sd">        Sets the value to return when there is a zero division. If set to ``warn``,</span>
+<span class="sd">        this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        accuracy_score : float or numpy.ndarray</span>
-<span class="sd">            The average accuracy score as a float if ``average`` is not None,</span>
-<span class="sd">            otherwise a numpy array of accuracy scores per class/label.</span>
+<span class="sd">    accuracy_score : float or numpy.ndarray</span>
+<span class="sd">        The average accuracy score as a float if ``average`` is not None,</span>
+<span class="sd">        otherwise a numpy array of accuracy scores per class/label.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
-<span class="sd">        ValueError</span>
-<span class="sd">            If ``task`` is not one of ``binary``, ``multiclass`` or ``multilabel``.</span>
-<span class="sd">        AssertionError</span>
-<span class="sd">            If ``task`` is ``multiclass`` and ``num_classes`` is not provided or is</span>
-<span class="sd">            less than 0.</span>
-<span class="sd">        AssertionError</span>
-<span class="sd">            If ``task`` is ``multilabel`` and ``num_labels`` is not provided or is</span>
-<span class="sd">            less than 0.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``task`` is not one of ``binary``, ``multiclass`` or ``multilabel``.</span>
+<span class="sd">    AssertionError</span>
+<span class="sd">        If ``task`` is ``multiclass`` and ``num_classes`` is not provided or is</span>
+<span class="sd">        less than 0.</span>
+<span class="sd">    AssertionError</span>
+<span class="sd">        If ``task`` is ``multilabel`` and ``num_labels`` is not provided or is</span>
+<span class="sd">        less than 0.</span>
 
-<span class="sd">    Examples (binary)</span>
-<span class="sd">    -----------------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import accuracy</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 1, 0, 1]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [0, 1, 1, 1]</span>
-<span class="sd">        &gt;&gt;&gt; accuracy(target, preds, task=&quot;binary&quot;)</span>
-<span class="sd">        0.75</span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    (binary)</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import accuracy</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 1, 0, 1]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [0, 1, 1, 1]</span>
+<span class="sd">    &gt;&gt;&gt; accuracy(target, preds, task=&quot;binary&quot;)</span>
+<span class="sd">    0.75</span>
 
-<span class="sd">    Examples (multiclass)</span>
-<span class="sd">    ---------------------</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 1, 2, 2, 2]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [0, 0, 2, 2, 1]</span>
-<span class="sd">        &gt;&gt;&gt; accuracy(target, preds, task=&quot;multiclass&quot;, num_classes=3, average=&quot;micro&quot;)</span>
-<span class="sd">        0.6</span>
+<span class="sd">    (multiclass)</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 1, 2, 2, 2]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [0, 0, 2, 2, 1]</span>
+<span class="sd">    &gt;&gt;&gt; accuracy(target, preds, task=&quot;multiclass&quot;, num_classes=3, average=&quot;micro&quot;)</span>
+<span class="sd">    0.6</span>
 
-<span class="sd">    Examples (multilabel)</span>
-<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0, 1, 0], [1, 0, 1]]</span>
-<span class="sd">        &gt;&gt;&gt; accuracy(target, preds, task=&quot;multilabel&quot;, num_labels=3, average=&quot;mcro&quot;)</span>
-<span class="sd">        0.6666666666666666</span>
+<span class="sd">    (multilabel)</span>
+<span class="sd">    &gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0, 1, 0], [1, 0, 1]]</span>
+<span class="sd">    &gt;&gt;&gt; accuracy(target, preds, task=&quot;multilabel&quot;, num_labels=3, average=&quot;mcro&quot;)</span>
+<span class="sd">    0.6666666666666666</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;binary&quot;</span><span class="p">:</span>

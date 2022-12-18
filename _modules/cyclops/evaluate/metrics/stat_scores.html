@@ -201,18 +201,18 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">            size : int</span>
-<span class="sd">                The size of the default numpy.ndarray to create for the state</span>
-<span class="sd">                variables.</span>
+<span class="sd">        size : int</span>
+<span class="sd">            The size of the default numpy.ndarray to create for the state</span>
+<span class="sd">            variables.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            None</span>
+<span class="sd">        None</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
-<span class="sd">            AssertionError</span>
-<span class="sd">                If ``size`` is not greater than 0.</span>
+<span class="sd">        AssertionError</span>
+<span class="sd">            If ``size`` is not greater than 0.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;``size`` must be greater than 0.&quot;</span>
@@ -230,18 +230,18 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">            tp : numpy.ndarray</span>
-<span class="sd">                The true positives.</span>
-<span class="sd">            fp : numpy.ndarray</span>
-<span class="sd">                The false positives.</span>
-<span class="sd">            tn : numpy.ndarray</span>
-<span class="sd">                The true negatives.</span>
-<span class="sd">            fn : numpy.ndarray</span>
-<span class="sd">                The false negatives.</span>
+<span class="sd">        tp : numpy.ndarray</span>
+<span class="sd">            The true positives.</span>
+<span class="sd">        fp : numpy.ndarray</span>
+<span class="sd">            The false positives.</span>
+<span class="sd">        tn : numpy.ndarray</span>
+<span class="sd">            The true negatives.</span>
+<span class="sd">        fn : numpy.ndarray</span>
+<span class="sd">            The false negatives.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            None</span>
+<span class="sd">        None</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># pylint: disable=no-member</span>
@@ -255,9 +255,9 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray, numpy.ndarray]</span>
-<span class="sd">                The final state variables. The order is true positives (tp),</span>
-<span class="sd">                false positives (fp), true negatives (tn), and false negatives</span>
+<span class="sd">        Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray, numpy.ndarray]</span>
+<span class="sd">            The final state variables. The order is true positives (tp),</span>
+<span class="sd">            false positives (fp), true negatives (tn), and false negatives</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># pylint: disable=no-member</span>
@@ -268,33 +268,33 @@
         <span class="k">return</span> <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span>
 
 
-<div class="viewcode-block" id="BinaryStatScores"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.stat_scores.html#cyclops.evaluate.metrics.stat_scores.BinaryStatScores">[docs]</a><span class="k">class</span> <span class="nc">BinaryStatScores</span><span class="p">(</span><span class="n">_AbstractScores</span><span class="p">):</span>
+<div class="viewcode-block" id="BinaryStatScores"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.stat_scores.html#cyclops.evaluate.metrics.stat_scores.BinaryStatScores">[docs]</a><span class="k">class</span> <span class="nc">BinaryStatScores</span><span class="p">(</span><span class="n">_AbstractScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;binary_stat_scores&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute binary stat scores.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        pos_label : int, default=1</span>
-<span class="sd">            The label to use for the positive class.</span>
-<span class="sd">        threshold : float, default=0.5</span>
-<span class="sd">            The threshold to use for converting the predictions to binary</span>
-<span class="sd">            values. Logits will be converted to probabilities using the sigmoid</span>
-<span class="sd">            function.</span>
+<span class="sd">    pos_label : int, default=1</span>
+<span class="sd">        The label to use for the positive class.</span>
+<span class="sd">    threshold : float, default=0.5</span>
+<span class="sd">        The threshold to use for converting the predictions to binary</span>
+<span class="sd">        values. Logits will be converted to probabilities using the sigmoid</span>
+<span class="sd">        function.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import BinaryStatScores</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 1, 1, 0]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [0, 1, 0, 0]</span>
-<span class="sd">        &gt;&gt;&gt; metric = BinaryStatScores(threshold=0.5, pos_label=1)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target=target, preds=preds)</span>
-<span class="sd">        array([1, 0, 2, 1, 2])</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[1, 1, 0, 1, 0, 0], [0, 0, 1, 1, 0, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.9, 0.8, 0.3, 0.4, 0.5, 0.2], [0.2, 0.3, 0.6, 0.9, 0.4, 0.8]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(target=t, preds=p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        array([4, 2, 5, 1, 5])</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import BinaryStatScores</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 1, 1, 0]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [0, 1, 0, 0]</span>
+<span class="sd">    &gt;&gt;&gt; metric = BinaryStatScores(threshold=0.5, pos_label=1)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target=target, preds=preds)</span>
+<span class="sd">    array([1, 0, 2, 1, 2])</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[1, 1, 0, 1, 0, 0], [0, 0, 1, 1, 0, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.9, 0.8, 0.3, 0.4, 0.5, 0.2], [0.2, 0.3, 0.6, 0.9, 0.4, 0.8]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(target=t, preds=p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    array([4, 2, 5, 1, 5])</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -313,7 +313,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
         <span class="sd">&quot;&quot;&quot;Update the state variables.&quot;&quot;&quot;</span>
         <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_binary_stat_scores_format</span><span class="p">(</span>
-            <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold</span>
+            <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pos_label</span>
         <span class="p">)</span>
 
         <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_binary_stat_scores_update</span><span class="p">(</span>
@@ -326,65 +326,65 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            numpy.ndarray</span>
-<span class="sd">                The binary stat scores. The order is true positives (tp),</span>
-<span class="sd">                false positives (fp), true negatives (tn), false negatives</span>
-<span class="sd">                (fn) and support (tp + fn).</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            The binary stat scores. The order is true positives (tp),</span>
+<span class="sd">            false positives (fp), true negatives (tn), false negatives</span>
+<span class="sd">            (fn) and support (tp + fn).</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_final_state</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">_stat_scores_compute</span><span class="p">(</span><span class="n">tp</span><span class="o">=</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="o">=</span><span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="o">=</span><span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">_stat_scores_compute</span><span class="p">(</span><span class="n">tp</span><span class="o">=</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="o">=</span><span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="o">=</span><span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">,</span> <span class="n">classwise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="MulticlassStatScores"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.stat_scores.html#cyclops.evaluate.metrics.stat_scores.MulticlassStatScores">[docs]</a><span class="k">class</span> <span class="nc">MulticlassStatScores</span><span class="p">(</span><span class="n">_AbstractScores</span><span class="p">):</span>
+<div class="viewcode-block" id="MulticlassStatScores"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.stat_scores.html#cyclops.evaluate.metrics.stat_scores.MulticlassStatScores">[docs]</a><span class="k">class</span> <span class="nc">MulticlassStatScores</span><span class="p">(</span><span class="n">_AbstractScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multiclass_stat_scores&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute multiclass stat scores.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        num_classes : int</span>
-<span class="sd">            The total number of classes for the problem.</span>
-<span class="sd">        top_k : Optional[int], default=None</span>
-<span class="sd">            If given, and predictions are probabilities/logits, the score will</span>
-<span class="sd">            be computed only for the top k classes. Otherwise, ``top_k`` will be</span>
-<span class="sd">            set to 1.</span>
-<span class="sd">        classwise : bool, default=True</span>
-<span class="sd">            Whether to return the stat scores for each class or sum over all</span>
-<span class="sd">            classes.</span>
+<span class="sd">    num_classes : int</span>
+<span class="sd">        The total number of classes for the problem.</span>
+<span class="sd">    top_k : Optional[int], default=None</span>
+<span class="sd">        If given, and predictions are probabilities/logits, the score will</span>
+<span class="sd">        be computed only for the top k classes. Otherwise, ``top_k`` will be</span>
+<span class="sd">        set to 1.</span>
+<span class="sd">    classwise : bool, default=True</span>
+<span class="sd">        Whether to return the stat scores for each class or sum over all</span>
+<span class="sd">        classes.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import MulticlassStatScores</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 1, 2, 2, 2]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [0, 2, 1, 2, 0]</span>
-<span class="sd">        &gt;&gt;&gt; metric = MulticlassStatScores(num_classes=3, classwise=True)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target=target, preds=preds)</span>
-<span class="sd">        array([[1, 1, 3, 0, 1],</span>
-<span class="sd">                [0, 1, 3, 1, 1],</span>
-<span class="sd">                [1, 1, 1, 2, 3]])</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[2, 0, 2, 2, 1], [1, 1, 0, 2, 2]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [</span>
-<span class="sd">        ...         [</span>
-<span class="sd">        ...             [0.1, 0.2, 0.6],</span>
-<span class="sd">        ...             [0.6, 0.1, 0.2],</span>
-<span class="sd">        ...             [0.2, 0.6, 0.1],</span>
-<span class="sd">        ...             [0.2, 0.6, 0.1],</span>
-<span class="sd">        ...             [0.6, 0.2, 0.1],</span>
-<span class="sd">        ...         ],</span>
-<span class="sd">        ...         [</span>
-<span class="sd">        ...             [0.05, 0.1, 0.6],</span>
-<span class="sd">        ...             [0.1, 0.05, 0.6],</span>
-<span class="sd">        ...             [0.6, 0.1, 0.05],</span>
-<span class="sd">        ...             [0.1, 0.6, 0.05],</span>
-<span class="sd">        ...             [0.1, 0.6, 0.05],</span>
-<span class="sd">        ...         ],</span>
-<span class="sd">        ...     ]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(target=t, preds=p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        array([[2, 1, 7, 0, 2],</span>
-<span class="sd">                [0, 4, 3, 3, 3],</span>
-<span class="sd">                [1, 2, 3, 4, 5]])</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import MulticlassStatScores</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 1, 2, 2, 2]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [0, 2, 1, 2, 0]</span>
+<span class="sd">    &gt;&gt;&gt; metric = MulticlassStatScores(num_classes=3, classwise=True)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target=target, preds=preds)</span>
+<span class="sd">    array([[1, 1, 3, 0, 1],</span>
+<span class="sd">            [0, 1, 3, 1, 1],</span>
+<span class="sd">            [1, 1, 1, 2, 3]])</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[2, 0, 2, 2, 1], [1, 1, 0, 2, 2]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [</span>
+<span class="sd">    ...         [</span>
+<span class="sd">    ...             [0.1, 0.2, 0.6],</span>
+<span class="sd">    ...             [0.6, 0.1, 0.2],</span>
+<span class="sd">    ...             [0.2, 0.6, 0.1],</span>
+<span class="sd">    ...             [0.2, 0.6, 0.1],</span>
+<span class="sd">    ...             [0.6, 0.2, 0.1],</span>
+<span class="sd">    ...         ],</span>
+<span class="sd">    ...         [</span>
+<span class="sd">    ...             [0.05, 0.1, 0.6],</span>
+<span class="sd">    ...             [0.1, 0.05, 0.6],</span>
+<span class="sd">    ...             [0.6, 0.1, 0.05],</span>
+<span class="sd">    ...             [0.1, 0.6, 0.05],</span>
+<span class="sd">    ...             [0.1, 0.6, 0.05],</span>
+<span class="sd">    ...         ],</span>
+<span class="sd">    ...     ]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(target=t, preds=p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    array([[2, 1, 7, 0, 2],</span>
+<span class="sd">            [0, 4, 3, 3, 3],</span>
+<span class="sd">            [1, 2, 3, 4, 5]])</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -399,7 +399,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">top_k</span> <span class="o">=</span> <span class="n">top_k</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">classwise</span> <span class="o">=</span> <span class="n">classwise</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_create_state</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">classwise</span> <span class="k">else</span> <span class="n">num_classes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_state</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">num_classes</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MulticlassStatScores.update_state"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.stat_scores.html#cyclops.evaluate.metrics.stat_scores.MulticlassStatScores.update_state">[docs]</a>    <span class="k">def</span> <span class="nf">update_state</span><span class="p">(</span>  <span class="c1"># pylint: disable=arguments-differ</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span>
@@ -409,10 +409,7 @@
             <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">top_k</span>
         <span class="p">)</span>
         <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_multiclass_stat_scores_update</span><span class="p">(</span>
-            <span class="n">target</span><span class="p">,</span>
-            <span class="n">preds</span><span class="p">,</span>
-            <span class="n">num_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span><span class="p">,</span>
-            <span class="n">classwise</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">classwise</span><span class="p">,</span>
+            <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_state</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span></div>
 
@@ -421,52 +418,54 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            numpy.ndarray</span>
-<span class="sd">                The multiclass stat scores. The order is true positives (tp),</span>
-<span class="sd">                false positives (fp), true negatives (tn), false negatives</span>
-<span class="sd">                (fn) and support (tp + fn). If ``classwise`` is ``True``, the</span>
-<span class="sd">                shape is ``(num_classes, 5)``. Otherwise, the shape is ``(5,)``.</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            The multiclass stat scores. The order is true positives (tp),</span>
+<span class="sd">            false positives (fp), true negatives (tn), false negatives</span>
+<span class="sd">            (fn) and support (tp + fn). If ``classwise`` is ``True``, the</span>
+<span class="sd">            shape is ``(num_classes, 5)``. Otherwise, the shape is ``(5,)``.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_final_state</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">_stat_scores_compute</span><span class="p">(</span><span class="n">tp</span><span class="o">=</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="o">=</span><span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="o">=</span><span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">_stat_scores_compute</span><span class="p">(</span>
+            <span class="n">tp</span><span class="o">=</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="o">=</span><span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="o">=</span><span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">,</span> <span class="n">classwise</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">classwise</span>
+        <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="MultilabelStatScores"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.stat_scores.html#cyclops.evaluate.metrics.stat_scores.MultilabelStatScores">[docs]</a><span class="k">class</span> <span class="nc">MultilabelStatScores</span><span class="p">(</span><span class="n">_AbstractScores</span><span class="p">):</span>
+<div class="viewcode-block" id="MultilabelStatScores"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.stat_scores.html#cyclops.evaluate.metrics.stat_scores.MultilabelStatScores">[docs]</a><span class="k">class</span> <span class="nc">MultilabelStatScores</span><span class="p">(</span><span class="n">_AbstractScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multilabel_stat_scores&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute stat scores for multilabel problems.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        threshold : float, default=0.5</span>
-<span class="sd">            Threshold value for binarizing predictions that are probabilities or</span>
-<span class="sd">            logits. A sigmoid function is applied if the predictions are logits.</span>
-<span class="sd">        top_k : int, default=None</span>
-<span class="sd">            If given, and predictions are probabilities/logits, the score will</span>
-<span class="sd">            be computed only for the top k classes. Otherwise, ``top_k`` will be</span>
-<span class="sd">            set to 1.</span>
-<span class="sd">        labelwise : bool, default=False</span>
-<span class="sd">            Whether to return the stat scores for each label or sum over all labels.</span>
+<span class="sd">    threshold : float, default=0.5</span>
+<span class="sd">        Threshold value for binarizing predictions that are probabilities or</span>
+<span class="sd">        logits. A sigmoid function is applied if the predictions are logits.</span>
+<span class="sd">    top_k : int, default=None</span>
+<span class="sd">        If given, and predictions are probabilities/logits, the score will</span>
+<span class="sd">        be computed only for the top k classes. Otherwise, ``top_k`` will be</span>
+<span class="sd">        set to 1.</span>
+<span class="sd">    labelwise : bool, default=True</span>
+<span class="sd">        Whether to return the stat scores for each label or sum over all labels.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import MultilabelStatScores</span>
-<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 1]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]]</span>
-<span class="sd">        &gt;&gt;&gt; metric = MultilabelStatScores(num_labels=3, labelwise=True)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target=target, preds=preds)</span>
-<span class="sd">        array([[1, 0, 1, 0, 1],</span>
-<span class="sd">                [1, 0, 1, 0, 1],</span>
-<span class="sd">                [2, 0, 0, 0, 2]])</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[[0, 1, 1], [1, 0, 1]], [[0, 0, 1], [1, 1, 1]]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]],</span>
-<span class="sd">        ...         [[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(target=t, preds=p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        array([[2, 0, 2, 0, 2],</span>
-<span class="sd">                [1, 1, 1, 1, 2],</span>
-<span class="sd">                [4, 0, 0, 0, 4]])</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import MultilabelStatScores</span>
+<span class="sd">    &gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 1]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]]</span>
+<span class="sd">    &gt;&gt;&gt; metric = MultilabelStatScores(num_labels=3, labelwise=True)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target=target, preds=preds)</span>
+<span class="sd">    array([[1, 0, 1, 0, 1],</span>
+<span class="sd">            [1, 0, 1, 0, 1],</span>
+<span class="sd">            [2, 0, 0, 0, 2]])</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[[0, 1, 1], [1, 0, 1]], [[0, 0, 1], [1, 1, 1]]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]],</span>
+<span class="sd">    ...         [[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(target=t, preds=p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    array([[2, 0, 2, 0, 2],</span>
+<span class="sd">            [1, 1, 1, 1, 2],</span>
+<span class="sd">            [4, 0, 0, 0, 4]])</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -475,7 +474,7 @@
         <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
         <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">labelwise</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">labelwise</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
@@ -486,7 +485,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">top_k</span> <span class="o">=</span> <span class="n">top_k</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">labelwise</span> <span class="o">=</span> <span class="n">labelwise</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_create_state</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelwise</span> <span class="k">else</span> <span class="n">num_labels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_state</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">num_labels</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MultilabelStatScores.update_state"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.stat_scores.html#cyclops.evaluate.metrics.stat_scores.MultilabelStatScores.update_state">[docs]</a>    <span class="k">def</span> <span class="nf">update_state</span><span class="p">(</span>  <span class="c1"># pylint: disable=arguments-differ</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span>
@@ -500,10 +499,7 @@
             <span class="n">top_k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">top_k</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_multilabel_stat_scores_update</span><span class="p">(</span>
-            <span class="n">target</span><span class="p">,</span>
-            <span class="n">preds</span><span class="p">,</span>
-            <span class="n">num_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_labels</span><span class="p">,</span>
-            <span class="n">labelwise</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labelwise</span><span class="p">,</span>
+            <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_labels</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_state</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span></div>
 
@@ -512,119 +508,119 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            numpy.ndarray</span>
-<span class="sd">                The multilabel stat scores. The order is true positives (tp),</span>
-<span class="sd">                false positives (fp), true negatives (tn), false negatives</span>
-<span class="sd">                (fn) and support (tp + fn). If ``labelwise`` is ``True``, the</span>
-<span class="sd">                shape is ``(num_labels, 5)``. Otherwise, the shape is ``(5,)``.</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            The multilabel stat scores. The order is true positives (tp),</span>
+<span class="sd">            false positives (fp), true negatives (tn), false negatives</span>
+<span class="sd">            (fn) and support (tp + fn). If ``labelwise`` is ``True``, the</span>
+<span class="sd">            shape is ``(num_labels, 5)``. Otherwise, the shape is ``(5,)``.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_final_state</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">_stat_scores_compute</span><span class="p">(</span><span class="n">tp</span><span class="o">=</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="o">=</span><span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="o">=</span><span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">_stat_scores_compute</span><span class="p">(</span>
+            <span class="n">tp</span><span class="o">=</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="o">=</span><span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="o">=</span><span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">,</span> <span class="n">classwise</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labelwise</span>
+        <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="StatScores"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.stat_scores.html#cyclops.evaluate.metrics.stat_scores.StatScores">[docs]</a><span class="k">class</span> <span class="nc">StatScores</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<div class="viewcode-block" id="StatScores"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.stat_scores.html#cyclops.evaluate.metrics.stat_scores.StatScores">[docs]</a><span class="k">class</span> <span class="nc">StatScores</span><span class="p">(</span><span class="n">Metric</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;stat_scores&quot;</span><span class="p">,</span> <span class="n">force_register</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute stat scores for binary, multiclass and multilabel problems.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
-<span class="sd">            The task type. Can be either ``binary``, ``multiclass`` or</span>
-<span class="sd">            ``multilabel``.</span>
-<span class="sd">        pos_label : int, default=1</span>
-<span class="sd">            The positive label to report. Only used for binary tasks.</span>
-<span class="sd">        threshold : float, default=0.5</span>
-<span class="sd">            The threshold to use for binarizing the predictions if logits or</span>
-<span class="sd">            probabilities are provided. If logits are provided, a sigmoid function</span>
-<span class="sd">            is applied prior to binarization. Used for binary and multilabel tasks.</span>
-<span class="sd">        num_classes : int</span>
-<span class="sd">            The number of classes for the problem. Required for multiclass tasks.</span>
-<span class="sd">        classwise : bool, default=True</span>
-<span class="sd">            Whether to return the stat scores for each class or sum over all</span>
-<span class="sd">            classes. Only used for multiclass tasks.</span>
-<span class="sd">        top_k : int, default=None</span>
-<span class="sd">            If given, and predictions are probabilities/logits, the score will</span>
-<span class="sd">            be computed only for the top k classes. Otherwise, ``top_k`` will be</span>
-<span class="sd">            set to 1. Used for multiclass and multilabel tasks.</span>
-<span class="sd">        num_labels : int</span>
-<span class="sd">            The number of labels. Only used for multilabel tasks.</span>
-<span class="sd">        labelwise : bool, default=False</span>
-<span class="sd">            Whether to compute the stat scores labelwise. Only used for multilabel</span>
-<span class="sd">            tasks.</span>
+<span class="sd">    task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
+<span class="sd">        The task type. Can be either ``binary``, ``multiclass`` or ``multilabel``.</span>
+<span class="sd">    pos_label : int, default=1</span>
+<span class="sd">        The positive label to report. Only used for binary tasks.</span>
+<span class="sd">    threshold : float, default=0.5</span>
+<span class="sd">        The threshold to use for binarizing the predictions if logits or</span>
+<span class="sd">        probabilities are provided. If logits are provided, a sigmoid function</span>
+<span class="sd">        is applied prior to binarization. Used for binary and multilabel tasks.</span>
+<span class="sd">    num_classes : int</span>
+<span class="sd">        The number of classes for the problem. Required for multiclass tasks.</span>
+<span class="sd">    classwise : bool, default=True</span>
+<span class="sd">        Whether to return the stat scores for each class or sum over all</span>
+<span class="sd">        classes. Only used for multiclass tasks.</span>
+<span class="sd">    top_k : int, default=None</span>
+<span class="sd">        If given, and predictions are probabilities/logits, the score will</span>
+<span class="sd">        be computed only for the top k classes. Otherwise, ``top_k`` will be</span>
+<span class="sd">        set to 1. Used for multiclass and multilabel tasks.</span>
+<span class="sd">    num_labels : int</span>
+<span class="sd">        The number of labels. Only used for multilabel tasks.</span>
+<span class="sd">    labelwise : bool, default=False</span>
+<span class="sd">        Whether to compute the stat scores labelwise. Only used for multilabel</span>
+<span class="sd">        tasks.</span>
 
 
-<span class="sd">    Examples (binary)</span>
-<span class="sd">    -----------------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import StatScores</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 1, 1, 0]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [0, 1, 0, 0]</span>
-<span class="sd">        &gt;&gt;&gt; metric = StatScores(task=&quot;binary&quot;, threshold=0.5, pos_label=1)</span>
-<span class="sd">        &gt;&gt;&gt; metric.update_state(target=target, preds=preds)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        array([1, 0, 2, 1, 2])</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[1, 1, 0, 1, 0, 0], [0, 0, 1, 1, 0, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.9, 0.8, 0.3, 0.4, 0.5, 0.2], [0.2, 0.3, 0.6, 0.9, 0.4, 0.8]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric(target=t, preds=p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        array([4, 2, 5, 1, 5])</span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    (binary)</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import StatScores</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 1, 1, 0]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [0, 1, 0, 0]</span>
+<span class="sd">    &gt;&gt;&gt; metric = StatScores(task=&quot;binary&quot;, threshold=0.5, pos_label=1)</span>
+<span class="sd">    &gt;&gt;&gt; metric.update_state(target=target, preds=preds)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    array([1, 0, 2, 1, 2])</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[1, 1, 0, 1, 0, 0], [0, 0, 1, 1, 0, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.9, 0.8, 0.3, 0.4, 0.5, 0.2], [0.2, 0.3, 0.6, 0.9, 0.4, 0.8]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric(target=t, preds=p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    array([4, 2, 5, 1, 5])</span>
 
-<span class="sd">    Examples (multiclass)</span>
-<span class="sd">    ---------------------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import StatScores</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 1, 2, 2, 2]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [0, 2, 1, 2, 0]</span>
-<span class="sd">        &gt;&gt;&gt; metric = StatScores(task=&quot;multiclass&quot;, num_classes=3, classwise=True)</span>
-<span class="sd">        &gt;&gt;&gt; metric.update(target=target, preds=preds)</span>
-<span class="sd">        array([[1, 1, 3, 0, 1],</span>
-<span class="sd">                [0, 1, 3, 1, 1],</span>
-<span class="sd">                [1, 1, 1, 2, 3]])</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[2, 0, 2, 2, 1], [1, 1, 0, 2, 2]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [</span>
-<span class="sd">        ...         [</span>
-<span class="sd">        ...             [0.1, 0.2, 0.6],</span>
-<span class="sd">        ...             [0.6, 0.1, 0.2],</span>
-<span class="sd">        ...             [0.2, 0.6, 0.1],</span>
-<span class="sd">        ...             [0.2, 0.6, 0.1],</span>
-<span class="sd">        ...             [0.6, 0.2, 0.1],</span>
-<span class="sd">        ...         ],</span>
-<span class="sd">        ...         [</span>
-<span class="sd">        ...             [0.05, 0.1, 0.6],</span>
-<span class="sd">        ...             [0.1, 0.05, 0.6],</span>
-<span class="sd">        ...             [0.6, 0.1, 0.05],</span>
-<span class="sd">        ...             [0.1, 0.6, 0.05],</span>
-<span class="sd">        ...             [0.1, 0.6, 0.05],</span>
-<span class="sd">        ...         ],</span>
-<span class="sd">        ...     ]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(target=t, preds=p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        array([[2, 1, 7, 0, 2],</span>
-<span class="sd">                [0, 4, 3, 3, 3],</span>
-<span class="sd">                [1, 2, 3, 4, 5]])</span>
+<span class="sd">    (multiclass)</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import StatScores</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 1, 2, 2, 2]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [0, 2, 1, 2, 0]</span>
+<span class="sd">    &gt;&gt;&gt; metric = StatScores(task=&quot;multiclass&quot;, num_classes=3, classwise=True)</span>
+<span class="sd">    &gt;&gt;&gt; metric.update(target=target, preds=preds)</span>
+<span class="sd">    array([[1, 1, 3, 0, 1],</span>
+<span class="sd">            [0, 1, 3, 1, 1],</span>
+<span class="sd">            [1, 1, 1, 2, 3]])</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[2, 0, 2, 2, 1], [1, 1, 0, 2, 2]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [</span>
+<span class="sd">    ...         [</span>
+<span class="sd">    ...             [0.1, 0.2, 0.6],</span>
+<span class="sd">    ...             [0.6, 0.1, 0.2],</span>
+<span class="sd">    ...             [0.2, 0.6, 0.1],</span>
+<span class="sd">    ...             [0.2, 0.6, 0.1],</span>
+<span class="sd">    ...             [0.6, 0.2, 0.1],</span>
+<span class="sd">    ...         ],</span>
+<span class="sd">    ...         [</span>
+<span class="sd">    ...             [0.05, 0.1, 0.6],</span>
+<span class="sd">    ...             [0.1, 0.05, 0.6],</span>
+<span class="sd">    ...             [0.6, 0.1, 0.05],</span>
+<span class="sd">    ...             [0.1, 0.6, 0.05],</span>
+<span class="sd">    ...             [0.1, 0.6, 0.05],</span>
+<span class="sd">    ...         ],</span>
+<span class="sd">    ...     ]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(target=t, preds=p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    array([[2, 1, 7, 0, 2],</span>
+<span class="sd">            [0, 4, 3, 3, 3],</span>
+<span class="sd">            [1, 2, 3, 4, 5]])</span>
 
-<span class="sd">    Examples (multilabel)</span>
-<span class="sd">    ---------------------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import StatScores</span>
-<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 1]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]]</span>
-<span class="sd">        &gt;&gt;&gt; metric = StatScores(task=&quot;multilabel&quot;, num_labels=3, labelwise=True)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target=target, preds=preds)</span>
-<span class="sd">        array([[1, 0, 1, 0, 1],</span>
-<span class="sd">                [1, 0, 1, 0, 1],</span>
-<span class="sd">                [2, 0, 0, 0, 2]])</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[[0, 1, 1], [1, 0, 1]], [[0, 0, 1], [1, 1, 1]]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]],</span>
-<span class="sd">        ...         [[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(target=t, preds=p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        array([[2, 0, 2, 0, 2],</span>
-<span class="sd">                [1, 1, 1, 1, 2],</span>
-<span class="sd">                [4, 0, 0, 0, 4]])</span>
+<span class="sd">    (multilabel)</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import StatScores</span>
+<span class="sd">    &gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 1]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]]</span>
+<span class="sd">    &gt;&gt;&gt; metric = StatScores(task=&quot;multilabel&quot;, num_labels=3, labelwise=True)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target=target, preds=preds)</span>
+<span class="sd">    array([[1, 0, 1, 0, 1],</span>
+<span class="sd">            [1, 0, 1, 0, 1],</span>
+<span class="sd">            [2, 0, 0, 0, 2]])</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[[0, 1, 1], [1, 0, 1]], [[0, 0, 1], [1, 1, 1]]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]],</span>
+<span class="sd">    ...         [[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(target=t, preds=p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    array([[2, 0, 2, 0, 2],</span>
+<span class="sd">            [1, 1, 1, 1, 2],</span>
+<span class="sd">            [4, 0, 0, 0, 4]])</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 

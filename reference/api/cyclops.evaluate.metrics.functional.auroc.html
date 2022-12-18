@@ -137,8 +137,10 @@
 <li class="toctree-l4 current"><a class="reference internal" href="cyclops.evaluate.metrics.html">cyclops.evaluate.metrics package</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="cyclops.evaluate.html#submodules">Submodules</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.evaluator.html">cyclops.evaluate.evaluator module</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="cyclops.evaluate.metrics.html">cyclops.evaluate.metrics package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="cyclops.evaluate.metrics.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l4 current"><a class="reference internal" href="cyclops.evaluate.metrics.functional.html">cyclops.evaluate.metrics.functional package</a></li>
@@ -293,48 +295,49 @@
 <dt class="sig sig-object py" id="cyclops.evaluate.metrics.functional.auroc.auroc">
 <span class="sig-name descname"><span class="pre">auroc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_fpr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresholds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluate/metrics/functional/auroc.html#auroc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluate.metrics.functional.auroc.auroc" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the area under the ROC curve for different tasks.</p>
-<blockquote>
-<div><dl>
+<dl>
 <dt>target<span class="classifier">ArrayLike</span></dt><dd><p>Ground truth (correct) target values.</p>
 </dd>
-<dt>preds<span class="classifier">ArrayLike</span></dt><dd><p>Estimated probabilities or decision function. If <code class="docutils literal notranslate"><span class="pre">preds</span></code> is not in
-the range [0, 1], a sigmoid function is applied to transform it to
-the range [0, 1].</p>
+<dt>preds<span class="classifier">ArrayLike</span></dt><dd><p>Estimated probabilities or decision function. If <code class="docutils literal notranslate"><span class="pre">preds</span></code> is not in the
+range [0, 1], a sigmoid function is applied to transform it to the range
+[0, 1].</p>
 </dd>
 <dt>task<span class="classifier">Literal[“binary”, “multiclass”, “multilabel”]</span></dt><dd><p>Task type. One of <code class="docutils literal notranslate"><span class="pre">binary</span></code>, <code class="docutils literal notranslate"><span class="pre">multiclass</span></code>, <code class="docutils literal notranslate"><span class="pre">multilabel</span></code>.</p>
 </dd>
-<dt>max_fpr<span class="classifier">float, default=None</span></dt><dd><p>The maximum value of the false positive rate. If not None, the
-a partial AUC in the range [0, max_fpr] is returned. Only used for
-binary classification.</p>
+<dt>max_fpr<span class="classifier">float, default=None</span></dt><dd><p>The maximum value of the false positive rate. If not None, a partial AUC
+in the range [0, max_fpr] is returned. Only used for binary classification.</p>
 </dd>
 <dt>thresholds<span class="classifier">int or list of floats or numpy.ndarray of floats, default=None</span></dt><dd><p>Thresholds used for binarizing the values of <code class="docutils literal notranslate"><span class="pre">preds</span></code>.
 If int, then the number of thresholds to use.
 If list or array, then the thresholds to use.
-If None, then the thresholds are automatically determined by the
-unique values in <code class="docutils literal notranslate"><span class="pre">preds</span></code>.</p>
+If None, then the thresholds are automatically determined by the unique
+values in <code class="docutils literal notranslate"><span class="pre">preds</span></code>.</p>
 </dd>
-<dt>num_classes<span class="classifier">int, default=None</span></dt><dd><p>Number of classes. This parameter is required for the <code class="docutils literal notranslate"><span class="pre">multiclass</span></code>
-task.</p>
+<dt>num_classes<span class="classifier">int, default=None</span></dt><dd><p>Number of classes. This parameter is required for the <code class="docutils literal notranslate"><span class="pre">multiclass</span></code> task.</p>
 </dd>
-<dt>num_labels<span class="classifier">int, default=None</span></dt><dd><p>Number of labels. This parameter is required for the <code class="docutils literal notranslate"><span class="pre">multilabel</span></code>
-task.</p>
+<dt>num_labels<span class="classifier">int, default=None</span></dt><dd><p>Number of labels. This parameter is required for the <code class="docutils literal notranslate"><span class="pre">multilabel</span></code> task.</p>
 </dd>
 <dt>average<span class="classifier">Literal[“micro”, “macro”, “weighted”], default=None</span></dt><dd><p>If not None, apply the method to compute the average area under the
 ROC curve. Only applicable for the <code class="docutils literal notranslate"><span class="pre">multiclass</span></code> and <code class="docutils literal notranslate"><span class="pre">multilabel</span></code>
-tasks. One of:</p>
+tasks. One of:
+- <code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true</p>
 <blockquote>
-<div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally by counting the total true
-positives, false negatives and false positives.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each label, and find their unweighted
-mean. This does not take label imbalance into account.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their
-average, weighted by support (accounting for label imbalance).</p></li>
-</ul>
+<div><p>positives, false negatives and false positives.</p>
 </div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each label, and find their unweighted</dt><dd><p>mean. This does not take label imbalance into account.</p>
 </dd>
 </dl>
-</div></blockquote>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their</dt><dd><p>average, weighted by support (accounting for label imbalance).</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><strong>auroc_score</strong> – Area under the ROC curve. If <code class="docutils literal notranslate"><span class="pre">average</span></code> is None or task is <code class="docutils literal notranslate"><span class="pre">binary</span></code>,
@@ -344,11 +347,31 @@ average, weighted by support (accounting for label imbalance).</p></li>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<p>(binary)
+&gt;&gt;&gt; from cyclops.evaluation.metrics.functional import auroc
+&gt;&gt;&gt; target = [0, 1, 0, 1]
+&gt;&gt;&gt; preds = [0.1, 0.35, 0.4, 0.8]
+&gt;&gt;&gt; auroc(target, preds, task=”binary”)
+0.75</p>
+<p>(multiclass)
+&gt;&gt;&gt; from cyclops.evaluation.metrics.functional import auroc
+&gt;&gt;&gt; target = [0, 1, 2, 0, 1, 2]
+&gt;&gt;&gt; preds = [[0.1, 0.6, 0.3], [0.05, 0.95, 0], [0.5, 0.3, 0.2],
+…          [0.1, 0.6, 0.3], [0.05, 0.95, 0], [0.5, 0.3, 0.2]]
+&gt;&gt;&gt; auroc(target, preds, task=”multiclass”, num_classes=3, average=None)
+array([0.5, 1. , 0.5])</p>
+<p>(multilabel)
+&gt;&gt;&gt; from cyclops.evaluation.metrics.functional import auroc
+&gt;&gt;&gt; target = [[0, 1], [1, 1], [0, 0], [1, 0]]
+&gt;&gt;&gt; preds = [[0.1, 0.9], [0.8, 0.2], [0.4, 0.6], [0.2, 0.8]]
+&gt;&gt;&gt; auroc(target, preds, task=”multilabel”, num_labels=2, average=None)
+array([0.25, 0.5 ])</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cyclops.evaluate.metrics.functional.auroc.binary_auroc">
-<span class="sig-name descname"><span class="pre">binary_auroc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_fpr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresholds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluate/metrics/functional/auroc.html#binary_auroc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluate.metrics.functional.auroc.binary_auroc" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">binary_auroc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_fpr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresholds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluate/metrics/functional/auroc.html#binary_auroc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluate.metrics.functional.auroc.binary_auroc" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the area under the ROC curve for binary classification tasks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -364,6 +387,7 @@ If int, then the number of thresholds to use.
 If list or array, then the thresholds to use.
 If None, then the thresholds are automatically determined by the
 unique values in <code class="docutils literal notranslate"><span class="pre">preds</span></code>.</p></li>
+<li><p><strong>pos_label</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>default=1</em>) – The label of the positive class.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -407,8 +431,11 @@ this determines the type of averaging performed on the scores. One of
 <div><p>mean. This does not take class imbalance into account.</p>
 </div></blockquote>
 <ul>
-<li><p><cite>weighted</cite>: Calculate metrics for each class, and find their average,
-weighted by support (the number of true instances for each class).</p></li>
+<li><dl class="simple">
+<dt><cite>weighted</cite>: Calculate metrics for each class, and find their average,</dt><dd><p>weighted by support (the number of true instances for each class).</p>
+</dd>
+</dl>
+</li>
 </ul>
 </p></li>
 </ul>

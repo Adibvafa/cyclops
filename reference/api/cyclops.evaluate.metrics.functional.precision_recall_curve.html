@@ -137,8 +137,10 @@
 <li class="toctree-l4 current"><a class="reference internal" href="cyclops.evaluate.metrics.html">cyclops.evaluate.metrics package</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="cyclops.evaluate.html#submodules">Submodules</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.evaluator.html">cyclops.evaluate.evaluator module</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="cyclops.evaluate.metrics.html">cyclops.evaluate.metrics package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="cyclops.evaluate.metrics.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l4 current"><a class="reference internal" href="cyclops.evaluate.metrics.functional.html">cyclops.evaluate.metrics.functional package</a></li>
@@ -348,9 +350,8 @@ with score &gt;= thresholds[i].</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>target</strong> (<em>ArrayLike</em>) – Ground truth (correct) target values.</p></li>
-<li><p><strong>preds</strong> (<em>ArrayLike</em>) – Estimated probabilities or decision function. If <code class="docutils literal notranslate"><span class="pre">preds</span></code> is a
-logit, it will be converted to a probability using the softmax
-function.</p></li>
+<li><p><strong>preds</strong> (<em>ArrayLike</em>) – Estimated probabilities or decision function. If <code class="docutils literal notranslate"><span class="pre">preds</span></code> is a logit, it
+will be converted to a probability using the softmax function.</p></li>
 <li><p><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of classes in the dataset.</p></li>
 <li><p><strong>thresholds</strong> (<em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>]</em><em>, </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><em>numpy.ndarray</em></a><em>]</em><em>, </em><em>default=None</em>) – Thresholds used for computing the precision and recall scores.
 If int, then the number of thresholds to use.
@@ -473,10 +474,8 @@ then the number of thresholds to use. If list or array, then the
 thresholds to use. If None, then the thresholds are automatically
 determined by the sunique values in <code class="docutils literal notranslate"><span class="pre">preds</span></code></p></li>
 <li><p><strong>pos_label</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>default=1</em>) – The label of the positive class.</p></li>
-<li><p><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – The number of classes in the dataset. Required if <code class="docutils literal notranslate"><span class="pre">task</span></code> is
-<code class="docutils literal notranslate"><span class="pre">&quot;multiclass&quot;</span></code>.</p></li>
-<li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – The number of labels in the dataset. Required if <code class="docutils literal notranslate"><span class="pre">task</span></code> is
-<code class="docutils literal notranslate"><span class="pre">&quot;multilabel&quot;</span></code>.</p></li>
+<li><p><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – The number of classes in the dataset. Required if <code class="docutils literal notranslate"><span class="pre">task</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;multiclass&quot;</span></code>.</p></li>
+<li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – The number of labels in the dataset. Required if <code class="docutils literal notranslate"><span class="pre">task</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;multilabel&quot;</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -504,6 +503,45 @@ scores for class or label <code class="docutils literal notranslate"><span class
 </ul>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<p>(binary)
+&gt;&gt;&gt; from cyclops.evaluation.metrics.functional import precision_recall_curve
+&gt;&gt;&gt; target = [0, 0, 1, 1]
+&gt;&gt;&gt; preds = [0.1, 0.4, 0.35, 0.8]
+&gt;&gt;&gt; precision, recall, thresholds = precision_recall_curve(target, preds,
+…     “binary”)
+&gt;&gt;&gt; precision
+array([0.66666667, 0.5, 1., 1.])
+&gt;&gt;&gt; recall
+array([1. , 0.5, 0.5, 0. ])
+&gt;&gt;&gt; thresholds
+array([0.35, 0.4 , 0.8 ])</p>
+<p>(multiclass)
+&gt;&gt;&gt; from cyclops.evaluation.metrics.functional import precision_recall_curve
+&gt;&gt;&gt; target = [0, 1, 2, 2]
+&gt;&gt;&gt; preds = [[0.1, 0.6, 0.3], [0.05, 0.95, 0], [0.5, 0.3, 0.2], [0.3, 0.4, 0.3]]
+&gt;&gt;&gt; precision, recall, thresholds = precision_recall_curve(
+…     target, preds, task=”multiclass”, num_classes=3)
+&gt;&gt;&gt; precision
+[array([0.33333333, 0.        , 0.        , 1.        ]),
+array([1., 1.]),
+array([0.66666667, 0.5       , 1.        ])]
+&gt;&gt;&gt; recall
+[array([1., 0., 0., 0.]), array([1., 0.]), array([1. , 0.5, 0. ])]
+&gt;&gt;&gt; thresholds
+[array([0.1, 0.3, 0.5]), array([0.95]), array([0.2, 0.3])]</p>
+<p>(multilabel)
+&gt;&gt;&gt; from cyclops.evaluation.metrics.functional import precision_recall_curve
+&gt;&gt;&gt; target = [[1, 1, 0], [0, 1, 0]]
+&gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.05, 0.95, 0.35]]
+&gt;&gt;&gt; precision, recall, thresholds = precision_recall_curve(target, preds,
+…     “multilabel”, num_labels=3)
+&gt;&gt;&gt; precision
+[array([1., 1.]), array([1., 1., 1.]), array([0., 1.])]
+&gt;&gt;&gt; recall
+[array([1., 0.]), array([1. , 0.5, 0. ]), array([0., 0.])]
+&gt;&gt;&gt; thresholds
+[array([0.1]), array([0.9 , 0.95]), array([0.8])]</p>
 </dd></dl>
 
 </section>

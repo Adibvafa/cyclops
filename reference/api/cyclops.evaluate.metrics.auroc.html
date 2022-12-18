@@ -137,8 +137,10 @@
 <li class="toctree-l4 current"><a class="reference internal" href="cyclops.evaluate.metrics.html">cyclops.evaluate.metrics package</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="cyclops.evaluate.html#submodules">Submodules</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.evaluator.html">cyclops.evaluate.evaluator module</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="cyclops.evaluate.metrics.html">cyclops.evaluate.metrics package</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="cyclops.evaluate.metrics.html#subpackages">Subpackages</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="cyclops.evaluate.metrics.html#submodules">Submodules</a><ul class="current">
@@ -292,18 +294,15 @@
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>task</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;binary&quot;</em><em>, </em><em>&quot;multiclass&quot;</em><em>, </em><em>&quot;multilabel&quot;</em><em>]</em>) – Task type. One of <code class="docutils literal notranslate"><span class="pre">binary</span></code>, <code class="docutils literal notranslate"><span class="pre">multiclass</span></code>, <code class="docutils literal notranslate"><span class="pre">multilabel</span></code>.</p></li>
-<li><p><strong>max_fpr</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>default=None</em>) – The maximum value of the false positive rate. If not None, the
-a partial AUC in the range [0, max_fpr] is returned. Only used for
-binary classification.</p></li>
+<li><p><strong>max_fpr</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>default=None</em>) – The maximum value of the false positive rate. If not None, a partial AUC
+in the range [0, max_fpr] is returned. Only used for binary classification.</p></li>
 <li><p><strong>thresholds</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of floats</em><em> or </em><em>numpy.ndarray of floats</em><em>, </em><em>default=None</em>) – Thresholds used for binarizing the values of <code class="docutils literal notranslate"><span class="pre">preds</span></code>.
 If int, then the number of thresholds to use.
 If list or array, then the thresholds to use.
 If None, then the thresholds are automatically determined by the
 unique values in <code class="docutils literal notranslate"><span class="pre">preds</span></code>.</p></li>
-<li><p><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>default=None</em>) – Number of classes. This parameter is required for the <code class="docutils literal notranslate"><span class="pre">multiclass</span></code>
-task.</p></li>
-<li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>default=None</em>) – Number of labels. This parameter is required for the <code class="docutils literal notranslate"><span class="pre">multilabel</span></code>
-task.</p></li>
+<li><p><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>default=None</em>) – Number of classes. This parameter is required for the <code class="docutils literal notranslate"><span class="pre">multiclass</span></code> task.</p></li>
+<li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>default=None</em>) – Number of labels. This parameter is required for the <code class="docutils literal notranslate"><span class="pre">multilabel</span></code> task.</p></li>
 <li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>]</em><em>, </em><em>default=None</em>) – <p>If not None, apply the method to compute the average area under the
 ROC curve. Only applicable for the <code class="docutils literal notranslate"><span class="pre">multiclass</span></code> and <code class="docutils literal notranslate"><span class="pre">multilabel</span></code>
 tasks. One of:
@@ -313,18 +312,66 @@ tasks. One of:
 <div><p>mean. This does not take label imbalance into account.</p>
 </div></blockquote>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their average,
-weighted by support (accounting for label imbalance).</p></li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their average,</dt><dd><p>weighted by support (accounting for label imbalance).</p>
+</dd>
+</dl>
+</li>
 </ul>
 </p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<p>(binary)
+&gt;&gt;&gt; from cyclops.evaluation.metrics import BinaryAUROC
+&gt;&gt;&gt; target = [0, 0, 1, 1]
+&gt;&gt;&gt; preds = [0.1, 0.4, 0.35, 0.8]
+&gt;&gt;&gt; metric = BinaryAUROC()
+&gt;&gt;&gt; metric(target, preds)
+0.75
+&gt;&gt;&gt; metric.reset_state()
+&gt;&gt;&gt; target = [[0, 1, 0], [1, 0, 1]]
+&gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.7, 0.2, 0.1]]
+&gt;&gt;&gt; for t, p in zip(target, preds):
+…     metric.update_state(t, p)
+&gt;&gt;&gt; metric.compute()
+0.6111111111111112</p>
+<p>(multiclass)
+&gt;&gt;&gt; from cyclops.evaluation.metrics import MulticlassAUROC
+&gt;&gt;&gt; target = [0, 1, 2, 0]
+&gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.89, 0.06],
+…         [0.05, 0.01, 0.94], [0.9, 0.05, 0.05]]
+&gt;&gt;&gt; metric = MulticlassAUROC(num_classes=3)
+&gt;&gt;&gt; metric(target, preds)
+array([1., 1., 1.])
+&gt;&gt;&gt; metric.reset_state()
+&gt;&gt;&gt; target = [[0, 1, 0], [1, 0, 1]]
+&gt;&gt;&gt; preds = [[[0.1, 0.9, 0.0], [0.7, 0.2, 0.1], [0.2, 0.3, 0.5]],
+…         [[0.1, 0.1, 0.8], [0.7, 0.2, 0.1], [0.2, 0.3, 0.5]]]
+&gt;&gt;&gt; for t, p in zip(target, preds):
+…     metric.update_state(t, p)
+&gt;&gt;&gt; metric.compute()
+array([0.5       , 0.22222222, 0.        ])</p>
+<p>(multilabel)
+&gt;&gt;&gt; from cyclops.evaluation.metrics import MultilabelAUROC
+&gt;&gt;&gt; target = [[0, 1], [1, 1], [1, 0]]
+&gt;&gt;&gt; preds = [[0.9, 0.05], [0.05, 0.89], [0.05, 0.01]]
+&gt;&gt;&gt; metric = MultilabelAUROC(num_labels=2)
+&gt;&gt;&gt; metric(target, preds)
+array([1., 1.])
+&gt;&gt;&gt; metric.reset_state()
+&gt;&gt;&gt; target = [[[0, 1], [1, 0]], [[1, 1], [1, 0]]]
+&gt;&gt;&gt; preds = [[[0.9, 0.05], [0.05, 0.89]], [[0.05, 0.89], [0.05, 0.01]]]
+&gt;&gt;&gt; for t, p in zip(target, preds):
+…     metric.update_state(t, p)
+&gt;&gt;&gt; metric.compute()
+array([1.   , 0.625])</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="cyclops.evaluate.metrics.auroc.BinaryAUROC">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BinaryAUROC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_fpr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresholds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluate/metrics/auroc.html#BinaryAUROC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluate.metrics.auroc.BinaryAUROC" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BinaryAUROC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_fpr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresholds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/cyclops/evaluate/metrics/auroc.html#BinaryAUROC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.evaluate.metrics.auroc.BinaryAUROC" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="cyclops.evaluate.metrics.precision_recall_curve.html#cyclops.evaluate.metrics.precision_recall_curve.BinaryPrecisionRecallCurve" title="cyclops.evaluate.metrics.precision_recall_curve.BinaryPrecisionRecallCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">cyclops.evaluate.metrics.precision_recall_curve.BinaryPrecisionRecallCurve</span></code></a></p>
 <p>Compute the area under the ROC curve for binary classification tasks.</p>
 <dl class="field-list simple">
@@ -384,14 +431,17 @@ If list or array, then the thresholds to use.
 If None, then the thresholds are automatically determined by the
 unique values in <code class="docutils literal notranslate"><span class="pre">preds</span></code>.</p></li>
 <li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>]</em><em>, </em><em>default=None</em>) – <p>If <code class="docutils literal notranslate"><span class="pre">None</span></code>, then the scores for each class are returned. Otherwise,
-this determines the type of averaging performed on the scores. One of
+this determines the type of averaging performed on the scores. One of:
 - <cite>macro</cite>: Calculate metrics for each class, and find their unweighted</p>
 <blockquote>
 <div><p>mean. This does not take class imbalance into account.</p>
 </div></blockquote>
 <ul>
-<li><p><cite>weighted</cite>: Calculate metrics for each class, and find their average,
-weighted by support (the number of true instances for each class).</p></li>
+<li><dl class="simple">
+<dt><cite>weighted</cite>: Calculate metrics for each class, and find their average,</dt><dd><p>weighted by support (the number of true instances for each class).</p>
+</dd>
+</dl>
+</li>
 </ul>
 </p></li>
 </ul>
@@ -443,15 +493,18 @@ If list or array, then the thresholds to use.
 If None, then the thresholds are automatically determined by the
 unique values in <code class="docutils literal notranslate"><span class="pre">preds</span></code>.</p></li>
 <li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>]</em><em>, </em><em>default=None</em>) – <p>If <code class="docutils literal notranslate"><span class="pre">None</span></code>, then the scores for each label are returned. Otherwise,
-this determines the type of averaging performed on the scores. One of
+this determines the type of averaging performed on the scores. One of:
 - <cite>micro</cite>: Calculate metrics globally.
 - <cite>macro</cite>: Calculate metrics for each label, and find their unweighted</p>
 <blockquote>
 <div><p>mean. This does not take label imbalance into account.</p>
 </div></blockquote>
 <ul>
-<li><p><cite>weighted`</cite>: Calculate metrics for each label, and find their average,
-weighted by support (the number of true instances for each label).</p></li>
+<li><dl class="simple">
+<dt><cite>weighted`</cite>: Calculate metrics for each label, and find their average,</dt><dd><p>weighted by support (the number of true instances for each label).</p>
+</dd>
+</dl>
+</li>
 </ul>
 </p></li>
 </ul>

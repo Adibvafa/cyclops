@@ -193,37 +193,37 @@
 <span class="c1"># mypy: ignore-errors</span>
 
 
-<div class="viewcode-block" id="BinaryPrecisionRecallCurve"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.precision_recall_curve.html#cyclops.evaluate.metrics.precision_recall_curve.BinaryPrecisionRecallCurve">[docs]</a><span class="k">class</span> <span class="nc">BinaryPrecisionRecallCurve</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<div class="viewcode-block" id="BinaryPrecisionRecallCurve"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.precision_recall_curve.html#cyclops.evaluate.metrics.precision_recall_curve.BinaryPrecisionRecallCurve">[docs]</a><span class="k">class</span> <span class="nc">BinaryPrecisionRecallCurve</span><span class="p">(</span><span class="n">Metric</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;binary_precision_recall_curve&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute precision-recall curve for binary input.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
-<span class="sd">            Thresholds used for computing the precision and recall scores.</span>
-<span class="sd">            If int, then the number of thresholds to use.</span>
-<span class="sd">            If list or numpy.ndarray, then the thresholds to use.</span>
-<span class="sd">            If None, then the thresholds are automatically determined by the</span>
-<span class="sd">            unique values in ``preds``.</span>
-<span class="sd">        pos_label : int</span>
-<span class="sd">            The label of the positive class.</span>
+<span class="sd">    thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
+<span class="sd">        Thresholds used for computing the precision and recall scores.</span>
+<span class="sd">        If int, then the number of thresholds to use.</span>
+<span class="sd">        If list or numpy.ndarray, then the thresholds to use.</span>
+<span class="sd">        If None, then the thresholds are automatically determined by the</span>
+<span class="sd">        unique values in ``preds``.</span>
+<span class="sd">    pos_label : int</span>
+<span class="sd">        The label of the positive class.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import BinaryPrecisionRecallCurve</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 1, 0, 1]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [0.1, 0.4, 0.35, 0.8]</span>
-<span class="sd">        &gt;&gt;&gt; metric = BinaryPrecisionRecallCurve(thresholds=3)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target, preds)</span>
-<span class="sd">        (array([0.5, 1. , 0. ]), array([1. , 0.5, 0. ]), array([0. , 0.5, 1. ]))</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 0, 1], [1, 1, 0, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.4, 0.35, 0.8], [0.6, 0.3, 0.1, 0.7]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(t, p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        (array([0.5       , 0.66666667, 0.        ]),</span>
-<span class="sd">        array([1. , 0.5, 0. ]),</span>
-<span class="sd">        array([0. , 0.5, 1. ]))</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import BinaryPrecisionRecallCurve</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 1, 0, 1]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [0.1, 0.4, 0.35, 0.8]</span>
+<span class="sd">    &gt;&gt;&gt; metric = BinaryPrecisionRecallCurve(thresholds=3)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target, preds)</span>
+<span class="sd">    (array([0.5, 1. , 0. ]), array([1. , 0.5, 0. ]), array([0. , 0.5, 1. ]))</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[0, 1, 0, 1], [1, 1, 0, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.1, 0.4, 0.35, 0.8], [0.6, 0.3, 0.1, 0.7]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(t, p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    (array([0.5       , 0.66666667, 0.        ]),</span>
+<span class="sd">    array([1. , 0.5, 0. ]),</span>
+<span class="sd">    array([0. , 0.5, 1. ]))</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -255,7 +255,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_binary_precision_recall_curve_format</span><span class="p">(</span>
-            <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="o">=</span><span class="n">preds</span>
+            <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="o">=</span><span class="n">preds</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pos_label</span>
         <span class="p">)</span>
         <span class="n">state</span> <span class="o">=</span> <span class="n">_binary_precision_recall_curve_update</span><span class="p">(</span>
             <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="o">=</span><span class="n">preds</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">thresholds</span>
@@ -284,51 +284,53 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="MulticlassPrecisionRecallCurve"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.precision_recall_curve.html#cyclops.evaluate.metrics.precision_recall_curve.MulticlassPrecisionRecallCurve">[docs]</a><span class="k">class</span> <span class="nc">MulticlassPrecisionRecallCurve</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<div class="viewcode-block" id="MulticlassPrecisionRecallCurve"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.precision_recall_curve.html#cyclops.evaluate.metrics.precision_recall_curve.MulticlassPrecisionRecallCurve">[docs]</a><span class="k">class</span> <span class="nc">MulticlassPrecisionRecallCurve</span><span class="p">(</span>
+    <span class="n">Metric</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multiclass_precision_recall_curve&quot;</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the precision-recall curve for multiclass problems.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        num_classes : int</span>
-<span class="sd">            The number of classes in the dataset.</span>
-<span class="sd">        thresholds : Union[int, List[float], numpy.ndarray], default=None</span>
-<span class="sd">            Thresholds used for computing the precision and recall scores.</span>
-<span class="sd">            If int, then the number of thresholds to use.</span>
-<span class="sd">            If list or array, then the thresholds to use.</span>
-<span class="sd">            If None, then the thresholds are automatically determined by the</span>
-<span class="sd">            unique values in ``preds``.</span>
+<span class="sd">    num_classes : int</span>
+<span class="sd">        The number of classes in the dataset.</span>
+<span class="sd">    thresholds : Union[int, List[float], numpy.ndarray], default=None</span>
+<span class="sd">        Thresholds used for computing the precision and recall scores.</span>
+<span class="sd">        If int, then the number of thresholds to use.</span>
+<span class="sd">        If list or array, then the thresholds to use.</span>
+<span class="sd">        If None, then the thresholds are automatically determined by the</span>
+<span class="sd">        unique values in ``preds``.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import MulticlassPrecisionRecallCurve</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 1, 2, 0]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.6, 0.3], [0.05, 0.95, 0.],</span>
-<span class="sd">        ...          [0.5, 0.3, 0.2], [0.2, 0.5, 0.3]]</span>
-<span class="sd">        &gt;&gt;&gt; metric = MulticlassPrecisionRecallCurve(num_classes=3, thresholds=3)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target, preds)</span>
-<span class="sd">        (array([[0.5       , 0.        , 0.        , 1.        ],</span>
-<span class="sd">                [0.25      , 0.33333333, 0.        , 1.        ],</span>
-<span class="sd">                [0.25      , 0.        , 0.        , 1.        ]]),</span>
-<span class="sd">        array([[1., 0., 0., 0.],</span>
-<span class="sd">               [1., 1., 0., 0.],</span>
-<span class="sd">               [1., 0., 0., 0.]]),</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import MulticlassPrecisionRecallCurve</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 1, 2, 0]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.1, 0.6, 0.3], [0.05, 0.95, 0.],</span>
+<span class="sd">    ...          [0.5, 0.3, 0.2], [0.2, 0.5, 0.3]]</span>
+<span class="sd">    &gt;&gt;&gt; metric = MulticlassPrecisionRecallCurve(num_classes=3, thresholds=3)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target, preds)</span>
+<span class="sd">    (array([[0.5       , 0.        , 0.        , 1.        ],</span>
+<span class="sd">            [0.25      , 0.33333333, 0.        , 1.        ],</span>
+<span class="sd">            [0.25      , 0.        , 0.        , 1.        ]]),</span>
+<span class="sd">    array([[1., 0., 0., 0.],</span>
+<span class="sd">            [1., 1., 0., 0.],</span>
+<span class="sd">            [1., 0., 0., 0.]]),</span>
+<span class="sd">    array([0. , 0.5, 1. ]))</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[0, 1, 2, 0], [1, 2, 0, 1]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [</span>
+<span class="sd">    ...     [[0.1, 0.6, 0.3], [0.05, 0.95, 0.], [0.5, 0.3, 0.2], [0.2, 0.5, 0.3]],</span>
+<span class="sd">    ...     [[0.3, 0.2, 0.5], [0.1, 0.7, 0.2], [0.6, 0.1, 0.3], [0.1, 0.8, 0.1]],</span>
+<span class="sd">    ... ]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(t, p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    (array([[0.375, 0.5  , 0.   , 1.   ],</span>
+<span class="sd">            [0.375, 0.4  , 0.   , 1.   ],</span>
+<span class="sd">            [0.25 , 0.   , 0.   , 1.   ]]),</span>
+<span class="sd">        array([[1.        , 0.33333333, 0.        , 0.        ],</span>
+<span class="sd">            [1.        , 0.66666667, 0.        , 0.        ],</span>
+<span class="sd">            [1.        , 0.        , 0.        , 0.        ]]),</span>
 <span class="sd">        array([0. , 0.5, 1. ]))</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 2, 0], [1, 2, 0, 1]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [</span>
-<span class="sd">        ...     [[0.1, 0.6, 0.3], [0.05, 0.95, 0.], [0.5, 0.3, 0.2], [0.2, 0.5, 0.3]],</span>
-<span class="sd">        ...     [[0.3, 0.2, 0.5], [0.1, 0.7, 0.2], [0.6, 0.1, 0.3], [0.1, 0.8, 0.1]],</span>
-<span class="sd">        ... ]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(t, p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        (array([[0.375, 0.5  , 0.   , 1.   ],</span>
-<span class="sd">                [0.375, 0.4  , 0.   , 1.   ],</span>
-<span class="sd">                [0.25 , 0.   , 0.   , 1.   ]]),</span>
-<span class="sd">         array([[1.        , 0.33333333, 0.        , 0.        ],</span>
-<span class="sd">                [1.        , 0.66666667, 0.        , 0.        ],</span>
-<span class="sd">                [1.        , 0.        , 0.        , 0.        ]]),</span>
-<span class="sd">         array([0. , 0.5, 1. ]))</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -399,43 +401,45 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="MultilabelPrecisionRecallCurve"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.precision_recall_curve.html#cyclops.evaluate.metrics.precision_recall_curve.MultilabelPrecisionRecallCurve">[docs]</a><span class="k">class</span> <span class="nc">MultilabelPrecisionRecallCurve</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<div class="viewcode-block" id="MultilabelPrecisionRecallCurve"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.precision_recall_curve.html#cyclops.evaluate.metrics.precision_recall_curve.MultilabelPrecisionRecallCurve">[docs]</a><span class="k">class</span> <span class="nc">MultilabelPrecisionRecallCurve</span><span class="p">(</span>
+    <span class="n">Metric</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multilabel_precision_recall_curve&quot;</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check and format the multilabel precision-recall curve input/data.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        num_labels : int</span>
-<span class="sd">            The number of labels in the dataset.</span>
-<span class="sd">        thresholds : int, list of floats or numpy.ndarray of floats, default=None</span>
-<span class="sd">            Thresholds used for computing the precision and recall scores.</span>
-<span class="sd">            If int, then the number of thresholds to use.</span>
-<span class="sd">            If list or array, then the thresholds to use.</span>
-<span class="sd">            If None, then the thresholds are automatically determined by the</span>
-<span class="sd">            unique values in ``preds``.</span>
+<span class="sd">    num_labels : int</span>
+<span class="sd">        The number of labels in the dataset.</span>
+<span class="sd">    thresholds : int, list of floats or numpy.ndarray of floats, default=None</span>
+<span class="sd">        Thresholds used for computing the precision and recall scores.</span>
+<span class="sd">        If int, then the number of thresholds to use.</span>
+<span class="sd">        If list or array, then the thresholds to use.</span>
+<span class="sd">        If None, then the thresholds are automatically determined by the</span>
+<span class="sd">        unique values in ``preds``.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import MultilabelPrecisionRecallCurve</span>
-<span class="sd">        &gt;&gt;&gt; target = [[0, 1], [1, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.9], [0.8, 0.2]]</span>
-<span class="sd">        &gt;&gt;&gt; metric = MultilabelPrecisionRecallCurve(num_labels=2, thresholds=3)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target, preds)</span>
-<span class="sd">        (array([[0.5, 1. , 0. , 1. ],</span>
-<span class="sd">                [0.5, 1. , 0. , 1. ]]),</span>
-<span class="sd">        array([[1., 1., 0., 0.],</span>
-<span class="sd">                [1., 1., 0., 0.]]),</span>
-<span class="sd">        array([0. , 0.5, 1. ]))</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[[0, 1], [1, 0]], [[1, 0], [0, 1]]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[[0.1, 0.9], [0.8, 0.2]], [[0.2, 0.8], [0.7, 0.3]]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(t, p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        (array([[0.5, 0.5, 0. , 1. ],</span>
-<span class="sd">                [0.5, 0.5, 0. , 1. ]]),</span>
-<span class="sd">        array([[1. , 0.5, 0. , 0. ],</span>
-<span class="sd">                [1. , 0.5, 0. , 0. ]]),</span>
-<span class="sd">        array([0. , 0.5, 1. ]))</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import MultilabelPrecisionRecallCurve</span>
+<span class="sd">    &gt;&gt;&gt; target = [[0, 1], [1, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.1, 0.9], [0.8, 0.2]]</span>
+<span class="sd">    &gt;&gt;&gt; metric = MultilabelPrecisionRecallCurve(num_labels=2, thresholds=3)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target, preds)</span>
+<span class="sd">    (array([[0.5, 1. , 0. , 1. ],</span>
+<span class="sd">            [0.5, 1. , 0. , 1. ]]),</span>
+<span class="sd">    array([[1., 1., 0., 0.],</span>
+<span class="sd">            [1., 1., 0., 0.]]),</span>
+<span class="sd">    array([0. , 0.5, 1. ]))</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[[0, 1], [1, 0]], [[1, 0], [0, 1]]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[[0.1, 0.9], [0.8, 0.2]], [[0.2, 0.8], [0.7, 0.3]]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(t, p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    (array([[0.5, 0.5, 0. , 1. ],</span>
+<span class="sd">            [0.5, 0.5, 0. , 1. ]]),</span>
+<span class="sd">    array([[1. , 0.5, 0. , 0. ],</span>
+<span class="sd">            [1. , 0.5, 0. , 0. ]]),</span>
+<span class="sd">    array([0. , 0.5, 1. ]))</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -498,108 +502,107 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="PrecisionRecallCurve"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.precision_recall_curve.html#cyclops.evaluate.metrics.precision_recall_curve.PrecisionRecallCurve">[docs]</a><span class="k">class</span> <span class="nc">PrecisionRecallCurve</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<div class="viewcode-block" id="PrecisionRecallCurve"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.precision_recall_curve.html#cyclops.evaluate.metrics.precision_recall_curve.PrecisionRecallCurve">[docs]</a><span class="k">class</span> <span class="nc">PrecisionRecallCurve</span><span class="p">(</span>
+    <span class="n">Metric</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;precision_recall_curve&quot;</span><span class="p">,</span> <span class="n">force_register</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the precision-recall curve for different classification tasks.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
-<span class="sd">            The task for which the precision-recall curve is computed.</span>
-<span class="sd">        thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
-<span class="sd">            Thresholds used for computing the precision and recall scores. If int,</span>
-<span class="sd">            then the number of thresholds to use. If list or array, then the</span>
-<span class="sd">            thresholds to use. If None, then the thresholds are automatically</span>
-<span class="sd">            determined by the sunique values in ``preds``</span>
-<span class="sd">        pos_label : int, default=1</span>
-<span class="sd">            Label to consider as positive for binary classification tasks.</span>
-<span class="sd">        num_classes : int, optional</span>
-<span class="sd">            The number of classes in the dataset. Required if ``task`` is</span>
-<span class="sd">            ``&quot;multiclass&quot;``.</span>
-<span class="sd">        num_labels : int, optional</span>
-<span class="sd">            The number of labels in the dataset. Required if ``task`` is</span>
-<span class="sd">            ``&quot;multilabel&quot;``.</span>
+<span class="sd">    task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
+<span class="sd">        The task for which the precision-recall curve is computed.</span>
+<span class="sd">    thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
+<span class="sd">        Thresholds used for computing the precision and recall scores. If int,</span>
+<span class="sd">        then the number of thresholds to use. If list or array, then the</span>
+<span class="sd">        thresholds to use. If None, then the thresholds are automatically</span>
+<span class="sd">        determined by the sunique values in ``preds``</span>
+<span class="sd">    pos_label : int, default=1</span>
+<span class="sd">        Label to consider as positive for binary classification tasks.</span>
+<span class="sd">    num_classes : int, optional</span>
+<span class="sd">        The number of classes in the dataset. Required if ``task`` is</span>
+<span class="sd">        ``&quot;multiclass&quot;``.</span>
+<span class="sd">    num_labels : int, optional</span>
+<span class="sd">        The number of labels in the dataset. Required if ``task`` is</span>
+<span class="sd">        ``&quot;multilabel&quot;``.</span>
 
-<span class="sd">    Examples (binary)</span>
-<span class="sd">    -----------------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import PrecisionRecallCurve</span>
-<span class="sd">        &gt;&gt;&gt; target = [1, 1, 1, 0]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [0.6, 0.2, 0.3, 0.8]</span>
-<span class="sd">        &gt;&gt;&gt; metric = PrecisionRecallCurve(task=&quot;binary&quot;, thresholds=None)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target, preds)</span>
-<span class="sd">        (array([0.75      , 0.66666667, 0.5       , 0.        , 1.        ]),</span>
-<span class="sd">        array([1.        , 0.66666667, 0.33333333, 0.        , 0.        ]),</span>
-<span class="sd">        array([0.2, 0.3, 0.6, 0.8]))</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[1, 0, 1, 1], [0, 0, 0, 1]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.5, 0.4, 0.1, 0.3], [0.9, 0.6, 0.45, 0.8]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(t, p)</span>
-<span class="sd">        ...</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        (array([0.5       , 0.42857143, 0.33333333, 0.4       , 0.5       ,</span>
-<span class="sd">            0.33333333, 0.5       , 0.        , 1.        ]),</span>
-<span class="sd">        array([1.  , 0.75, 0.5 , 0.5 , 0.5 , 0.25, 0.25, 0.  , 0.  ]),</span>
-<span class="sd">        array([0.1 , 0.3 , 0.4 , 0.45, 0.5 , 0.6 , 0.8 , 0.9 ]))</span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    (binary)</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import PrecisionRecallCurve</span>
+<span class="sd">    &gt;&gt;&gt; target = [1, 1, 1, 0]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [0.6, 0.2, 0.3, 0.8]</span>
+<span class="sd">    &gt;&gt;&gt; metric = PrecisionRecallCurve(task=&quot;binary&quot;, thresholds=None)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target, preds)</span>
+<span class="sd">    (array([0.75      , 0.66666667, 0.5       , 0.        , 1.        ]),</span>
+<span class="sd">    array([1.        , 0.66666667, 0.33333333, 0.        , 0.        ]),</span>
+<span class="sd">    array([0.2, 0.3, 0.6, 0.8]))</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[1, 0, 1, 1], [0, 0, 0, 1]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.5, 0.4, 0.1, 0.3], [0.9, 0.6, 0.45, 0.8]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(t, p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    (array([0.5       , 0.42857143, 0.33333333, 0.4       , 0.5       ,</span>
+<span class="sd">        0.33333333, 0.5       , 0.        , 1.        ]),</span>
+<span class="sd">    array([1.  , 0.75, 0.5 , 0.5 , 0.5 , 0.25, 0.25, 0.  , 0.  ]),</span>
+<span class="sd">    array([0.1 , 0.3 , 0.4 , 0.45, 0.5 , 0.6 , 0.8 , 0.9 ]))</span>
 
-<span class="sd">    Examples (multiclass)</span>
-<span class="sd">    ---------------------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import PrecisionRecallCurve</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 1, 2, 2]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.05, 0.95, 0], [0.1, 0.8, 0.1],</span>
-<span class="sd">        ...         [0.2, 0.2, 0.6], [0.2, 0.2, 0.6]]</span>
-<span class="sd">        &gt;&gt;&gt; metric = PrecisionRecallCurve(task=&quot;multiclass&quot;, num_classes=3,</span>
-<span class="sd">        ...     thresholds=3)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target, preds)</span>
-<span class="sd">        (array([[0.25, 0.  , 0.  , 1.  ],</span>
-<span class="sd">                [0.25, 0.5 , 0.  , 1.  ],</span>
-<span class="sd">                [0.5 , 1.  , 0.  , 1.  ]]),</span>
-<span class="sd">        array([[1., 0., 0., 0.],</span>
-<span class="sd">                [1., 1., 0., 0.],</span>
-<span class="sd">                [1., 1., 0., 0.]]),</span>
-<span class="sd">        array([0. , 0.5, 1. ]))</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 2, 2], [1, 2, 0, 1]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[[0.05, 0.95, 0], [0.1, 0.8, 0.1],</span>
-<span class="sd">        ...         [0.2, 0.2, 0.6], [0.2, 0.2, 0.6]],</span>
-<span class="sd">        ...         [[0.05, 0.95, 0], [0.1, 0.8, 0.1],</span>
-<span class="sd">        ...         [0.2, 0.2, 0.6], [0.2, 0.2, 0.6]]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(t, p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        (array([[0.25 , 0.   , 0.   , 1.   ],</span>
-<span class="sd">                [0.375, 0.5  , 0.   , 1.   ],</span>
-<span class="sd">                [0.375, 0.5  , 0.   , 1.   ]]),</span>
-<span class="sd">        array([[1.        , 0.        , 0.        , 0.        ],</span>
-<span class="sd">                [1.        , 0.66666667, 0.        , 0.        ],</span>
-<span class="sd">                [1.        , 0.66666667, 0.        , 0.        ]]),</span>
-<span class="sd">        array([0. , 0.5, 1. ]))</span>
+<span class="sd">    (multiclass)</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import PrecisionRecallCurve</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 1, 2, 2]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.05, 0.95, 0], [0.1, 0.8, 0.1],</span>
+<span class="sd">    ...         [0.2, 0.2, 0.6], [0.2, 0.2, 0.6]]</span>
+<span class="sd">    &gt;&gt;&gt; metric = PrecisionRecallCurve(task=&quot;multiclass&quot;, num_classes=3,</span>
+<span class="sd">    ...     thresholds=3)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target, preds)</span>
+<span class="sd">    (array([[0.25, 0.  , 0.  , 1.  ],</span>
+<span class="sd">            [0.25, 0.5 , 0.  , 1.  ],</span>
+<span class="sd">            [0.5 , 1.  , 0.  , 1.  ]]),</span>
+<span class="sd">    array([[1., 0., 0., 0.],</span>
+<span class="sd">            [1., 1., 0., 0.],</span>
+<span class="sd">            [1., 1., 0., 0.]]),</span>
+<span class="sd">    array([0. , 0.5, 1. ]))</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[0, 1, 2, 2], [1, 2, 0, 1]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[[0.05, 0.95, 0], [0.1, 0.8, 0.1],</span>
+<span class="sd">    ...         [0.2, 0.2, 0.6], [0.2, 0.2, 0.6]],</span>
+<span class="sd">    ...         [[0.05, 0.95, 0], [0.1, 0.8, 0.1],</span>
+<span class="sd">    ...         [0.2, 0.2, 0.6], [0.2, 0.2, 0.6]]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(t, p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    (array([[0.25 , 0.   , 0.   , 1.   ],</span>
+<span class="sd">            [0.375, 0.5  , 0.   , 1.   ],</span>
+<span class="sd">            [0.375, 0.5  , 0.   , 1.   ]]),</span>
+<span class="sd">    array([[1.        , 0.        , 0.        , 0.        ],</span>
+<span class="sd">            [1.        , 0.66666667, 0.        , 0.        ],</span>
+<span class="sd">            [1.        , 0.66666667, 0.        , 0.        ]]),</span>
+<span class="sd">    array([0. , 0.5, 1. ]))</span>
 
-
-<span class="sd">    Examples (multilabel)</span>
-<span class="sd">    ---------------------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import PrecisionRecallCurve</span>
-<span class="sd">        &gt;&gt;&gt; target = [[0, 1], [1, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.1, 0.9], [0.8, 0.2]]</span>
-<span class="sd">        &gt;&gt;&gt; metric = PrecisionRecallCurve(task=&quot;multilabel&quot;, num_labels=2,</span>
-<span class="sd">        ...     thresholds=3)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target, preds)</span>
-<span class="sd">        (array([[0.5, 1. , 0. , 1. ],</span>
-<span class="sd">                [0.5, 1. , 0. , 1. ]]),</span>
-<span class="sd">        array([[1., 1., 0., 0.],</span>
-<span class="sd">                [1., 1., 0., 0.]]),</span>
-<span class="sd">        array([0. , 0.5, 1. ]))</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[[0, 1], [1, 0]], [[1, 0], [0, 1]]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[[0.1, 0.9], [0.8, 0.2]],</span>
-<span class="sd">        ...         [[0.1, 0.9], [0.8, 0.2]]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(t, p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        (array([[0.5, 0.5, 0. , 1. ],</span>
-<span class="sd">                [0.5, 0.5, 0. , 1. ]]),</span>
-<span class="sd">        array([[1. , 0.5, 0. , 0. ],</span>
-<span class="sd">                [1. , 0.5, 0. , 0. ]]),</span>
-<span class="sd">        array([0. , 0.5, 1. ]))</span>
+<span class="sd">    (multilabel)</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import PrecisionRecallCurve</span>
+<span class="sd">    &gt;&gt;&gt; target = [[0, 1], [1, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.1, 0.9], [0.8, 0.2]]</span>
+<span class="sd">    &gt;&gt;&gt; metric = PrecisionRecallCurve(task=&quot;multilabel&quot;, num_labels=2,</span>
+<span class="sd">    ...     thresholds=3)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target, preds)</span>
+<span class="sd">    (array([[0.5, 1. , 0. , 1. ],</span>
+<span class="sd">            [0.5, 1. , 0. , 1. ]]),</span>
+<span class="sd">    array([[1., 1., 0., 0.],</span>
+<span class="sd">            [1., 1., 0., 0.]]),</span>
+<span class="sd">    array([0. , 0.5, 1. ]))</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[[0, 1], [1, 0]], [[1, 0], [0, 1]]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[[0.1, 0.9], [0.8, 0.2]],</span>
+<span class="sd">    ...         [[0.1, 0.9], [0.8, 0.2]]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(t, p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    (array([[0.5, 0.5, 0. , 1. ],</span>
+<span class="sd">            [0.5, 0.5, 0. , 1. ]]),</span>
+<span class="sd">    array([[1. , 0.5, 0. , 0. ],</span>
+<span class="sd">            [1. , 0.5, 0. , 0. ]]),</span>
+<span class="sd">    array([0. , 0.5, 1. ]))</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 

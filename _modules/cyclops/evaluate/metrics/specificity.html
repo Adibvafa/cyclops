@@ -182,37 +182,37 @@
 <span class="kn">from</span> <span class="nn">cyclops.evaluate.metrics.utils</span> <span class="kn">import</span> <span class="n">_check_average_arg</span>
 
 
-<div class="viewcode-block" id="BinarySpecificity"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.specificity.html#cyclops.evaluate.metrics.specificity.BinarySpecificity">[docs]</a><span class="k">class</span> <span class="nc">BinarySpecificity</span><span class="p">(</span><span class="n">BinaryStatScores</span><span class="p">):</span>
+<div class="viewcode-block" id="BinarySpecificity"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.specificity.html#cyclops.evaluate.metrics.specificity.BinarySpecificity">[docs]</a><span class="k">class</span> <span class="nc">BinarySpecificity</span><span class="p">(</span><span class="n">BinaryStatScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;binary_specificity&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute specificity for binary classification tasks.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        target : ArrayLike</span>
-<span class="sd">            Ground truth (correct) target values.</span>
-<span class="sd">        preds : ArrayLike</span>
-<span class="sd">            Estimated targets (predictions) as returned by a classifier.</span>
-<span class="sd">        pos_label : int, default=1</span>
-<span class="sd">            The label to use for the positive class.</span>
-<span class="sd">        threshold : float, default=0.5</span>
-<span class="sd">            The threshold to use for converting the predictions to binary</span>
-<span class="sd">            values. Logits will be converted to probabilities using the sigmoid</span>
-<span class="sd">            function.</span>
+<span class="sd">    target : ArrayLike</span>
+<span class="sd">        Ground truth (correct) target values.</span>
+<span class="sd">    preds : ArrayLike</span>
+<span class="sd">        Estimated targets (predictions) as returned by a classifier.</span>
+<span class="sd">    pos_label : int, default=1</span>
+<span class="sd">        The label to use for the positive class.</span>
+<span class="sd">    threshold : float, default=0.5</span>
+<span class="sd">        The threshold to use for converting the predictions to binary</span>
+<span class="sd">        values. Logits will be converted to probabilities using the sigmoid</span>
+<span class="sd">        function.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import BinarySpecificity</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 1, 1, 0]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [0, 1, 0, 0]</span>
-<span class="sd">        &gt;&gt;&gt; metric = BinarySpecificity()</span>
-<span class="sd">        &gt;&gt;&gt; metric(target, preds)</span>
-<span class="sd">        1.0</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 1, 0], [1, 1, 0, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0, 1, 0, 0], [1, 0, 0, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(t, p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        1.0</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import BinarySpecificity</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 1, 1, 0]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [0, 1, 0, 0]</span>
+<span class="sd">    &gt;&gt;&gt; metric = BinarySpecificity()</span>
+<span class="sd">    &gt;&gt;&gt; metric(target, preds)</span>
+<span class="sd">    1.0</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[0, 1, 1, 0], [1, 1, 0, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0, 1, 0, 0], [1, 0, 0, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(t, p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    1.0</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -239,46 +239,48 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="MulticlassSpecificity"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.specificity.html#cyclops.evaluate.metrics.specificity.MulticlassSpecificity">[docs]</a><span class="k">class</span> <span class="nc">MulticlassSpecificity</span><span class="p">(</span><span class="n">MulticlassStatScores</span><span class="p">):</span>
+<div class="viewcode-block" id="MulticlassSpecificity"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.specificity.html#cyclops.evaluate.metrics.specificity.MulticlassSpecificity">[docs]</a><span class="k">class</span> <span class="nc">MulticlassSpecificity</span><span class="p">(</span>
+    <span class="n">MulticlassStatScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multiclass_specificity&quot;</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute specificity for multiclass classification tasks.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        num_classes : int</span>
-<span class="sd">            The number of classes in the dataset.</span>
-<span class="sd">        top_k : int, optional</span>
-<span class="sd">            Number of highest probability or logit score predictions considered</span>
-<span class="sd">            to find the correct label. Only works when ``preds`` contain</span>
-<span class="sd">            probabilities/logits.</span>
-<span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
-<span class="sd">            If None, return the specificity for each class, otherwise return the</span>
-<span class="sd">            average specificity. Average options are:</span>
-<span class="sd">                - ``micro``: Calculate metrics globally.</span>
-<span class="sd">                - ``macro``: Calculate metrics for each class, and find their unweighted</span>
-<span class="sd">                  mean. This does not take class imbalance into account.</span>
-<span class="sd">                - ``weighted``: Calculate metrics for each class, and find their</span>
-<span class="sd">                  average, weighted by support (the number of true instances for each</span>
-<span class="sd">                  label).</span>
-<span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1], default=&quot;warn&quot;</span>
-<span class="sd">            Sets the value to return when there is a zero division. If set to ``warn``,</span>
-<span class="sd">            this acts as 0, but warnings are also raised.</span>
+<span class="sd">    num_classes : int</span>
+<span class="sd">        The number of classes in the dataset.</span>
+<span class="sd">    top_k : int, optional</span>
+<span class="sd">        Number of highest probability or logit score predictions considered</span>
+<span class="sd">        to find the correct label. Only works when ``preds`` contain</span>
+<span class="sd">        probabilities/logits.</span>
+<span class="sd">    average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
+<span class="sd">        If None, return the specificity for each class, otherwise return the</span>
+<span class="sd">        average specificity. Average options are:</span>
+<span class="sd">        - ``micro``: Calculate metrics globally.</span>
+<span class="sd">        - ``macro``: Calculate metrics for each class, and find their unweighted</span>
+<span class="sd">            mean. This does not take class imbalance into account.</span>
+<span class="sd">        - ``weighted``: Calculate metrics for each class, and find their</span>
+<span class="sd">            average, weighted by support (the number of true instances for each</span>
+<span class="sd">            label).</span>
+<span class="sd">    zero_division : Literal[&quot;warn&quot;, 0, 1], default=&quot;warn&quot;</span>
+<span class="sd">        Sets the value to return when there is a zero division. If set to ``warn``,</span>
+<span class="sd">        this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import MulticlassSpecificity</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 1, 2, 0, 1, 2]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05], [0.05, 0.2, 0.75],</span>
-<span class="sd">        ...          [0.35, 0.5, 0.15], [0.05, 0.9, 0.05], [0.05, 0.05, 0.9]]</span>
-<span class="sd">        &gt;&gt;&gt; metric = MulticlassSpecificity(num_classes=3)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target, preds)</span>
-<span class="sd">        array([1.  , 0.75, 1.  ])</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 2, 0, 1, 2], [1, 1, 2, 0, 0, 1]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0, 2, 1, 2, 0, 1], [1, 0, 1, 2, 2, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(t, p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        array([0.625     , 0.57142857, 0.55555556])</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import MulticlassSpecificity</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 1, 2, 0, 1, 2]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05], [0.05, 0.2, 0.75],</span>
+<span class="sd">    ...          [0.35, 0.5, 0.15], [0.05, 0.9, 0.05], [0.05, 0.05, 0.9]]</span>
+<span class="sd">    &gt;&gt;&gt; metric = MulticlassSpecificity(num_classes=3)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target, preds)</span>
+<span class="sd">    array([1.  , 0.75, 1.  ])</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[0, 1, 2, 0, 1, 2], [1, 1, 2, 0, 0, 1]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0, 2, 1, 2, 0, 1], [1, 0, 1, 2, 2, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(t, p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    array([0.625     , 0.57142857, 0.55555556])</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -308,51 +310,53 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="MultilabelSpecificity"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.specificity.html#cyclops.evaluate.metrics.specificity.MultilabelSpecificity">[docs]</a><span class="k">class</span> <span class="nc">MultilabelSpecificity</span><span class="p">(</span><span class="n">MultilabelStatScores</span><span class="p">):</span>
+<div class="viewcode-block" id="MultilabelSpecificity"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.specificity.html#cyclops.evaluate.metrics.specificity.MultilabelSpecificity">[docs]</a><span class="k">class</span> <span class="nc">MultilabelSpecificity</span><span class="p">(</span>
+    <span class="n">MultilabelStatScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multilabel_specificity&quot;</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute specificity for multilabel classification tasks.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        num_labels : int</span>
-<span class="sd">            The number of labels in the dataset.</span>
-<span class="sd">        threshold : float, default=0.5</span>
-<span class="sd">            The threshold value for converting probability or logit scores to</span>
-<span class="sd">            binary. A sigmoid function is first applied to logits to convert them</span>
-<span class="sd">            to probabilities.</span>
-<span class="sd">        top_k : int, optional</span>
-<span class="sd">            Number of highest probability or logit score predictions considered</span>
-<span class="sd">            to find the correct label. Only works when ``preds`` contains</span>
-<span class="sd">            probabilities/logits.</span>
-<span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
-<span class="sd">            If None, return the specificity for each class, otherwise return the</span>
-<span class="sd">            average specificity. Average options are:</span>
-<span class="sd">            - ``micro``: Calculate metrics globally.</span>
-<span class="sd">            - ``macro``: Calculate metrics for each label, and find their unweighted</span>
-<span class="sd">              mean. This does not take label imbalance into account.</span>
-<span class="sd">            - ``weighted``: Calculate metrics for each label, and find their average,</span>
-<span class="sd">              weighted by support (the number of true instances for each label).</span>
-<span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1], default=&quot;warn&quot;</span>
-<span class="sd">            Sets the value to return when there is a zero division. If set to ``warn``,</span>
-<span class="sd">            this acts as 0, but warnings are also raised.</span>
+<span class="sd">    num_labels : int</span>
+<span class="sd">        The number of labels in the dataset.</span>
+<span class="sd">    threshold : float, default=0.5</span>
+<span class="sd">        The threshold value for converting probability or logit scores to</span>
+<span class="sd">        binary. A sigmoid function is first applied to logits to convert them</span>
+<span class="sd">        to probabilities.</span>
+<span class="sd">    top_k : int, optional</span>
+<span class="sd">        Number of highest probability or logit score predictions considered</span>
+<span class="sd">        to find the correct label. Only works when ``preds`` contains</span>
+<span class="sd">        probabilities/logits.</span>
+<span class="sd">    average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
+<span class="sd">        If None, return the specificity for each class, otherwise return the</span>
+<span class="sd">        average specificity. Average options are:</span>
+<span class="sd">        - ``micro``: Calculate metrics globally.</span>
+<span class="sd">        - ``macro``: Calculate metrics for each label, and find their unweighted</span>
+<span class="sd">            mean. This does not take label imbalance into account.</span>
+<span class="sd">        - ``weighted``: Calculate metrics for each label, and find their average,</span>
+<span class="sd">            weighted by support (the number of true instances for each label).</span>
+<span class="sd">    zero_division : Literal[&quot;warn&quot;, 0, 1], default=&quot;warn&quot;</span>
+<span class="sd">        Sets the value to return when there is a zero division. If set to ``warn``,</span>
+<span class="sd">        this acts as 0, but warnings are also raised.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import MultilabelSpecificity</span>
-<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 1], [1, 1, 0], [0, 0, 1], [1, 0, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05], [0.05, 0.2, 0.75],</span>
-<span class="sd">        ...          [0.35, 0.5, 0.15], [0.05, 0.9, 0.05]]</span>
-<span class="sd">        &gt;&gt;&gt; metric = MultilabelSpecificity(num_labels=3)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target, preds)</span>
-<span class="sd">        array([0.5, 0. , 0.5])</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[[0, 1, 1], [1, 0, 1], [1, 1, 0], [0, 0, 1], [1, 0, 0]],</span>
-<span class="sd">        ...           [[1, 0, 1], [0, 1, 0], [1, 1, 0], [0, 0, 1], [1, 0, 0]]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[[1, 0, 0], [0, 1, 0], [0, 1, 1], [0, 0, 1], [1, 0, 0]],</span>
-<span class="sd">        ...          [[0, 1, 1], [1, 0, 1], [1, 1, 0], [0, 0, 1], [1, 0, 0]]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(t, p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        array([0.5       , 0.66666667, 0.6       ])</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import MultilabelSpecificity</span>
+<span class="sd">    &gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 1], [1, 1, 0], [0, 0, 1], [1, 0, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05], [0.05, 0.2, 0.75],</span>
+<span class="sd">    ...          [0.35, 0.5, 0.15], [0.05, 0.9, 0.05]]</span>
+<span class="sd">    &gt;&gt;&gt; metric = MultilabelSpecificity(num_labels=3)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target, preds)</span>
+<span class="sd">    array([0.5, 0. , 0.5])</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[[0, 1, 1], [1, 0, 1], [1, 1, 0], [0, 0, 1], [1, 0, 0]],</span>
+<span class="sd">    ...           [[1, 0, 1], [0, 1, 0], [1, 1, 0], [0, 0, 1], [1, 0, 0]]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[[1, 0, 0], [0, 1, 0], [0, 1, 1], [0, 0, 1], [1, 0, 0]],</span>
+<span class="sd">    ...          [[0, 1, 1], [1, 0, 1], [1, 1, 0], [0, 0, 1], [1, 0, 0]]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(t, p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    array([0.5       , 0.66666667, 0.6       ])</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -385,7 +389,7 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="Specificity"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.specificity.html#cyclops.evaluate.metrics.specificity.Specificity">[docs]</a><span class="k">class</span> <span class="nc">Specificity</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<div class="viewcode-block" id="Specificity"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.specificity.html#cyclops.evaluate.metrics.specificity.Specificity">[docs]</a><span class="k">class</span> <span class="nc">Specificity</span><span class="p">(</span><span class="n">Metric</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;specificity&quot;</span><span class="p">,</span> <span class="n">force_register</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute specificity score for different classification tasks.</span>
 
 <span class="sd">    The specificity is the ratio of true negatives to the sum of true negatives and</span>
@@ -393,88 +397,87 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
-<span class="sd">            Type of classification task.</span>
-<span class="sd">        pos_label : int, default=1</span>
-<span class="sd">            Label to consider as positive for binary classification tasks.</span>
-<span class="sd">        num_classes : int</span>
-<span class="sd">            Number of classes for the task. Required if ``task`` is ``&quot;multiclass&quot;``.</span>
-<span class="sd">        threshold : float, default=0.5</span>
-<span class="sd">            Threshold for deciding the positive class. Only used if ``task`` is</span>
-<span class="sd">            ``&quot;binary&quot;`` or ``&quot;multilabel&quot;``.</span>
-<span class="sd">        top_k : int, optional</span>
-<span class="sd">            If given, and predictions are probabilities/logits, the precision will</span>
-<span class="sd">            be computed only for the top k classes. Otherwise, ``top_k`` will be</span>
-<span class="sd">            set to 1. Only used if ``task`` is ``&quot;multiclass&quot;`` or ``&quot;multilabel&quot;``.</span>
-<span class="sd">        num_labels : int</span>
-<span class="sd">            Number of labels for the task. Required if ``task`` is ``&quot;multilabel&quot;``.</span>
-<span class="sd">        average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
-<span class="sd">            If ``None``, return the score for each label/class. Otherwise,</span>
-<span class="sd">            use one of the following options to compute the average score:</span>
-<span class="sd">                - ``micro``: Calculate metrics globally.</span>
-<span class="sd">                - ``macro``: Calculate metrics for each class/label, and find their</span>
-<span class="sd">                  unweighted mean. This does not take label/class imbalance into</span>
-<span class="sd">                  account.</span>
-<span class="sd">                - ``weighted``: Calculate metrics for each label/class, and find</span>
-<span class="sd">                  their average weighted by support (the number of true instances</span>
-<span class="sd">                  for each label/class). This alters ``macro`` to account for</span>
-<span class="sd">                  label/class imbalance.</span>
-<span class="sd">        zero_division : Literal[&quot;warn&quot;, 0, 1], default=&quot;warn&quot;</span>
-<span class="sd">            Value to return when there is a zero division. If set to &quot;warn&quot;, this</span>
-<span class="sd">            acts as 0, but warnings are also raised.</span>
+<span class="sd">    task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
+<span class="sd">        Type of classification task.</span>
+<span class="sd">    pos_label : int, default=1</span>
+<span class="sd">        Label to consider as positive for binary classification tasks.</span>
+<span class="sd">    num_classes : int</span>
+<span class="sd">        Number of classes for the task. Required if ``task`` is ``&quot;multiclass&quot;``.</span>
+<span class="sd">    threshold : float, default=0.5</span>
+<span class="sd">        Threshold for deciding the positive class. Only used if ``task`` is</span>
+<span class="sd">        ``&quot;binary&quot;`` or ``&quot;multilabel&quot;``.</span>
+<span class="sd">    top_k : int, optional</span>
+<span class="sd">        If given, and predictions are probabilities/logits, the precision will</span>
+<span class="sd">        be computed only for the top k classes. Otherwise, ``top_k`` will be</span>
+<span class="sd">        set to 1. Only used if ``task`` is ``&quot;multiclass&quot;`` or ``&quot;multilabel&quot;``.</span>
+<span class="sd">    num_labels : int</span>
+<span class="sd">        Number of labels for the task. Required if ``task`` is ``&quot;multilabel&quot;``.</span>
+<span class="sd">    average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
+<span class="sd">        If ``None``, return the score for each label/class. Otherwise,</span>
+<span class="sd">        use one of the following options to compute the average score:</span>
+<span class="sd">        - ``micro``: Calculate metrics globally.</span>
+<span class="sd">        - ``macro``: Calculate metrics for each class/label, and find their</span>
+<span class="sd">            unweighted mean. This does not take label/class imbalance into</span>
+<span class="sd">            account.</span>
+<span class="sd">        - ``weighted``: Calculate metrics for each label/class, and find</span>
+<span class="sd">            their average weighted by support (the number of true instances</span>
+<span class="sd">            for each label/class). This alters ``macro`` to account for</span>
+<span class="sd">            label/class imbalance.</span>
+<span class="sd">    zero_division : Literal[&quot;warn&quot;, 0, 1], default=&quot;warn&quot;</span>
+<span class="sd">        Value to return when there is a zero division. If set to &quot;warn&quot;, this</span>
+<span class="sd">        acts as 0, but warnings are also raised.</span>
 
-<span class="sd">    Examples (binary)</span>
-<span class="sd">    -----------------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import Specificity</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 1, 1, 0, 1]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [0.9, 0.05, 0.05, 0.35, 0.05]</span>
-<span class="sd">        &gt;&gt;&gt; metric = Specificity(task=&quot;binary&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target, preds)</span>
-<span class="sd">        0.5</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 1]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(t, p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        0.0</span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    (binary)</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import Specificity</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 1, 1, 0, 1]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [0.9, 0.05, 0.05, 0.35, 0.05]</span>
+<span class="sd">    &gt;&gt;&gt; metric = Specificity(task=&quot;binary&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target, preds)</span>
+<span class="sd">    0.5</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 1]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(t, p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    0.0</span>
 
-<span class="sd">    Examples (multiclass)</span>
-<span class="sd">    ---------------------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import Specificity</span>
-<span class="sd">        &gt;&gt;&gt; target = [0, 1, 2, 0, 1, 2]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05], [0.05, 0.2, 0.75],</span>
-<span class="sd">        ...          [0.35, 0.5, 0.15], [0.05, 0.9, 0.05], [0.05, 0.05, 0.9]]</span>
-<span class="sd">        &gt;&gt;&gt; metric = Specificity(task=&quot;multiclass&quot;, num_classes=3)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target, preds)</span>
-<span class="sd">        array([1.  , 0.75, 1.  ])</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 1], [1, 2, 1]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[[0.9, 0.05, 0.05], [0.05, 0.9, 0.05], [0.05, 0.2, 0.75]],</span>
-<span class="sd">        ...          [[0.35, 0.5, 0.15], [0.25, 0.5, 0.25], [0.5, 0.05, 0.45]]]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(t, p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        array([0.8, 0.5, 0.8])</span>
+<span class="sd">    (multiclass)</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import Specificity</span>
+<span class="sd">    &gt;&gt;&gt; target = [0, 1, 2, 0, 1, 2]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05], [0.05, 0.2, 0.75],</span>
+<span class="sd">    ...          [0.35, 0.5, 0.15], [0.05, 0.9, 0.05], [0.05, 0.05, 0.9]]</span>
+<span class="sd">    &gt;&gt;&gt; metric = Specificity(task=&quot;multiclass&quot;, num_classes=3)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target, preds)</span>
+<span class="sd">    array([1.  , 0.75, 1.  ])</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[0, 1, 1], [1, 2, 1]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[[0.9, 0.05, 0.05], [0.05, 0.9, 0.05], [0.05, 0.2, 0.75]],</span>
+<span class="sd">    ...          [[0.35, 0.5, 0.15], [0.25, 0.5, 0.25], [0.5, 0.05, 0.45]]]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(t, p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    array([0.8, 0.5, 0.8])</span>
 
-<span class="sd">    Examples (multilabel)</span>
-<span class="sd">    ---------------------</span>
-<span class="sd">        &gt;&gt;&gt; from cyclops.evaluation.metrics import Specificity</span>
-<span class="sd">        &gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 1], [1, 1, 0]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.2, 0.75], [0.35, 0.5, 0.15]]</span>
-<span class="sd">        &gt;&gt;&gt; metric = Specificity(task=&quot;multilabel&quot;, num_labels=3)</span>
-<span class="sd">        &gt;&gt;&gt; metric(target, preds)</span>
-<span class="sd">        array([0., 1., 1.])</span>
-<span class="sd">        &gt;&gt;&gt; metric.reset_state()</span>
-<span class="sd">        &gt;&gt;&gt; target = [[[0, 1, 0], [1, 0, 1]], [[0, 1, 1], [1, 0, 0]]]</span>
-<span class="sd">        &gt;&gt;&gt; preds = [</span>
-<span class="sd">        ...     [[0.1, 0.7, 0.2], [0.2, 0.8, 0.3]],</span>
-<span class="sd">        ...     [[0.5, 0.9, 0.0], [0.3, 0.4, 0.2]],</span>
-<span class="sd">        ... ]</span>
-<span class="sd">        &gt;&gt;&gt; for t, p in zip(target, preds):</span>
-<span class="sd">        ...     metric.update_state(t, p)</span>
-<span class="sd">        &gt;&gt;&gt; metric.compute()</span>
-<span class="sd">        array([0.5, 0.5, 1. ])</span>
+<span class="sd">    (multilabel)</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import Specificity</span>
+<span class="sd">    &gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 1], [1, 1, 0]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.2, 0.75], [0.35, 0.5, 0.15]]</span>
+<span class="sd">    &gt;&gt;&gt; metric = Specificity(task=&quot;multilabel&quot;, num_labels=3)</span>
+<span class="sd">    &gt;&gt;&gt; metric(target, preds)</span>
+<span class="sd">    array([0., 1., 1.])</span>
+<span class="sd">    &gt;&gt;&gt; metric.reset_state()</span>
+<span class="sd">    &gt;&gt;&gt; target = [[[0, 1, 0], [1, 0, 1]], [[0, 1, 1], [1, 0, 0]]]</span>
+<span class="sd">    &gt;&gt;&gt; preds = [</span>
+<span class="sd">    ...     [[0.1, 0.7, 0.2], [0.2, 0.8, 0.3]],</span>
+<span class="sd">    ...     [[0.5, 0.9, 0.0], [0.3, 0.4, 0.2]],</span>
+<span class="sd">    ... ]</span>
+<span class="sd">    &gt;&gt;&gt; for t, p in zip(target, preds):</span>
+<span class="sd">    ...     metric.update_state(t, p)</span>
+<span class="sd">    &gt;&gt;&gt; metric.compute()</span>
+<span class="sd">    array([0.5, 0.5, 1. ])</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 

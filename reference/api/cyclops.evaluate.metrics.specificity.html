@@ -137,8 +137,10 @@
 <li class="toctree-l4 current"><a class="reference internal" href="cyclops.evaluate.metrics.html">cyclops.evaluate.metrics package</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="cyclops.evaluate.html#submodules">Submodules</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.evaluator.html">cyclops.evaluate.evaluator module</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="cyclops.evaluate.metrics.html">cyclops.evaluate.metrics package</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="cyclops.evaluate.metrics.html#subpackages">Subpackages</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="cyclops.evaluate.metrics.html#submodules">Submodules</a><ul class="current">
@@ -342,17 +344,20 @@ function.</p></li>
 to find the correct label. Only works when <code class="docutils literal notranslate"><span class="pre">preds</span></code> contain
 probabilities/logits.</p></li>
 <li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em><em>, </em><em>default=None</em>) – <p>If None, return the specificity for each class, otherwise return the
-average specificity. Average options are:</p>
+average specificity. Average options are:
+- <code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally.
+- <code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each class, and find their unweighted</p>
 <blockquote>
-<div><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each class, and find their unweighted
-mean. This does not take class imbalance into account.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each class, and find their
-average, weighted by support (the number of true instances for each
-label).</p></li>
-</ul>
+<div><p>mean. This does not take class imbalance into account.</p>
 </div></blockquote>
+<ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each class, and find their</dt><dd><p>average, weighted by support (the number of true instances for each
+label).</p>
+</dd>
+</dl>
+</li>
+</ul>
 </p></li>
 <li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em><em>, </em><em>default=&quot;warn&quot;</em>) – Sets the value to return when there is a zero division. If set to <code class="docutils literal notranslate"><span class="pre">warn</span></code>,
 this acts as 0, but warnings are also raised.</p></li>
@@ -412,8 +417,11 @@ average specificity. Average options are:
 <div><p>mean. This does not take label imbalance into account.</p>
 </div></blockquote>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their average,
-weighted by support (the number of true instances for each label).</p></li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label, and find their average,</dt><dd><p>weighted by support (the number of true instances for each label).</p>
+</dd>
+</dl>
+</li>
 </ul>
 </p></li>
 <li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em><em>, </em><em>default=&quot;warn&quot;</em>) – Sets the value to return when there is a zero division. If set to <code class="docutils literal notranslate"><span class="pre">warn</span></code>,
@@ -473,25 +481,76 @@ be computed only for the top k classes. Otherwise, <code class="docutils literal
 set to 1. Only used if <code class="docutils literal notranslate"><span class="pre">task</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;multiclass&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;multilabel&quot;</span></code>.</p></li>
 <li><p><strong>num_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of labels for the task. Required if <code class="docutils literal notranslate"><span class="pre">task</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;multilabel&quot;</span></code>.</p></li>
 <li><p><strong>average</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;micro&quot;</em><em>, </em><em>&quot;macro&quot;</em><em>, </em><em>&quot;weighted&quot;</em><em>, </em><em>None</em><em>]</em><em>, </em><em>default=None</em>) – <p>If <code class="docutils literal notranslate"><span class="pre">None</span></code>, return the score for each label/class. Otherwise,
-use one of the following options to compute the average score:</p>
+use one of the following options to compute the average score:
+- <code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally.
+- <code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each class/label, and find their</p>
 <blockquote>
-<div><ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">micro</span></code>: Calculate metrics globally.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">macro</span></code>: Calculate metrics for each class/label, and find their
-unweighted mean. This does not take label/class imbalance into
-account.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label/class, and find
-their average weighted by support (the number of true instances
-for each label/class). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for
-label/class imbalance.</p></li>
-</ul>
+<div><p>unweighted mean. This does not take label/class imbalance into
+account.</p>
 </div></blockquote>
+<ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">weighted</span></code>: Calculate metrics for each label/class, and find</dt><dd><p>their average weighted by support (the number of true instances
+for each label/class). This alters <code class="docutils literal notranslate"><span class="pre">macro</span></code> to account for
+label/class imbalance.</p>
+</dd>
+</dl>
+</li>
+</ul>
 </p></li>
 <li><p><strong>zero_division</strong> (<a class="reference internal" href="cyclops.query.process.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><em>Literal</em></a><em>[</em><em>&quot;warn&quot;</em><em>, </em><em>0</em><em>, </em><em>1</em><em>]</em><em>, </em><em>default=&quot;warn&quot;</em>) – Value to return when there is a zero division. If set to “warn”, this
 acts as 0, but warnings are also raised.</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<p>(binary)
+&gt;&gt;&gt; from cyclops.evaluation.metrics import Specificity
+&gt;&gt;&gt; target = [0, 1, 1, 0, 1]
+&gt;&gt;&gt; preds = [0.9, 0.05, 0.05, 0.35, 0.05]
+&gt;&gt;&gt; metric = Specificity(task=”binary”)
+&gt;&gt;&gt; metric(target, preds)
+0.5
+&gt;&gt;&gt; metric.reset_state()
+&gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 1]]
+&gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05]]
+&gt;&gt;&gt; for t, p in zip(target, preds):
+…     metric.update_state(t, p)
+&gt;&gt;&gt; metric.compute()
+0.0</p>
+<p>(multiclass)
+&gt;&gt;&gt; from cyclops.evaluation.metrics import Specificity
+&gt;&gt;&gt; target = [0, 1, 2, 0, 1, 2]
+&gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05], [0.05, 0.2, 0.75],
+…          [0.35, 0.5, 0.15], [0.05, 0.9, 0.05], [0.05, 0.05, 0.9]]
+&gt;&gt;&gt; metric = Specificity(task=”multiclass”, num_classes=3)
+&gt;&gt;&gt; metric(target, preds)
+array([1.  , 0.75, 1.  ])
+&gt;&gt;&gt; metric.reset_state()
+&gt;&gt;&gt; target = [[0, 1, 1], [1, 2, 1]]
+&gt;&gt;&gt; preds = [[[0.9, 0.05, 0.05], [0.05, 0.9, 0.05], [0.05, 0.2, 0.75]],
+…          [[0.35, 0.5, 0.15], [0.25, 0.5, 0.25], [0.5, 0.05, 0.45]]]
+&gt;&gt;&gt; for t, p in zip(target, preds):
+…     metric.update_state(t, p)
+&gt;&gt;&gt; metric.compute()
+array([0.8, 0.5, 0.8])</p>
+<p>(multilabel)
+&gt;&gt;&gt; from cyclops.evaluation.metrics import Specificity
+&gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 1], [1, 1, 0]]
+&gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.2, 0.75], [0.35, 0.5, 0.15]]
+&gt;&gt;&gt; metric = Specificity(task=”multilabel”, num_labels=3)
+&gt;&gt;&gt; metric(target, preds)
+array([0., 1., 1.])
+&gt;&gt;&gt; metric.reset_state()
+&gt;&gt;&gt; target = [[[0, 1, 0], [1, 0, 1]], [[0, 1, 1], [1, 0, 0]]]
+&gt;&gt;&gt; preds = [
+…     [[0.1, 0.7, 0.2], [0.2, 0.8, 0.3]],
+…     [[0.5, 0.9, 0.0], [0.3, 0.4, 0.2]],
+… ]
+&gt;&gt;&gt; for t, p in zip(target, preds):
+…     metric.update_state(t, p)
+&gt;&gt;&gt; metric.compute()
+array([0.5, 0.5, 1. ])</p>
 </dd></dl>
 
 </section>

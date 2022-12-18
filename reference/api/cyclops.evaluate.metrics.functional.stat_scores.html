@@ -137,8 +137,10 @@
 <li class="toctree-l4 current"><a class="reference internal" href="cyclops.evaluate.metrics.html">cyclops.evaluate.metrics package</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="cyclops.evaluate.html#submodules">Submodules</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="cyclops.evaluate.evaluator.html">cyclops.evaluate.evaluator module</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="cyclops.evaluate.metrics.html">cyclops.evaluate.metrics package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="cyclops.evaluate.metrics.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l4 current"><a class="reference internal" href="cyclops.evaluate.metrics.functional.html">cyclops.evaluate.metrics.functional package</a></li>
@@ -360,8 +362,8 @@ negatives and support. If <code class="docutils literal notranslate"><span class
 <span class="gp">&gt;&gt;&gt; </span><span class="n">preds</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">multiclass_stat_scores</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="go">array([[1, 1, 3, 0, 1],</span>
-<span class="go">       [0, 1, 3, 1, 1],</span>
-<span class="go">       [1, 1, 1, 2, 3]])</span>
+<span class="go">        [0, 1, 3, 1, 1],</span>
+<span class="go">        [1, 1, 1, 2, 3]])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -400,8 +402,8 @@ if <code class="docutils literal notranslate"><span class="pre">labelwise=True</
 <span class="gp">&gt;&gt;&gt; </span><span class="n">preds</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">multilabel_stat_scores</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="go">array([[1, 0, 1, 0, 1],</span>
-<span class="go">       [1, 0, 1, 0, 1],</span>
-<span class="go">       [2, 0, 0, 0, 2]])</span>
+<span class="go">        [1, 0, 1, 0, 1],</span>
+<span class="go">        [2, 0, 0, 0, 2]])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -445,6 +447,33 @@ if <code class="docutils literal notranslate"><span class="pre">labelwise</span>
 <dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)">numpy.ndarray</a></p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<p>(binary)
+&gt;&gt;&gt; from cyclops.evaluation.metrics.functional import tat_scores
+&gt;&gt;&gt; target = [0, 1, 1, 0]
+&gt;&gt;&gt; preds = [0, 1, 0, 0]
+&gt;&gt;&gt; stat_scores(target, preds, task=”binary”)
+array([1, 0, 2, 1, 2])</p>
+<p>(multiclass)
+&gt;&gt;&gt; from cyclops.evaluation.metrics.functional import multiclass_stat_scores
+&gt;&gt;&gt; target = [0, 1, 2, 2, 2]
+&gt;&gt;&gt; preds = [0, 2, 1, 2, 0]
+&gt;&gt;&gt; stat_scores(target, preds, task=”multiclass”, num_classes=3)
+array([[1, 1, 3, 0, 1],</p>
+<blockquote>
+<div><p>[0, 1, 3, 1, 1],
+[1, 1, 1, 2, 3]])</p>
+</div></blockquote>
+<p>(multilabel)
+&gt;&gt;&gt; from cyclops.evaluation.metrics.functional import stat_scores
+&gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 1]]
+&gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]]
+&gt;&gt;&gt; stat_scores(target, preds, task=”multilabel”, num_labels=3)
+array([[1, 0, 1, 0, 1],</p>
+<blockquote>
+<div><p>[1, 0, 1, 0, 1],
+[2, 0, 0, 0, 2]])</p>
+</div></blockquote>
 </dd></dl>
 
 </section>
