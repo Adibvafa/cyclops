@@ -235,6 +235,49 @@
 <div class="viewcode-block" id="TableTypes"><a class="viewcode-back" href="../../../technical/api/cyclops/query/util/index.html#cyclops.query.util.TableTypes">[docs]</a><span class="n">TableTypes</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Select</span><span class="p">,</span> <span class="n">Subquery</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">DBTable</span><span class="p">]</span></div>
 
 
+<div class="viewcode-block" id="ckwarg"><a class="viewcode-back" href="../../../technical/api/cyclops/query/util/index.html#cyclops.query.util.ckwarg">[docs]</a><span class="k">def</span> <span class="nf">ckwarg</span><span class="p">(</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">kwarg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the value of a conditional keyword argument.</span>
+
+<span class="sd">    A keyword argument may or may not be specified in some</span>
+<span class="sd">    keyword arguments. If specified, return the value,</span>
+<span class="sd">    otherwise return None.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kwargs: dict</span>
+<span class="sd">        Process keyword arguments.</span>
+<span class="sd">    kwarg: str</span>
+<span class="sd">        The keyword argument of interest.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    any, optional</span>
+<span class="sd">        The value of the keyword argument if it exists, otherwise None.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">kwarg</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">kwarg</span><span class="p">]</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="remove_kwargs"><a class="viewcode-back" href="../../../technical/api/cyclops/query/util/index.html#cyclops.query.util.remove_kwargs">[docs]</a><span class="k">def</span> <span class="nf">remove_kwargs</span><span class="p">(</span><span class="n">process_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]):</span>
+    <span class="sd">&quot;&quot;&quot;Remove some keyword arguments from process_kwargs if they exist.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    process_kwargs: dict</span>
+<span class="sd">        Process keyword arguments.</span>
+<span class="sd">    kwargs: str or list of str</span>
+<span class="sd">        The keyword arguments to remove should they exist.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">kwarg</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">kwarg</span> <span class="ow">in</span> <span class="n">process_kwargs</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">process_kwargs</span><span class="p">[</span><span class="n">kwarg</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">process_kwargs</span></div>
+
+
 <div class="viewcode-block" id="_to_subquery"><a class="viewcode-back" href="../../../technical/api/cyclops/query/util/index.html#cyclops.query.util._to_subquery">[docs]</a><span class="k">def</span> <span class="nf">_to_subquery</span><span class="p">(</span><span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Convert a table from a table type object to the Subquery type.</span>
 

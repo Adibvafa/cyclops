@@ -272,49 +272,6 @@
         <span class="k">return</span> <span class="n">val</span></div></div>
 
 
-<div class="viewcode-block" id="ckwarg"><a class="viewcode-back" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.ckwarg">[docs]</a><span class="k">def</span> <span class="nf">ckwarg</span><span class="p">(</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">kwarg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get the value of a conditional keyword argument.</span>
-
-<span class="sd">    A keyword argument may or may not be specified in some</span>
-<span class="sd">    keyword arguments. If specified, return the value,</span>
-<span class="sd">    otherwise return None.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    kwargs: dict</span>
-<span class="sd">        Process keyword arguments.</span>
-<span class="sd">    kwarg: str</span>
-<span class="sd">        The keyword argument of interest.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    any, optional</span>
-<span class="sd">        The value of the keyword argument if it exists, otherwise None.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">kwarg</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">kwarg</span><span class="p">]</span>
-    <span class="k">return</span> <span class="kc">None</span></div>
-
-
-<div class="viewcode-block" id="remove_kwargs"><a class="viewcode-back" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.remove_kwargs">[docs]</a><span class="k">def</span> <span class="nf">remove_kwargs</span><span class="p">(</span><span class="n">process_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]):</span>
-    <span class="sd">&quot;&quot;&quot;Remove some keyword arguments from process_kwargs if they exist.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    process_kwargs: dict</span>
-<span class="sd">        Process keyword arguments.</span>
-<span class="sd">    kwargs: str or list of str</span>
-<span class="sd">        The keyword arguments to remove should they exist.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">kwarg</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">kwarg</span> <span class="ow">in</span> <span class="n">process_kwargs</span><span class="p">:</span>
-            <span class="k">del</span> <span class="n">process_kwargs</span><span class="p">[</span><span class="n">kwarg</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">process_kwargs</span></div>
-
-
 <span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Subquery</span><span class="p">)</span>
 <div class="viewcode-block" id="process_operations"><a class="viewcode-back" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.process_operations">[docs]</a><span class="k">def</span> <span class="nf">process_operations</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-locals</span>
     <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span> <span class="n">operations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">],</span> <span class="n">user_kwargs</span><span class="p">:</span> <span class="nb">dict</span>
@@ -438,7 +395,7 @@
     <span class="k">return</span> <span class="n">table</span></div>
 
 
-<div class="viewcode-block" id="append_if_missing"><a class="viewcode-back" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.append_if_missing">[docs]</a><span class="k">def</span> <span class="nf">append_if_missing</span><span class="p">(</span>
+<div class="viewcode-block" id="_append_if_missing"><a class="viewcode-back" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process._append_if_missing">[docs]</a><span class="k">def</span> <span class="nf">_append_if_missing</span><span class="p">(</span>
     <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span>
     <span class="n">keep_cols</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">force_include_cols</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -461,10 +418,11 @@
     <span class="n">force_include_cols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">force_include_cols</span><span class="p">)</span>
     <span class="n">extend_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">force_include_cols</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keep_cols</span><span class="p">]</span>
     <span class="n">keep_cols</span> <span class="o">=</span> <span class="n">extend_cols</span> <span class="o">+</span> <span class="n">keep_cols</span>
+
     <span class="k">return</span> <span class="n">FilterColumns</span><span class="p">(</span><span class="n">keep_cols</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="none_add"><a class="viewcode-back" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.none_add">[docs]</a><span class="k">def</span> <span class="nf">none_add</span><span class="p">(</span><span class="n">obj1</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">obj2</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<div class="viewcode-block" id="_none_add"><a class="viewcode-back" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process._none_add">[docs]</a><span class="k">def</span> <span class="nf">_none_add</span><span class="p">(</span><span class="n">obj1</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">obj2</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Add two objects together while ignoring None values.</span>
 
 <span class="sd">    If both objects are None, returns None.</span>
@@ -482,7 +440,7 @@
     <span class="k">return</span> <span class="n">obj1</span> <span class="o">+</span> <span class="n">obj2</span></div>
 
 
-<div class="viewcode-block" id="process_checks"><a class="viewcode-back" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.process_checks">[docs]</a><span class="k">def</span> <span class="nf">process_checks</span><span class="p">(</span>
+<div class="viewcode-block" id="_process_checks"><a class="viewcode-back" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process._process_checks">[docs]</a><span class="k">def</span> <span class="nf">_process_checks</span><span class="p">(</span>
     <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span>
     <span class="n">cols</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">cols_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -549,7 +507,7 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">drop_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span></div></div>
 
 
@@ -585,7 +543,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_exists</span><span class="p">:</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rename_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rename_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
         <span class="k">return</span> <span class="n">rename_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rename_map</span><span class="p">)</span></div></div>
 
 
@@ -625,7 +583,7 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span>
             <span class="n">table</span><span class="p">,</span>
             <span class="n">func</span><span class="o">.</span><span class="n">substr</span><span class="p">(</span>
@@ -663,7 +621,7 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">reorder_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span></div></div>
 
 
@@ -697,7 +655,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">after</span><span class="p">])</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">after</span><span class="p">])</span>
         <span class="n">names</span> <span class="o">=</span> <span class="n">get_column_names</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
         <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">]</span>
         <span class="n">name_after_ind</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">after</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
@@ -732,7 +690,7 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">filter_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span></div></div>
 
 
@@ -767,7 +725,7 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">trim_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span> <span class="n">new_col_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span><span class="p">)</span></div></div>
 
 
@@ -801,7 +759,7 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">literal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">))</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div></div>
 
 
@@ -838,7 +796,7 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span>
             <span class="n">table</span><span class="p">,</span> <span class="n">timestamp_cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span>
         <span class="p">)</span>
 
@@ -886,7 +844,9 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_to</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span>
+            <span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_to</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">apply_to_columns</span><span class="p">(</span>
             <span class="n">table</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add_to</span><span class="p">,</span>
@@ -929,7 +889,7 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span>
             <span class="n">table</span><span class="p">,</span> <span class="n">timestamp_cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_to</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span>
         <span class="p">)</span>
 
@@ -983,11 +943,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># If the column being added is a timestamp column, ensure the others are too</span>
         <span class="k">if</span> <span class="n">check_timestamp_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">):</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span>
                 <span class="n">table</span><span class="p">,</span> <span class="n">timestamp_cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_to</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span>
                 <span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_to</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span>
             <span class="p">)</span>
 
@@ -1055,7 +1015,7 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span>
             <span class="n">table</span><span class="p">,</span> <span class="n">timestamp_cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_to</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_labels</span>
         <span class="p">)</span>
 
@@ -1109,7 +1069,7 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
 
         <span class="n">cast_type_map</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;str&quot;</span><span class="p">:</span> <span class="s2">&quot;to_str&quot;</span><span class="p">,</span>
@@ -1220,13 +1180,16 @@
                 <span class="n">col_obj</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col_obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">col_obj</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
                 <span class="k">for</span> <span class="n">col_obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_</span>
             <span class="p">]</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">none_add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_cols</span><span class="p">,</span> <span class="n">on_table_cols</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">join_table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">join_table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">none_add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">join_table_cols</span><span class="p">,</span> <span class="n">on_join_table_cols</span><span class="p">)</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span>
+                <span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">_none_add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_cols</span><span class="p">,</span> <span class="n">on_table_cols</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">join_table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">join_table</span><span class="p">,</span>
+                <span class="n">cols</span><span class="o">=</span><span class="n">_none_add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">join_table_cols</span><span class="p">,</span> <span class="n">on_join_table_cols</span><span class="p">),</span>
             <span class="p">)</span>
             <span class="c1"># Filter columns, keeping those being joined on</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="n">append_if_missing</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_cols</span><span class="p">,</span> <span class="n">on_table_cols</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">join_table</span> <span class="o">=</span> <span class="n">append_if_missing</span><span class="p">(</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">_append_if_missing</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_cols</span><span class="p">,</span> <span class="n">on_table_cols</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">join_table</span> <span class="o">=</span> <span class="n">_append_if_missing</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">join_table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">join_table_cols</span><span class="p">,</span> <span class="n">on_join_table_cols</span>
             <span class="p">)</span>
             <span class="c1"># Perform type conversions if given</span>
@@ -1320,7 +1283,7 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
         <span class="n">cond</span> <span class="o">=</span> <span class="n">equals</span><span class="p">(</span><span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_</span><span class="p">:</span>
             <span class="n">cond</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">_negate</span><span class="p">()</span>
@@ -1380,7 +1343,7 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
         <span class="n">cond</span> <span class="o">=</span> <span class="n">in_</span><span class="p">(</span>
             <span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">),</span>
             <span class="n">to_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
@@ -1452,7 +1415,7 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
         <span class="n">conds</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">has_substring</span><span class="p">(</span><span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">),</span> <span class="n">sub</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">substrings</span>
@@ -1521,7 +1484,7 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
         <span class="n">cond</span> <span class="o">=</span> <span class="n">starts_with</span><span class="p">(</span><span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_</span><span class="p">:</span>
             <span class="n">cond</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">_negate</span><span class="p">()</span>
@@ -1581,7 +1544,7 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
         <span class="n">cond</span> <span class="o">=</span> <span class="n">ends_with</span><span class="p">(</span><span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_</span><span class="p">:</span>
             <span class="n">cond</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">_negate</span><span class="p">()</span>
@@ -1637,7 +1600,7 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span>
             <span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span>
         <span class="p">)</span>
         <span class="n">cond</span> <span class="o">=</span> <span class="n">in_</span><span class="p">(</span>
@@ -1698,7 +1661,7 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span>
             <span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span>
         <span class="p">)</span>
         <span class="n">cond</span> <span class="o">=</span> <span class="n">in_</span><span class="p">(</span>
@@ -1747,7 +1710,7 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">timestamp_cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">timestamp_cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">timestamp</span> <span class="o">=</span> <span class="n">to_datetime_format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="p">)</span>
@@ -1792,7 +1755,7 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">timestamp_cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">timestamp_cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">timestamp</span> <span class="o">=</span> <span class="n">to_datetime_format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="p">)</span>
@@ -1897,7 +1860,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
 
         <span class="n">cond</span> <span class="o">=</span> <span class="n">and_</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">not_equals</span><span class="p">(</span><span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">col</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div></div>
@@ -1936,7 +1899,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
         <span class="n">ascending</span> <span class="o">=</span> <span class="n">to_list_optional</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ascending</span><span class="p">)</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">ascending</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">ascending</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
@@ -2025,7 +1988,7 @@
         <span class="p">]</span>
 
         <span class="n">groupby_names</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groupby_cols</span><span class="p">)</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">groupby_names</span> <span class="o">+</span> <span class="n">aggfunc_cols</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">groupby_names</span> <span class="o">+</span> <span class="n">aggfunc_cols</span><span class="p">)</span>
 
         <span class="c1"># Error checking</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">aggfunc_str</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">aggfunc_strs</span><span class="p">):</span>

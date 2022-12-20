@@ -266,19 +266,22 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">schema_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">config_overrides</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">config_overrides</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        config_overrides: list, optional</span>
-<span class="sd">            List of override configuration parameters.</span>
+<span class="sd">        schema_name: str</span>
+<span class="sd">            Name of database schema.</span>
+<span class="sd">        **config_overrides</span>
+<span class="sd">            Override configuration parameters, specified as kwargs.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">config_overrides</span><span class="p">:</span>
-            <span class="n">config_overrides</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">_get_table_map</span><span class="p">(</span><span class="n">schema_name</span><span class="p">),</span> <span class="n">COLUMN_MAP</span><span class="p">,</span> <span class="n">config_overrides</span><span class="p">)</span>
+        <span class="n">overrides</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">config_overrides</span><span class="p">:</span>
+            <span class="n">overrides</span> <span class="o">=</span> <span class="n">config_overrides</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">_get_table_map</span><span class="p">(</span><span class="n">schema_name</span><span class="p">),</span> <span class="n">COLUMN_MAP</span><span class="p">,</span> <span class="o">**</span><span class="n">overrides</span><span class="p">)</span>
 
 <div class="viewcode-block" id="OMOPQuerier._map_concept_ids_to_name"><a class="viewcode-back" href="../../../technical/api/cyclops/query/omop/index.html#cyclops.query.omop.OMOPQuerier._map_concept_ids_to_name">[docs]</a>    <span class="k">def</span> <span class="nf">_map_concept_ids_to_name</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">source_table</span><span class="p">:</span> <span class="n">Subquery</span><span class="p">,</span> <span class="n">source_cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>

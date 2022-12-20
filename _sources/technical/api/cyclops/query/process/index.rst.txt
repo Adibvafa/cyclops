@@ -60,12 +60,10 @@ Functions
 
 .. autoapisummary::
 
-   cyclops.query.process.ckwarg
-   cyclops.query.process.remove_kwargs
    cyclops.query.process.process_operations
-   cyclops.query.process.append_if_missing
-   cyclops.query.process.none_add
-   cyclops.query.process.process_checks
+   cyclops.query.process._append_if_missing
+   cyclops.query.process._none_add
+   cyclops.query.process._process_checks
 
 
 
@@ -181,67 +179,6 @@ Attributes
           !! processed by numpydoc !!
 
 
-.. py:function:: ckwarg(kwargs: dict, kwarg: str)
-
-   
-   Get the value of a conditional keyword argument.
-
-   A keyword argument may or may not be specified in some
-   keyword arguments. If specified, return the value,
-   otherwise return None.
-
-   :param kwargs: Process keyword arguments.
-   :type kwargs: dict
-   :param kwarg: The keyword argument of interest.
-   :type kwarg: str
-
-   :returns: The value of the keyword argument if it exists, otherwise None.
-   :rtype: any, optional
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
-
-.. py:function:: remove_kwargs(process_kwargs: dict, kwargs: Union[str, List[str]])
-
-   
-   Remove some keyword arguments from process_kwargs if they exist.
-
-   :param process_kwargs: Process keyword arguments.
-   :type process_kwargs: dict
-   :param kwargs: The keyword arguments to remove should they exist.
-   :type kwargs: str or list of str
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
-
 .. py:function:: process_operations(table: cyclops.query.util.TableTypes, operations: List[tuple], user_kwargs: dict) -> sqlalchemy.sql.selectable.Subquery
 
    
@@ -274,7 +211,7 @@ Attributes
    ..
        !! processed by numpydoc !!
 
-.. py:function:: append_if_missing(table: cyclops.query.util.TableTypes, keep_cols: Optional[Union[str, List[str]]] = None, force_include_cols: Optional[Union[str, List[str]]] = None)
+.. py:function:: _append_if_missing(table: cyclops.query.util.TableTypes, keep_cols: Optional[Union[str, List[str]]] = None, force_include_cols: Optional[Union[str, List[str]]] = None)
 
    
    Keep only certain columns in a table, but must include certain columns.
@@ -303,7 +240,7 @@ Attributes
    ..
        !! processed by numpydoc !!
 
-.. py:function:: none_add(obj1: Any, obj2: Any)
+.. py:function:: _none_add(obj1: Any, obj2: Any)
 
    
    Add two objects together while ignoring None values.
@@ -332,7 +269,7 @@ Attributes
    ..
        !! processed by numpydoc !!
 
-.. py:function:: process_checks(table: cyclops.query.util.TableTypes, cols: Optional[Union[str, List[str]]] = None, cols_not_in: Optional[Union[str, List[str]]] = None, timestamp_cols: Optional[Union[str, List[str]]] = None) -> sqlalchemy.sql.selectable.Subquery
+.. py:function:: _process_checks(table: cyclops.query.util.TableTypes, cols: Optional[Union[str, List[str]]] = None, cols_not_in: Optional[Union[str, List[str]]] = None, timestamp_cols: Optional[Union[str, List[str]]] = None) -> sqlalchemy.sql.selectable.Subquery
 
    
    Perform checks, and possibly alterations, on a table.
