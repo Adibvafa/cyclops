@@ -1,0 +1,589 @@
+:py:mod:`cyclops.evaluate.metrics.stat_scores`
+==============================================
+
+.. py:module:: cyclops.evaluate.metrics.stat_scores
+
+.. autoapi-nested-parse::
+
+   Classes for computing stat scores.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.evaluate.metrics.stat_scores._AbstractScores
+   cyclops.evaluate.metrics.stat_scores.BinaryStatScores
+   cyclops.evaluate.metrics.stat_scores.MulticlassStatScores
+   cyclops.evaluate.metrics.stat_scores.MultilabelStatScores
+   cyclops.evaluate.metrics.stat_scores.StatScores
+
+
+
+
+.. py:class:: _AbstractScores
+
+   Bases: :py:obj:`cyclops.evaluate.metrics.metric.Metric`
+
+   
+   Abstract base class for classes that compute stat scores.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: _create_state(size: int = 1) -> None
+
+      
+      Create the state variables.
+
+      For the stat scores, the state variables are the true positives (tp),
+      false positives (fp), true negatives (tn), and false negatives (fn).
+
+      :param size: The size of the default numpy.ndarray to create for the state
+                   variables.
+      :type size: int
+
+      :rtype: None
+
+      :raises AssertionError: If ``size`` is not greater than 0.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: _update_state(tp: numpy.ndarray, fp: numpy.ndarray, tn: numpy.ndarray, fn: numpy.ndarray) -> None
+
+      
+      Update the state variables.
+
+      :param tp: The true positives.
+      :type tp: numpy.ndarray
+      :param fp: The false positives.
+      :type fp: numpy.ndarray
+      :param tn: The true negatives.
+      :type tn: numpy.ndarray
+      :param fn: The false negatives.
+      :type fn: numpy.ndarray
+
+      :rtype: None
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: _final_state() -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray, numpy.ndarray]
+
+      
+      Return the final state variables.
+
+      :returns: The final state variables. The order is true positives (tp),
+                false positives (fp), true negatives (tn), and false negatives
+      :rtype: Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray, numpy.ndarray]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: BinaryStatScores(pos_label: int = 1, threshold: float = 0.5)
+
+   Bases: :py:obj:`_AbstractScores`
+
+   
+   Compute binary stat scores.
+
+   :param pos_label: The label to use for the positive class.
+   :type pos_label: int, default=1
+   :param threshold: The threshold to use for converting the predictions to binary
+                     values. Logits will be converted to probabilities using the sigmoid
+                     function.
+   :type threshold: float, default=0.5
+
+   .. rubric:: Examples
+
+   >>> from cyclops.evaluation.metrics import BinaryStatScores
+   >>> target = [0, 1, 1, 0]
+   >>> preds = [0, 1, 0, 0]
+   >>> metric = BinaryStatScores(threshold=0.5, pos_label=1)
+   >>> metric(target=target, preds=preds)
+   array([1, 0, 2, 1, 2])
+   >>> metric.reset_state()
+   >>> target = [[1, 1, 0, 1, 0, 0], [0, 0, 1, 1, 0, 0]]
+   >>> preds = [[0.9, 0.8, 0.3, 0.4, 0.5, 0.2], [0.2, 0.3, 0.6, 0.9, 0.4, 0.8]]
+   >>> for t, p in zip(target, preds):
+   ...     metric.update_state(target=t, preds=p)
+   >>> metric.compute()
+   array([4, 2, 5, 1, 5])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: update_state(target: numpy.typing.ArrayLike, preds: numpy.typing.ArrayLike) -> None
+
+      
+      Update the state variables.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: compute() -> numpy.ndarray
+
+      
+      Compute the binary stat scores from the state variables.
+
+      :returns: The binary stat scores. The order is true positives (tp),
+                false positives (fp), true negatives (tn), false negatives
+                (fn) and support (tp + fn).
+      :rtype: numpy.ndarray
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: MulticlassStatScores(num_classes: int, top_k: Optional[int] = None, classwise: bool = True)
+
+   Bases: :py:obj:`_AbstractScores`
+
+   
+   Compute multiclass stat scores.
+
+   :param num_classes: The total number of classes for the problem.
+   :type num_classes: int
+   :param top_k: If given, and predictions are probabilities/logits, the score will
+                 be computed only for the top k classes. Otherwise, ``top_k`` will be
+                 set to 1.
+   :type top_k: Optional[int], default=None
+   :param classwise: Whether to return the stat scores for each class or sum over all
+                     classes.
+   :type classwise: bool, default=True
+
+   .. rubric:: Examples
+
+   >>> from cyclops.evaluation.metrics import MulticlassStatScores
+   >>> target = [0, 1, 2, 2, 2]
+   >>> preds = [0, 2, 1, 2, 0]
+   >>> metric = MulticlassStatScores(num_classes=3, classwise=True)
+   >>> metric(target=target, preds=preds)
+   array([[1, 1, 3, 0, 1],
+           [0, 1, 3, 1, 1],
+           [1, 1, 1, 2, 3]])
+   >>> metric.reset_state()
+   >>> target = [[2, 0, 2, 2, 1], [1, 1, 0, 2, 2]]
+   >>> preds = [
+   ...         [
+   ...             [0.1, 0.2, 0.6],
+   ...             [0.6, 0.1, 0.2],
+   ...             [0.2, 0.6, 0.1],
+   ...             [0.2, 0.6, 0.1],
+   ...             [0.6, 0.2, 0.1],
+   ...         ],
+   ...         [
+   ...             [0.05, 0.1, 0.6],
+   ...             [0.1, 0.05, 0.6],
+   ...             [0.6, 0.1, 0.05],
+   ...             [0.1, 0.6, 0.05],
+   ...             [0.1, 0.6, 0.05],
+   ...         ],
+   ...     ]
+   >>> for t, p in zip(target, preds):
+   ...     metric.update_state(target=t, preds=p)
+   >>> metric.compute()
+   array([[2, 1, 7, 0, 2],
+           [0, 4, 3, 3, 3],
+           [1, 2, 3, 4, 5]])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: update_state(target: numpy.typing.ArrayLike, preds: numpy.typing.ArrayLike) -> None
+
+      
+      Update the state variables.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: compute() -> numpy.ndarray
+
+      
+      Compute the multiclass stat scores from the state variables.
+
+      :returns: The multiclass stat scores. The order is true positives (tp),
+                false positives (fp), true negatives (tn), false negatives
+                (fn) and support (tp + fn). If ``classwise`` is ``True``, the
+                shape is ``(num_classes, 5)``. Otherwise, the shape is ``(5,)``.
+      :rtype: numpy.ndarray
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: MultilabelStatScores(num_labels: int, threshold: float = 0.5, top_k: int = None, labelwise: bool = True)
+
+   Bases: :py:obj:`_AbstractScores`
+
+   
+   Compute stat scores for multilabel problems.
+
+   :param threshold: Threshold value for binarizing predictions that are probabilities or
+                     logits. A sigmoid function is applied if the predictions are logits.
+   :type threshold: float, default=0.5
+   :param top_k: If given, and predictions are probabilities/logits, the score will
+                 be computed only for the top k classes. Otherwise, ``top_k`` will be
+                 set to 1.
+   :type top_k: int, default=None
+   :param labelwise: Whether to return the stat scores for each label or sum over all labels.
+   :type labelwise: bool, default=True
+
+   .. rubric:: Examples
+
+   >>> from cyclops.evaluation.metrics import MultilabelStatScores
+   >>> target = [[0, 1, 1], [1, 0, 1]]
+   >>> preds = [[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]]
+   >>> metric = MultilabelStatScores(num_labels=3, labelwise=True)
+   >>> metric(target=target, preds=preds)
+   array([[1, 0, 1, 0, 1],
+           [1, 0, 1, 0, 1],
+           [2, 0, 0, 0, 2]])
+   >>> metric.reset_state()
+   >>> target = [[[0, 1, 1], [1, 0, 1]], [[0, 0, 1], [1, 1, 1]]]
+   >>> preds = [[[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]],
+   ...         [[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]]]
+   >>> for t, p in zip(target, preds):
+   ...     metric.update_state(target=t, preds=p)
+   >>> metric.compute()
+   array([[2, 0, 2, 0, 2],
+           [1, 1, 1, 1, 2],
+           [4, 0, 0, 0, 4]])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: update_state(target: numpy.typing.ArrayLike, preds: numpy.typing.ArrayLike) -> None
+
+      
+      Update the state variables.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: compute() -> numpy.ndarray
+
+      
+      Compute the multilabel stat scores from the state variables.
+
+      :returns: The multilabel stat scores. The order is true positives (tp),
+                false positives (fp), true negatives (tn), false negatives
+                (fn) and support (tp + fn). If ``labelwise`` is ``True``, the
+                shape is ``(num_labels, 5)``. Otherwise, the shape is ``(5,)``.
+      :rtype: numpy.ndarray
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: StatScores
+
+   Bases: :py:obj:`cyclops.evaluate.metrics.metric.Metric`
+
+   
+   Compute stat scores for binary, multiclass and multilabel problems.
+
+   :param task: The task type. Can be either ``binary``, ``multiclass`` or ``multilabel``.
+   :type task: Literal["binary", "multiclass", "multilabel"]
+   :param pos_label: The positive label to report. Only used for binary tasks.
+   :type pos_label: int, default=1
+   :param threshold: The threshold to use for binarizing the predictions if logits or
+                     probabilities are provided. If logits are provided, a sigmoid function
+                     is applied prior to binarization. Used for binary and multilabel tasks.
+   :type threshold: float, default=0.5
+   :param num_classes: The number of classes for the problem. Required for multiclass tasks.
+   :type num_classes: int
+   :param classwise: Whether to return the stat scores for each class or sum over all
+                     classes. Only used for multiclass tasks.
+   :type classwise: bool, default=True
+   :param top_k: If given, and predictions are probabilities/logits, the score will
+                 be computed only for the top k classes. Otherwise, ``top_k`` will be
+                 set to 1. Used for multiclass and multilabel tasks.
+   :type top_k: int, default=None
+   :param num_labels: The number of labels. Only used for multilabel tasks.
+   :type num_labels: int
+   :param labelwise: Whether to compute the stat scores labelwise. Only used for multilabel
+                     tasks.
+   :type labelwise: bool, default=False
+
+   .. rubric:: Examples
+
+   >>> # (binary)
+   >>> from cyclops.evaluation.metrics import StatScores
+   >>> target = [0, 1, 1, 0]
+   >>> preds = [0, 1, 0, 0]
+   >>> metric = StatScores(task="binary", threshold=0.5, pos_label=1)
+   >>> metric.update_state(target=target, preds=preds)
+   >>> metric.compute()
+   array([1, 0, 2, 1, 2])
+   >>> metric.reset_state()
+   >>> target = [[1, 1, 0, 1, 0, 0], [0, 0, 1, 1, 0, 0]]
+   >>> preds = [[0.9, 0.8, 0.3, 0.4, 0.5, 0.2], [0.2, 0.3, 0.6, 0.9, 0.4, 0.8]]
+   >>> for t, p in zip(target, preds):
+   ...     metric(target=t, preds=p)
+   >>> metric.compute()
+   array([4, 2, 5, 1, 5])
+
+   >>> # (multiclass)
+   >>> from cyclops.evaluation.metrics import StatScores
+   >>> target = [0, 1, 2, 2, 2]
+   >>> preds = [0, 2, 1, 2, 0]
+   >>> metric = StatScores(task="multiclass", num_classes=3, classwise=True)
+   >>> metric.update(target=target, preds=preds)
+   array([[1, 1, 3, 0, 1],
+           [0, 1, 3, 1, 1],
+           [1, 1, 1, 2, 3]])
+   >>> metric.reset_state()
+   >>> target = [[2, 0, 2, 2, 1], [1, 1, 0, 2, 2]]
+   >>> preds = [
+   ...         [
+   ...             [0.1, 0.2, 0.6],
+   ...             [0.6, 0.1, 0.2],
+   ...             [0.2, 0.6, 0.1],
+   ...             [0.2, 0.6, 0.1],
+   ...             [0.6, 0.2, 0.1],
+   ...         ],
+   ...         [
+   ...             [0.05, 0.1, 0.6],
+   ...             [0.1, 0.05, 0.6],
+   ...             [0.6, 0.1, 0.05],
+   ...             [0.1, 0.6, 0.05],
+   ...             [0.1, 0.6, 0.05],
+   ...         ],
+   ...     ]
+   >>> for t, p in zip(target, preds):
+   ...     metric.update_state(target=t, preds=p)
+   >>> metric.compute()
+   array([[2, 1, 7, 0, 2],
+           [0, 4, 3, 3, 3],
+           [1, 2, 3, 4, 5]])
+
+   >>> # (multilabel)
+   >>> from cyclops.evaluation.metrics import StatScores
+   >>> target = [[0, 1, 1], [1, 0, 1]]
+   >>> preds = [[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]]
+   >>> metric = StatScores(task="multilabel", num_labels=3, labelwise=True)
+   >>> metric(target=target, preds=preds)
+   array([[1, 0, 1, 0, 1],
+           [1, 0, 1, 0, 1],
+           [2, 0, 0, 0, 2]])
+   >>> metric.reset_state()
+   >>> target = [[[0, 1, 1], [1, 0, 1]], [[0, 0, 1], [1, 1, 1]]]
+   >>> preds = [[[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]],
+   ...         [[0.1, 0.9, 0.8], [0.8, 0.2, 0.7]]]
+   >>> for t, p in zip(target, preds):
+   ...     metric.update_state(target=t, preds=p)
+   >>> metric.compute()
+   array([[2, 0, 2, 0, 2],
+           [1, 1, 1, 1, 2],
+           [4, 0, 0, 0, 4]])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

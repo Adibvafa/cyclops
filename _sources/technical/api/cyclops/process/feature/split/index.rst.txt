@@ -1,0 +1,344 @@
+:py:mod:`cyclops.process.feature.split`
+=======================================
+
+.. py:module:: cyclops.process.feature.split
+
+.. autoapi-nested-parse::
+
+   Dataset split processing.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.process.feature.split.fractions_to_split
+   cyclops.process.feature.split.split_idx
+   cyclops.process.feature.split.split_idx_stratified
+   cyclops.process.feature.split.split_kfold
+   cyclops.process.feature.split.idxs_to_splits
+   cyclops.process.feature.split.kfold_cross_val
+   cyclops.process.feature.split.intersect_datasets
+   cyclops.process.feature.split.split_datasets_by_idx
+   cyclops.process.feature.split.split_datasets
+
+
+
+.. py:function:: fractions_to_split(fractions: Union[float, List[float]], n_samples: int) -> numpy.ndarray
+
+   
+   Create an array of index split points useful for dataset splitting.
+
+   Created using the length of the data and the desired split fractions.
+
+   :param fractions: Fraction(s) of samples between 0 and 1 to use for each split.
+   :type fractions: float or list of float
+   :param n_samples: The total number of samples in the data being split.
+   :type n_samples: int
+
+   :returns: Split indices to use in creating the desired split sizes.
+   :rtype: np.ndarray
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: split_idx(fractions: Union[float, List[float]], n_samples: int, randomize: bool = True, seed: Optional[int] = None) -> tuple
+
+   
+   Create disjoint subsets of indices.
+
+   :param fractions: Fraction(s) of samples between 0 and 1 to use for each split.
+   :type fractions: float or list of float
+   :param n_samples: The length of the data.
+   :type n_samples: int
+   :param randomize: Whether to randomize the data in the splits.
+   :type randomize: bool, default = True
+   :param seed: Seed for random number generator.
+   :type seed: int, optional
+
+   :returns: Disjoint subsets of indices.
+   :rtype: tuple of numpy.ndarray
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: split_idx_stratified(fractions: Union[float, List[float]], stratify_labels: numpy.ndarray, randomize: bool = True, seed: Optional[int] = None) -> tuple
+
+   
+   Create disjoint, label-stratified subsets of indices.
+
+   There will be the equal label proportions in each subset.
+
+   :param fractions: Fraction(s) of samples between 0 and 1 to use for each split.
+   :type fractions: float or list of float
+   :param stratify_labels: 1D array of labels used for stratification.
+   :type stratify_labels: numpy.ndarray
+   :param randomize: Whether to randomize the data in the splits.
+   :type randomize: bool, default = True
+   :param seed: Seed for random number generator.
+   :type seed: int, optional
+
+   :returns: Disjoint, label-stratified subsets of indices.
+   :rtype: tuple of numpy.ndarray
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: split_kfold(k_folds: int, n_samples: int, randomize: bool = True, seed: Optional[int] = None) -> numpy.ndarray
+
+   
+   Create K disjoint subsets of indices equal in length.
+
+   These K equally sized folds are useful for K-fold cross validation.
+
+   :param k_folds: K, i.e., the number of folds.
+   :type k_folds: int
+   :param n_samples: The number of samples.
+   :type n_samples: int
+   :param randomize: Whether to randomize the data in the splits.
+   :type randomize: bool, default = True
+   :param seed: Seed for random number generator.
+   :type seed: int, optional
+
+   :returns: K disjoint subsets of indices equal in length.
+   :rtype: tuple of numpy.ndarray
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: idxs_to_splits(samples: numpy.ndarray, idxs: Tuple)
+
+   
+   Create data subsets using subsets of indices.
+
+   :param samples: A NumPy array with the first dimension being over the samples.
+   :type samples: numpy.ndarray
+   :param idxs: Subsets of indices.
+   :type idxs: tuple of numpy.ndarray
+
+   :returns: Dataset splits.
+   :rtype: tuple of numpy.ndarray
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: kfold_cross_val(k_folds: int, samples: numpy.ndarray, randomize: bool = True, seed: Optional[int] = None) -> Generator[Tuple[numpy.ndarray, numpy.ndarray], None, None]
+
+   
+   Perform K-fold cross validation.
+
+   :param k_folds: Number of folds in the K-fold cross validation.
+   :type k_folds: int
+   :param samples: A NumPy array with the first dimension being over the samples.
+   :type samples: numpy.ndarray
+   :param randomize: Whether to randomize the data in the splits.
+   :type randomize: bool, default = True
+   :param seed: Seed for random number generator.
+   :type seed: int, optional
+
+   :Yields: *tuple of numpy.ndarray* -- Yields the training and validation splits.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: intersect_datasets(datas: List[pandas.DataFrame], on_col: str, sort: bool = True) -> Tuple
+
+   
+   Perform an intersection across datasets over a column.
+
+   This can be used to align dataset samples e.g., aligning encounters for a tabular
+   and temporal dataset.
+
+   :param datas: List of datasets.
+   :type datas: list of pandas.DataFrame
+   :param on_col: The column on which to perform the intersection.
+   :type on_col: str
+   :param sort: Whether to sort the values in each dataset by the on column.
+   :type sort: bool, default = True
+
+   :returns: A tuple of the processed datasets.
+   :rtype: tuple
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: split_datasets_by_idx(datasets: Union[numpy.ndarray, List[numpy.ndarray]], idx_splits: Tuple, axes: Optional[Union[int, List[int]]] = None)
+
+   
+   Split datasets by index over given axes.
+
+   :param datasets: Datasets to split in the same manner.
+   :type datasets: numpy.ndarray or list of numpy.ndarray
+   :param idx_splits: A tuple of the indices belonging to each individual split.
+   :type idx_splits: tuple
+   :param axes: The axes along which to split each of the datasets.
+                If not specified, defaults to the axis = 0 for all datasets.
+   :type axes: int or list of int, optional
+
+   :returns: A tuple of the dataset splits, where each contains a tuple of splits.
+             e.g., split1, split2 = split_features([features1, features2], 0.5)
+             train1, test1 = split1
+             train2, test2 = split2
+   :rtype: tuple
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: split_datasets(datasets: Union[numpy.ndarray, List[numpy.ndarray]], fractions: Union[float, List[float]], axes: Optional[Union[int, List[int]]] = None, randomize: bool = True, seed: Optional[int] = None) -> Tuple
+
+   
+   Split a dataset into a number of datasets.
+
+   :param datasets: Datasets, or a dataset, to split.
+   :type datasets: np.ndarray or list of np.ndarray
+   :param axes: Axes, or axis, along which to split the data.
+   :type axes: int or list of int
+   :param fractions: Fraction(s) of samples between 0 and 1 to use for each split.
+   :type fractions: float or list of float
+   :param randomize: Whether to randomize the samples in the splits. Otherwise it splits
+                     the samples in the current order.
+   :type randomize: bool, default = True
+   :param seed: Seed for random number generator.
+   :type seed: int, optional
+
+   :returns: A tuple of splits if a single dataset is given. Otherwise, a tuple of
+             datasets of splits. All splits are also numpy.ndarray.
+   :rtype: tuple
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

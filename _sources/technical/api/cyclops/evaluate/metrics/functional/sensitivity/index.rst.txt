@@ -1,0 +1,293 @@
+:py:mod:`cyclops.evaluate.metrics.functional.sensitivity`
+=========================================================
+
+.. py:module:: cyclops.evaluate.metrics.functional.sensitivity
+
+.. autoapi-nested-parse::
+
+   Functions for computing sensitivity scores on different input types.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.evaluate.metrics.functional.sensitivity.binary_sensitivity
+   cyclops.evaluate.metrics.functional.sensitivity.multiclass_sensitivity
+   cyclops.evaluate.metrics.functional.sensitivity.multilabel_sensitivity
+   cyclops.evaluate.metrics.functional.sensitivity.sensitivity
+
+
+
+.. py:function:: binary_sensitivity(target: numpy.typing.ArrayLike, preds: numpy.typing.ArrayLike, pos_label: int = 1, threshold: float = 0.5, zero_division: Literal[warn, 0, 1] = 'warn') -> float
+
+   
+   Compute sensitvity score for binary classification problems.
+
+   Sensitivity is the recall of the positive class in a binary classification
+   problem.
+
+   :param target: Ground truth (correct) target values.
+   :type target: ArrayLike
+   :param preds: Predictions as returned by a classifier.
+   :type preds: ArrayLike
+   :param pos_label: Label of the positive class.
+   :type pos_label: int, default=1
+   :param threshold: Threshold for deciding the positive class.
+   :type threshold: float, default=0.5
+   :param zero_division: Value to return when there is a zero division. If set to "warn", this
+                         acts as 0, but warnings are also raised.
+   :type zero_division: Literal["warn", 0, 1], default="warn"
+
+   :returns: sensitivity score.
+   :rtype: float
+
+   .. rubric:: Examples
+
+   >>> from cyclops.evaluation.metrics.functional import binary_sensitivity
+   >>> target = [0, 1, 0, 1]
+   >>> preds = [0, 1, 1, 0]
+   >>> binary_sensitivity(target, preds)
+   0.5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: multiclass_sensitivity(target: numpy.typing.ArrayLike, preds: numpy.typing.ArrayLike, num_classes: int, top_k: Optional[int] = None, average: Literal[micro, macro, weighted, None] = None, zero_division: Literal[warn, 0, 1] = 'warn')
+
+   
+   Compute sensitivity score for multiclass classification problems.
+
+   :param target: Ground truth (correct) target values.
+   :type target: ArrayLike
+   :param preds: Predictions as returned by a classifier.
+   :type preds: ArrayLike
+   :param num_classes: Total number of classes in the dataset.
+   :type num_classes: int
+   :param top_k: If given, and predictions are probabilities/logits, the sensitivity will
+                 be computed only for the top k classes. Otherwise, ``top_k`` will be
+                 set to 1.
+   :type top_k: Optional[int]
+   :param average: Average to apply. If None, return scores for each class. Otherwise,
+                   use one of the following options to compute the average score:
+
+                   - ``micro``: Calculate metrics globally by counting the total true
+                       positives and false negatives.
+                   - ``macro``: Calculate metrics for each label, and find their
+                       unweighted mean. This does not take label imbalance into account.
+                   - ``weighted``: Calculate metrics for each label, and find their
+                       average weighted by support (the number of true instances for each label).
+                       This alters "macro" to account for label imbalance.
+   :type average: Literal["micro", "macro", "weighted", None], default=None
+   :param zero_division: Value to return when there are no true positives or true negatives.
+                         If set to ``warn``, this acts as 0, but warnings are also raised.
+   :type zero_division: Literal["warn", 0, 1], default="warn"
+
+   :returns: Sensitivity score. If ``average`` is None, return a numpy.ndarray of
+             sensitivity scores for each class.
+   :rtype: float or numpy.ndarray
+
+   :raises ValueError: If ``average`` is not one of ``micro``, ``macro``, ``weighted``
+       or ``None``.
+
+   .. rubric:: Examples
+
+   >>> from cyclops.evaluation.metrics.functional import multiclass_sensitivity
+   >>> target = [0, 1, 2, 0, 1, 2]
+   >>> preds = [[0.4, 0.1, 0.5], [0.1, 0.8, 0.1], [0.2, 0.2, 0.6],
+   ...     [0.5, 0.3, 0.2], [0.2, 0.5, 0.3], [0.2, 0.2, 0.6]]
+   >>> multiclass_sensitivity(target, preds, num_classes=3, average="macro")
+   0.8333333333333334
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: multilabel_sensitivity(target: numpy.typing.ArrayLike, preds: numpy.typing.ArrayLike, num_labels: int, threshold: float = 0.5, top_k: Optional[int] = None, average: Literal[micro, macro, weighted, None] = None, zero_division: Literal[warn, 0, 1] = 'warn')
+
+   
+   Compute sensitivity score for multilabel classification tasks.
+
+   The input is expected to be an array-like of shape (N, L), where N is the
+   number of samples and L is the number of labels. The input is expected to
+   be a binary array-like, where 1 indicates the presence of a label and 0
+   indicates its absence.
+
+   :param target: Ground truth (correct) target values.
+   :type target: ArrayLike
+   :param preds: Predictions as returned by a classifier.
+   :type preds: ArrayLike
+   :param num_labels: Number of labels in the dataset.
+   :type num_labels: int
+   :param threshold: Threshold for deciding the positive class.
+   :type threshold: float, default=0.5
+   :param average: If ``None``, return the sensitivity score for each class. Otherwise,
+                   use one of the following options to compute the average score:
+
+                   - ``micro``: Calculate metric globally from the total count of true
+                       positives and false negatives.
+                   - ``macro``: Calculate metric for each label, and find their
+                       unweighted mean. This does not take label imbalance into account.
+                   - ``weighted``: Calculate metric for each label, and find their
+                       average weighted by the support (the number of true instances
+                       for each label). This alters "macro" to account for label imbalance.
+   :type average: Literal["micro", "macro", "weighted", None], default=None
+   :param zero_division: Value to return when there is a zero division. If set to "warn", this
+                         acts as 0, but warnings are also raised.
+   :type zero_division: Literal["warn", 0, 1], default="warn"
+
+   :returns: Sensitivity score. If ``average`` is None, return a numpy.ndarray of
+             sensitivity scores for each label.
+   :rtype: float or numpy.ndarray
+
+   :raises ValueError: If ``average`` is not one of ``micro``, ``macro``, ``weighted``
+       or ``None``.
+
+   .. rubric:: Examples
+
+   >>> from cyclops.evaluation.metrics.functional import multilabel_sensitivity
+   >>> target = [1, 1, 2, 0, 2, 2]
+   >>> preds = [1, 2, 2, 0, 2, 0]
+   >>> multilabel_sensitivity(target, preds, num_classes=3)
+   array([1.        , 0.5       , 0.66666667])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: sensitivity(target: numpy.typing.ArrayLike, preds: numpy.typing.ArrayLike, task: Literal[binary, multiclass, multilabel], pos_label: int = 1, num_classes: int = None, threshold: float = 0.5, top_k: Optional[int] = None, num_labels: int = None, average: Literal[micro, macro, weighted, None] = None, zero_division: Literal[warn, 0, 1] = 'warn') -> Union[float, numpy.ndarray]
+
+   
+   Compute sensitivity score for different classification tasks.
+
+   Sensitivity is the ratio tp / (tp + fn) where tp is the number of true positives
+   and fn the number of false negatives. The sensitivity is intuitively the ability
+   of the classifier to find all the positive samples.
+
+   :param target: Ground truth (correct) target values.
+   :type target: ArrayLike
+   :param preds: Predictions as returned by a classifier.
+   :type preds: ArrayLike
+   :param task: Task type.
+   :type task: Literal["binary", "multiclass", "multilabel"]
+   :param pos_label: Label of the positive class. Only used for binary classification.
+   :type pos_label: int
+   :param num_classes: Number of classes. Only used for multiclass classification.
+   :type num_classes: Optional[int]
+   :param threshold: Threshold for positive class predictions.
+   :type threshold: float, default=0.5
+   :param top_k: Number of highest probability or logits predictions to consider when
+                 computing multiclass or multilabel metrics. Default is None.
+   :type top_k: Optional[int]
+   :param num_labels: Number of labels. Only used for multilabel classification.
+   :type num_labels: Optional[int]
+   :param average: Average to apply. If None, return scores for each class/label. Otherwise,
+                   use one of the following options to compute the average score:
+
+                   - ``micro``: Calculate metrics globally by counting the total true
+                       positives and false negatives.
+                   - ``macro``: Calculate metrics for each class/label, and find their
+                       unweighted mean. This does not take class/label imbalance into account.
+                   - ``weighted``: Calculate metrics for each class/label, and find
+                       their average weighted by support (the number of true instances for each
+                       class/label). This alters ``macro`` to account for class/label imbalance.
+   :type average: Literal["micro", "macro", "weighted", None], default=None
+   :param zero_division: Value to return when there are no true positives or true negatives.
+                         If set to ``warn``, this acts as 0, but warnings are also raised.
+   :type zero_division: Literal["warn", 0, 1], default="warn"
+
+   :returns: Sensitivity score. If ``average`` is not None or ``task`` is ``binary``,
+             return a float. Otherwise, return a numpy.ndarray of sensitivity scores
+             for each class/label.
+   :rtype: float or numpy.ndarray
+
+   :raises ValueError: If ``task`` is not one of ``binary``, ``multiclass`` or ``multilabel``.
+
+   .. rubric:: Examples
+
+   >>> # (binary)
+   >>> from cyclops.evaluation.metrics.functional import sensitivity
+   >>> target = [0, 1, 1, 0, 1]
+   >>> preds = [0.4, 0.2, 0.0, 0.6, 0.9]
+   >>> sensitivity(target, preds, task="binary")
+   0.3333333333333333
+
+   >>> # (multiclass)
+   >>> from cyclops.evaluation.metrics.functional import sensitivity
+   >>> target = [1, 1, 2, 0, 2, 2]
+   >>> preds = [1, 2, 2, 0, 2, 0]
+   >>> sensitivity(target, preds, task="multiclass", num_classes=3)
+   array([1.        , 0.5       , 0.66666667])
+
+   >>> # (multilabel)
+   >>> from cyclops.evaluation.metrics.functional import sensitivity
+   >>> target = [[1, 0, 1], [0, 1, 0]]
+   >>> preds = [[0.4, 0.2, 0.0], [0.6, 0.9, 0.1]]
+   >>> sensitivity(target, preds, task="multilabel", num_labels=3)
+   array([0., 1., 0.])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

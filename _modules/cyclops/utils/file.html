@@ -13,6 +13,7 @@
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/cyclops.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
@@ -126,9 +127,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#notebooks">🎓 Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#reference">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../design.html">Framework Design</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to cyclops</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
 </ul>
 
         </div>
@@ -181,11 +181,11 @@
 <span class="kn">from</span> <span class="nn">cyclops.utils.log</span> <span class="kn">import</span> <span class="n">setup_logging</span>
 
 <span class="c1"># Logging.</span>
-<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<div class="viewcode-block" id="LOGGER"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.LOGGER">[docs]</a><span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span></div>
 <span class="n">setup_logging</span><span class="p">(</span><span class="n">print_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="join"><a class="viewcode-back" href="../../../reference/api/cyclops.utils.file.html#cyclops.utils.file.join">[docs]</a><span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="o">*</span><span class="n">paths</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="join"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.join">[docs]</a><span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="o">*</span><span class="n">paths</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Robustly join paths.</span>
 
 <span class="sd">    os.path.join only may cause problems with some filepaths (especially on Windows).</span>
@@ -204,7 +204,7 @@
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">paths</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="exchange_extension"><a class="viewcode-back" href="../../../reference/api/cyclops.utils.file.html#cyclops.utils.file.exchange_extension">[docs]</a><span class="k">def</span> <span class="nf">exchange_extension</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_ext</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="exchange_extension"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.exchange_extension">[docs]</a><span class="k">def</span> <span class="nf">exchange_extension</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_ext</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Exchange one file extension for another.</span>
 
 <span class="sd">    Parameters</span>
@@ -226,7 +226,7 @@
     <span class="k">return</span> <span class="n">file_path</span><span class="p">[:</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">old_ext</span><span class="p">)]</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">new_ext</span></div>
 
 
-<div class="viewcode-block" id="process_file_save_path"><a class="viewcode-back" href="../../../reference/api/cyclops.utils.file.html#cyclops.utils.file.process_file_save_path">[docs]</a><span class="k">def</span> <span class="nf">process_file_save_path</span><span class="p">(</span>
+<div class="viewcode-block" id="process_file_save_path"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.process_file_save_path">[docs]</a><span class="k">def</span> <span class="nf">process_file_save_path</span><span class="p">(</span>
     <span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">create_dir</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Process file save path, perform checks, and possibly create a parent directory.</span>
@@ -268,7 +268,7 @@
     <span class="k">return</span> <span class="n">save_path</span></div>
 
 
-<div class="viewcode-block" id="process_dir_save_path"><a class="viewcode-back" href="../../../reference/api/cyclops.utils.file.html#cyclops.utils.file.process_dir_save_path">[docs]</a><span class="k">def</span> <span class="nf">process_dir_save_path</span><span class="p">(</span><span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">create_dir</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="process_dir_save_path"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.process_dir_save_path">[docs]</a><span class="k">def</span> <span class="nf">process_dir_save_path</span><span class="p">(</span><span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">create_dir</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Process directory save path, perform checks, and possibly create the directory.</span>
 
 <span class="sd">    Parameters</span>
@@ -296,7 +296,7 @@
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Directory does not exist.&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="save_dataframe"><a class="viewcode-back" href="../../../reference/api/cyclops.utils.file.html#cyclops.utils.file.save_dataframe">[docs]</a><span class="k">def</span> <span class="nf">save_dataframe</span><span class="p">(</span>
+<div class="viewcode-block" id="save_dataframe"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.save_dataframe">[docs]</a><span class="k">def</span> <span class="nf">save_dataframe</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;parquet&quot;</span><span class="p">,</span>
@@ -341,7 +341,7 @@
     <span class="k">return</span> <span class="n">save_path</span></div>
 
 
-<div class="viewcode-block" id="load_dataframe"><a class="viewcode-back" href="../../../reference/api/cyclops.utils.file.html#cyclops.utils.file.load_dataframe">[docs]</a><span class="k">def</span> <span class="nf">load_dataframe</span><span class="p">(</span>
+<div class="viewcode-block" id="load_dataframe"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.load_dataframe">[docs]</a><span class="k">def</span> <span class="nf">load_dataframe</span><span class="p">(</span>
     <span class="n">load_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;parquet&quot;</span><span class="p">,</span>
     <span class="n">log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -380,7 +380,7 @@
     <span class="k">return</span> <span class="n">data</span></div>
 
 
-<div class="viewcode-block" id="save_array"><a class="viewcode-back" href="../../../reference/api/cyclops.utils.file.html#cyclops.utils.file.save_array">[docs]</a><span class="k">def</span> <span class="nf">save_array</span><span class="p">(</span>
+<div class="viewcode-block" id="save_array"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.save_array">[docs]</a><span class="k">def</span> <span class="nf">save_array</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;npy&quot;</span><span class="p">,</span>
@@ -421,7 +421,7 @@
     <span class="k">return</span> <span class="n">save_path</span></div>
 
 
-<div class="viewcode-block" id="load_array"><a class="viewcode-back" href="../../../reference/api/cyclops.utils.file.html#cyclops.utils.file.load_array">[docs]</a><span class="k">def</span> <span class="nf">load_array</span><span class="p">(</span>
+<div class="viewcode-block" id="load_array"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.load_array">[docs]</a><span class="k">def</span> <span class="nf">load_array</span><span class="p">(</span>
     <span class="n">load_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;npy&quot;</span><span class="p">,</span>
     <span class="n">log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -456,7 +456,7 @@
     <span class="k">return</span> <span class="n">data</span></div>
 
 
-<div class="viewcode-block" id="save_pickle"><a class="viewcode-back" href="../../../reference/api/cyclops.utils.file.html#cyclops.utils.file.save_pickle">[docs]</a><span class="k">def</span> <span class="nf">save_pickle</span><span class="p">(</span>
+<div class="viewcode-block" id="save_pickle"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.save_pickle">[docs]</a><span class="k">def</span> <span class="nf">save_pickle</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -489,7 +489,7 @@
     <span class="k">return</span> <span class="n">save_path</span></div>
 
 
-<div class="viewcode-block" id="load_pickle"><a class="viewcode-back" href="../../../reference/api/cyclops.utils.file.html#cyclops.utils.file.load_pickle">[docs]</a><span class="k">def</span> <span class="nf">load_pickle</span><span class="p">(</span>
+<div class="viewcode-block" id="load_pickle"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.load_pickle">[docs]</a><span class="k">def</span> <span class="nf">load_pickle</span><span class="p">(</span>
     <span class="n">load_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
@@ -517,7 +517,7 @@
         <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="listdir_nonhidden"><a class="viewcode-back" href="../../../reference/api/cyclops.utils.file.html#cyclops.utils.file.listdir_nonhidden">[docs]</a><span class="k">def</span> <span class="nf">listdir_nonhidden</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<div class="viewcode-block" id="listdir_nonhidden"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.listdir_nonhidden">[docs]</a><span class="k">def</span> <span class="nf">listdir_nonhidden</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;List the non-hidden files of a directory.</span>
 
 <span class="sd">    Parameters</span>
@@ -534,7 +534,7 @@
     <span class="k">return</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)]</span></div>
 
 
-<div class="viewcode-block" id="yield_dataframes"><a class="viewcode-back" href="../../../reference/api/cyclops.utils.file.html#cyclops.utils.file.yield_dataframes">[docs]</a><span class="k">def</span> <span class="nf">yield_dataframes</span><span class="p">(</span>
+<div class="viewcode-block" id="yield_dataframes"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.yield_dataframes">[docs]</a><span class="k">def</span> <span class="nf">yield_dataframes</span><span class="p">(</span>
     <span class="n">dir_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">sort</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">skip_n</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -574,7 +574,7 @@
         <span class="k">yield</span> <span class="n">load_dataframe</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="n">file</span><span class="p">),</span> <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="concat_consequtive_dataframes"><a class="viewcode-back" href="../../../reference/api/cyclops.utils.file.html#cyclops.utils.file.concat_consequtive_dataframes">[docs]</a><span class="k">def</span> <span class="nf">concat_consequtive_dataframes</span><span class="p">(</span>
+<div class="viewcode-block" id="concat_consequtive_dataframes"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.concat_consequtive_dataframes">[docs]</a><span class="k">def</span> <span class="nf">concat_consequtive_dataframes</span><span class="p">(</span>
     <span class="n">dir_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">every_n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -614,7 +614,7 @@
         <span class="k">yield</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">datas</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="save_consequtive_dataframes"><a class="viewcode-back" href="../../../reference/api/cyclops.utils.file.html#cyclops.utils.file.save_consequtive_dataframes">[docs]</a><span class="k">def</span> <span class="nf">save_consequtive_dataframes</span><span class="p">(</span>
+<div class="viewcode-block" id="save_consequtive_dataframes"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.save_consequtive_dataframes">[docs]</a><span class="k">def</span> <span class="nf">save_consequtive_dataframes</span><span class="p">(</span>
     <span class="n">prev_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">new_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">every_n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -648,7 +648,7 @@
             <span class="k">return</span></div>
 
 
-<div class="viewcode-block" id="yield_pickled_files"><a class="viewcode-back" href="../../../reference/api/cyclops.utils.file.html#cyclops.utils.file.yield_pickled_files">[docs]</a><span class="k">def</span> <span class="nf">yield_pickled_files</span><span class="p">(</span>
+<div class="viewcode-block" id="yield_pickled_files"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.yield_pickled_files">[docs]</a><span class="k">def</span> <span class="nf">yield_pickled_files</span><span class="p">(</span>
     <span class="n">dir_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">sort</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">skip_n</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -702,8 +702,8 @@
 
   <div class="citation">
     CyclOps team <i>et al.,</i>
-    <a href="https://vectorinstitute.github.io/cyclops/">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
-    <i>, TBD</i> (2022)
+    <a href="https://www.medrxiv.org/content/10.1101/2022.12.02.22283021v2">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, medarxiv</i> (2022)
   </def>
 
 
@@ -752,9 +752,17 @@
     ,
     
     <span>
-      <a href="https://github.com/dhrumilp15">
-        <img src="../../../_static/team/dhrumil-patel.jpg" width="32"/>
-        Dhrumil Patel
+      <a href="https://github.com/mahshidaln">
+        <img src="../../../_static/team/mahshid-alinoori.jpg" width="32"/>
+        Mahshid Alinoori
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/elhamdolatabadi">
+        <img src="../../../_static/team/elham-dolatabadi.jpg" width="32"/>
+        Elham Dolatabadi
       </a>
     </span>
     ,

@@ -1,0 +1,434 @@
+:py:mod:`cyclops.query.orm`
+===========================
+
+.. py:module:: cyclops.query.orm
+
+.. autoapi-nested-parse::
+
+   Object Relational Mapper (ORM) using sqlalchemy.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.query.orm.Database
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.query.orm._get_db_url
+   cyclops.query.orm._get_attr_name
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.query.orm.LOGGER
+   cyclops.query.orm.SOCKET_CONNECTION_TIMEOUT
+
+
+.. py:data:: LOGGER
+   
+
+   
+
+.. py:data:: SOCKET_CONNECTION_TIMEOUT
+   :annotation: = 5
+
+   
+
+.. py:function:: _get_db_url(dbms: str, user: str, pwd: str, host: str, port: str, database: str) -> str
+
+   
+   Combine to make Database URL string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: _get_attr_name(name: str) -> str
+
+   
+   Get attribute name (second part of first.second).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: Database(config: omegaconf.DictConfig)
+
+   
+   Database class.
+
+   .. attribute:: config
+
+      Configuration stored in object.
+
+      :type: argparse.Namespace
+
+   .. attribute:: engine
+
+      SQL extraction engine.
+
+      :type: sqlalchemy.engine.base.Engine
+
+   .. attribute:: inspector
+
+      Module for schema inspection.
+
+      :type: sqlalchemy.engine.reflection.Inspector
+
+   .. attribute:: session
+
+      :type: sqlalchemy.orm.session.Session
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: _create_engine() -> sqlalchemy.engine.base.Engine
+
+      
+      Create an engine.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: _create_session() -> sqlalchemy.orm.session.Session
+
+      
+      Create session.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: _setup()
+
+      
+      Prepare ORM DB.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: run_query(query: cyclops.query.util.TableTypes, limit: Optional[int] = None) -> pandas.DataFrame
+
+      
+      Run query.
+
+      :param query: Query to run.
+      :type query: cyclops.query.util.TableTypes
+      :param limit: Limit query result to limit.
+      :type limit: Optional[int]
+
+      :returns: Extracted data from query.
+      :rtype: pd.DataFrame
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: run_sql_string(query: str) -> pandas.DataFrame
+
+      
+      Run query from SQL raw SQL string.
+
+      :param query: Raw SQL query string.
+      :type query: str
+
+      :returns: Extracted data from query.
+      :rtype: pd.DataFrame
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: save_query_to_csv(query: cyclops.query.util.TableTypes, path: str) -> str
+
+      
+      Save query in a .csv format.
+
+      :param query: Query to save.
+      :type query: cyclops.query.util.TableTypes
+      :param path: Save path.
+
+      :returns: Processed save path for upstream use.
+      :rtype: str
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: save_query_to_parquet(query: cyclops.query.util.TableTypes, path: str) -> str
+
+      
+      Save query in a .parquet format.
+
+      :param query: Query to save.
+      :type query: cyclops.query.util.TableTypes
+      :param path: Save path.
+
+      :returns: Processed save path for upstream use.
+      :rtype: str
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: query_batch_conditions(query: cyclops.query.util.TableTypes, id_col: str, batch_size: int) -> List[Union[sqlalchemy.sql.elements.BinaryExpression, sqlalchemy.sql.elements.BooleanClauseList]]
+
+      
+      Return a list of WHERE conditions to segment a query into batches.
+
+      Batches are created via SQL windowing, based on segmenting the values in a
+      given column, such as an ID column, into intervals.
+
+      Requires a database that supports window functions.
+
+      :param column: The column over which to create the interval ranges and conditions.
+      :type column: sqlalchemy.sql.schema.Column
+      :param window_size: The range of the interval to create.
+      :type window_size: int
+
+      :returns: * *list of sqlalchemy.sql.elements.BinaryExpression or*
+                * *sqlalchemy.sql.elements.BooleanClauseList* -- The window conditions on which to filter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: run_id_batched_query(query: cyclops.query.util.TableTypes, id_col: str, batch_size: int) -> Generator[pandas.DataFrame, None, None]
+
+      
+      Generate query batches with complete sets of IDs in a batch.
+
+      Queries are sorted and grouped such that the rows for a given sample ID are kept
+      together in a single batch.
+
+      :param query: Query to run.
+      :type query: cyclops.query.util.TableTypes
+      :param window_size: Window size used to batch queries over the ID column.
+      :type window_size: int
+      :param id_col: Name of the sample ID column by which to batch.
+      :type id_col: str
+
+      :Yields: *pandas.DataFrame* -- A query batch with complete sets of sample IDs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: save_id_batched_query(query: cyclops.query.util.TableTypes, dir_path: str, id_col: str, batch_size: int, file_format: str = 'parquet') -> None
+
+      
+      Save a query in different batches, keeping same sample IDs together.
+
+      Queries are sorted and grouped such that the rows for a given sample ID are kept
+      together in a single batch.
+
+      :param query: Query to run.
+      :type query: cyclops.query.util.TableTypes
+      :param dir_path: Path to directory in which to save the batches.
+      :type dir_path: str
+      :param batch_size: Approximate batch size before rearranging based on sample IDs.
+      :type batch_size: int
+      :param id_col: Name of the sample ID column by which to batch.
+      :type id_col: str
+      :param file_format: File format of the DataFrame to save.
+      :type file_format: str
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

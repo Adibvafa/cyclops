@@ -13,6 +13,7 @@
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/cyclops.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
     <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
@@ -126,9 +127,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro.html#notebooks">🎓 Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro.html#reference">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../design.html">Framework Design</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing to cyclops</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
 </ul>
 
         </div>
@@ -182,7 +182,7 @@
 <span class="kn">from</span> <span class="nn">cyclops.evaluate.metrics.utils</span> <span class="kn">import</span> <span class="n">_check_average_arg</span>
 
 
-<div class="viewcode-block" id="BinarySpecificity"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.specificity.html#cyclops.evaluate.metrics.specificity.BinarySpecificity">[docs]</a><span class="k">class</span> <span class="nc">BinarySpecificity</span><span class="p">(</span><span class="n">BinaryStatScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;binary_specificity&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="BinarySpecificity"><a class="viewcode-back" href="../../../../technical/api/cyclops/evaluate/metrics/specificity/index.html#cyclops.evaluate.metrics.BinarySpecificity">[docs]</a><span class="k">class</span> <span class="nc">BinarySpecificity</span><span class="p">(</span><span class="n">BinaryStatScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;binary_specificity&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute specificity for binary classification tasks.</span>
 
 <span class="sd">    Parameters</span>
@@ -225,7 +225,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zero_division</span> <span class="o">=</span> <span class="n">zero_division</span>
 
-<div class="viewcode-block" id="BinarySpecificity.compute"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.specificity.html#cyclops.evaluate.metrics.specificity.BinarySpecificity.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="BinarySpecificity.compute"><a class="viewcode-back" href="../../../../technical/api/cyclops/evaluate/metrics/specificity/index.html#cyclops.evaluate.metrics.BinarySpecificity.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Compute the specificity score from the state.&quot;&quot;&quot;</span>
         <span class="c1"># pylint: disable=invalid-name # for tp, tn, fp, fn</span>
         <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_final_state</span><span class="p">()</span>
@@ -239,7 +239,7 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="MulticlassSpecificity"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.specificity.html#cyclops.evaluate.metrics.specificity.MulticlassSpecificity">[docs]</a><span class="k">class</span> <span class="nc">MulticlassSpecificity</span><span class="p">(</span>
+<div class="viewcode-block" id="MulticlassSpecificity"><a class="viewcode-back" href="../../../../technical/api/cyclops/evaluate/metrics/specificity/index.html#cyclops.evaluate.metrics.MulticlassSpecificity">[docs]</a><span class="k">class</span> <span class="nc">MulticlassSpecificity</span><span class="p">(</span>
     <span class="n">MulticlassStatScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multiclass_specificity&quot;</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute specificity for multiclass classification tasks.</span>
@@ -255,6 +255,7 @@
 <span class="sd">    average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
 <span class="sd">        If None, return the specificity for each class, otherwise return the</span>
 <span class="sd">        average specificity. Average options are:</span>
+
 <span class="sd">        - ``micro``: Calculate metrics globally.</span>
 <span class="sd">        - ``macro``: Calculate metrics for each class, and find their unweighted</span>
 <span class="sd">            mean. This does not take class imbalance into account.</span>
@@ -297,7 +298,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">average</span> <span class="o">=</span> <span class="n">average</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zero_division</span> <span class="o">=</span> <span class="n">zero_division</span>
 
-<div class="viewcode-block" id="MulticlassSpecificity.compute"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.specificity.html#cyclops.evaluate.metrics.specificity.MulticlassSpecificity.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="MulticlassSpecificity.compute"><a class="viewcode-back" href="../../../../technical/api/cyclops/evaluate/metrics/specificity/index.html#cyclops.evaluate.metrics.MulticlassSpecificity.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Compute the specificity score from the state.&quot;&quot;&quot;</span>
         <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_final_state</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">_specificity_reduce</span><span class="p">(</span>
@@ -310,7 +311,7 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="MultilabelSpecificity"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.specificity.html#cyclops.evaluate.metrics.specificity.MultilabelSpecificity">[docs]</a><span class="k">class</span> <span class="nc">MultilabelSpecificity</span><span class="p">(</span>
+<div class="viewcode-block" id="MultilabelSpecificity"><a class="viewcode-back" href="../../../../technical/api/cyclops/evaluate/metrics/specificity/index.html#cyclops.evaluate.metrics.MultilabelSpecificity">[docs]</a><span class="k">class</span> <span class="nc">MultilabelSpecificity</span><span class="p">(</span>
     <span class="n">MultilabelStatScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multilabel_specificity&quot;</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute specificity for multilabel classification tasks.</span>
@@ -330,6 +331,7 @@
 <span class="sd">    average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
 <span class="sd">        If None, return the specificity for each class, otherwise return the</span>
 <span class="sd">        average specificity. Average options are:</span>
+
 <span class="sd">        - ``micro``: Calculate metrics globally.</span>
 <span class="sd">        - ``macro``: Calculate metrics for each label, and find their unweighted</span>
 <span class="sd">            mean. This does not take label imbalance into account.</span>
@@ -376,7 +378,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">average</span> <span class="o">=</span> <span class="n">average</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zero_division</span> <span class="o">=</span> <span class="n">zero_division</span>
 
-<div class="viewcode-block" id="MultilabelSpecificity.compute"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.specificity.html#cyclops.evaluate.metrics.specificity.MultilabelSpecificity.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="MultilabelSpecificity.compute"><a class="viewcode-back" href="../../../../technical/api/cyclops/evaluate/metrics/specificity/index.html#cyclops.evaluate.metrics.MultilabelSpecificity.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Compute the specificity score from the state.&quot;&quot;&quot;</span>
         <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_final_state</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">_specificity_reduce</span><span class="p">(</span>
@@ -389,7 +391,7 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="Specificity"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.specificity.html#cyclops.evaluate.metrics.specificity.Specificity">[docs]</a><span class="k">class</span> <span class="nc">Specificity</span><span class="p">(</span><span class="n">Metric</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;specificity&quot;</span><span class="p">,</span> <span class="n">force_register</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Specificity"><a class="viewcode-back" href="../../../../technical/api/cyclops/evaluate/metrics/specificity/index.html#cyclops.evaluate.metrics.Specificity">[docs]</a><span class="k">class</span> <span class="nc">Specificity</span><span class="p">(</span><span class="n">Metric</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;specificity&quot;</span><span class="p">,</span> <span class="n">force_register</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute specificity score for different classification tasks.</span>
 
 <span class="sd">    The specificity is the ratio of true negatives to the sum of true negatives and</span>
@@ -415,6 +417,7 @@
 <span class="sd">    average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
 <span class="sd">        If ``None``, return the score for each label/class. Otherwise,</span>
 <span class="sd">        use one of the following options to compute the average score:</span>
+
 <span class="sd">        - ``micro``: Calculate metrics globally.</span>
 <span class="sd">        - ``macro``: Calculate metrics for each class/label, and find their</span>
 <span class="sd">            unweighted mean. This does not take label/class imbalance into</span>
@@ -429,7 +432,7 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    (binary)</span>
+<span class="sd">    &gt;&gt;&gt; # (binary)</span>
 <span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import Specificity</span>
 <span class="sd">    &gt;&gt;&gt; target = [0, 1, 1, 0, 1]</span>
 <span class="sd">    &gt;&gt;&gt; preds = [0.9, 0.05, 0.05, 0.35, 0.05]</span>
@@ -444,7 +447,7 @@
 <span class="sd">    &gt;&gt;&gt; metric.compute()</span>
 <span class="sd">    0.0</span>
 
-<span class="sd">    (multiclass)</span>
+<span class="sd">    &gt;&gt;&gt; # (multiclass)</span>
 <span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import Specificity</span>
 <span class="sd">    &gt;&gt;&gt; target = [0, 1, 2, 0, 1, 2]</span>
 <span class="sd">    &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05], [0.05, 0.2, 0.75],</span>
@@ -461,7 +464,7 @@
 <span class="sd">    &gt;&gt;&gt; metric.compute()</span>
 <span class="sd">    array([0.8, 0.5, 0.8])</span>
 
-<span class="sd">    (multilabel)</span>
+<span class="sd">    &gt;&gt;&gt; # (multilabel)</span>
 <span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import Specificity</span>
 <span class="sd">    &gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 1], [1, 1, 0]]</span>
 <span class="sd">    &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.2, 0.75], [0.35, 0.5, 0.15]]</span>
@@ -539,8 +542,8 @@
 
   <div class="citation">
     CyclOps team <i>et al.,</i>
-    <a href="https://vectorinstitute.github.io/cyclops/">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
-    <i>, TBD</i> (2022)
+    <a href="https://www.medrxiv.org/content/10.1101/2022.12.02.22283021v2">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, medarxiv</i> (2022)
   </def>
 
 
@@ -589,9 +592,17 @@
     ,
     
     <span>
-      <a href="https://github.com/dhrumilp15">
-        <img src="../../../../_static/team/dhrumil-patel.jpg" width="32"/>
-        Dhrumil Patel
+      <a href="https://github.com/mahshidaln">
+        <img src="../../../../_static/team/mahshid-alinoori.jpg" width="32"/>
+        Mahshid Alinoori
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/elhamdolatabadi">
+        <img src="../../../../_static/team/elham-dolatabadi.jpg" width="32"/>
+        Elham Dolatabadi
       </a>
     </span>
     ,

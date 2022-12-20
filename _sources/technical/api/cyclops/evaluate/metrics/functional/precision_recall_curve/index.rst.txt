@@ -1,0 +1,740 @@
+:py:mod:`cyclops.evaluate.metrics.functional.precision_recall_curve`
+====================================================================
+
+.. py:module:: cyclops.evaluate.metrics.functional.precision_recall_curve
+
+.. autoapi-nested-parse::
+
+   Functions for computing the precision-recall curve for different input types.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.evaluate.metrics.functional.precision_recall_curve._format_thresholds
+   cyclops.evaluate.metrics.functional.precision_recall_curve._ovr_multi_threshold_confusion_matrix
+   cyclops.evaluate.metrics.functional.precision_recall_curve._precision_recall_curve_compute_from_confmat
+   cyclops.evaluate.metrics.functional.precision_recall_curve._binary_precision_recall_curve_format
+   cyclops.evaluate.metrics.functional.precision_recall_curve._binary_precision_recall_curve_update
+   cyclops.evaluate.metrics.functional.precision_recall_curve._binary_precision_recall_curve_compute
+   cyclops.evaluate.metrics.functional.precision_recall_curve.binary_precision_recall_curve
+   cyclops.evaluate.metrics.functional.precision_recall_curve._multiclass_precision_recall_curve_format
+   cyclops.evaluate.metrics.functional.precision_recall_curve._multiclass_precision_recall_curve_update
+   cyclops.evaluate.metrics.functional.precision_recall_curve._multiclass_precision_recall_curve_compute
+   cyclops.evaluate.metrics.functional.precision_recall_curve.multiclass_precision_recall_curve
+   cyclops.evaluate.metrics.functional.precision_recall_curve._multilabel_precision_recall_curve_format
+   cyclops.evaluate.metrics.functional.precision_recall_curve._multilabel_precision_recall_curve_update
+   cyclops.evaluate.metrics.functional.precision_recall_curve._multilabel_precision_recall_curve_compute
+   cyclops.evaluate.metrics.functional.precision_recall_curve.multilabel_precision_recall_curve
+   cyclops.evaluate.metrics.functional.precision_recall_curve.precision_recall_curve
+
+
+
+.. py:function:: _format_thresholds(thresholds: Union[int, List[float], numpy.ndarray] = None) -> Optional[numpy.ndarray]
+
+   
+   Format thresholds to be a 1D numpy array of floats.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: _ovr_multi_threshold_confusion_matrix(target: numpy.ndarray, preds: numpy.ndarray, num_classes: int, num_thresholds: int) -> numpy.ndarray
+
+   
+   Compute multi-threshold confusion matrix for one-vs-rest classification.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: _precision_recall_curve_compute_from_confmat(confmat: numpy.ndarray, thresholds: numpy.ndarray) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
+
+   
+   Compute precision-recall curve from a multi-threshold confusion matrix.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: _binary_precision_recall_curve_format(target: numpy.typing.ArrayLike, preds: numpy.typing.ArrayLike, pos_label: int) -> Tuple[numpy.ndarray, numpy.ndarray]
+
+   
+   Check and format binary precision-recall curve input/data.
+
+   :param target: Ground truth (correct) target values.
+   :type target: ArrayLike
+   :param preds: Estimated probabilities or non-thresholded output of decision function.
+                 A sigmoid function is applied if ``preds`` are not in [0, 1].
+   :type preds: ArrayLike
+   :param pos_label: Label of the positive class.
+   :type pos_label: int
+
+   :returns: * **target** (*numpy.ndarray*) -- Ground truth (correct) target values as a numpy array.
+             * **preds** (*numpy.ndarray*) -- Estimated probabilities or non-thresholded output of decision function
+               as a numpy array.
+
+   :raises ValueError: If ``target`` is not binary, with only 1 and 0 as values; If ``target`` and
+       ``preds`` are not of the same shape; If ``preds`` is not continuous.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: _binary_precision_recall_curve_update(target: numpy.ndarray, preds: numpy.ndarray, thresholds: Optional[numpy.ndarray]) -> Union[Tuple[numpy.ndarray, numpy.ndarray], numpy.ndarray]
+
+   
+   Compute the state from which the precision-recall curve can be computed.
+
+   :param target: Binary target values.
+   :type target: numpy.ndarray
+   :param preds: Predicted probabilities.
+   :type preds: numpy.ndarray
+   :param thresholds: Thresholds used for computing the precision and recall scores.
+   :type thresholds: Optional[numpy.ndarray]
+
+   :returns: * **(target, preds)** (*Tuple[numpy.ndarray, numpy.ndarray]*) -- Target and predicted probabilities, if ``thresholds`` is None.
+             * **confmat** (*numpy.ndarray*) -- Multi-threshold confusion matrix, if ``thresholds`` is not None.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: _binary_precision_recall_curve_compute(state: Union[Tuple, numpy.ndarray], thresholds: numpy.ndarray, pos_label: int = None) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
+
+   
+   Compute precision-recall curve from a state.
+
+   :param state: State from which the precision-recall curve can be computed. Can be
+                 either a tuple of (target, preds) or a multi-threshold confusion matrix.
+   :type state: Tuple or numpy.ndarray
+   :param thresholds: Thresholds used for computing the precision and recall scores. If not None,
+                      must be a 1D numpy array of floats in the [0, 1] range and monotonically
+                      increasing.
+   :type thresholds: numpy.ndarray
+   :param pos_label: The label of the positive class.
+   :type pos_label: int
+
+   :returns: * **precision** (*numpy.ndarray*) -- Precision scores such that element i is the precision of predictions
+               with score >= thresholds[i].
+             * **recall** (*numpy.ndarray*) -- Recall scores in descending order.
+             * **thresholds** (*numpy.ndarray*) -- Thresholds used for computing the precision and recall scores.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: binary_precision_recall_curve(target: numpy.typing.ArrayLike, preds: numpy.typing.ArrayLike, thresholds: Union[int, List[float], numpy.ndarray] = None, pos_label: int = 1) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
+
+   
+   Compute precision-recall curve for binary input.
+
+   :param target: Binary target values.
+   :type target: ArrayLike
+   :param preds: Predicted probabilities or output of a decision function. If ``preds``
+                 are logits, they will be transformed to probabilities via the sigmoid
+                 function.
+   :type preds: ArrayLike
+   :param thresholds: Thresholds used for computing the precision and recall scores.
+                      If int, then the number of thresholds to use.
+                      If list or numpy.ndarray, then the thresholds to use.
+                      If None, then the thresholds are automatically determined by the
+                      unique values in ``preds``.
+   :type thresholds: int or list of floats or numpy.ndarray of floats, default=None
+   :param pos_label: The label of the positive class.
+   :type pos_label: int
+
+   :returns: * **precision** (*numpy.ndarray*) -- Precision scores such that element i is the precision of predictions
+               with score >= thresholds[i].
+             * **recall** (*numpy.ndarray*) -- Recall scores in descending order.
+             * **thresholds** (*numpy.ndarray*) -- Thresholds used for computing the precision and recall scores.
+
+   .. rubric:: Examples
+
+   >>> from cyclops.evaluation.metrics.functional import (
+   ...     binary_precision_recall_curve
+   ... )
+   >>> target = [0, 0, 1, 1]
+   >>> preds = [0.1, 0.4, 0.35, 0.8]
+   >>> precision, recall, thresholds = binary_precision_recall_curve(target,
+   ...     preds, thresholds=5
+   ... )
+   >>> precision
+   array([0.5, 0.66666667, 1., 1., 0.]
+   >>> recall
+   array([1., 1., 0.5, 0.5, 0.])
+   >>> thresholds
+   array([0.1, 0.25 , 0.5, 0.75 , 1.])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: _multiclass_precision_recall_curve_format(target: numpy.typing.ArrayLike, preds: numpy.typing.ArrayLike, num_classes: int) -> Tuple[numpy.ndarray, numpy.ndarray]
+
+   
+   Check and format the input for the multiclass precision-recall curve.
+
+   :param target: The target values.
+   :type target: ArrayLike
+   :param preds: The predicted probabilities or output of a decision function. If
+                 ``preds`` is not in the [0, 1] range, it will be transformed into this
+                 range via the softmax function.
+   :type preds: ArrayLike
+   :param num_classes: Number of classes.
+   :type num_classes: int
+
+   :returns: * **target** (*numpy.ndarray*) -- The target values as a numpy array.
+             * **preds** (*numpy.ndarray*) -- The predicted probabilities as a numpy array.
+             * **thresholds** (*numpy.ndarray*) -- Thresholds used for computing the precision and recall scores as a numpy array.
+
+   :raises ValueError: If ``target`` is not a 1D array of integers or contains values outside the
+       range [0, num_classes) or does not have one more dimension than ``preds``;
+       if ``preds`` is not a 2D array of floats or does not have the same number
+       of classes as ``num_classes``; if ``preds and ``target`` do not have the
+       same number of samples.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: _multiclass_precision_recall_curve_update(target: numpy.ndarray, preds: numpy.ndarray, num_classes: int, thresholds: numpy.ndarray = None) -> Union[Tuple[numpy.ndarray, numpy.ndarray], numpy.ndarray]
+
+   
+   Update the state of the multiclass precision-recall curve.
+
+   :param target: Binary target values.
+   :type target: numpy.ndarray
+   :param preds: Predicted probabilities.
+   :type preds: numpy.ndarray
+   :param num_classes: Number of classes.
+   :type num_classes: int
+   :param thresholds: Thresholds used for computing the precision and recall scores.
+   :type thresholds: numpy.ndarray, default=None
+
+   :returns: * **(target, preds)** (*Tuple[numpy.ndarray, numpy.ndarray]*) -- The target and predicted probabilities, if ``thresholds`` is None.
+             * **state** (*numpy.ndarray*) -- The state of the multiclass precision-recall curve,  if ``thresholds``
+               is not None.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: _multiclass_precision_recall_curve_compute(state: Union[numpy.ndarray, Tuple[numpy.ndarray, numpy.ndarray]], thresholds: numpy.ndarray, num_classes: int) -> Union[Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray], Tuple[List[numpy.ndarray], List[numpy.ndarray], List[numpy.ndarray]]]
+
+   
+   Compute the multiclass precision-recall curve.
+
+   :param state: The state of the multiclass precision-recall curve. If ``thresholds`` is
+                 None, then ``state`` is a tuple of the target and predicted probabilities.
+                 Otherwise, ``state`` is the one-vs-all multi-threshold confusion matrix.
+   :type state: numpy.ndarray
+   :param thresholds: Thresholds used for computing the precision and recall scores.
+   :type thresholds: numpy.ndarray
+   :param num_classes: Number of classes.
+   :type num_classes: int
+
+   :returns: * **precision** (*numpy.ndarray or list of numpy.ndarray*) -- Precision scores where element i is the precision score corresponding to the
+               threshold i. If state is a tuple of the target and predicted probabilities,
+               then precision is a list of arrays, where each array corresponds to the
+               precision scores for a class.
+             * **recall** (*numpy.ndarray or list of numpy.ndarray*) -- Recall scores where element `i` is the recall score corresponding to the
+               threshold  `i`. If state is a tuple of the target and predicted probabilities,
+               then recall is a list of arrays, where each array corresponds to the recall
+               scores for a class.
+             * **thresholds** (*numpy.ndarray or list of numpy.ndarray*) -- Thresholds used for computing the precision and recall scores.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: multiclass_precision_recall_curve(target: numpy.typing.ArrayLike, preds: numpy.typing.ArrayLike, num_classes: int, thresholds: Union[int, List[float], numpy.ndarray] = None) -> Union[Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray], Tuple[List[numpy.ndarray], List[numpy.ndarray], List[numpy.ndarray]]]
+
+   
+   Compute the precision-recall curve for multiclass problems.
+
+   :param target: Ground truth (correct) target values.
+   :type target: ArrayLike
+   :param preds: Estimated probabilities or decision function. If ``preds`` is a logit, it
+                 will be converted to a probability using the softmax function.
+   :type preds: ArrayLike
+   :param num_classes: The number of classes in the dataset.
+   :type num_classes: int
+   :param thresholds: Thresholds used for computing the precision and recall scores.
+                      If int, then the number of thresholds to use.
+                      If list or array, then the thresholds to use.
+                      If None, then the thresholds are automatically determined by the
+                      unique values in ``preds``.
+   :type thresholds: Union[int, List[float], numpy.ndarray], default=None
+
+   :returns: * **precision** (*numpy.ndarray or list of numpy.ndarray*) -- Precision scores where element i is the precision score corresponding
+               to the threshold i. If state is a tuple of the target and predicted
+               probabilities, then precision is a list of arrays, where each array
+               corresponds to the precision scores for a class.
+             * **recall** (*numpy.ndarray or list of numpy.ndarray*) -- Recall scores where element i is the recall score corresponding to
+               the threshold i. If state is a tuple of the target and predicted
+               probabilities, then recall is a list of arrays, where each array
+               corresponds to the recall scores for a class.
+             * **thresholds** (*numpy.ndarray or list of numpy.ndarray*) -- Thresholds used for computing the precision and recall scores.
+
+   .. rubric:: Examples
+
+   >>> from cyclops.evaluation.metrics.functional import (
+   ...     multiclass_precision_recall_curve
+   ... )
+   >>> target = [0, 1, 2, 2]
+   >>> preds = [[0.1, 0.6, 0.3], [0.05, 0.95, 0], [0.5, 0.3, 0.2], [0.3, 0.4, 0.3]]
+   >>> precision, recall, thresholds = multiclass_precision_recall_curve(target,
+   ...     preds, num_classes=3, thresholds=5)
+   >>> precision
+   array([[0.25, 0.  , 0.  , 0.  , 0.  , 1.  ],
+   [0.25, 0.25, 0.5 , 1.  , 0.  , 1.  ],
+   [0.5 , 0.5 , 0.  , 0.  , 0.  , 1.  ]])
+   >>> recall
+   array([[1. , 0. , 0. , 0. , 0. , 0. ],
+   [1. , 1. , 1. , 1. , 0. , 0. ],
+   [1. , 0.5, 0. , 0. , 0. , 0. ]])
+   >>> thresholds
+   array([0.  , 0.25, 0.5 , 0.75, 1.  ])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: _multilabel_precision_recall_curve_format(target: numpy.typing.ArrayLike, preds: numpy.typing.ArrayLike, num_labels: int) -> Tuple[numpy.ndarray, numpy.ndarray]
+
+   
+   Check and format the multilabel precision-recall curve input/data.
+
+   :param target: The target values.
+   :type target: ArrayLike
+   :param preds: Predicted probabilities or output of a decision function. If the
+                 values are not in [0, 1], then they are converted into probabilities
+                 by applying the sigmoid function.
+   :type preds: ArrayLike
+   :param num_labels: The number of labels in the dataset.
+   :type num_labels: int
+   :param thresholds: Thresholds used for computing the precision and recall scores.
+                      If int, then the number of thresholds to use.
+                      If list or array, then the thresholds to use.
+                      If None, then the thresholds are automatically determined by the
+                      unique values in ``preds``.
+   :type thresholds: int, list of floats or numpy.ndarray of floats, default=None
+
+   :returns: * **target** (*numpy.ndarray*) -- The target values as a numpy array.
+             * **preds** (*numpy.ndarray*) -- The predicted probabilities as a numpy array.
+             * **thresholds** (*numpy.ndarray*) -- Thresholds used for computing the precision and recall scores as a
+               numpy array, if ``thresholds`` is not None.
+
+   :raises ValueError: If ``target`` is not in multilabel-indicator format.
+   :raises ValueError: If ``preds`` does not contain float values.
+   :raises ValueError: If ``num_labels`` does not match up with the number of columns in ``preds``.
+   :raises ValueError: If the number of columns in ``preds`` is not the same as the number of
+       columns in ``target``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: _multilabel_precision_recall_curve_update(target: numpy.ndarray, preds: numpy.ndarray, num_labels: int, thresholds: numpy.ndarray) -> Union[Tuple[numpy.ndarray, numpy.ndarray], numpy.ndarray]
+
+   
+   Update the multilabel precision-recall curve state.
+
+   :param target: The target values.
+   :type target: numpy.ndarray
+   :param preds: Predicted probabilities or output of a decision function.
+   :type preds: numpy.ndarray
+   :param num_labels: The number of labels in the dataset.
+   :type num_labels: int
+   :param thresholds: Thresholds used for computing the precision and recall scores.
+   :type thresholds: numpy.ndarray
+
+   :returns: * **(target, preds)** (*Tuple[numpy.ndarray, numpy.ndarray]*) -- The target and predicted values, if ``thresholds`` is None.
+             * **state** (*numpy.ndarray*) -- One-vs-rest multi-threshold confusion matrix, if ``thresholds`` is not None.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: _multilabel_precision_recall_curve_compute(state: Union[Tuple[numpy.ndarray, numpy.ndarray], numpy.ndarray], thresholds: numpy.ndarray, num_labels: int) -> Union[Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray], Tuple[List[numpy.ndarray], List[numpy.ndarray], List[numpy.ndarray]]]
+
+   
+   Compute the precision-recall curve for multilabel data.
+
+   :param state: The target and predicted values, if ``thresholds`` is None. Otherwise,
+                 the one-vs-rest multi-threshold confusion matrix.
+   :type state: Tuple[numpy.ndarray, numpy.ndarray] or numpy.ndarray
+   :param thresholds: Thresholds used for computing the precision and recall scores.
+   :type thresholds: numpy.ndarray
+   :param num_labels: Number of labels.
+   :type num_labels: int
+
+   :returns: * **precision** (*numpy.ndarray or List[numpy.ndarray]*) -- Precision values for each label.
+             * **recall** (*numpy.ndarray or List[numpy.ndarray]*) -- Recall values for each label.
+             * **thresholds** (*numpy.ndarray or List[numpy.ndarray]*) -- If ``thresholds`` is None, then thresholds is a list of arrays, one for
+               each label. Otherwise, thresholds is a single array with shape
+               (len(``thresholds``,).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: multilabel_precision_recall_curve(target: numpy.typing.ArrayLike, preds: numpy.typing.ArrayLike, num_labels: int, thresholds: Union[int, List[float], numpy.ndarray] = None) -> Union[Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray], Tuple[List[numpy.ndarray], List[numpy.ndarray], List[numpy.ndarray]]]
+
+   
+   Compute the precision-recall curve for multilabel input.
+
+   :param target: The target values.
+   :type target: ArrayLike
+   :param preds: Predicted probabilities or output of a decision function. If the
+                 values are not in [0, 1], then they are converted into that range
+                 by applying the sigmoid function.
+   :type preds: ArrayLike
+   :param num_labels: The number of labels in the dataset.
+   :type num_labels: int
+   :param thresholds: Thresholds used for computing the precision and recall scores.
+                      If int, then the number of thresholds to use.
+                      If list of floats, then the thresholds to use.
+                      If None, then the thresholds are computed automatically from the unique
+                      values in ``preds``.
+   :type thresholds: numpy.ndarray
+
+   :returns: * **precision** (*numpy.ndarray or List[numpy.ndarray]*) -- Precision values for each label. If ``thresholds`` is None, then
+               precision is a list of arrays, one for each label. Otherwise,
+               precision is a single array with shape
+               (``num_labels``, len(``thresholds``)).
+             * **recall** (*numpy.ndarray or List[numpy.ndarray]*) -- Recall values for each label. If ``thresholds`` is None, then
+               recall is a list of arrays, one for each label. Otherwise,
+               recall is a single array with shape (``num_labels``, len(``thresholds``)).
+             * **thresholds** (*numpy.ndarray or List[numpy.ndarray]*) -- If ``thresholds`` is None, then thresholds is a list of arrays, one for
+               each label. Otherwise, thresholds is a single array with shape
+               (len(``thresholds``,).
+
+   .. rubric:: Examples
+
+   >>> from cyclops.evaluation.metrics.functional import (
+   ...     multilabel_precision_recall_curve)
+   >>> target = [[1, 1, 0], [0, 1, 0]]
+   >>> preds = [[0.1, 0.9, 0.8], [0.05, 0.95, 0.35]]
+   >>> precision, recall, thresholds = multilabel_precision_recall_curve(
+   ...     target, preds, num_labels=3, thresholds=5)
+   >>> precision
+   array([[0.5, 0. , 0. , 0. , 0. , 1. ],
+   [1. , 1. , 1. , 1. , 0. , 1. ],
+   [0. , 0. , 0. , 0. , 0. , 1. ]])
+   >>> recall
+   array([[1., 0., 0., 0., 0., 0.],
+   [1., 1., 1., 1., 0., 0.],
+   [0., 0., 0., 0., 0., 0.]])
+   >>> thresholds
+   array([0.  , 0.25, 0.5 , 0.75, 1.  ])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: precision_recall_curve(target: numpy.typing.ArrayLike, preds: numpy.typing.ArrayLike, task: Literal[binary, multiclass, multilabel], thresholds: Union[int, List[float], numpy.ndarray] = None, pos_label: int = 1, num_classes: int = None, num_labels: int = None) -> Union[Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray], Tuple[List[numpy.ndarray], List[numpy.ndarray], List[numpy.ndarray]]]
+
+   
+   Compute the precision-recall curve for different tasks/input types.
+
+   :param target: Ground truth (correct) target values.
+   :type target: ArrayLike
+   :param preds: Estimated probabilities or non-thresholded output of decision function.
+   :type preds: ArrayLike
+   :param task: The task for which the precision-recall curve is computed.
+   :type task: Literal["binary", "multiclass", "multilabel"]
+   :param thresholds: Thresholds used for computing the precision and recall scores. If int,
+                      then the number of thresholds to use. If list or array, then the
+                      thresholds to use. If None, then the thresholds are automatically
+                      determined by the sunique values in ``preds``
+   :type thresholds: int or list of floats or numpy.ndarray of floats, default=None
+   :param pos_label: The label of the positive class.
+   :type pos_label: int, default=1
+   :param num_classes: The number of classes in the dataset. Required if ``task`` is ``"multiclass"``.
+   :type num_classes: int, optional
+   :param num_labels: The number of labels in the dataset. Required if ``task`` is ``"multilabel"``.
+   :type num_labels: int, optional
+
+   :returns: * **precision** (*numpy.ndarray*) -- The precision scores where ``precision[i]`` is the precision score for
+               ``scores >= thresholds[i]``. If ``task`` is 'multiclass' or 'multilaabel',
+               then ``precision`` is a list of numpy arrays, where ``precision[i]`` is the
+               precision scores for class or label ``i``.
+             * **recall** (*numpy.ndarray*) -- The recall scores where ``recall[i]`` is the recall score for ``scores >=
+               thresholds[i]``. If ``task`` is 'multiclass' or 'multilaabel', then
+               ``recall`` is a list of numpy arrays, where ``recall[i]`` is the recall
+               scores for class or label ``i``.
+             * **thresholds** (*numpy.ndarray*) -- Thresholds used for computing the precision and recall scores.
+
+   :raises ValueError: If ``task`` is not one of 'binary', 'multiclass' or 'multilabel'.
+   :raises AssertionError: If ``task`` is ``multiclass`` and ``num_classes`` is not provided.
+   :raises AssertionError: If ``task`` is ``multilabel`` and ``num_labels`` is not provided.
+
+   .. rubric:: Examples
+
+   >>> # (binary)
+   >>> from cyclops.evaluation.metrics.functional import precision_recall_curve
+   >>> target = [0, 0, 1, 1]
+   >>> preds = [0.1, 0.4, 0.35, 0.8]
+   >>> precision, recall, thresholds = precision_recall_curve(target, preds,
+   ...     "binary")
+   >>> precision
+   array([0.66666667, 0.5, 1., 1.])
+   >>> recall
+   array([1. , 0.5, 0.5, 0. ])
+   >>> thresholds
+   array([0.35, 0.4 , 0.8 ])
+
+   >>> # (multiclass)
+   >>> from cyclops.evaluation.metrics.functional import precision_recall_curve
+   >>> target = [0, 1, 2, 2]
+   >>> preds = [[0.1, 0.6, 0.3], [0.05, 0.95, 0], [0.5, 0.3, 0.2], [0.3, 0.4, 0.3]]
+   >>> precision, recall, thresholds = precision_recall_curve(
+   ...     target, preds, task="multiclass", num_classes=3)
+   >>> precision
+   [array([0.33333333, 0.        , 0.        , 1.        ]),
+   array([1., 1.]),
+   array([0.66666667, 0.5       , 1.        ])]
+   >>> recall
+   [array([1., 0., 0., 0.]), array([1., 0.]), array([1. , 0.5, 0. ])]
+   >>> thresholds
+   [array([0.1, 0.3, 0.5]), array([0.95]), array([0.2, 0.3])]
+
+   >>> # (multilabel)
+   >>> from cyclops.evaluation.metrics.functional import precision_recall_curve
+   >>> target = [[1, 1, 0], [0, 1, 0]]
+   >>> preds = [[0.1, 0.9, 0.8], [0.05, 0.95, 0.35]]
+   >>> precision, recall, thresholds = precision_recall_curve(target, preds,
+   ...     "multilabel", num_labels=3)
+   >>> precision
+   [array([1., 1.]), array([1., 1., 1.]), array([0., 1.])]
+   >>> recall
+   [array([1., 0.]), array([1. , 0.5, 0. ]), array([0., 0.])]
+   >>> thresholds
+   [array([0.1]), array([0.9 , 0.95]), array([0.8])]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

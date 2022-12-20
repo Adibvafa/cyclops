@@ -1,0 +1,407 @@
+:py:mod:`cyclops.utils.common`
+==============================
+
+.. py:module:: cyclops.utils.common
+
+.. autoapi-nested-parse::
+
+   Common utility functions that can be used across multiple cyclops packages.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.utils.common.add_years_approximate
+   cyclops.utils.common.add_years_exact
+   cyclops.utils.common.to_list
+   cyclops.utils.common.to_list_optional
+   cyclops.utils.common.print_dict
+   cyclops.utils.common.append_if_missing
+   cyclops.utils.common.to_datetime_format
+   cyclops.utils.common.list_swap
+   cyclops.utils.common.is_one_dimensional
+   cyclops.utils.common.series_to_array
+   cyclops.utils.common.array_to_series
+   cyclops.utils.common.array_series_conversion
+
+
+
+.. py:function:: add_years_approximate(timestamp_series: pandas.Series, years_series: pandas.Series) -> pandas.Series
+
+   
+   Approximately add together a timestamp series with a years series row-by-row.
+
+   Approximates are typically exact or incorrect by one day, e.g., on leap days.
+
+   :param timestamp_series: The series of timestamps to which to add.
+   :type timestamp_series: pandas.Series
+   :param years_series: The series of years to add.
+   :type years_series: panadas.Series
+
+   :returns: The timestamp series with the approximately added years.
+   :rtype: pandas.Series
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: add_years_exact(timestamp_series: pandas.Series, years_series: pandas.Series) -> pandas.Series
+
+   
+   Add together a timestamp series with a years series row-by-row.
+
+   Warning: Very slow. It is worth using the add_years_approximate function even
+   moderately large data.
+
+   :param timestamp_series: The series of timestamps to which to add.
+   :type timestamp_series: pandas.Series
+   :param years_series: The series of years to add.
+   :type years_series: panadas.Series
+
+   :returns: The timestamp series with the approximately added years.
+   :rtype: pandas.Series
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: to_list(obj: Any) -> list
+
+   
+   Convert some object to a list of object(s) unless already one.
+
+   :param obj: The object to convert to a list.
+   :type obj: any
+
+   :returns: The processed object.
+   :rtype: list
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: to_list_optional(obj: Optional[Any], none_to_empty: bool = False) -> Union[list, None]
+
+   
+   Convert some object to a list of object(s) unless already None or a list.
+
+   :param obj: The object to convert to a list.
+   :type obj: any
+   :param none_to_empty: If true, return a None obj as an empty list. Otherwise, return as None.
+   :type none_to_empty: bool, default = False
+
+   :returns: The processed object.
+   :rtype: list or None
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: print_dict(dictionary: dict, limit: int = None) -> None
+
+   
+   Print a dictionary with the option to limit the number of items.
+
+   :param dictionary: Dictionary to print.
+   :type dictionary: dict
+   :param limit: Item limit to print.
+   :type limit: int, optional
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: append_if_missing(lst: Any, append_lst: Any, to_start: bool = False) -> List[Any]
+
+   
+   Append objects in append_lst to lst if not already there.
+
+   :param lst: An object or list of objects.
+   :type lst: any
+   :param append_lst: An object or list of objects to append.
+   :type append_lst: any
+   :param to_start: Whether to append the objects to the start or end.
+   :type to_start: bool
+
+   :returns: The appended list.
+   :rtype: list of any
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: to_datetime_format(date: str, fmt='%Y-%m-%d') -> datetime.datetime
+
+   
+   Convert string date to datetime.
+
+   :param date: Input date in string format.
+   :type date: str
+   :param fmt: Date formatting string.
+   :type fmt: str, optional
+
+   :returns: Date in datetime format.
+   :rtype: datetime
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: list_swap(lst: List, index1: int, index2: int) -> List
+
+   
+   Swap items in a list given the item index and new item index.
+
+   :param lst: List in which elements will be swapped.
+   :type lst: list
+   :param index1: Index of first item to swap.
+   :type index1: int
+   :param index2: Index of second item to swap.
+   :type index2: int
+
+   :returns: List with elements swapped.
+   :rtype: list
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: is_one_dimensional(arr: numpy.ndarray, raise_error: bool = True)
+
+   
+   Determine whether a NumPy array is 1-dimensional.
+
+   :param arr: Array to check.
+   :type arr: numpy.ndarray
+   :param raise_error: Whether to raise an error if the array is not 1-dimensional.
+   :type raise_error: bool, default = True
+
+   :returns: Whether the NumPy array is 1-dimensional.
+   :rtype: bool
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: series_to_array(val: Any) -> Any
+
+   
+   Convert Pandas series to NumPy array, leaving other values unchanged.
+
+   :param val: Any value.
+   :type val: any
+
+   :returns: Return a NumPy array if a Pandas series is given, otherwise return the
+             value unchanged.
+   :rtype: any
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: array_to_series(val: Any)
+
+   
+   Convert NumPy array to Pandas series, leaving other values unchanged.
+
+   :param val: Any value.
+   :type val: any
+
+   :returns: Return a Pandas series if a NumPy array is given, otherwise return the
+             value unchanged.
+   :rtype: any
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: array_series_conversion(to: str, out_to: str = 'back') -> Callable
+
+   
+   Convert positional arguments between numpy.ndarray and pandas.Series.
+
+   When using out_to = 'back', the positional arguments given must correspond to the
+   values returned, i.e., the same number in the same semantic ordering.
+
+   :param to: The type to which to convert positional arguments. Options are
+              'array' or 'series'.
+   :type to: str
+   :param out_to: The type to which to convert return types. Options are
+                  'back', 'array', 'series', or 'none'. 'back' will convert the
+                  returned values to the same as was inputted (the positional arguments
+                  given must correspond to the values returned, i.e., the same number in
+                  the same semantic ordering.
+   :type out_to: str
+
+   :returns: The processed function.
+   :rtype: callable
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

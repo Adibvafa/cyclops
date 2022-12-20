@@ -1,0 +1,1134 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.query.util &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/cyclops.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/graphviz.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script src="../../../../../_static/clipboard.min.js"></script>
+        <script src="../../../../../_static/copybutton.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+    document.body.innerHTML = document.body.innerHTML.replace(/ package/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav">
+  <!--
+    Lie about what theme we really are when some RTD-injected JS fetches the
+    full versions panel from the RTD API.  RTD's JS replaces the stub versions
+    panel in the Sphinx-generated HTML with the full versions panel it fetches
+    from the RTD API.  If the API thinks we're not sphinx_rtd_theme, it will
+    serve us the wrong HTML and the panel will float as a "badge" when it
+    shouldn't.  As a customized version of sphinx_rtd_theme, we really do want
+    the same HTML it gets.  See also the diagnoses in
+    <https://github.com/nextstrain/docs.nextstrain.org/issues/76>.
+
+    This bit of JS finds the data RTD injects into the page and modifies it
+    before the code that RTD injects runs and looks at the data.  RTD's
+    <script>s (in <head>) run before this JS, but they wait until the DOM is
+    ready to actually do any work.  This gives us a chance to modify the data
+    during DOM load before the RTD code actually uses it.
+
+      -trs, 27 Jan 2022
+  -->
+  <script>
+    (() => {
+      try {
+        console.log("Lying about the theme to RTD's JS so the versions panel works properly. 🙈");
+
+        /* Update global variable, which is used in the request to get the RTD
+         * "footer" that includes the versions panel.
+         */
+        if (window.READTHEDOCS_DATA)
+          window.READTHEDOCS_DATA.theme = "sphinx_rtd_theme";
+
+        /* Update stored JSON in case anything else deserializes it later.
+         * Comments in the RTD-injected HTML source claim the global variable
+         * above is deprecated.
+         */
+        var script = document.querySelector("#READTHEDOCS_DATA");
+        if (script)
+          script.innerHTML = JSON.stringify({ ...JSON.parse(script.innerHTML), theme: "sphinx_rtd_theme" });
+      }
+      catch (err) {
+        console.log("Lying about the theme to RTD's JS failed… oh well. 🤷", err);
+      }
+    })();
+  </script>
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+
+
+
+
+  <a href="https://vectorinstitute.github.io/cyclops/">
+    <img src="../../../../../_static/cyclops_logo-dark.png" class="logo" alt="Logo"/>
+  </a>
+
+
+
+  <div class="subproject">
+    <a href="../../../../../index.html" class="project-name" alt="Documentation Home">
+      cyclops
+    </a>
+
+    
+    
+    
+
+  </div>
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#developing">🧑🏿‍💻 Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+  
+
+  
+  
+    <li><a href="https://vectorinstitute.github.io/cyclops/">Home</a></li>
+    <li><a href="../../../../../index.html">cyclops</a></li>
+  
+
+  
+  
+
+  
+
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/technical/api/cyclops/query/util/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-cyclops.query.util">
+<span id="cyclops-query-util"></span><h1><a class="reference internal" href="#module-cyclops.query.util" title="cyclops.query.util"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cyclops.query.util</span></code></a><a class="headerlink" href="#module-cyclops.query.util" title="Permalink to this headline"></a></h1>
+<p>Utility functions for querying.</p>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.util.DBSchema" title="cyclops.query.util.DBSchema"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DBSchema</span></code></a></p></td>
+<td><p>Database schema wrapper.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.util.DBTable" title="cyclops.query.util.DBTable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DBTable</span></code></a></p></td>
+<td><p>Database table wrapper.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.util._to_subquery" title="cyclops.query.util._to_subquery"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_to_subquery</span></code></a>(→ sqlalchemy.sql.selectable.Subquery)</p></td>
+<td><p>Convert a table from a table type object to the Subquery type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.util._to_select" title="cyclops.query.util._to_select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_to_select</span></code></a>(→ sqlalchemy.sql.selectable.Select)</p></td>
+<td><p>Convert a table from a table type object to the Select type.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.util.param_types_to_type" title="cyclops.query.util.param_types_to_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">param_types_to_type</span></code></a>(→ Callable)</p></td>
+<td><p>Convert TableTypes parameters to a specified type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.util.table_params_to_type" title="cyclops.query.util.table_params_to_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">table_params_to_type</span></code></a>(→ Callable)</p></td>
+<td><p>Decorate to convert TableTypes params to a specified type.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.util.get_column" title="cyclops.query.util.get_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_column</span></code></a>(table, col)</p></td>
+<td><p>Extract a column object from a table by name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.util.filter_columns" title="cyclops.query.util.filter_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_columns</span></code></a>(→ sqlalchemy.sql.selectable.Subquery)</p></td>
+<td><p>Filter a table, keeping only the specified columns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.util.get_columns" title="cyclops.query.util.get_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_columns</span></code></a>(table, cols)</p></td>
+<td><p>Extract a number of columns from the table.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.util.get_column_names" title="cyclops.query.util.get_column_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_column_names</span></code></a>(table)</p></td>
+<td><p>Extract column names from a table.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.util.has_columns" title="cyclops.query.util.has_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_columns</span></code></a>(table, cols[, raise_error])</p></td>
+<td><p>Check whether a table has all of the specified columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.util.assert_table_has_columns" title="cyclops.query.util.assert_table_has_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assert_table_has_columns</span></code></a>(→ Callable)</p></td>
+<td><p>Assert that TableTypes params have the necessary columns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.util.drop_columns" title="cyclops.query.util.drop_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop_columns</span></code></a>(→ sqlalchemy.sql.selectable.Subquery)</p></td>
+<td><p>Drop, or remove, some columns from a table.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.util.rename_columns" title="cyclops.query.util.rename_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rename_columns</span></code></a>(→ sqlalchemy.sql.selectable.Subquery)</p></td>
+<td><p>Rename a table's columns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.util.reorder_columns" title="cyclops.query.util.reorder_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reorder_columns</span></code></a>(→ sqlalchemy.sql.selectable.Subquery)</p></td>
+<td><p>Reorder a table's columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.util.apply_to_columns" title="cyclops.query.util.apply_to_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_to_columns</span></code></a>(→ sqlalchemy.sql.selectable.Subquery)</p></td>
+<td><p>Apply a function to some columns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.util.trim_columns" title="cyclops.query.util.trim_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trim_columns</span></code></a>(→ sqlalchemy.sql.selectable.Subquery)</p></td>
+<td><p>Trim, or strip, specified columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.util.process_elem" title="cyclops.query.util.process_elem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_elem</span></code></a>(→ Any)</p></td>
+<td><p>Preprocess some basic object such as an integer, float, or string.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.util.process_list" title="cyclops.query.util.process_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_list</span></code></a>(→ List[Any])</p></td>
+<td><p>Preprocess a list of elements.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.util.process_column" title="cyclops.query.util.process_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_column</span></code></a>(→ sqlalchemy.sql.schema.Column)</p></td>
+<td><p>Preprocess a Column object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.util.equals" title="cyclops.query.util.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a>(→ sqlalchemy.sql.elements.BinaryExpression)</p></td>
+<td><p>Condition that a column has some value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.util.not_equals" title="cyclops.query.util.not_equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">not_equals</span></code></a>(→ sqlalchemy.sql.elements.BinaryExpression)</p></td>
+<td><p>Condition that a column is not equal to some value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.util.has_string_format" title="cyclops.query.util.has_string_format"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_string_format</span></code></a>(...)</p></td>
+<td><p>Condition that a column has some string formatting.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.util.has_substring" title="cyclops.query.util.has_substring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_substring</span></code></a>(→ sqlalchemy.sql.elements.BinaryExpression)</p></td>
+<td><p>Condition that a column has some substring.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.util.starts_with" title="cyclops.query.util.starts_with"><code class="xref py py-obj docutils literal notranslate"><span class="pre">starts_with</span></code></a>(→ sqlalchemy.sql.elements.BinaryExpression)</p></td>
+<td><p>Condition that a column starts with some value/string.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.util.ends_with" title="cyclops.query.util.ends_with"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ends_with</span></code></a>(→ sqlalchemy.sql.elements.BinaryExpression)</p></td>
+<td><p>Condition that a column ends with some value/string.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.util.in_" title="cyclops.query.util.in_"><code class="xref py py-obj docutils literal notranslate"><span class="pre">in_</span></code></a>(→ sqlalchemy.sql.elements.BinaryExpression)</p></td>
+<td><p>Condition that a column value is in a list of values.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.util.check_column_type" title="cyclops.query.util.check_column_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_column_type</span></code></a>(table, cols, types[, raise_error])</p></td>
+<td><p>Check whether some columns are each one of a number of types.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.util.check_timestamp_columns" title="cyclops.query.util.check_timestamp_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_timestamp_columns</span></code></a>(table, cols[, raise_error])</p></td>
+<td><p>Check whether some columns are DATE or TIMESTAMP columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.util.get_delta_column" title="cyclops.query.util.get_delta_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_delta_column</span></code></a>(→ sqlalchemy.sql.schema.Column)</p></td>
+<td><p>Create a time delta column.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.util.LOGGER" title="cyclops.query.util.LOGGER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LOGGER</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.util.COLUMN_OBJECTS" title="cyclops.query.util.COLUMN_OBJECTS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">COLUMN_OBJECTS</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.util.TABLE_OBJECTS" title="cyclops.query.util.TABLE_OBJECTS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TABLE_OBJECTS</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.util.TableTypes" title="cyclops.query.util.TableTypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TableTypes</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.util.LOGGER">
+<span class="sig-name descname"><span class="pre">LOGGER</span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#LOGGER"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.LOGGER" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.util.COLUMN_OBJECTS">
+<span class="sig-name descname"><span class="pre">COLUMN_OBJECTS</span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#COLUMN_OBJECTS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.COLUMN_OBJECTS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cyclops.query.util.DBSchema">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DBSchema</span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#DBSchema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.DBSchema" title="Permalink to this definition"></a></dt>
+<dd><p>Database schema wrapper.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of schema.</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.MetaData" title="(in SQLAlchemy v1.4)"><em>sqlalchemy.sql.schema.MetaData</em></a>) – Metadata for schema.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.query.util.DBSchema.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="pre">:str</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#DBSchema.name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.DBSchema.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.query.util.DBSchema.data">
+<span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="w"> </span><span class="pre">:sqlalchemy.sql.schema.MetaData</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#DBSchema.data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.DBSchema.data" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cyclops.query.util.DBTable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DBTable</span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#DBTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.DBTable" title="Permalink to this definition"></a></dt>
+<dd><p>Database table wrapper.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of table.</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Table" title="(in SQLAlchemy v1.4)"><em>sqlalchemy.sql.schema.Table</em></a>) – Metadata for schema.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.query.util.DBTable.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="pre">:str</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#DBTable.name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.DBTable.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.query.util.DBTable.data">
+<span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="w"> </span><span class="pre">:sqlalchemy.sql.schema.MetaData</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#DBTable.data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.DBTable.data" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.util.TABLE_OBJECTS">
+<span class="sig-name descname"><span class="pre">TABLE_OBJECTS</span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#TABLE_OBJECTS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.TABLE_OBJECTS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.util.TableTypes">
+<span class="sig-name descname"><span class="pre">TableTypes</span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#TableTypes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.TableTypes" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util._to_subquery">
+<span class="sig-name descname"><span class="pre">_to_subquery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TableTypes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.selectable.Subquery</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#_to_subquery"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util._to_subquery" title="Permalink to this definition"></a></dt>
+<dd><p>Convert a table from a table type object to the Subquery type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>table</strong> (<em>cyclops.query.util.TableTypes</em>) – Table to convert.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The converted table.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.selectable.Subquery</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util._to_select">
+<span class="sig-name descname"><span class="pre">_to_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TableTypes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Select" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.selectable.Select</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#_to_select"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util._to_select" title="Permalink to this definition"></a></dt>
+<dd><p>Convert a table from a table type object to the Select type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>table</strong> (<em>cyclops.query.util.TableTypes</em>) – Table to convert.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The converted table.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Select" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.selectable.Select</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.param_types_to_type">
+<span class="sig-name descname"><span class="pre">param_types_to_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relevant_types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_type_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#param_types_to_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.param_types_to_type" title="Permalink to this definition"></a></dt>
+<dd><p>Convert TableTypes parameters to a specified type.</p>
+<p>A decorator which processes a function’s arguments by taking all
+parameters with type in relevant_types and converting them using
+some to_type_fn function. Non-relevant types are left alone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>relevant_types</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – Types to process.</p></li>
+<li><p><strong>to_type_fn</strong> (<em>Callable</em>) – Function to process the relevant types</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The processed function.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.table_params_to_type">
+<span class="sig-name descname"><span class="pre">table_params_to_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">to_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TableTypes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#table_params_to_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.table_params_to_type" title="Permalink to this definition"></a></dt>
+<dd><p>Decorate to convert TableTypes params to a specified type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>to_type</strong> (<em>cyclops.query.util.TableTypes</em>) – The type to which to convert.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The processed function.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.get_column">
+<span class="sig-name descname"><span class="pre">get_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TableTypes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#get_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.get_column" title="Permalink to this definition"></a></dt>
+<dd><p>Extract a column object from a table by name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>cyclops.query.util.TableTypes</em>) – The table with the column.</p></li>
+<li><p><strong>col</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of column to extract.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The corresponding column in the table.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.schema.Column</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.filter_columns">
+<span class="sig-name descname"><span class="pre">filter_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TableTypes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.selectable.Subquery</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#filter_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.filter_columns" title="Permalink to this definition"></a></dt>
+<dd><p>Filter a table, keeping only the specified columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>cyclops.query.util.TableTypes</em>) – The table with the column.</p></li>
+<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em>) – Name of columns to keep.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Table with only the specified columns.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.selectable.Subquery</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.get_columns">
+<span class="sig-name descname"><span class="pre">get_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TableTypes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#get_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.get_columns" title="Permalink to this definition"></a></dt>
+<dd><p>Extract a number of columns from the table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>cyclops.query.util.TableTypes</em>) – The table.</p></li>
+<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em>) – Names of columns to extract.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The corresponding columns in the table.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of sqlalchemy.sql.schema.Column</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.get_column_names">
+<span class="sig-name descname"><span class="pre">get_column_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TableTypes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#get_column_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.get_column_names" title="Permalink to this definition"></a></dt>
+<dd><p>Extract column names from a table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>table</strong> (<em>cyclops.query.util.TableTypes</em>) – The table.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The table column names.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.has_columns">
+<span class="sig-name descname"><span class="pre">has_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TableTypes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#has_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.has_columns" title="Permalink to this definition"></a></dt>
+<dd><p>Check whether a table has all of the specified columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>cyclops.query.util.TableTypes</em>) – Table to check.</p></li>
+<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em>) – Required columns.</p></li>
+<li><p><strong>raise_error</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to raise an error if the required columns are not found.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if all required columns are present, otherwise False.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.assert_table_has_columns">
+<span class="sig-name descname"><span class="pre">assert_table_has_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#assert_table_has_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.assert_table_has_columns" title="Permalink to this definition"></a></dt>
+<dd><p>Assert that TableTypes params have the necessary columns.</p>
+<p>assert_table_has_columns([“A”, “B”], None) is equivalent to
+assert_table_has_columns([“A”, “B”]) but may be necessary when
+wanting to check, assert_table_has_columns([“A”], None, [“C”])</p>
+<p>Can also check keyword arguments, e.g., optional queries,
+assert_table_has_columns([“A”], kwarg_table=[“D”])</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> – Ordered arguments corresponding to the function’s table-type args.</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments corresponding to the function’s table-type kwargs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Decorator function.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.drop_columns">
+<span class="sig-name descname"><span class="pre">drop_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TableTypes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.selectable.Subquery</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#drop_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.drop_columns" title="Permalink to this definition"></a></dt>
+<dd><p>Drop, or remove, some columns from a table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>cyclops.query.util.TableTypes</em>) – The table.</p></li>
+<li><p><strong>col</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em>) – Names of columns to drop.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The corresponding table with columns dropped.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.selectable.Subquery</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.rename_columns">
+<span class="sig-name descname"><span class="pre">rename_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TableTypes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rename_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.selectable.Subquery</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#rename_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.rename_columns" title="Permalink to this definition"></a></dt>
+<dd><p>Rename a table’s columns.</p>
+<p>Rename the table’s columns according to a dictionary of strings,
+where the key is the current name, and the value is the replacement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>cyclops.query.util.TableTypes</em>) – The table.</p></li>
+<li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – Dictionary mapping current column names (key) to new ones (value).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The corresponding table with columns renamed.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.selectable.Subquery</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.reorder_columns">
+<span class="sig-name descname"><span class="pre">reorder_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TableTypes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.selectable.Subquery</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#reorder_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.reorder_columns" title="Permalink to this definition"></a></dt>
+<dd><p>Reorder a table’s columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>cyclops.query.util.TableTypes</em>) – The table to reorder.</p></li>
+<li><p><strong>cols</strong> (<em>list of str</em>) – New order of columns, which must include all existing columns.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The reordered table.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.selectable.Subquery</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.apply_to_columns">
+<span class="sig-name descname"><span class="pre">apply_to_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TableTypes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_col_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.selectable.Subquery</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#apply_to_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.apply_to_columns" title="Permalink to this definition"></a></dt>
+<dd><p>Apply a function to some columns.</p>
+<p>This function can change existing columns or create new
+columns depending on whether new_col_labels is specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>cyclops.query.util.TableTypes</em>) – The table.</p></li>
+<li><p><strong>col_names</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em>) – Columns to which to apply the function.</p></li>
+<li><p><strong>func</strong> (<em>Callable</em>) – Function to apply to the columns, where it takes an column
+as its only parameter and returns another column object.</p></li>
+<li><p><strong>new_col_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em><em>, </em><em>optional</em>) – If specified, create new columns with these labels. Otherwise,
+apply the function to the existing columns.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The table with function applied.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.selectable.Subquery</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.trim_columns">
+<span class="sig-name descname"><span class="pre">trim_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TableTypes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_col_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.selectable.Subquery</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#trim_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.trim_columns" title="Permalink to this definition"></a></dt>
+<dd><p>Trim, or strip, specified columns.</p>
+<p>Trimming refers to the removal of leading/trailing whitespace.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>cyclops.query.util.TableTypes</em>) – The table.</p></li>
+<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em>) – Names of columns to trim.</p></li>
+<li><p><strong>new_col_labels</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em><em>, </em><em>optional</em>) – If specified, create new columns with these labels. Otherwise,
+apply the function to the existing columns.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The table with the specified columns trimmed.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.selectable.Subquery</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.process_elem">
+<span class="sig-name descname"><span class="pre">process_elem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#process_elem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.process_elem" title="Permalink to this definition"></a></dt>
+<dd><p>Preprocess some basic object such as an integer, float, or string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>elem</strong> (<em>any</em>) – An element such as an integer, float, or string.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em>, </em><em>optional</em>) – Preprocessing keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The preprocessed element.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.process_list">
+<span class="sig-name descname"><span class="pre">process_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#process_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.process_list" title="Permalink to this definition"></a></dt>
+<dd><p>Preprocess a list of elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lst</strong> (<em>any</em><em> or </em><em>list of any</em>) – A list of elements such as integers, floats, or strings.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em>, </em><em>optional</em>) – Preprocessing keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The preprocessed element.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.process_column">
+<span class="sig-name descname"><span class="pre">process_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.schema.Column</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.schema.Column</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#process_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.process_column" title="Permalink to this definition"></a></dt>
+<dd><p>Preprocess a Column object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>col</strong> (<a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)"><em>sqlalchemy.sql.schema.Column</em></a>) – A column to preprocess.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em>, </em><em>optional</em>) – Preprocessing keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The processed column.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.schema.Column</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.equals">
+<span class="sig-name descname"><span class="pre">equals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.schema.Column</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/sqlelement.html#sqlalchemy.sql.expression.BinaryExpression" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.elements.BinaryExpression</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#equals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.equals" title="Permalink to this definition"></a></dt>
+<dd><p>Condition that a column has some value.</p>
+<p>Assumes that if searching for a string, both the value and column values
+should be converted to lowercase and trimmed of leading/trailing whitespace.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>col</strong> (<a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)"><em>sqlalchemy.sql.schema.Column</em></a>) – The column to condition.</p></li>
+<li><p><strong>val</strong> (<em>Any</em>) – The value to match in the column.</p></li>
+<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default=True</em>) – Whether to convert the value and column to lowercase.
+This is only relevant when the column/value are strings.</p></li>
+<li><p><strong>trim</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default=True</em>) – Whether to trim (strip) whitespace on the value and column.
+This is only relevant when the column/value are strings.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em>, </em><em>optional</em>) – Remaining preprocessing keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An expression representing where the condition was satisfied.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/sqlelement.html#sqlalchemy.sql.expression.BinaryExpression" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.elements.BinaryExpression</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.not_equals">
+<span class="sig-name descname"><span class="pre">not_equals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.schema.Column</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/sqlelement.html#sqlalchemy.sql.expression.BinaryExpression" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.elements.BinaryExpression</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#not_equals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.not_equals" title="Permalink to this definition"></a></dt>
+<dd><p>Condition that a column is not equal to some value.</p>
+<p>Assumes that if searching for a string, both the value and column values
+should be converted to lowercase and trimmed of leading/trailing whitespace.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>col</strong> (<a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)"><em>sqlalchemy.sql.schema.Column</em></a>) – The column to condition.</p></li>
+<li><p><strong>val</strong> (<em>Any</em>) – The value to match in the column.</p></li>
+<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default=True</em>) – Whether to convert the value and column to lowercase.
+This is only relevant when the column/value are strings.</p></li>
+<li><p><strong>trim</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default=True</em>) – Whether to trim (strip) whitespace on the value and column.
+This is only relevant when the column/value are strings.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em>, </em><em>optional</em>) – Remaining preprocessing keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An expression representing where the condition was satisfied.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/sqlelement.html#sqlalchemy.sql.expression.BinaryExpression" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.elements.BinaryExpression</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.has_string_format">
+<span class="sig-name descname"><span class="pre">has_string_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.schema.Column</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/sqlelement.html#sqlalchemy.sql.expression.BinaryExpression" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.elements.BinaryExpression</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#has_string_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.has_string_format" title="Permalink to this definition"></a></dt>
+<dd><p>Condition that a column has some string formatting.</p>
+<p>Assumes that we’re searching for a string, performing
+the relevant conversion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>col</strong> (<a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)"><em>sqlalchemy.sql.schema.Column</em></a>) – The column to condition.</p></li>
+<li><p><strong>value</strong> (<em>Any</em>) – A value to be implanted in the string formatting.</p></li>
+<li><p><strong>fmt</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The string format to match in the column.</p></li>
+<li><p><strong>to_str</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default=True</em>) – Whether to convert the value/column to string type.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em>, </em><em>optional</em>) – Remaining preprocessing keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An expression representing where the condition was satisfied.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/sqlelement.html#sqlalchemy.sql.expression.BinaryExpression" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.elements.BinaryExpression</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.has_substring">
+<span class="sig-name descname"><span class="pre">has_substring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.schema.Column</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">substring</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/sqlelement.html#sqlalchemy.sql.expression.BinaryExpression" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.elements.BinaryExpression</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#has_substring"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.has_substring" title="Permalink to this definition"></a></dt>
+<dd><p>Condition that a column has some substring.</p>
+<p>Assumes that we’re searching for a string, where both the value and
+column values should be converted to strings and made lowercase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>col</strong> (<a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)"><em>sqlalchemy.sql.schema.Column</em></a>) – The column to condition.</p></li>
+<li><p><strong>substring</strong> (<em>Any</em>) – The substring to match in the column.</p></li>
+<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default=True</em>) – Whether to convert the value and column to lowercase.
+This is only relevant when the column/value are strings.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em>, </em><em>optional</em>) – Remaining preprocessing keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An expression representing where the condition was satisfied.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/sqlelement.html#sqlalchemy.sql.expression.BinaryExpression" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.elements.BinaryExpression</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.starts_with">
+<span class="sig-name descname"><span class="pre">starts_with</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.schema.Column</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/sqlelement.html#sqlalchemy.sql.expression.BinaryExpression" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.elements.BinaryExpression</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#starts_with"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.starts_with" title="Permalink to this definition"></a></dt>
+<dd><p>Condition that a column starts with some value/string.</p>
+<p>Assumes that we’re searching for a string, where both the value and
+column values should be converted to strings, made lowercase, and
+trimmed of leading/trailing whitespace.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>col</strong> (<a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)"><em>sqlalchemy.sql.schema.Column</em></a>) – The column to condition.</p></li>
+<li><p><strong>value</strong> (<em>Any</em>) – The value to match at the start.</p></li>
+<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default=True</em>) – Whether to convert the value and column to lowercase.
+This is only relevant when the column/value are strings.</p></li>
+<li><p><strong>trim</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default=True</em>) – Whether to trim (strip) whitespace on the value and column.
+This is only relevant when the column/value are strings.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em>, </em><em>optional</em>) – Remaining preprocessing keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An expression representing where the condition was satisfied.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/sqlelement.html#sqlalchemy.sql.expression.BinaryExpression" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.elements.BinaryExpression</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.ends_with">
+<span class="sig-name descname"><span class="pre">ends_with</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.schema.Column</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/sqlelement.html#sqlalchemy.sql.expression.BinaryExpression" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.elements.BinaryExpression</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#ends_with"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.ends_with" title="Permalink to this definition"></a></dt>
+<dd><p>Condition that a column ends with some value/string.</p>
+<p>Assumes that we’re searching for a string, where both the value and
+column values should be converted to strings, made lowercase, and
+trimmed of leading/trailing whitespace.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>col</strong> (<a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)"><em>sqlalchemy.sql.schema.Column</em></a>) – The column to condition.</p></li>
+<li><p><strong>value</strong> (<em>Any</em>) – The value to match at the end.</p></li>
+<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default=True</em>) – Whether to convert the value and column to lowercase.
+This is only relevant when the column/value are strings.</p></li>
+<li><p><strong>trim</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default=True</em>) – Whether to trim (strip) whitespace on the value and column.
+This is only relevant when the column/value are strings.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em>, </em><em>optional</em>) – Remaining preprocessing keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An expression representing where the condition was satisfied.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/sqlelement.html#sqlalchemy.sql.expression.BinaryExpression" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.elements.BinaryExpression</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.in_">
+<span class="sig-name descname"><span class="pre">in_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.schema.Column</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/sqlelement.html#sqlalchemy.sql.expression.BinaryExpression" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.elements.BinaryExpression</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#in_"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.in_" title="Permalink to this definition"></a></dt>
+<dd><p>Condition that a column value is in a list of values.</p>
+<p>Assumes that if searching for a string, both the value and column values
+should be converted to lowercase and trimmed of leading/trailing whitespace.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>col</strong> (<a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)"><em>sqlalchemy.sql.schema.Column</em></a>) – The column to condition.</p></li>
+<li><p><strong>lst</strong> (<em>list of any</em>) – The value to match at the start.</p></li>
+<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default=True</em>) – Whether to convert the value and column to lowercase.
+This is only relevant when the column/value are strings.</p></li>
+<li><p><strong>trim</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default=True</em>) – Whether to trim (strip) whitespace on the value and column.
+This is only relevant when the column/value are strings.</p></li>
+<li><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em>, </em><em>optional</em>) – Remaining preprocessing keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An expression representing where the condition was satisfied.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/sqlelement.html#sqlalchemy.sql.expression.BinaryExpression" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.elements.BinaryExpression</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.check_column_type">
+<span class="sig-name descname"><span class="pre">check_column_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TableTypes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#check_column_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.check_column_type" title="Permalink to this definition"></a></dt>
+<dd><p>Check whether some columns are each one of a number of types.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>cyclops.query.util.TableTypes</em>) – The table.</p></li>
+<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em>) – Column names to check.</p></li>
+<li><p><strong>types</strong> (<em>any</em>) – The allowed types for each column.</p></li>
+<li><p><strong>raise_error</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to raise an error if one of the columns are none of the types.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Whether all of the columns are one of the types.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.check_timestamp_columns">
+<span class="sig-name descname"><span class="pre">check_timestamp_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TableTypes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#check_timestamp_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.check_timestamp_columns" title="Permalink to this definition"></a></dt>
+<dd><p>Check whether some columns are DATE or TIMESTAMP columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>cyclops.query.util.TableTypes</em>) – The table.</p></li>
+<li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em>) – Column names to check.</p></li>
+<li><p><strong>raise_error</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to raise an error if one of the columns are none of the types.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Whether all of the columns are one of the types.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.util.get_delta_column">
+<span class="sig-name descname"><span class="pre">get_delta_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TableTypes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">years</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">months</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hours</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.schema.Column</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/util.html#get_delta_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.util.get_delta_column" title="Permalink to this definition"></a></dt>
+<dd><p>Create a time delta column.</p>
+<p>Create a time delta (interval) column from a number of
+numeric timestamp columns.</p>
+<p>Warning: Null values in each specified numeric time column are coalesced to 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>cyclops.query.util.TableTypes</em>) – The table.</p></li>
+<li><p><strong>years</strong> (<em>None</em><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Years column.</p></li>
+<li><p><strong>months</strong> (<em>None</em><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Months column.</p></li>
+<li><p><strong>days</strong> (<em>None</em><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Days column.</p></li>
+<li><p><strong>hours</strong> (<em>None</em><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Hours column.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Combined delta/interval column.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Column" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.schema.Column</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  
+
+  <div class="citation">
+    CyclOps team <i>et al.,</i>
+    <a href="https://www.medrxiv.org/content/10.1101/2022.12.02.22283021v2">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, medarxiv</i> (2022)
+  </def>
+
+
+  <p class="avatar">cyclops is built by</p>
+  <div class="avatar">
+    
+    
+    <span>
+      <a href="https://github.com/amrit110">
+        <img src="../../../../../_static/team/amrit-krishnan.jpg" width="32"/>
+        Amrit Krishnan
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/KadenMc">
+        <img src="../../../../../_static/team/kaden-mckeen.jpg" width="32"/>
+        Kaden McKeen
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/vsubasri">
+        <img src="../../../../../_static/team/valli-subasri.jpg" width="32"/>
+        Valli Subasri
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/a-kore">
+        <img src="../../../../../_static/team/ali-kore.jpg" width="32"/>
+        Ali Kore
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/fcogidi">
+        <img src="../../../../../_static/team/franklin-ogidi.jpg" width="32"/>
+        Franklin Ogidi
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/mahshidaln">
+        <img src="../../../../../_static/team/mahshid-alinoori.jpg" width="32"/>
+        Mahshid Alinoori
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/elhamdolatabadi">
+        <img src="../../../../../_static/team/elham-dolatabadi.jpg" width="32"/>
+        Elham Dolatabadi
+      </a>
+    </span>
+    ,
+  </div>
+
+
+  <div class="footer-small-text">
+    All <a href="https://github.com/VectorInstitute/cyclops">source code for cyclops</a> is freely available under the terms of an <a href="https://opensource.org/licenses/Apache-2.0">Apache-2.0</a> license.
+  </div>
+
+  <div class="footer-small-text">
+    This work is made possible due to the data obtained from the
+    General Medicine Inpatient Initiative (GEMINI).
+  </div>
+
+  <hr/>
+
+  <div class="logo">
+    <a class="logo" href="https://vectorinstitute.ai/">
+      <span class="logo"></span>
+      <img alt="Logo of the Vector Institute" style="width:90px; max-width:90px;" src="../../../../../_static/logos/vector_logo.png" />
+    </a>
+    <a class="logo" href="https://www.geminimedicine.ca/">
+      <span class="logo"></span>
+      <img alt="Logo of GEMINI" style="width:90px; max-width:90px;" src="../../../../../_static/logos/gemini_logo.png" />
+    </a>
+  </div>
+
+  <div class="copyright">
+    &copy; Copyright 2022, Vector AI Engineering
+  </div>
+
+  <div class="copyright">
+    </p>
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using customised version of
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">base theme</a> provided by
+    <a href="https://readthedocs.org">Read the Docs</a>.
+  </div>
+
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -13,6 +13,7 @@
       <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../../_static/css/cyclops.css" type="text/css" />
       <link rel="stylesheet" href="../../../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/graphviz.css" type="text/css" />
     <link rel="shortcut icon" href="../../../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../../../_static/js/html5shiv.min.js"></script>
@@ -126,9 +127,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#notebooks">🎓 Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#reference">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../design.html">Framework Design</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../contributing.html">Contributing to cyclops</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api.html">API Reference</a></li>
 </ul>
 
         </div>
@@ -189,7 +189,7 @@
 <span class="kn">from</span> <span class="nn">cyclops.evaluate.metrics.utils</span> <span class="kn">import</span> <span class="n">_check_thresholds</span>
 
 
-<span class="k">def</span> <span class="nf">_roc_compute_from_confmat</span><span class="p">(</span>
+<div class="viewcode-block" id="_roc_compute_from_confmat"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/roc/index.html#cyclops.evaluate.metrics.functional._roc_compute_from_confmat">[docs]</a><span class="k">def</span> <span class="nf">_roc_compute_from_confmat</span><span class="p">(</span>
     <span class="n">confmat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
@@ -229,10 +229,10 @@
     <span class="n">fpr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">fpr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">thresholds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">thresholds</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span>
+    <span class="k">return</span> <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span></div>
 
 
-<span class="k">def</span> <span class="nf">_binary_roc_compute</span><span class="p">(</span>
+<div class="viewcode-block" id="_binary_roc_compute"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/roc/index.html#cyclops.evaluate.metrics.functional._binary_roc_compute">[docs]</a><span class="k">def</span> <span class="nf">_binary_roc_compute</span><span class="p">(</span>
     <span class="n">state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
     <span class="n">thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -294,10 +294,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">tpr</span> <span class="o">=</span> <span class="n">tps</span> <span class="o">/</span> <span class="n">tps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span>
+    <span class="k">return</span> <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span></div>
 
 
-<div class="viewcode-block" id="binary_roc_curve"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluate.metrics.functional.roc.html#cyclops.evaluate.metrics.functional.roc.binary_roc_curve">[docs]</a><span class="k">def</span> <span class="nf">binary_roc_curve</span><span class="p">(</span>
+<div class="viewcode-block" id="binary_roc_curve"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/roc/index.html#cyclops.evaluate.metrics.functional.binary_roc_curve">[docs]</a><span class="k">def</span> <span class="nf">binary_roc_curve</span><span class="p">(</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">thresholds</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -357,7 +357,7 @@
     <span class="k">return</span> <span class="n">_binary_roc_compute</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">_multiclass_roc_compute</span><span class="p">(</span>
+<div class="viewcode-block" id="_multiclass_roc_compute"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/roc/index.html#cyclops.evaluate.metrics.functional._multiclass_roc_compute">[docs]</a><span class="k">def</span> <span class="nf">_multiclass_roc_compute</span><span class="p">(</span>
     <span class="n">state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span>
     <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -409,10 +409,10 @@
             <span class="n">tpr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
             <span class="n">thresholds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 
-    <span class="k">return</span> <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span>
+    <span class="k">return</span> <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span></div>
 
 
-<div class="viewcode-block" id="multiclass_roc_curve"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluate.metrics.functional.roc.html#cyclops.evaluate.metrics.functional.roc.multiclass_roc_curve">[docs]</a><span class="k">def</span> <span class="nf">multiclass_roc_curve</span><span class="p">(</span>
+<div class="viewcode-block" id="multiclass_roc_curve"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/roc/index.html#cyclops.evaluate.metrics.functional.multiclass_roc_curve">[docs]</a><span class="k">def</span> <span class="nf">multiclass_roc_curve</span><span class="p">(</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -488,7 +488,7 @@
     <span class="k">return</span> <span class="n">_multiclass_roc_compute</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">_multilabel_roc_compute</span><span class="p">(</span>
+<div class="viewcode-block" id="_multilabel_roc_compute"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/roc/index.html#cyclops.evaluate.metrics.functional._multilabel_roc_compute">[docs]</a><span class="k">def</span> <span class="nf">_multilabel_roc_compute</span><span class="p">(</span>
     <span class="n">state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
     <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -540,10 +540,10 @@
             <span class="n">tpr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
             <span class="n">thresholds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 
-    <span class="k">return</span> <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span>
+    <span class="k">return</span> <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span></div>
 
 
-<div class="viewcode-block" id="multilabel_roc_curve"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluate.metrics.functional.roc.html#cyclops.evaluate.metrics.functional.roc.multilabel_roc_curve">[docs]</a><span class="k">def</span> <span class="nf">multilabel_roc_curve</span><span class="p">(</span>
+<div class="viewcode-block" id="multilabel_roc_curve"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/roc/index.html#cyclops.evaluate.metrics.functional.multilabel_roc_curve">[docs]</a><span class="k">def</span> <span class="nf">multilabel_roc_curve</span><span class="p">(</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -618,7 +618,7 @@
     <span class="k">return</span> <span class="n">_multilabel_roc_compute</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">num_labels</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="roc_curve"><a class="viewcode-back" href="../../../../../reference/api/cyclops.evaluate.metrics.functional.roc.html#cyclops.evaluate.metrics.functional.roc.roc_curve">[docs]</a><span class="k">def</span> <span class="nf">roc_curve</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+<div class="viewcode-block" id="roc_curve"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/roc/index.html#cyclops.evaluate.metrics.functional.roc_curve">[docs]</a><span class="k">def</span> <span class="nf">roc_curve</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">task</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">,</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">],</span>
@@ -648,6 +648,7 @@
 <span class="sd">        or &#39;multilabel&#39;.</span>
 <span class="sd">    thresholds : int or list of floats or numpy.ndarray of floats, default=None</span>
 <span class="sd">        Thresholds used for computing the ROC curve. Can be one of:</span>
+
 <span class="sd">        - None: use the unique values of ``preds`` as thresholds</span>
 <span class="sd">        - int: generate ``thresholds`` number of evenly spaced values between</span>
 <span class="sd">            0 and 1 as thresholds.</span>
@@ -693,7 +694,7 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    (binary)</span>
+<span class="sd">    &gt;&gt;&gt; # (binary)</span>
 <span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import roc_curve</span>
 <span class="sd">    &gt;&gt;&gt; target = [0, 0, 1, 1]</span>
 <span class="sd">    &gt;&gt;&gt; preds = [0.1, 0.4, 0.35, 0.8]</span>
@@ -705,7 +706,7 @@
 <span class="sd">    &gt;&gt;&gt; thresholds</span>
 <span class="sd">    array([1.  , 0.8 , 0.4 , 0.35, 0.1 ])</span>
 
-<span class="sd">    (multiclass)</span>
+<span class="sd">    &gt;&gt;&gt; # (multiclass)</span>
 <span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import roc_curve</span>
 <span class="sd">    &gt;&gt;&gt; target = [0, 1, 2]</span>
 <span class="sd">    &gt;&gt;&gt; preds = [[0.9, 0.05, 0.05], [0.05, 0.89, 0.06], [0.02, 0.03, 0.95]]</span>
@@ -723,7 +724,7 @@
 <span class="sd">    array([1.  , 0.89, 0.05, 0.03]),</span>
 <span class="sd">    array([1.  , 0.95, 0.06, 0.05])]</span>
 
-<span class="sd">    (multilabel)</span>
+<span class="sd">    &gt;&gt;&gt; # (multilabel)</span>
 <span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics.functional import roc_curve</span>
 <span class="sd">    &gt;&gt;&gt; target = [[1, 1], [0, 1], [1, 0]]</span>
 <span class="sd">    &gt;&gt;&gt; preds = [[0.9, 0.8], [0.2, 0.7], [0.8, 0.3]]</span>
@@ -780,8 +781,8 @@
 
   <div class="citation">
     CyclOps team <i>et al.,</i>
-    <a href="https://vectorinstitute.github.io/cyclops/">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
-    <i>, TBD</i> (2022)
+    <a href="https://www.medrxiv.org/content/10.1101/2022.12.02.22283021v2">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, medarxiv</i> (2022)
   </def>
 
 
@@ -830,9 +831,17 @@
     ,
     
     <span>
-      <a href="https://github.com/dhrumilp15">
-        <img src="../../../../../_static/team/dhrumil-patel.jpg" width="32"/>
-        Dhrumil Patel
+      <a href="https://github.com/mahshidaln">
+        <img src="../../../../../_static/team/mahshid-alinoori.jpg" width="32"/>
+        Mahshid Alinoori
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/elhamdolatabadi">
+        <img src="../../../../../_static/team/elham-dolatabadi.jpg" width="32"/>
+        Elham Dolatabadi
       </a>
     </span>
     ,

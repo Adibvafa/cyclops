@@ -13,6 +13,7 @@
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/cyclops.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
@@ -126,9 +127,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#notebooks">🎓 Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#reference">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../design.html">Framework Design</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to cyclops</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
 </ul>
 
         </div>
@@ -194,11 +194,11 @@
 <span class="kn">from</span> <span class="nn">cyclops.utils.profile</span> <span class="kn">import</span> <span class="n">time_function</span>
 
 <span class="c1"># Logging.</span>
-<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<div class="viewcode-block" id="LOGGER"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.LOGGER">[docs]</a><span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span></div>
 <span class="n">setup_logging</span><span class="p">(</span><span class="n">print_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="compute_inter_range"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.compute_inter_range">[docs]</a><span class="k">def</span> <span class="nf">compute_inter_range</span><span class="p">(</span><span class="n">null</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+<div class="viewcode-block" id="compute_inter_range"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.compute_inter_range">[docs]</a><span class="k">def</span> <span class="nf">compute_inter_range</span><span class="p">(</span><span class="n">null</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
     <span class="sd">&quot;&quot;&quot;Compute the range of values to be interpolated.</span>
 
 <span class="sd">    Computed using the first and last non-null values in the series.</span>
@@ -221,7 +221,7 @@
     <span class="k">return</span> <span class="n">inds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">inds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span></div>
 
 
-<div class="viewcode-block" id="np_ffill"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.np_ffill">[docs]</a><span class="k">def</span> <span class="nf">np_ffill</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="np_ffill"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.np_ffill">[docs]</a><span class="k">def</span> <span class="nf">np_ffill</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Forward fill a 1D array.</span>
 
 <span class="sd">    Parameters</span>
@@ -236,7 +236,7 @@
     <span class="k">return</span> <span class="n">arr</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="np_bfill"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.np_bfill">[docs]</a><span class="k">def</span> <span class="nf">np_bfill</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="np_bfill"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.np_bfill">[docs]</a><span class="k">def</span> <span class="nf">np_bfill</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Backward fill a 1D array.</span>
 
 <span class="sd">    Parameters</span>
@@ -256,7 +256,7 @@
     <span class="k">return</span> <span class="n">arr</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="np_ffill_bfill"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.np_ffill_bfill">[docs]</a><span class="k">def</span> <span class="nf">np_ffill_bfill</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="np_ffill_bfill"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.np_ffill_bfill">[docs]</a><span class="k">def</span> <span class="nf">np_ffill_bfill</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Equivalent to forward filling and then backward filling a 1D array.</span>
 
 <span class="sd">    Parameters</span>
@@ -278,7 +278,7 @@
     <span class="k">return</span> <span class="n">arr</span></div>
 
 
-<div class="viewcode-block" id="np_fill_null_num"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.np_fill_null_num">[docs]</a><span class="k">def</span> <span class="nf">np_fill_null_num</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="np_fill_null_num"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.np_fill_null_num">[docs]</a><span class="k">def</span> <span class="nf">np_fill_null_num</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Fill null values with a number.</span>
 
 <span class="sd">    Parameters</span>
@@ -295,7 +295,7 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="n">num</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="np_fill_null_zero"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.np_fill_null_zero">[docs]</a><span class="k">def</span> <span class="nf">np_fill_null_zero</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="np_fill_null_zero"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.np_fill_null_zero">[docs]</a><span class="k">def</span> <span class="nf">np_fill_null_zero</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Fill null values with zero.</span>
 
 <span class="sd">    Parameters</span>
@@ -312,7 +312,7 @@
     <span class="k">return</span> <span class="n">np_fill_null_num</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="np_fill_null_mean"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.np_fill_null_mean">[docs]</a><span class="k">def</span> <span class="nf">np_fill_null_mean</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="np_fill_null_mean"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.np_fill_null_mean">[docs]</a><span class="k">def</span> <span class="nf">np_fill_null_mean</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Fill null values with the array mean.</span>
 
 <span class="sd">    Parameters</span>
@@ -329,7 +329,7 @@
     <span class="k">return</span> <span class="n">np_fill_null_num</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">arr</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="fill_null_with"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.fill_null_with">[docs]</a><span class="k">def</span> <span class="nf">fill_null_with</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">null</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<div class="viewcode-block" id="fill_null_with"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.fill_null_with">[docs]</a><span class="k">def</span> <span class="nf">fill_null_with</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">null</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Fill null values with a specified value when the nulls were already located.</span>
 
 <span class="sd">    Parameters</span>
@@ -351,7 +351,7 @@
     <span class="k">return</span> <span class="n">series</span></div>
 
 
-<div class="viewcode-block" id="efficient_ffill_bfill"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.efficient_ffill_bfill">[docs]</a><span class="k">def</span> <span class="nf">efficient_ffill_bfill</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">null</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<div class="viewcode-block" id="efficient_ffill_bfill"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.efficient_ffill_bfill">[docs]</a><span class="k">def</span> <span class="nf">efficient_ffill_bfill</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">null</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Forward and backward fill nulls in an efficient manner.</span>
 
 <span class="sd">    An efficient implementation equivalent to forward filling a series and subsequently</span>
@@ -377,7 +377,7 @@
     <span class="k">return</span> <span class="n">series</span></div>
 
 
-<span class="n">IMPUTEFUNCS</span> <span class="o">=</span> <span class="p">{</span>
+<div class="viewcode-block" id="IMPUTEFUNCS"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.IMPUTEFUNCS">[docs]</a><span class="n">IMPUTEFUNCS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="n">IGNORE</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">DROP</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">series</span><span class="p">,</span> <span class="n">null</span><span class="p">:</span> <span class="n">series</span><span class="p">[</span><span class="o">~</span><span class="n">null</span><span class="p">],</span>
     <span class="n">MEAN</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">series</span><span class="p">,</span> <span class="n">null</span><span class="p">:</span> <span class="n">fill_null_with</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">null</span><span class="p">,</span> <span class="n">series</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">)),</span>
@@ -389,10 +389,10 @@
     <span class="n">BFILL</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">series</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">series</span><span class="o">.</span><span class="n">bfill</span><span class="p">(),</span>
     <span class="n">FFILL_BFILL</span><span class="p">:</span> <span class="n">efficient_ffill_bfill</span><span class="p">,</span>
     <span class="n">LINEAR_INTERP</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">series</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">series</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">),</span>
-<span class="p">}</span>
+<span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="SeriesImputer"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.SeriesImputer">[docs]</a><span class="k">class</span> <span class="nc">SeriesImputer</span><span class="p">:</span>
+<div class="viewcode-block" id="SeriesImputer"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.SeriesImputer">[docs]</a><span class="k">class</span> <span class="nc">SeriesImputer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Imputation of a Pandas Series.</span>
 
 <span class="sd">    It may seem counter-intuitive to allow the return of nulls, but many imputation</span>
@@ -417,7 +417,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="SeriesImputer.__init__"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.SeriesImputer.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">imputefunc</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="n">MEAN</span><span class="p">,</span>
         <span class="n">allow_nulls_returned</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -442,9 +442,9 @@
                     <span class="sa">f</span><span class="s2">&quot;If specified, limit_area must be in: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">INTER</span><span class="p">,</span> <span class="n">EXTRA</span><span class="p">])</span><span class="si">}</span><span class="s2">.&quot;</span>
                 <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">limit_area</span> <span class="o">=</span> <span class="n">limit_area</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">limit_area</span> <span class="o">=</span> <span class="n">limit_area</span>
 
-    <span class="k">def</span> <span class="nf">_process_imputefunc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imputefunc</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<div class="viewcode-block" id="SeriesImputer._process_imputefunc"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.SeriesImputer._process_imputefunc">[docs]</a>    <span class="k">def</span> <span class="nf">_process_imputefunc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imputefunc</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Process imputation function.</span>
 
 <span class="sd">        Convert a imputefunc string to an imputefunc if recognized.</span>
@@ -468,9 +468,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Imputefunc must be a string or callable.&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">func</span>  <span class="c1"># type: ignore</span>
+        <span class="k">return</span> <span class="n">func</span>  <span class="c1"># type: ignore</span></div>
 
-<div class="viewcode-block" id="SeriesImputer.is_using_drop"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.SeriesImputer.is_using_drop">[docs]</a>    <span class="k">def</span> <span class="nf">is_using_drop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="SeriesImputer.is_using_drop"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.SeriesImputer.is_using_drop">[docs]</a>    <span class="k">def</span> <span class="nf">is_using_drop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return whether the imputer is using the DROP strategy.</span>
 
 <span class="sd">        Returns</span>
@@ -481,7 +481,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">using_drop</span></div>
 
-    <span class="k">def</span> <span class="nf">_interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">null</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<div class="viewcode-block" id="SeriesImputer._interpolate"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.SeriesImputer._interpolate">[docs]</a>    <span class="k">def</span> <span class="nf">_interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">null</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
         <span class="n">inter_range</span> <span class="o">=</span> <span class="n">compute_inter_range</span><span class="p">(</span><span class="n">null</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">inter_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># If all null, there is nothing to do for inter imputation.</span>
@@ -492,9 +492,9 @@
             <span class="n">series</span><span class="p">[</span><span class="n">inter_start</span><span class="p">:</span><span class="n">inter_stop</span><span class="p">],</span>
             <span class="n">null</span><span class="p">[</span><span class="n">inter_start</span><span class="p">:</span><span class="n">inter_stop</span><span class="p">],</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">series</span>
+        <span class="k">return</span> <span class="n">series</span></div>
 
-    <span class="k">def</span> <span class="nf">_extrapolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">null</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<div class="viewcode-block" id="SeriesImputer._extrapolate"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.SeriesImputer._extrapolate">[docs]</a>    <span class="k">def</span> <span class="nf">_extrapolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">null</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
         <span class="n">inter_range</span> <span class="o">=</span> <span class="n">compute_inter_range</span><span class="p">(</span><span class="n">null</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">inter_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># If all null, then it is all considered extra.</span>
@@ -515,9 +515,9 @@
                 <span class="n">null</span><span class="p">[</span><span class="n">inter_stop</span><span class="p">:],</span>
             <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">series</span>
+        <span class="k">return</span> <span class="n">series</span></div>
 
-    <span class="k">def</span> <span class="nf">_impute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">null</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<div class="viewcode-block" id="SeriesImputer._impute"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.SeriesImputer._impute">[docs]</a>    <span class="k">def</span> <span class="nf">_impute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">null</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit_area</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">imputefunc</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">null</span><span class="p">)</span>
 
@@ -526,9 +526,9 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpolate</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">null</span><span class="p">)</span>
 
         <span class="c1"># Extrapolate</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extrapolate</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">null</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extrapolate</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">null</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<div class="viewcode-block" id="SeriesImputer.__call__"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.SeriesImputer.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Impute a series.</span>
 
 <span class="sd">        Parameters</span>
@@ -574,10 +574,10 @@
                     <span class="s2">&quot;Nulls returned from imputation function when not allowed.&quot;</span>
                 <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">series</span><span class="p">,</span> <span class="n">null_percent</span></div>
+        <span class="k">return</span> <span class="n">series</span><span class="p">,</span> <span class="n">null_percent</span></div></div>
 
 
-<div class="viewcode-block" id="TabularImputer"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.TabularImputer">[docs]</a><span class="k">class</span> <span class="nc">TabularImputer</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+<div class="viewcode-block" id="TabularImputer"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.TabularImputer">[docs]</a><span class="k">class</span> <span class="nc">TabularImputer</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
     <span class="sd">&quot;&quot;&quot;Imputation of tabular data.</span>
 
 <span class="sd">    Attributes</span>
@@ -587,7 +587,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="TabularImputer.__init__"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.TabularImputer.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">imputers</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SeriesImputer</span><span class="p">],</span>
     <span class="p">):</span>
@@ -602,10 +602,10 @@
                         <span class="s2">&quot;DROP strategy. Explore other strategy like IGNORE, or &quot;</span><span class="p">,</span>
                         <span class="s2">&quot;consider using no imputation.&quot;</span><span class="p">,</span>
                     <span class="p">)</span>
-                <span class="p">)</span></div>
+                <span class="p">)</span>
 
     <span class="nd">@time_function</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<div class="viewcode-block" id="TabularImputer.__call__"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.TabularImputer.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;Impute.</span>
 
 <span class="sd">        Parameters</span>
@@ -619,7 +619,7 @@
         <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">imputer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">imputers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">null_percents</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">imputer</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
 
-        <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">null_percents</span></div>
+        <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">null_percents</span></div></div>
 
 
 <span class="c1"># class GroupbyImputer:</span>
@@ -650,7 +650,7 @@
 <span class="c1">#         pass</span>
 
 
-<div class="viewcode-block" id="AggregatedImputer"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.AggregatedImputer">[docs]</a><span class="k">class</span> <span class="nc">AggregatedImputer</span><span class="p">:</span>
+<div class="viewcode-block" id="AggregatedImputer"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.AggregatedImputer">[docs]</a><span class="k">class</span> <span class="nc">AggregatedImputer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Imputation of data being aggregated.</span>
 
 <span class="sd">    Attributes</span>
@@ -664,7 +664,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="AggregatedImputer.__init__"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.AggregatedImputer.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">intra_imputer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TabularImputer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">inter_imputer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TabularImputer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -687,9 +687,9 @@
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">series_imputer</span><span class="o">.</span><span class="n">limit_area</span> <span class="o">==</span> <span class="n">EXTRA</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;extra_imputer SeriesImputer limit_area=&#39;</span><span class="si">{</span><span class="n">EXTRA</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
-                    <span class="p">)</span></div>
+                    <span class="p">)</span>
 
-<div class="viewcode-block" id="AggregatedImputer.intra"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.AggregatedImputer.intra">[docs]</a>    <span class="k">def</span> <span class="nf">intra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="AggregatedImputer.intra"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.AggregatedImputer.intra">[docs]</a>    <span class="k">def</span> <span class="nf">intra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Perform intra-imputation.</span>
 
 <span class="sd">        Intra imputation describes the imputation occurring within a single timestep,</span>
@@ -713,7 +713,7 @@
         <span class="n">has_columns</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intra_imputer</span><span class="o">.</span><span class="n">imputers</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">raise_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">intra_imputer</span><span class="p">(</span><span class="n">group</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="AggregatedImputer.inter"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.AggregatedImputer.inter">[docs]</a>    <span class="k">def</span> <span class="nf">inter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="AggregatedImputer.inter"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.AggregatedImputer.inter">[docs]</a>    <span class="k">def</span> <span class="nf">inter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Perform interpolation imputation.</span>
 
 <span class="sd">        Inter imputation describes the imputation occurring between timesteps, or</span>
@@ -738,7 +738,7 @@
         <span class="n">has_columns</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inter_imputer</span><span class="o">.</span><span class="n">imputers</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">raise_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inter_imputer</span><span class="p">(</span><span class="n">group</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="AggregatedImputer.extra"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.AggregatedImputer.extra">[docs]</a>    <span class="k">def</span> <span class="nf">extra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="AggregatedImputer.extra"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.AggregatedImputer.extra">[docs]</a>    <span class="k">def</span> <span class="nf">extra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Perform extrapolation imputation.</span>
 
 <span class="sd">        Extra imputation describes the imputation occurring after the last observed</span>
@@ -764,7 +764,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_imputer</span><span class="p">(</span><span class="n">group</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="numpy_2d_ffill"><a class="viewcode-back" href="../../../reference/api/cyclops.process.impute.html#cyclops.process.impute.numpy_2d_ffill">[docs]</a><span class="k">def</span> <span class="nf">numpy_2d_ffill</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="numpy_2d_ffill"><a class="viewcode-back" href="../../../technical/api/cyclops/process/impute/index.html#cyclops.process.impute.numpy_2d_ffill">[docs]</a><span class="k">def</span> <span class="nf">numpy_2d_ffill</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Foward fill a 2D array in a row-wise fashion, i.e., filling each row separately.</span>
 
 <span class="sd">    Parameters</span>
@@ -802,8 +802,8 @@
 
   <div class="citation">
     CyclOps team <i>et al.,</i>
-    <a href="https://vectorinstitute.github.io/cyclops/">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
-    <i>, TBD</i> (2022)
+    <a href="https://www.medrxiv.org/content/10.1101/2022.12.02.22283021v2">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, medarxiv</i> (2022)
   </def>
 
 
@@ -852,9 +852,17 @@
     ,
     
     <span>
-      <a href="https://github.com/dhrumilp15">
-        <img src="../../../_static/team/dhrumil-patel.jpg" width="32"/>
-        Dhrumil Patel
+      <a href="https://github.com/mahshidaln">
+        <img src="../../../_static/team/mahshid-alinoori.jpg" width="32"/>
+        Mahshid Alinoori
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/elhamdolatabadi">
+        <img src="../../../_static/team/elham-dolatabadi.jpg" width="32"/>
+        Elham Dolatabadi
       </a>
     </span>
     ,

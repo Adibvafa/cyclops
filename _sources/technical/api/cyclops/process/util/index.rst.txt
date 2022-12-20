@@ -1,0 +1,291 @@
+:py:mod:`cyclops.process.util`
+==============================
+
+.. py:module:: cyclops.process.util
+
+.. autoapi-nested-parse::
+
+   Utility functions for processor API.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.process.util.create_indicator_variables
+   cyclops.process.util.is_timestamp_series
+   cyclops.process.util.has_columns
+   cyclops.process.util.assert_has_columns
+   cyclops.process.util.has_range_index
+   cyclops.process.util.to_range_index
+   cyclops.process.util.gather_columns
+   cyclops.process.util.log_counts_step
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.process.util.LOGGER
+
+
+.. py:data:: LOGGER
+   
+
+   
+
+.. py:function:: create_indicator_variables(features: pandas.DataFrame, columns: Optional[List] = None) -> pandas.DataFrame
+
+   
+   Create binary indicator variable for each column (or specified).
+
+   Create new indicator variable columns based on NAs for other feature columns.
+
+   :param features: Input features with missing values.
+   :type features: pandas.DataFrame
+   :param columns: Columns to create variables, all if not specified.
+   :type columns: list, optional
+
+   :returns: Dataframe with indicator variables as columns.
+   :rtype: pandas.DataFrame
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: is_timestamp_series(series, raise_error: bool = False)
+
+   
+   Check whether a series has the Pandas Timestamp datatype.
+
+   :param series: A series.
+   :type series: pandas.Series
+
+   :returns: Whether the series has the Pandas Timestamp datatype.
+   :rtype: bool
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: has_columns(data: pandas.DataFrame, cols: Union[str, List[str]], exactly: bool = False, raise_error: bool = False) -> bool
+
+   
+   Check if data has required columns for processing.
+
+   :param data: DataFrame to check.
+   :type data: pandas.DataFrame
+   :param cols: List of column names that must be present in data.
+   :type cols: str or list or str
+   :param raise_error: Whether to raise a ValueError if there are missing columns.
+   :type raise_error: bool
+
+   :returns: True if all required columns are present, otherwise False.
+   :rtype: bool
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: assert_has_columns(*args, **kwargs) -> Callable
+
+   
+   Decorate function to assert that input DataFrames have the necessary columns.
+
+   assert_has_columns(["A", "B"], None) is equivalent to assert_has_columns(["A", "B"])
+   but may be necessary when wanting to check,
+   assert_has_columns(["A"], None, ["C"])
+
+   Can also check keyword arguments, e.g., optional DataFrames,
+   assert_has_columns(["A"], optional_df=["D"])
+
+   :param \*args: Required columns of the function's ordered DataFrame arguments.
+   :param \*\*kwargs: Keyword corresponds to the DataFrame kwargs of the function.
+                      The value is this keyword argument's required columns.
+
+   :returns: Decorator function.
+   :rtype: Callable
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: has_range_index(data: pandas.DataFrame) -> bool
+
+   
+   Check whether a DataFrame has a range index.
+
+   :param data: Data.
+   :type data: pandas.DataFrame
+
+   :returns: Whether the data has a range index.
+   :rtype: bool
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: to_range_index(data: pandas.DataFrame) -> pandas.DataFrame
+
+   
+   Force a DataFrame to have a range index.
+
+   :param data: Data.
+   :type data: pandas.DataFrame
+
+   :returns: Data with a range index.
+   :rtype: pandas.DataFrame
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: gather_columns(data: pandas.DataFrame, columns: Union[List[str], str]) -> pandas.DataFrame
+
+   
+   Gather specified columns, discarding rest and return copy of columns.
+
+   :param data: DataFrame to check.
+   :type data: pandas.DataFrame
+   :param columns: Column names to gather from dataframe.
+   :type columns: list of str or str
+
+   :returns: DataFrame with required columns, other columns discarded.
+   :rtype: pandas.DataFrame
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: log_counts_step(data, step_description: str, rows=True, columns=False) -> None
+
+   
+   Log num. of encounters and num. of samples (rows).
+
+   :param data: Encounter specific input data.
+   :type data: pandas.DataFrame
+   :param step_description: Description of intermediate processing step.
+   :type step_description: str
+   :param rows: Log the number of samples, or rows of data.
+   :type rows: bool
+   :param columns: Log the number of data columns.
+   :type columns: bool
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

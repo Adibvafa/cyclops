@@ -13,6 +13,7 @@
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/cyclops.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
@@ -126,9 +127,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#notebooks">🎓 Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#reference">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../design.html">Framework Design</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to cyclops</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
 </ul>
 
         </div>
@@ -196,14 +196,14 @@
 <span class="kn">from</span> <span class="nn">cyclops.utils.profile</span> <span class="kn">import</span> <span class="n">time_function</span>
 
 <span class="c1"># Logging.</span>
-<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<div class="viewcode-block" id="LOGGER"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.LOGGER">[docs]</a><span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span></div>
 <span class="n">setup_logging</span><span class="p">(</span><span class="n">print_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">)</span>
 
 
-<span class="n">AGGFUNCS</span> <span class="o">=</span> <span class="p">{</span><span class="n">MEAN</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">MEDIAN</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">}</span>
+<div class="viewcode-block" id="AGGFUNCS"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.AGGFUNCS">[docs]</a><span class="n">AGGFUNCS</span> <span class="o">=</span> <span class="p">{</span><span class="n">MEAN</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">MEDIAN</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="Aggregator"><a class="viewcode-back" href="../../../reference/api/cyclops.process.aggregate.html#cyclops.process.aggregate.Aggregator">[docs]</a><span class="k">class</span> <span class="nc">Aggregator</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-many-instance-attributes</span>
+<div class="viewcode-block" id="Aggregator"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.Aggregator">[docs]</a><span class="k">class</span> <span class="nc">Aggregator</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-many-instance-attributes</span>
     <span class="sd">&quot;&quot;&quot;Equal-spaced aggregation, or binning, of temporal data.</span>
 
 <span class="sd">    Computing aggregation metadata is expensive and should be done sparingly.</span>
@@ -233,7 +233,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Aggregator.__init__"><a class="viewcode-back" href="../../../reference/api/cyclops.process.aggregate.html#cyclops.process.aggregate.Aggregator.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">aggfuncs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]],</span>
         <span class="n">timestamp_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -268,9 +268,9 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">divided</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_duration</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestep_size</span>
             <span class="k">if</span> <span class="n">divided</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">(</span><span class="n">divided</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Window duration be divisible by bucket size.&quot;</span><span class="p">)</span></div>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Window duration be divisible by bucket size.&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Aggregator.get_timestamp_col"><a class="viewcode-back" href="../../../reference/api/cyclops.process.aggregate.html#cyclops.process.aggregate.Aggregator.get_timestamp_col">[docs]</a>    <span class="k">def</span> <span class="nf">get_timestamp_col</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="Aggregator.get_timestamp_col"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.Aggregator.get_timestamp_col">[docs]</a>    <span class="k">def</span> <span class="nf">get_timestamp_col</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Get timestamp column.</span>
 
 <span class="sd">        Returns</span>
@@ -281,7 +281,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span></div>
 
-<div class="viewcode-block" id="Aggregator.get_aggfuncs"><a class="viewcode-back" href="../../../reference/api/cyclops.process.aggregate.html#cyclops.process.aggregate.Aggregator.get_aggfuncs">[docs]</a>    <span class="k">def</span> <span class="nf">get_aggfuncs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
+<div class="viewcode-block" id="Aggregator.get_aggfuncs"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.Aggregator.get_aggfuncs">[docs]</a>    <span class="k">def</span> <span class="nf">get_aggfuncs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Get aggregation functions.</span>
 
 <span class="sd">        Returns</span>
@@ -292,7 +292,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggfuncs</span></div>
 
-    <span class="k">def</span> <span class="nf">_process_aggfuncs</span><span class="p">(</span>
+<div class="viewcode-block" id="Aggregator._process_aggfuncs"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.Aggregator._process_aggfuncs">[docs]</a>    <span class="k">def</span> <span class="nf">_process_aggfuncs</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">aggfuncs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -320,9 +320,9 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Aggfunc must be a string or callable.&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">aggfuncs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">aggfuncs</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_check_start_stop_window_ts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_time</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Aggregator._check_start_stop_window_ts"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.Aggregator._check_start_stop_window_ts">[docs]</a>    <span class="k">def</span> <span class="nf">_check_start_stop_window_ts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_time</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Check whether a window start/stop time have the correct format.</span>
 
 <span class="sd">        Parameters</span>
@@ -338,9 +338,9 @@
             <span class="p">[</span><span class="n">RESTRICT_TIMESTAMP</span><span class="p">],</span>
             <span class="n">exactly</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">raise_error</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_restrict_by_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="Aggregator._restrict_by_timestamp"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.Aggregator._restrict_by_timestamp">[docs]</a>    <span class="k">def</span> <span class="nf">_restrict_by_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Restrict events by the window start/stop times.</span>
 
 <span class="sd">        Parameters</span>
@@ -363,9 +363,9 @@
         <span class="c1"># Keep if no match was made (i.e., no restriction performed)</span>
         <span class="n">cond</span> <span class="o">=</span> <span class="n">cond</span> <span class="o">|</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">())</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">data</span>
+        <span class="k">return</span> <span class="n">data</span></div>
 
-    <span class="k">def</span> <span class="nf">_use_provided_window</span><span class="p">(</span>
+<div class="viewcode-block" id="Aggregator._use_provided_window"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.Aggregator._use_provided_window">[docs]</a>    <span class="k">def</span> <span class="nf">_use_provided_window</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">window_time</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">default_time</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">warning_args</span><span class="p">:</span> <span class="n">Tuple</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Process a window start/stop time.</span>
@@ -402,9 +402,9 @@
                 <span class="n">inds</span>
             <span class="p">]</span>
             <span class="n">window_time</span> <span class="o">=</span> <span class="n">window_time</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">window_time</span>
+        <span class="k">return</span> <span class="n">window_time</span></div>
 
-    <span class="k">def</span> <span class="nf">_compute_window_start</span><span class="p">(</span>
+<div class="viewcode-block" id="Aggregator._compute_window_start"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.Aggregator._compute_window_start">[docs]</a>    <span class="k">def</span> <span class="nf">_compute_window_start</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">window_start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -444,9 +444,9 @@
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_start_stop_window_ts</span><span class="p">(</span><span class="n">window_start_time</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">window_start_time</span>
+        <span class="k">return</span> <span class="n">window_start_time</span></div>
 
-    <span class="k">def</span> <span class="nf">_compute_window_stop</span><span class="p">(</span>
+<div class="viewcode-block" id="Aggregator._compute_window_stop"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.Aggregator._compute_window_stop">[docs]</a>    <span class="k">def</span> <span class="nf">_compute_window_stop</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">window_start_time</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
@@ -504,9 +504,9 @@
                 <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_start_stop_window_ts</span><span class="p">(</span><span class="n">window_stop_time</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">window_stop_time</span>
+        <span class="k">return</span> <span class="n">window_stop_time</span></div>
 
-    <span class="k">def</span> <span class="nf">_compute_window_times</span><span class="p">(</span>
+<div class="viewcode-block" id="Aggregator._compute_window_times"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.Aggregator._compute_window_times">[docs]</a>    <span class="k">def</span> <span class="nf">_compute_window_times</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">window_start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -548,9 +548,9 @@
         <span class="p">)</span>
         <span class="n">window_times</span> <span class="o">=</span> <span class="n">window_start_time</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">window_stop_time</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">window_times</span>
+        <span class="k">return</span> <span class="n">window_times</span></div>
 
-    <span class="k">def</span> <span class="nf">_compute_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="Aggregator._compute_timestep"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.Aggregator._compute_timestep">[docs]</a>    <span class="k">def</span> <span class="nf">_compute_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Compute which timestep, or bin, each occurence falls into.</span>
 
 <span class="sd">        Parameters</span>
@@ -571,9 +571,9 @@
         <span class="p">)</span>
         <span class="n">group</span><span class="p">[</span><span class="n">TIMESTEP</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="n">TIMESTEP</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">group</span>
+        <span class="k">return</span> <span class="n">group</span></div>
 
-    <span class="k">def</span> <span class="nf">_compute_agg_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="Aggregator._compute_agg_meta"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.Aggregator._compute_agg_meta">[docs]</a>    <span class="k">def</span> <span class="nf">_compute_agg_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Compute the aggregation metadata for an agg_by group.</span>
 
 <span class="sd">        Parameters</span>
@@ -606,9 +606,9 @@
 
         <span class="n">meta</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span>
         <span class="n">meta</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">droplevel</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">meta</span>
+        <span class="k">return</span> <span class="n">meta</span></div>
 
-    <span class="k">def</span> <span class="nf">_compute_aggregation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="Aggregator._compute_aggregation"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.Aggregator._compute_aggregation">[docs]</a>    <span class="k">def</span> <span class="nf">_compute_aggregation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Compute the aggregation for an agg_by group by timestep.</span>
 
 <span class="sd">        Parameters</span>
@@ -642,9 +642,9 @@
         <span class="k">if</span> <span class="n">agg_meta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">group</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">agg_meta</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">group</span>
+        <span class="k">return</span> <span class="n">group</span></div>
 
-    <span class="k">def</span> <span class="nf">_aggregate</span><span class="p">(</span>
+<div class="viewcode-block" id="Aggregator._aggregate"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.Aggregator._aggregate">[docs]</a>    <span class="k">def</span> <span class="nf">_aggregate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">include_timestep_start</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="c1"># Get the timestep according to the timestep for each event</span>
@@ -682,10 +682,10 @@
         <span class="n">aggregated</span> <span class="o">=</span> <span class="n">aggregated</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
         <span class="n">aggregated</span> <span class="o">=</span> <span class="n">aggregated</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agg_by</span> <span class="o">+</span> <span class="p">[</span><span class="n">TIMESTEP</span><span class="p">])</span>
 
-        <span class="k">return</span> <span class="n">aggregated</span>
+        <span class="k">return</span> <span class="n">aggregated</span></div>
 
     <span class="nd">@time_function</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+<div class="viewcode-block" id="Aggregator.__call__"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.Aggregator.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">window_start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -746,10 +746,10 @@
         <span class="c1"># Restrict the data according to the start/stop</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restrict_by_timestamp</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aggregate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">include_timestep_start</span><span class="o">=</span><span class="n">include_timestep_start</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aggregate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">include_timestep_start</span><span class="o">=</span><span class="n">include_timestep_start</span><span class="p">)</span></div>
 
     <span class="nd">@time_function</span>
-    <span class="k">def</span> <span class="nf">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggregated</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="Aggregator.vectorize"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.Aggregator.vectorize">[docs]</a>    <span class="k">def</span> <span class="nf">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggregated</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Vectorize aggregated data.</span>
 
 <span class="sd">        Parameters</span>
@@ -802,10 +802,10 @@
             <span class="n">data</span><span class="o">=</span><span class="n">vectorized</span><span class="p">,</span>
             <span class="n">indexes</span><span class="o">=</span><span class="n">indexes</span><span class="p">,</span>
             <span class="n">axis_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;aggfuncs&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">agg_by</span> <span class="o">+</span> <span class="p">[</span><span class="n">TIMESTEP</span><span class="p">],</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="tabular_as_aggregated"><a class="viewcode-back" href="../../../reference/api/cyclops.process.aggregate.html#cyclops.process.aggregate.tabular_as_aggregated">[docs]</a><span class="k">def</span> <span class="nf">tabular_as_aggregated</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+<div class="viewcode-block" id="tabular_as_aggregated"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.tabular_as_aggregated">[docs]</a><span class="k">def</span> <span class="nf">tabular_as_aggregated</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
     <span class="n">tab</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">index</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">var_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">EVENT_NAME</span><span class="p">,</span>
@@ -875,7 +875,7 @@
     <span class="k">return</span> <span class="n">tab</span></div>
 
 
-<div class="viewcode-block" id="timestamp_ffill_agg"><a class="viewcode-back" href="../../../reference/api/cyclops.process.aggregate.html#cyclops.process.aggregate.timestamp_ffill_agg">[docs]</a><span class="k">def</span> <span class="nf">timestamp_ffill_agg</span><span class="p">(</span>
+<div class="viewcode-block" id="timestamp_ffill_agg"><a class="viewcode-back" href="../../../technical/api/cyclops/process/aggregate/index.html#cyclops.process.aggregate.timestamp_ffill_agg">[docs]</a><span class="k">def</span> <span class="nf">timestamp_ffill_agg</span><span class="p">(</span>
     <span class="n">timesteps</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">num_timesteps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fill_nan</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Perform single-value aggregation with fill forward functionality given timesteps.</span>
@@ -946,8 +946,8 @@
 
   <div class="citation">
     CyclOps team <i>et al.,</i>
-    <a href="https://vectorinstitute.github.io/cyclops/">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
-    <i>, TBD</i> (2022)
+    <a href="https://www.medrxiv.org/content/10.1101/2022.12.02.22283021v2">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, medarxiv</i> (2022)
   </def>
 
 
@@ -996,9 +996,17 @@
     ,
     
     <span>
-      <a href="https://github.com/dhrumilp15">
-        <img src="../../../_static/team/dhrumil-patel.jpg" width="32"/>
-        Dhrumil Patel
+      <a href="https://github.com/mahshidaln">
+        <img src="../../../_static/team/mahshid-alinoori.jpg" width="32"/>
+        Mahshid Alinoori
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/elhamdolatabadi">
+        <img src="../../../_static/team/elham-dolatabadi.jpg" width="32"/>
+        Elham Dolatabadi
       </a>
     </span>
     ,

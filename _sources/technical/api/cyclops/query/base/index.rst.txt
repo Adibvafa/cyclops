@@ -1,0 +1,143 @@
+:py:mod:`cyclops.query.base`
+============================
+
+.. py:module:: cyclops.query.base
+
+.. autoapi-nested-parse::
+
+   Base querier class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.query.base.DatasetQuerier
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.query.base.LOGGER
+
+
+.. py:data:: LOGGER
+   
+
+   
+
+.. py:class:: DatasetQuerier(table_map: Dict, column_map: Dict, config_overrides: Optional[List] = None)
+
+   
+   Base class to query EHR datasets.
+
+   .. attribute:: _db
+
+      ORM Database used to run queries.
+
+      :type: cyclops.query.orm.Database
+
+   .. attribute:: _table_map
+
+      A dictionary mapping table names to table objects in the DB.
+
+      :type: Dict
+
+   .. attribute:: _column_map
+
+      A dictionary mapping column names from the database to map to output
+      in a consistent format.
+
+      :type: Dict
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: get_interface(table: cyclops.query.util.TableTypes, process_fn: Optional[Callable] = None) -> Union[cyclops.query.interface.QueryInterface, cyclops.query.interface.QueryInterfaceProcessed]
+
+      
+      Get a query interface for a GEMINI table.
+
+      :param table: Table to wrap in the interface.
+      :type table: cyclops.query.util.TableTypes
+      :param process_fn: Process function to apply on the Pandas DataFrame returned from the query.
+      :type process_fn: Callable
+
+      :returns: * *cyclops.query.interface.QueryInterface or*
+                * *cyclops.query.interface.QueryInterfaceProcessed* -- A query interface using the GEMINI database object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: get_table(table_name: str, rename: bool = True) -> sqlalchemy.sql.selectable.Subquery
+
+      
+      Get a table and possibly map columns to have standard names.
+
+      Standardizing column names allows for for columns to be
+      recognized in downstream processing.
+
+      :param table_name: Name of GEMINI table.
+      :type table_name: str
+      :param rename: Whether to map the column names
+      :type rename: bool, optional
+
+      :returns: Table with mapped columns.
+      :rtype: sqlalchemy.sql.selectable.Subquery
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

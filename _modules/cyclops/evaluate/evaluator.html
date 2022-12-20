@@ -13,6 +13,7 @@
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/cyclops.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
@@ -126,9 +127,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#notebooks">🎓 Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#reference">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../design.html">Framework Design</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to cyclops</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
 </ul>
 
         </div>
@@ -177,7 +177,7 @@
 <span class="c1"># pylint: disable=fixme</span>
 
 
-<div class="viewcode-block" id="Evaluator"><a class="viewcode-back" href="../../../reference/api/cyclops.evaluate.evaluator.html#cyclops.evaluate.evaluator.Evaluator">[docs]</a><span class="k">class</span> <span class="nc">Evaluator</span><span class="p">:</span>
+<div class="viewcode-block" id="Evaluator"><a class="viewcode-back" href="../../../technical/api/cyclops/evaluate/evaluator/index.html#cyclops.evaluate.evaluator.Evaluator">[docs]</a><span class="k">class</span> <span class="nc">Evaluator</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Evaluate one or more models on a dataset.</span>
 
 <span class="sd">    Attributes</span>
@@ -193,7 +193,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Evaluator.__init__"><a class="viewcode-back" href="../../../reference/api/cyclops.evaluate.evaluator.html#cyclops.evaluate.evaluator.Evaluator.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">models</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WrappedModel</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">WrappedModel</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">WrappedModel</span><span class="p">]],</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">NamedTuple</span><span class="p">,</span>
@@ -213,9 +213,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_models</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_prepare_models</span><span class="p">(</span>
+<div class="viewcode-block" id="Evaluator._prepare_models"><a class="viewcode-back" href="../../../technical/api/cyclops/evaluate/evaluator/index.html#cyclops.evaluate.evaluator.Evaluator._prepare_models">[docs]</a>    <span class="k">def</span> <span class="nf">_prepare_models</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WrappedModel</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">WrappedModel</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">WrappedModel</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">WrappedModel</span><span class="p">]:</span>
@@ -243,9 +243,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid model type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">model</span>
+        <span class="k">return</span> <span class="n">model</span></div>
 
-    <span class="k">def</span> <span class="nf">_prepare_metrics</span><span class="p">(</span>
+<div class="viewcode-block" id="Evaluator._prepare_metrics"><a class="viewcode-back" href="../../../technical/api/cyclops/evaluate/evaluator/index.html#cyclops.evaluate.evaluator.Evaluator._prepare_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">_prepare_metrics</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">metrics</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Metric</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Metric</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Metric</span><span class="p">],</span> <span class="n">MetricCollection</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MetricCollection</span><span class="p">:</span>
@@ -272,9 +272,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid metric type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">metrics</span>
+        <span class="k">return</span> <span class="n">metrics</span></div>
 
-<div class="viewcode-block" id="Evaluator.compute"><a class="viewcode-back" href="../../../reference/api/cyclops.evaluate.evaluator.html#cyclops.evaluate.evaluator.Evaluator.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<div class="viewcode-block" id="Evaluator.compute"><a class="viewcode-back" href="../../../technical/api/cyclops/evaluate/evaluator/index.html#cyclops.evaluate.evaluator.Evaluator.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;Evaluate the model(s) on the dataset.</span>
 
 <span class="sd">        Returns</span>
@@ -321,8 +321,8 @@
 
   <div class="citation">
     CyclOps team <i>et al.,</i>
-    <a href="https://vectorinstitute.github.io/cyclops/">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
-    <i>, TBD</i> (2022)
+    <a href="https://www.medrxiv.org/content/10.1101/2022.12.02.22283021v2">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, medarxiv</i> (2022)
   </def>
 
 
@@ -371,9 +371,17 @@
     ,
     
     <span>
-      <a href="https://github.com/dhrumilp15">
-        <img src="../../../_static/team/dhrumil-patel.jpg" width="32"/>
-        Dhrumil Patel
+      <a href="https://github.com/mahshidaln">
+        <img src="../../../_static/team/mahshid-alinoori.jpg" width="32"/>
+        Mahshid Alinoori
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/elhamdolatabadi">
+        <img src="../../../_static/team/elham-dolatabadi.jpg" width="32"/>
+        Elham Dolatabadi
       </a>
     </span>
     ,

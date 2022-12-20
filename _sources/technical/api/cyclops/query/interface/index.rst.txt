@@ -1,0 +1,388 @@
+:py:mod:`cyclops.query.interface`
+=================================
+
+.. py:module:: cyclops.query.interface
+
+.. autoapi-nested-parse::
+
+   A query interface class to wrap database objects and queries.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.query.interface.QueryInterface
+   cyclops.query.interface.QueryInterfaceProcessed
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.query.interface.LOGGER
+
+
+.. py:data:: LOGGER
+   
+
+   
+
+.. py:class:: QueryInterface
+
+   
+   An interface dataclass to wrap queries, and run them.
+
+   :param database: Database object to create ORM, and query data.
+   :type database: cyclops.orm.Database
+   :param query: The query.
+   :type query: cyclops.query.util.TableTypes
+   :param data: Data returned from executing the query, as Pandas DataFrame.
+   :type data: pandas.DataFrame
+   :param _run_args: Private dictionary attribute to keep track of arguments
+                     passed to run() method.
+   :type _run_args: dict
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:attribute:: database
+      :annotation: :cyclops.query.orm.Database
+
+      
+
+   .. py:attribute:: query
+      :annotation: :cyclops.query.util.TableTypes
+
+      
+
+   .. py:attribute:: data
+      :annotation: :Optional[pandas.DataFrame]
+
+      
+
+   .. py:attribute:: _run_args
+      :annotation: :Dict
+
+      
+
+   .. py:method:: run(limit: Optional[int] = None) -> pandas.DataFrame
+
+      
+      Run the query, and fetch data.
+
+      :param limit: No. of rows to limit the query return.
+      :type limit: int, optional
+
+      :returns: Query result dataframe.
+      :rtype: pandas.DataFrame
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: save(path: str, file_format: str = 'parquet') -> str
+
+      
+      Save the query.
+
+      :param save_path: Path where the file will be saved.
+      :type save_path: str
+      :param file_format: File format of the file to save.
+      :type file_format: str
+
+      :returns: Processed save path for upstream use.
+      :rtype: str
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: clear_data() -> None
+
+      
+      Clear data container.
+
+      Sets the data attribute to None, thus clearing the dataframe contained.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: run_in_grouped_batches(id_col: str, batch_size: int) -> Generator[pandas.DataFrame, None, None]
+
+      
+      Run the query in batches with complete sets of sample IDs.
+
+      Queries are sorted and grouped such that the rows for a given sample ID are kept
+      together in a single batch.
+
+      :param id_col: Name of the sample ID column by which to batch.
+      :type id_col: str
+      :param batch_size: Approximate batch size before rearranging based on sample IDs.
+      :type batch_size: int
+
+      :Yields: *pandas.DataFrame* -- A query batch with complete sets of sample IDs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: save_in_grouped_batches(dir_path: str, id_col: str, batch_size: int, file_format: str = 'parquet') -> None
+
+      
+      Save a query in different batches, keeping same sample IDs together.
+
+      Queries are sorted and grouped such that the rows for a given sample ID are kept
+      together in a single batch.
+
+      :param query: Query to run.
+      :type query: cyclops.query.util.TableTypes
+      :param dir_path: Path to directory in which to save the batches.
+      :type dir_path: str
+      :param batch_size: Approximate batch size before rearranging based on sample IDs.
+      :type batch_size: int
+      :param id_col: Name of the sample ID column by which to batch.
+      :type id_col: str
+      :param file_format: File format of the DataFrame to save.
+      :type file_format: str
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: QueryInterfaceProcessed
+
+   
+   An interface dataclass to wrap queries, and run them with post-processing.
+
+   An similar dataclass to QueryInterface, where custom post-processing
+   functions on the pandas dataframe returned from the query can be run. However,
+   this prevents the query from being further used, and hence is declared as
+   private attribute.
+
+   :param database: Database object to create ORM, and query data.
+   :type database: cyclops.orm.Database
+   :param _query: The query.
+   :type _query: cyclops.query.util.TableTypes
+   :param process_fn: Process function to apply on the pandas dataframe returned from the query.
+   :type process_fn: Callable
+   :param _run_args: Private dictionary attribute to keep track of arguments
+                     passed to run() method.
+   :type _run_args: dict
+   :param data: Data returned from executing the query, as Pandas DataFrame.
+   :type data: pandas.DataFrame
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:attribute:: database
+      :annotation: :cyclops.query.orm.Database
+
+      
+
+   .. py:attribute:: _query
+      :annotation: :cyclops.query.util.TableTypes
+
+      
+
+   .. py:attribute:: process_fn
+      :annotation: :Callable
+
+      
+
+   .. py:attribute:: data
+      :annotation: :Union[pandas.DataFrame, None]
+
+      
+
+   .. py:attribute:: _run_args
+      :annotation: :Dict
+
+      
+
+   .. py:method:: run(limit: Optional[int] = None) -> pandas.DataFrame
+
+      
+      Run the query, and fetch data.
+
+      :param limit: No. of rows to limit the query return.
+      :type limit: int, optional
+
+      :returns: Query result dataframe.
+      :rtype: pandas.DataFrame
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: save(path: str, file_format: str = 'parquet') -> str
+
+      
+      Save the processed query.
+
+      :param save_path: Path where the file will be saved.
+      :type save_path: str
+      :param file_format: File format of the file to save.
+      :type file_format: str
+
+      :returns: Processed save path for upstream use.
+      :rtype: str
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: clear_data() -> None
+
+      
+      Clear data container.
+
+      Sets the data attribute to None, thus clearing the dataframe contained.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

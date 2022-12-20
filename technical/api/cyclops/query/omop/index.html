@@ -1,0 +1,840 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.query.omop &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/cyclops.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/graphviz.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script src="../../../../../_static/clipboard.min.js"></script>
+        <script src="../../../../../_static/copybutton.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+    document.body.innerHTML = document.body.innerHTML.replace(/ package/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav">
+  <!--
+    Lie about what theme we really are when some RTD-injected JS fetches the
+    full versions panel from the RTD API.  RTD's JS replaces the stub versions
+    panel in the Sphinx-generated HTML with the full versions panel it fetches
+    from the RTD API.  If the API thinks we're not sphinx_rtd_theme, it will
+    serve us the wrong HTML and the panel will float as a "badge" when it
+    shouldn't.  As a customized version of sphinx_rtd_theme, we really do want
+    the same HTML it gets.  See also the diagnoses in
+    <https://github.com/nextstrain/docs.nextstrain.org/issues/76>.
+
+    This bit of JS finds the data RTD injects into the page and modifies it
+    before the code that RTD injects runs and looks at the data.  RTD's
+    <script>s (in <head>) run before this JS, but they wait until the DOM is
+    ready to actually do any work.  This gives us a chance to modify the data
+    during DOM load before the RTD code actually uses it.
+
+      -trs, 27 Jan 2022
+  -->
+  <script>
+    (() => {
+      try {
+        console.log("Lying about the theme to RTD's JS so the versions panel works properly. 🙈");
+
+        /* Update global variable, which is used in the request to get the RTD
+         * "footer" that includes the versions panel.
+         */
+        if (window.READTHEDOCS_DATA)
+          window.READTHEDOCS_DATA.theme = "sphinx_rtd_theme";
+
+        /* Update stored JSON in case anything else deserializes it later.
+         * Comments in the RTD-injected HTML source claim the global variable
+         * above is deprecated.
+         */
+        var script = document.querySelector("#READTHEDOCS_DATA");
+        if (script)
+          script.innerHTML = JSON.stringify({ ...JSON.parse(script.innerHTML), theme: "sphinx_rtd_theme" });
+      }
+      catch (err) {
+        console.log("Lying about the theme to RTD's JS failed… oh well. 🤷", err);
+      }
+    })();
+  </script>
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+
+
+
+
+  <a href="https://vectorinstitute.github.io/cyclops/">
+    <img src="../../../../../_static/cyclops_logo-dark.png" class="logo" alt="Logo"/>
+  </a>
+
+
+
+  <div class="subproject">
+    <a href="../../../../../index.html" class="project-name" alt="Documentation Home">
+      cyclops
+    </a>
+
+    
+    
+    
+
+  </div>
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#developing">🧑🏿‍💻 Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+  
+
+  
+  
+    <li><a href="https://vectorinstitute.github.io/cyclops/">Home</a></li>
+    <li><a href="../../../../../index.html">cyclops</a></li>
+  
+
+  
+  
+
+  
+
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/technical/api/cyclops/query/omop/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-cyclops.query.omop">
+<span id="cyclops-query-omop"></span><h1><a class="reference internal" href="#module-cyclops.query.omop" title="cyclops.query.omop"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cyclops.query.omop</span></code></a><a class="headerlink" href="#module-cyclops.query.omop" title="Permalink to this headline"></a></h1>
+<p>OMOP query API.</p>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.OMOPQuerier" title="cyclops.query.omop.OMOPQuerier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OMOPQuerier</span></code></a></p></td>
+<td><p>OMOP querier.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop._get_table_map" title="cyclops.query.omop._get_table_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_table_map</span></code></a>(→ Dict)</p></td>
+<td><p>Get table map.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.LOGGER" title="cyclops.query.omop.LOGGER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LOGGER</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.VISIT_OCCURRENCE" title="cyclops.query.omop.VISIT_OCCURRENCE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VISIT_OCCURRENCE</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.VISIT_DETAIL" title="cyclops.query.omop.VISIT_DETAIL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VISIT_DETAIL</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.PERSON" title="cyclops.query.omop.PERSON"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PERSON</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.MEASUREMENT" title="cyclops.query.omop.MEASUREMENT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MEASUREMENT</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.CONCEPT" title="cyclops.query.omop.CONCEPT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CONCEPT</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.OBSERVATION" title="cyclops.query.omop.OBSERVATION"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OBSERVATION</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.CARE_SITE" title="cyclops.query.omop.CARE_SITE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CARE_SITE</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.VISIT_OCCURRENCE_ID" title="cyclops.query.omop.VISIT_OCCURRENCE_ID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VISIT_OCCURRENCE_ID</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.PERSON_ID" title="cyclops.query.omop.PERSON_ID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PERSON_ID</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.VISIT_START_DATETIME" title="cyclops.query.omop.VISIT_START_DATETIME"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VISIT_START_DATETIME</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.VISIT_END_DATETIME" title="cyclops.query.omop.VISIT_END_DATETIME"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VISIT_END_DATETIME</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.VISIT_DETAIL_START_DATETIME" title="cyclops.query.omop.VISIT_DETAIL_START_DATETIME"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VISIT_DETAIL_START_DATETIME</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.VISIT_DETAIL_END_DATETIME" title="cyclops.query.omop.VISIT_DETAIL_END_DATETIME"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VISIT_DETAIL_END_DATETIME</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.VISIT_CONCEPT_ID" title="cyclops.query.omop.VISIT_CONCEPT_ID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VISIT_CONCEPT_ID</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.VISIT_TYPE_CONCEPT_ID" title="cyclops.query.omop.VISIT_TYPE_CONCEPT_ID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VISIT_TYPE_CONCEPT_ID</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.VISIT_DETAIL_CONCEPT_ID" title="cyclops.query.omop.VISIT_DETAIL_CONCEPT_ID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VISIT_DETAIL_CONCEPT_ID</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.VISIT_DETAIL_TYPE_CONCEPT_ID" title="cyclops.query.omop.VISIT_DETAIL_TYPE_CONCEPT_ID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VISIT_DETAIL_TYPE_CONCEPT_ID</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.CARE_SITE_ID" title="cyclops.query.omop.CARE_SITE_ID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CARE_SITE_ID</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.CONCEPT_NAME" title="cyclops.query.omop.CONCEPT_NAME"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CONCEPT_NAME</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.CONCEPT_ID" title="cyclops.query.omop.CONCEPT_ID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CONCEPT_ID</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.CARE_SITE_SOURCE_VALUE" title="cyclops.query.omop.CARE_SITE_SOURCE_VALUE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CARE_SITE_SOURCE_VALUE</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.OBSERVATION_CONCEPT_ID" title="cyclops.query.omop.OBSERVATION_CONCEPT_ID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OBSERVATION_CONCEPT_ID</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.OBSERVATION_TYPE_CONCEPT_ID" title="cyclops.query.omop.OBSERVATION_TYPE_CONCEPT_ID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OBSERVATION_TYPE_CONCEPT_ID</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.OBSERVATION_DATETIME" title="cyclops.query.omop.OBSERVATION_DATETIME"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OBSERVATION_DATETIME</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.MEASUREMENT_CONCEPT_ID" title="cyclops.query.omop.MEASUREMENT_CONCEPT_ID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MEASUREMENT_CONCEPT_ID</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.MEASUREMENT_TYPE_CONCEPT_ID" title="cyclops.query.omop.MEASUREMENT_TYPE_CONCEPT_ID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MEASUREMENT_TYPE_CONCEPT_ID</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.MEASUREMENT_DATETIME" title="cyclops.query.omop.MEASUREMENT_DATETIME"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MEASUREMENT_DATETIME</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.UNIT_CONCEPT_ID" title="cyclops.query.omop.UNIT_CONCEPT_ID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UNIT_CONCEPT_ID</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.VALUE_AS_CONCEPT_ID" title="cyclops.query.omop.VALUE_AS_CONCEPT_ID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VALUE_AS_CONCEPT_ID</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.VISIT_DETAIL_CONCEPT_NAME" title="cyclops.query.omop.VISIT_DETAIL_CONCEPT_NAME"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VISIT_DETAIL_CONCEPT_NAME</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.CARE_SITE_NAME" title="cyclops.query.omop.CARE_SITE_NAME"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CARE_SITE_NAME</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.GENDER_CONCEPT_NAME" title="cyclops.query.omop.GENDER_CONCEPT_NAME"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GENDER_CONCEPT_NAME</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.RACE_CONCEPT_NAME" title="cyclops.query.omop.RACE_CONCEPT_NAME"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RACE_CONCEPT_NAME</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.ETHNICITY_CONCEPT_NAME" title="cyclops.query.omop.ETHNICITY_CONCEPT_NAME"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ETHNICITY_CONCEPT_NAME</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.COLUMN_MAP" title="cyclops.query.omop.COLUMN_MAP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">COLUMN_MAP</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.ID" title="cyclops.query.omop.ID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ID</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.NAME" title="cyclops.query.omop.NAME"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NAME</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.LOGGER">
+<span class="sig-name descname"><span class="pre">LOGGER</span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#LOGGER"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.LOGGER" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.VISIT_OCCURRENCE">
+<span class="sig-name descname"><span class="pre">VISIT_OCCURRENCE</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">visit_occurrence</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#VISIT_OCCURRENCE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.VISIT_OCCURRENCE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.VISIT_DETAIL">
+<span class="sig-name descname"><span class="pre">VISIT_DETAIL</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">visit_detail</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#VISIT_DETAIL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.VISIT_DETAIL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.PERSON">
+<span class="sig-name descname"><span class="pre">PERSON</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">person</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#PERSON"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.PERSON" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.MEASUREMENT">
+<span class="sig-name descname"><span class="pre">MEASUREMENT</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">measurement</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#MEASUREMENT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.MEASUREMENT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.CONCEPT">
+<span class="sig-name descname"><span class="pre">CONCEPT</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">concept</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#CONCEPT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.CONCEPT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.OBSERVATION">
+<span class="sig-name descname"><span class="pre">OBSERVATION</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">observation</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#OBSERVATION"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OBSERVATION" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.CARE_SITE">
+<span class="sig-name descname"><span class="pre">CARE_SITE</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">care_site</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#CARE_SITE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.CARE_SITE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.VISIT_OCCURRENCE_ID">
+<span class="sig-name descname"><span class="pre">VISIT_OCCURRENCE_ID</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">visit_occurrence_id</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#VISIT_OCCURRENCE_ID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.VISIT_OCCURRENCE_ID" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.PERSON_ID">
+<span class="sig-name descname"><span class="pre">PERSON_ID</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">person_id</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#PERSON_ID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.PERSON_ID" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.VISIT_START_DATETIME">
+<span class="sig-name descname"><span class="pre">VISIT_START_DATETIME</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">visit_start_datetime</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#VISIT_START_DATETIME"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.VISIT_START_DATETIME" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.VISIT_END_DATETIME">
+<span class="sig-name descname"><span class="pre">VISIT_END_DATETIME</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">visit_end_datetime</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#VISIT_END_DATETIME"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.VISIT_END_DATETIME" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.VISIT_DETAIL_START_DATETIME">
+<span class="sig-name descname"><span class="pre">VISIT_DETAIL_START_DATETIME</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">visit_detail_start_datetime</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#VISIT_DETAIL_START_DATETIME"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.VISIT_DETAIL_START_DATETIME" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.VISIT_DETAIL_END_DATETIME">
+<span class="sig-name descname"><span class="pre">VISIT_DETAIL_END_DATETIME</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">visit_detail_end_datetime</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#VISIT_DETAIL_END_DATETIME"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.VISIT_DETAIL_END_DATETIME" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.VISIT_CONCEPT_ID">
+<span class="sig-name descname"><span class="pre">VISIT_CONCEPT_ID</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">visit_concept_id</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#VISIT_CONCEPT_ID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.VISIT_CONCEPT_ID" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.VISIT_TYPE_CONCEPT_ID">
+<span class="sig-name descname"><span class="pre">VISIT_TYPE_CONCEPT_ID</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">visit_type_concept_id</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#VISIT_TYPE_CONCEPT_ID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.VISIT_TYPE_CONCEPT_ID" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.VISIT_DETAIL_CONCEPT_ID">
+<span class="sig-name descname"><span class="pre">VISIT_DETAIL_CONCEPT_ID</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">visit_detail_concept_id</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#VISIT_DETAIL_CONCEPT_ID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.VISIT_DETAIL_CONCEPT_ID" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.VISIT_DETAIL_TYPE_CONCEPT_ID">
+<span class="sig-name descname"><span class="pre">VISIT_DETAIL_TYPE_CONCEPT_ID</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">visit_detail_type_concept_id</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#VISIT_DETAIL_TYPE_CONCEPT_ID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.VISIT_DETAIL_TYPE_CONCEPT_ID" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.CARE_SITE_ID">
+<span class="sig-name descname"><span class="pre">CARE_SITE_ID</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">care_site_id</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#CARE_SITE_ID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.CARE_SITE_ID" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.CONCEPT_NAME">
+<span class="sig-name descname"><span class="pre">CONCEPT_NAME</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">concept_name</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#CONCEPT_NAME"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.CONCEPT_NAME" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.CONCEPT_ID">
+<span class="sig-name descname"><span class="pre">CONCEPT_ID</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">concept_id</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#CONCEPT_ID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.CONCEPT_ID" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.CARE_SITE_SOURCE_VALUE">
+<span class="sig-name descname"><span class="pre">CARE_SITE_SOURCE_VALUE</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">care_site_source_value</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#CARE_SITE_SOURCE_VALUE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.CARE_SITE_SOURCE_VALUE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.OBSERVATION_CONCEPT_ID">
+<span class="sig-name descname"><span class="pre">OBSERVATION_CONCEPT_ID</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">observation_concept_id</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#OBSERVATION_CONCEPT_ID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OBSERVATION_CONCEPT_ID" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.OBSERVATION_TYPE_CONCEPT_ID">
+<span class="sig-name descname"><span class="pre">OBSERVATION_TYPE_CONCEPT_ID</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">observation_type_concept_id</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#OBSERVATION_TYPE_CONCEPT_ID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OBSERVATION_TYPE_CONCEPT_ID" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.OBSERVATION_DATETIME">
+<span class="sig-name descname"><span class="pre">OBSERVATION_DATETIME</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">observation_datetime</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#OBSERVATION_DATETIME"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OBSERVATION_DATETIME" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.MEASUREMENT_CONCEPT_ID">
+<span class="sig-name descname"><span class="pre">MEASUREMENT_CONCEPT_ID</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">measurement_concept_id</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#MEASUREMENT_CONCEPT_ID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.MEASUREMENT_CONCEPT_ID" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.MEASUREMENT_TYPE_CONCEPT_ID">
+<span class="sig-name descname"><span class="pre">MEASUREMENT_TYPE_CONCEPT_ID</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">measurement_type_concept_id</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#MEASUREMENT_TYPE_CONCEPT_ID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.MEASUREMENT_TYPE_CONCEPT_ID" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.MEASUREMENT_DATETIME">
+<span class="sig-name descname"><span class="pre">MEASUREMENT_DATETIME</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">measurement_datetime</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#MEASUREMENT_DATETIME"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.MEASUREMENT_DATETIME" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.UNIT_CONCEPT_ID">
+<span class="sig-name descname"><span class="pre">UNIT_CONCEPT_ID</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">unit_concept_id</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#UNIT_CONCEPT_ID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.UNIT_CONCEPT_ID" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.VALUE_AS_CONCEPT_ID">
+<span class="sig-name descname"><span class="pre">VALUE_AS_CONCEPT_ID</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">value_as_concept_id</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#VALUE_AS_CONCEPT_ID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.VALUE_AS_CONCEPT_ID" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.VISIT_DETAIL_CONCEPT_NAME">
+<span class="sig-name descname"><span class="pre">VISIT_DETAIL_CONCEPT_NAME</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">visit_detail_concept_name</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#VISIT_DETAIL_CONCEPT_NAME"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.VISIT_DETAIL_CONCEPT_NAME" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.CARE_SITE_NAME">
+<span class="sig-name descname"><span class="pre">CARE_SITE_NAME</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">care_site_name</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#CARE_SITE_NAME"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.CARE_SITE_NAME" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.GENDER_CONCEPT_NAME">
+<span class="sig-name descname"><span class="pre">GENDER_CONCEPT_NAME</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">gender_concept_name</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#GENDER_CONCEPT_NAME"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.GENDER_CONCEPT_NAME" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.RACE_CONCEPT_NAME">
+<span class="sig-name descname"><span class="pre">RACE_CONCEPT_NAME</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">race_concept_name</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#RACE_CONCEPT_NAME"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.RACE_CONCEPT_NAME" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.ETHNICITY_CONCEPT_NAME">
+<span class="sig-name descname"><span class="pre">ETHNICITY_CONCEPT_NAME</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">ethnicity_concept_name</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#ETHNICITY_CONCEPT_NAME"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.ETHNICITY_CONCEPT_NAME" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.COLUMN_MAP">
+<span class="sig-name descname"><span class="pre">COLUMN_MAP</span></span><em class="property"><span class="w"> </span><span class="pre">:dict</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#COLUMN_MAP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.COLUMN_MAP" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.ID">
+<span class="sig-name descname"><span class="pre">ID</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">id</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#ID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.ID" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.query.omop.NAME">
+<span class="sig-name descname"><span class="pre">NAME</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">name</span></em><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#NAME"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.NAME" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.omop._get_table_map">
+<span class="sig-name descname"><span class="pre">_get_table_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#_get_table_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop._get_table_map" title="Permalink to this definition"></a></dt>
+<dd><p>Get table map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>schema_name</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of schema.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A mapping of table names to the ORM table objects.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cyclops.query.omop.OMOPQuerier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">OMOPQuerier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_overrides</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#OMOPQuerier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base/index.html#cyclops.query.base.DatasetQuerier" title="cyclops.query.base.DatasetQuerier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclops.query.base.DatasetQuerier</span></code></a></p>
+<p>OMOP querier.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.query.omop.OMOPQuerier._map_concept_ids_to_name">
+<span class="sig-name descname"><span class="pre">_map_concept_ids_to_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.selectable.Subquery</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.selectable.Subquery</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#OMOPQuerier._map_concept_ids_to_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier._map_concept_ids_to_name" title="Permalink to this definition"></a></dt>
+<dd><p>Map concept IDs in a source table to concept names from concept table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_table</strong> (<em>Subquery</em>) – Source table with concept IDs.</p></li>
+<li><p><strong>source_cols</strong> (<em>list of str</em>) – List of columns names to consider as concept IDs for mapping.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Query with mapped columns from concept table.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Subquery</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.query.omop.OMOPQuerier._map_care_site_id">
+<span class="sig-name descname"><span class="pre">_map_care_site_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.selectable.Subquery</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)"><span class="pre">sqlalchemy.sql.selectable.Subquery</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#OMOPQuerier._map_care_site_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier._map_care_site_id" title="Permalink to this definition"></a></dt>
+<dd><p>Map care_site_id in a source table to care_site table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>source_table</strong> (<em>Subquery</em>) – Source table with care_site_id.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Query with mapped columns from care_site table.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Subquery</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.query.omop.OMOPQuerier.visit_occurrence">
+<span class="sig-name descname"><span class="pre">visit_occurrence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">drop_null_person_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">process_kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../interface/index.html#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface"><span class="pre">cyclops.query.interface.QueryInterface</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#OMOPQuerier.visit_occurrence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.visit_occurrence" title="Permalink to this definition"></a></dt>
+<dd><p>Query OMOP visit_occurrence table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>drop_null_person_ids</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag to say if entries should be dropped if ‘person_id’ is missing.</p></li>
+<li><p><strong>before_date</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><em>datetime.datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Get patient visits starting before some date.
+If a string, provide in YYYY-MM-DD format.</p></li>
+<li><p><strong>after_date</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><em>datetime.datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Get patient visits starting after some date.
+If a string, provide in YYYY-MM-DD format.</p></li>
+<li><p><strong>hospitals</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em><em>, </em><em>optional</em>) – Get patient visits by hospital sites.</p></li>
+<li><p><strong>years</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get patient visits by year.</p></li>
+<li><p><strong>months</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get patient visits by month.</p></li>
+<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Limit the number of rows returned.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Constructed query, wrapped in an interface object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../interface/index.html#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface">cyclops.query.interface.QueryInterface</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.query.omop.OMOPQuerier.visit_detail">
+<span class="sig-name descname"><span class="pre">visit_detail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">visit_occurrence_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">cyclops.query.util.TableTypes</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">process_kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../interface/index.html#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface"><span class="pre">cyclops.query.interface.QueryInterface</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#OMOPQuerier.visit_detail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.visit_detail" title="Permalink to this definition"></a></dt>
+<dd><p>Query OMOP visit_detail table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>visit_occurrence_table</strong> (<em>Subquery</em><em>, </em><em>optional</em>) – Visit occurrence table to join on.</p></li>
+<li><p><strong>before_date</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><em>datetime.datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Get patient visits starting before some date.
+If a string, provide in YYYY-MM-DD format.</p></li>
+<li><p><strong>after_date</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><em>datetime.datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Get patient visits starting after some date.
+If a string, provide in YYYY-MM-DD format.</p></li>
+<li><p><strong>years</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get patient visits by year.</p></li>
+<li><p><strong>months</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get patient visits by month.</p></li>
+<li><p><strong>care_unit</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em>) – Filter on care_unit, accepts substring e.g. “Emergency Room”.</p></li>
+<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Limit the number of rows returned.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Constructed query, wrapped in an interface object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../interface/index.html#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface">cyclops.query.interface.QueryInterface</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.query.omop.OMOPQuerier.person">
+<span class="sig-name descname"><span class="pre">person</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">visit_occurrence_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">cyclops.query.util.TableTypes</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">process_kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../interface/index.html#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface"><span class="pre">cyclops.query.interface.QueryInterface</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#OMOPQuerier.person"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.person" title="Permalink to this definition"></a></dt>
+<dd><p>Query OMOP person table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>visit_occurrence_table</strong> (<em>Subquery</em><em>, </em><em>optional</em>) – Visit occurrence table to join on.</p></li>
+<li><p><strong>gender</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em>) – Filter on gender.</p></li>
+<li><p><strong>race</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em>) – Filter on race.</p></li>
+<li><p><strong>ethnicity</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em>) – Filter on ethnicity.</p></li>
+<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Limit the number of rows returned.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Constructed query, wrapped in an interface object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../interface/index.html#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface">cyclops.query.interface.QueryInterface</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.query.omop.OMOPQuerier.observation">
+<span class="sig-name descname"><span class="pre">observation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">visit_occurrence_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">cyclops.query.util.TableTypes</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">process_kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../interface/index.html#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface"><span class="pre">cyclops.query.interface.QueryInterface</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#OMOPQuerier.observation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.observation" title="Permalink to this definition"></a></dt>
+<dd><p>Query OMOP observation table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>visit_occurrence_table</strong> (<em>Subquery</em><em>, </em><em>optional</em>) – Visit occurrence table to join on.</p></li>
+<li><p><strong>before_date</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><em>datetime.datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Get patient observations starting before some date.
+If a string, provide in YYYY-MM-DD format.</p></li>
+<li><p><strong>after_date</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><em>datetime.datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Get patient observations starting after some date.
+If a string, provide in YYYY-MM-DD format.</p></li>
+<li><p><strong>years</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get patient observations by year.</p></li>
+<li><p><strong>months</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get patient observations by month.</p></li>
+<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Limit the number of rows returned.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Constructed query, wrapped in an interface object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../interface/index.html#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface">cyclops.query.interface.QueryInterface</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.query.omop.OMOPQuerier.measurement">
+<span class="sig-name descname"><span class="pre">measurement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">visit_occurrence_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">cyclops.query.util.TableTypes</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">process_kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../interface/index.html#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface"><span class="pre">cyclops.query.interface.QueryInterface</span></a></span></span><a class="reference internal" href="../../../../../_modules/cyclops/query/omop.html#OMOPQuerier.measurement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.measurement" title="Permalink to this definition"></a></dt>
+<dd><p>Query OMOP measurement table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>visit_occurrence_table</strong> (<em>Subquery</em><em>, </em><em>optional</em>) – Visit occurrence table to join on.</p></li>
+<li><p><strong>before_date</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><em>datetime.datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Get patient measurements starting before some date.
+If a string, provide in YYYY-MM-DD format.</p></li>
+<li><p><strong>after_date</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><em>datetime.datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Get patient measurements starting after some date.
+If a string, provide in YYYY-MM-DD format.</p></li>
+<li><p><strong>years</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get patient measurements by year.</p></li>
+<li><p><strong>months</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get patient measurements by month.</p></li>
+<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Limit the number of rows returned.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Constructed query, wrapped in an interface object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../interface/index.html#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface">cyclops.query.interface.QueryInterface</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  
+
+  <div class="citation">
+    CyclOps team <i>et al.,</i>
+    <a href="https://www.medrxiv.org/content/10.1101/2022.12.02.22283021v2">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, medarxiv</i> (2022)
+  </def>
+
+
+  <p class="avatar">cyclops is built by</p>
+  <div class="avatar">
+    
+    
+    <span>
+      <a href="https://github.com/amrit110">
+        <img src="../../../../../_static/team/amrit-krishnan.jpg" width="32"/>
+        Amrit Krishnan
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/KadenMc">
+        <img src="../../../../../_static/team/kaden-mckeen.jpg" width="32"/>
+        Kaden McKeen
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/vsubasri">
+        <img src="../../../../../_static/team/valli-subasri.jpg" width="32"/>
+        Valli Subasri
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/a-kore">
+        <img src="../../../../../_static/team/ali-kore.jpg" width="32"/>
+        Ali Kore
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/fcogidi">
+        <img src="../../../../../_static/team/franklin-ogidi.jpg" width="32"/>
+        Franklin Ogidi
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/mahshidaln">
+        <img src="../../../../../_static/team/mahshid-alinoori.jpg" width="32"/>
+        Mahshid Alinoori
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/elhamdolatabadi">
+        <img src="../../../../../_static/team/elham-dolatabadi.jpg" width="32"/>
+        Elham Dolatabadi
+      </a>
+    </span>
+    ,
+  </div>
+
+
+  <div class="footer-small-text">
+    All <a href="https://github.com/VectorInstitute/cyclops">source code for cyclops</a> is freely available under the terms of an <a href="https://opensource.org/licenses/Apache-2.0">Apache-2.0</a> license.
+  </div>
+
+  <div class="footer-small-text">
+    This work is made possible due to the data obtained from the
+    General Medicine Inpatient Initiative (GEMINI).
+  </div>
+
+  <hr/>
+
+  <div class="logo">
+    <a class="logo" href="https://vectorinstitute.ai/">
+      <span class="logo"></span>
+      <img alt="Logo of the Vector Institute" style="width:90px; max-width:90px;" src="../../../../../_static/logos/vector_logo.png" />
+    </a>
+    <a class="logo" href="https://www.geminimedicine.ca/">
+      <span class="logo"></span>
+      <img alt="Logo of GEMINI" style="width:90px; max-width:90px;" src="../../../../../_static/logos/gemini_logo.png" />
+    </a>
+  </div>
+
+  <div class="copyright">
+    &copy; Copyright 2022, Vector AI Engineering
+  </div>
+
+  <div class="copyright">
+    </p>
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using customised version of
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">base theme</a> provided by
+    <a href="https://readthedocs.org">Read the Docs</a>.
+  </div>
+
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

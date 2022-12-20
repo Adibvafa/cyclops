@@ -13,6 +13,7 @@
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/cyclops.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
@@ -126,9 +127,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#notebooks">🎓 Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#reference">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../design.html">Framework Design</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to cyclops</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
 </ul>
 
         </div>
@@ -181,11 +181,11 @@
 <span class="kn">from</span> <span class="nn">cyclops.utils.log</span> <span class="kn">import</span> <span class="n">setup_logging</span>
 
 <span class="c1"># Logging.</span>
-<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<div class="viewcode-block" id="LOGGER"><a class="viewcode-back" href="../../../technical/api/cyclops/process/util/index.html#cyclops.process.util.LOGGER">[docs]</a><span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span></div>
 <span class="n">setup_logging</span><span class="p">(</span><span class="n">print_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="create_indicator_variables"><a class="viewcode-back" href="../../../reference/api/cyclops.process.util.html#cyclops.process.util.create_indicator_variables">[docs]</a><span class="k">def</span> <span class="nf">create_indicator_variables</span><span class="p">(</span>
+<div class="viewcode-block" id="create_indicator_variables"><a class="viewcode-back" href="../../../technical/api/cyclops/process/util/index.html#cyclops.process.util.create_indicator_variables">[docs]</a><span class="k">def</span> <span class="nf">create_indicator_variables</span><span class="p">(</span>
     <span class="n">features</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Create binary indicator variable for each column (or specified).</span>
@@ -213,7 +213,7 @@
     <span class="k">return</span> <span class="n">indicator_features</span><span class="o">.</span><span class="n">notnull</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">add_suffix</span><span class="p">(</span><span class="s2">&quot;_indicator&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="is_timestamp_series"><a class="viewcode-back" href="../../../reference/api/cyclops.process.util.html#cyclops.process.util.is_timestamp_series">[docs]</a><span class="k">def</span> <span class="nf">is_timestamp_series</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">raise_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="is_timestamp_series"><a class="viewcode-back" href="../../../technical/api/cyclops/process/util/index.html#cyclops.process.util.is_timestamp_series">[docs]</a><span class="k">def</span> <span class="nf">is_timestamp_series</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">raise_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check whether a series has the Pandas Timestamp datatype.</span>
 
 <span class="sd">    Parameters</span>
@@ -235,7 +235,7 @@
     <span class="k">return</span> <span class="n">is_timestamp</span></div>
 
 
-<div class="viewcode-block" id="has_columns"><a class="viewcode-back" href="../../../reference/api/cyclops.process.util.html#cyclops.process.util.has_columns">[docs]</a><span class="k">def</span> <span class="nf">has_columns</span><span class="p">(</span>
+<div class="viewcode-block" id="has_columns"><a class="viewcode-back" href="../../../technical/api/cyclops/process/util/index.html#cyclops.process.util.has_columns">[docs]</a><span class="k">def</span> <span class="nf">has_columns</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
     <span class="n">exactly</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -275,7 +275,7 @@
     <span class="k">return</span> <span class="n">present</span></div>
 
 
-<div class="viewcode-block" id="assert_has_columns"><a class="viewcode-back" href="../../../reference/api/cyclops.process.util.html#cyclops.process.util.assert_has_columns">[docs]</a><span class="k">def</span> <span class="nf">assert_has_columns</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<div class="viewcode-block" id="assert_has_columns"><a class="viewcode-back" href="../../../technical/api/cyclops/process/util/index.html#cyclops.process.util.assert_has_columns">[docs]</a><span class="k">def</span> <span class="nf">assert_has_columns</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Decorate function to assert that input DataFrames have the necessary columns.</span>
 
 <span class="sd">    assert_has_columns([&quot;A&quot;, &quot;B&quot;], None) is equivalent to assert_has_columns([&quot;A&quot;, &quot;B&quot;])</span>
@@ -328,7 +328,7 @@
     <span class="k">return</span> <span class="n">decorator</span></div>
 
 
-<div class="viewcode-block" id="has_range_index"><a class="viewcode-back" href="../../../reference/api/cyclops.process.util.html#cyclops.process.util.has_range_index">[docs]</a><span class="k">def</span> <span class="nf">has_range_index</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="has_range_index"><a class="viewcode-back" href="../../../technical/api/cyclops/process/util/index.html#cyclops.process.util.has_range_index">[docs]</a><span class="k">def</span> <span class="nf">has_range_index</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Check whether a DataFrame has a range index.</span>
 
 <span class="sd">    Parameters</span>
@@ -345,7 +345,7 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">pd</span><span class="o">.</span><span class="n">RangeIndex</span><span class="p">(</span><span class="n">stop</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="to_range_index"><a class="viewcode-back" href="../../../reference/api/cyclops.process.util.html#cyclops.process.util.to_range_index">[docs]</a><span class="k">def</span> <span class="nf">to_range_index</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="to_range_index"><a class="viewcode-back" href="../../../technical/api/cyclops/process/util/index.html#cyclops.process.util.to_range_index">[docs]</a><span class="k">def</span> <span class="nf">to_range_index</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Force a DataFrame to have a range index.</span>
 
 <span class="sd">    Parameters</span>
@@ -370,7 +370,7 @@
     <span class="k">return</span> <span class="n">data</span></div>
 
 
-<div class="viewcode-block" id="gather_columns"><a class="viewcode-back" href="../../../reference/api/cyclops.process.util.html#cyclops.process.util.gather_columns">[docs]</a><span class="k">def</span> <span class="nf">gather_columns</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="gather_columns"><a class="viewcode-back" href="../../../technical/api/cyclops/process/util/index.html#cyclops.process.util.gather_columns">[docs]</a><span class="k">def</span> <span class="nf">gather_columns</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Gather specified columns, discarding rest and return copy of columns.</span>
 
 <span class="sd">    Parameters</span>
@@ -389,7 +389,7 @@
     <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">to_list</span><span class="p">(</span><span class="n">columns</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="log_counts_step"><a class="viewcode-back" href="../../../reference/api/cyclops.process.util.html#cyclops.process.util.log_counts_step">[docs]</a><span class="k">def</span> <span class="nf">log_counts_step</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">step_description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="log_counts_step"><a class="viewcode-back" href="../../../technical/api/cyclops/process/util/index.html#cyclops.process.util.log_counts_step">[docs]</a><span class="k">def</span> <span class="nf">log_counts_step</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">step_description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Log num. of encounters and num. of samples (rows).</span>
 
 <span class="sd">    Parameters</span>
@@ -428,8 +428,8 @@
 
   <div class="citation">
     CyclOps team <i>et al.,</i>
-    <a href="https://vectorinstitute.github.io/cyclops/">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
-    <i>, TBD</i> (2022)
+    <a href="https://www.medrxiv.org/content/10.1101/2022.12.02.22283021v2">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, medarxiv</i> (2022)
   </def>
 
 
@@ -478,9 +478,17 @@
     ,
     
     <span>
-      <a href="https://github.com/dhrumilp15">
-        <img src="../../../_static/team/dhrumil-patel.jpg" width="32"/>
-        Dhrumil Patel
+      <a href="https://github.com/mahshidaln">
+        <img src="../../../_static/team/mahshid-alinoori.jpg" width="32"/>
+        Mahshid Alinoori
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/elhamdolatabadi">
+        <img src="../../../_static/team/elham-dolatabadi.jpg" width="32"/>
+        Elham Dolatabadi
       </a>
     </span>
     ,

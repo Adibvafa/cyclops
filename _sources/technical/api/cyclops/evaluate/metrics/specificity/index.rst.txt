@@ -1,0 +1,386 @@
+:py:mod:`cyclops.evaluate.metrics.specificity`
+==============================================
+
+.. py:module:: cyclops.evaluate.metrics.specificity
+
+.. autoapi-nested-parse::
+
+   Classes for computing specificity metrics.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.evaluate.metrics.specificity.BinarySpecificity
+   cyclops.evaluate.metrics.specificity.MulticlassSpecificity
+   cyclops.evaluate.metrics.specificity.MultilabelSpecificity
+   cyclops.evaluate.metrics.specificity.Specificity
+
+
+
+
+.. py:class:: BinarySpecificity(pos_label: int = 1, threshold: float = 0.5, zero_division: Literal[warn, 0, 1] = 'warn')
+
+   Bases: :py:obj:`cyclops.evaluate.metrics.stat_scores.BinaryStatScores`
+
+   
+   Compute specificity for binary classification tasks.
+
+   :param target: Ground truth (correct) target values.
+   :type target: ArrayLike
+   :param preds: Estimated targets (predictions) as returned by a classifier.
+   :type preds: ArrayLike
+   :param pos_label: The label to use for the positive class.
+   :type pos_label: int, default=1
+   :param threshold: The threshold to use for converting the predictions to binary
+                     values. Logits will be converted to probabilities using the sigmoid
+                     function.
+   :type threshold: float, default=0.5
+
+   .. rubric:: Examples
+
+   >>> from cyclops.evaluation.metrics import BinarySpecificity
+   >>> target = [0, 1, 1, 0]
+   >>> preds = [0, 1, 0, 0]
+   >>> metric = BinarySpecificity()
+   >>> metric(target, preds)
+   1.0
+   >>> metric.reset_state()
+   >>> target = [[0, 1, 1, 0], [1, 1, 0, 0]]
+   >>> preds = [[0, 1, 0, 0], [1, 0, 0, 0]]
+   >>> for t, p in zip(target, preds):
+   ...     metric.update_state(t, p)
+   >>> metric.compute()
+   1.0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: compute() -> float
+
+      
+      Compute the specificity score from the state.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: MulticlassSpecificity(num_classes: int, top_k: Optional[int] = None, average: Literal[micro, macro, weighted, None] = None, zero_division: Literal[warn, 0, 1] = 'warn')
+
+   Bases: :py:obj:`cyclops.evaluate.metrics.stat_scores.MulticlassStatScores`
+
+   
+   Compute specificity for multiclass classification tasks.
+
+   :param num_classes: The number of classes in the dataset.
+   :type num_classes: int
+   :param top_k: Number of highest probability or logit score predictions considered
+                 to find the correct label. Only works when ``preds`` contain
+                 probabilities/logits.
+   :type top_k: int, optional
+   :param average: If None, return the specificity for each class, otherwise return the
+                   average specificity. Average options are:
+
+                   - ``micro``: Calculate metrics globally.
+                   - ``macro``: Calculate metrics for each class, and find their unweighted
+                       mean. This does not take class imbalance into account.
+                   - ``weighted``: Calculate metrics for each class, and find their
+                       average, weighted by support (the number of true instances for each
+                       label).
+   :type average: Literal["micro", "macro", "weighted", None], default=None
+   :param zero_division: Sets the value to return when there is a zero division. If set to ``warn``,
+                         this acts as 0, but warnings are also raised.
+   :type zero_division: Literal["warn", 0, 1], default="warn"
+
+   .. rubric:: Examples
+
+   >>> from cyclops.evaluation.metrics import MulticlassSpecificity
+   >>> target = [0, 1, 2, 0, 1, 2]
+   >>> preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05], [0.05, 0.2, 0.75],
+   ...          [0.35, 0.5, 0.15], [0.05, 0.9, 0.05], [0.05, 0.05, 0.9]]
+   >>> metric = MulticlassSpecificity(num_classes=3)
+   >>> metric(target, preds)
+   array([1.  , 0.75, 1.  ])
+   >>> metric.reset_state()
+   >>> target = [[0, 1, 2, 0, 1, 2], [1, 1, 2, 0, 0, 1]]
+   >>> preds = [[0, 2, 1, 2, 0, 1], [1, 0, 1, 2, 2, 0]]
+   >>> for t, p in zip(target, preds):
+   ...     metric.update_state(t, p)
+   >>> metric.compute()
+   array([0.625     , 0.57142857, 0.55555556])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: compute() -> float
+
+      
+      Compute the specificity score from the state.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: MultilabelSpecificity(num_labels: int, threshold: float = 0.5, top_k: Optional[int] = None, average: Literal[micro, macro, weighted, None] = None, zero_division: Literal[warn, 0, 1] = 'warn')
+
+   Bases: :py:obj:`cyclops.evaluate.metrics.stat_scores.MultilabelStatScores`
+
+   
+   Compute specificity for multilabel classification tasks.
+
+   :param num_labels: The number of labels in the dataset.
+   :type num_labels: int
+   :param threshold: The threshold value for converting probability or logit scores to
+                     binary. A sigmoid function is first applied to logits to convert them
+                     to probabilities.
+   :type threshold: float, default=0.5
+   :param top_k: Number of highest probability or logit score predictions considered
+                 to find the correct label. Only works when ``preds`` contains
+                 probabilities/logits.
+   :type top_k: int, optional
+   :param average: If None, return the specificity for each class, otherwise return the
+                   average specificity. Average options are:
+
+                   - ``micro``: Calculate metrics globally.
+                   - ``macro``: Calculate metrics for each label, and find their unweighted
+                       mean. This does not take label imbalance into account.
+                   - ``weighted``: Calculate metrics for each label, and find their average,
+                       weighted by support (the number of true instances for each label).
+   :type average: Literal["micro", "macro", "weighted", None], default=None
+   :param zero_division: Sets the value to return when there is a zero division. If set to ``warn``,
+                         this acts as 0, but warnings are also raised.
+   :type zero_division: Literal["warn", 0, 1], default="warn"
+
+   .. rubric:: Examples
+
+   >>> from cyclops.evaluation.metrics import MultilabelSpecificity
+   >>> target = [[0, 1, 1], [1, 0, 1], [1, 1, 0], [0, 0, 1], [1, 0, 0]]
+   >>> preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05], [0.05, 0.2, 0.75],
+   ...          [0.35, 0.5, 0.15], [0.05, 0.9, 0.05]]
+   >>> metric = MultilabelSpecificity(num_labels=3)
+   >>> metric(target, preds)
+   array([0.5, 0. , 0.5])
+   >>> metric.reset_state()
+   >>> target = [[[0, 1, 1], [1, 0, 1], [1, 1, 0], [0, 0, 1], [1, 0, 0]],
+   ...           [[1, 0, 1], [0, 1, 0], [1, 1, 0], [0, 0, 1], [1, 0, 0]]]
+   >>> preds = [[[1, 0, 0], [0, 1, 0], [0, 1, 1], [0, 0, 1], [1, 0, 0]],
+   ...          [[0, 1, 1], [1, 0, 1], [1, 1, 0], [0, 0, 1], [1, 0, 0]]]
+   >>> for t, p in zip(target, preds):
+   ...     metric.update_state(t, p)
+   >>> metric.compute()
+   array([0.5       , 0.66666667, 0.6       ])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: compute() -> float
+
+      
+      Compute the specificity score from the state.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: Specificity
+
+   Bases: :py:obj:`cyclops.evaluate.metrics.metric.Metric`
+
+   
+   Compute specificity score for different classification tasks.
+
+   The specificity is the ratio of true negatives to the sum of true negatives and
+   false positives. It is also the recall of the negative class.
+
+   :param task: Type of classification task.
+   :type task: Literal["binary", "multiclass", "multilabel"]
+   :param pos_label: Label to consider as positive for binary classification tasks.
+   :type pos_label: int, default=1
+   :param num_classes: Number of classes for the task. Required if ``task`` is ``"multiclass"``.
+   :type num_classes: int
+   :param threshold: Threshold for deciding the positive class. Only used if ``task`` is
+                     ``"binary"`` or ``"multilabel"``.
+   :type threshold: float, default=0.5
+   :param top_k: If given, and predictions are probabilities/logits, the precision will
+                 be computed only for the top k classes. Otherwise, ``top_k`` will be
+                 set to 1. Only used if ``task`` is ``"multiclass"`` or ``"multilabel"``.
+   :type top_k: int, optional
+   :param num_labels: Number of labels for the task. Required if ``task`` is ``"multilabel"``.
+   :type num_labels: int
+   :param average: If ``None``, return the score for each label/class. Otherwise,
+                   use one of the following options to compute the average score:
+
+                   - ``micro``: Calculate metrics globally.
+                   - ``macro``: Calculate metrics for each class/label, and find their
+                       unweighted mean. This does not take label/class imbalance into
+                       account.
+                   - ``weighted``: Calculate metrics for each label/class, and find
+                       their average weighted by support (the number of true instances
+                       for each label/class). This alters ``macro`` to account for
+                       label/class imbalance.
+   :type average: Literal["micro", "macro", "weighted", None], default=None
+   :param zero_division: Value to return when there is a zero division. If set to "warn", this
+                         acts as 0, but warnings are also raised.
+   :type zero_division: Literal["warn", 0, 1], default="warn"
+
+   .. rubric:: Examples
+
+   >>> # (binary)
+   >>> from cyclops.evaluation.metrics import Specificity
+   >>> target = [0, 1, 1, 0, 1]
+   >>> preds = [0.9, 0.05, 0.05, 0.35, 0.05]
+   >>> metric = Specificity(task="binary")
+   >>> metric(target, preds)
+   0.5
+   >>> metric.reset_state()
+   >>> target = [[0, 1, 1], [1, 0, 1]]
+   >>> preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05]]
+   >>> for t, p in zip(target, preds):
+   ...     metric.update_state(t, p)
+   >>> metric.compute()
+   0.0
+
+   >>> # (multiclass)
+   >>> from cyclops.evaluation.metrics import Specificity
+   >>> target = [0, 1, 2, 0, 1, 2]
+   >>> preds = [[0.9, 0.05, 0.05], [0.05, 0.9, 0.05], [0.05, 0.2, 0.75],
+   ...          [0.35, 0.5, 0.15], [0.05, 0.9, 0.05], [0.05, 0.05, 0.9]]
+   >>> metric = Specificity(task="multiclass", num_classes=3)
+   >>> metric(target, preds)
+   array([1.  , 0.75, 1.  ])
+   >>> metric.reset_state()
+   >>> target = [[0, 1, 1], [1, 2, 1]]
+   >>> preds = [[[0.9, 0.05, 0.05], [0.05, 0.9, 0.05], [0.05, 0.2, 0.75]],
+   ...          [[0.35, 0.5, 0.15], [0.25, 0.5, 0.25], [0.5, 0.05, 0.45]]]
+   >>> for t, p in zip(target, preds):
+   ...     metric.update_state(t, p)
+   >>> metric.compute()
+   array([0.8, 0.5, 0.8])
+
+   >>> # (multilabel)
+   >>> from cyclops.evaluation.metrics import Specificity
+   >>> target = [[0, 1, 1], [1, 0, 1], [1, 1, 0]]
+   >>> preds = [[0.9, 0.05, 0.05], [0.05, 0.2, 0.75], [0.35, 0.5, 0.15]]
+   >>> metric = Specificity(task="multilabel", num_labels=3)
+   >>> metric(target, preds)
+   array([0., 1., 1.])
+   >>> metric.reset_state()
+   >>> target = [[[0, 1, 0], [1, 0, 1]], [[0, 1, 1], [1, 0, 0]]]
+   >>> preds = [
+   ...     [[0.1, 0.7, 0.2], [0.2, 0.8, 0.3]],
+   ...     [[0.5, 0.9, 0.0], [0.3, 0.4, 0.2]],
+   ... ]
+   >>> for t, p in zip(target, preds):
+   ...     metric.update_state(t, p)
+   >>> metric.compute()
+   array([0.5, 0.5, 1. ])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

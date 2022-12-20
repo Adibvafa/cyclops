@@ -1,0 +1,690 @@
+:py:mod:`cyclops.process.feature.normalize`
+===========================================
+
+.. py:module:: cyclops.process.feature.normalize
+
+.. autoapi-nested-parse::
+
+   Feature normalization.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.process.feature.normalize.SklearnNormalizer
+   cyclops.process.feature.normalize.GroupbyNormalizer
+   cyclops.process.feature.normalize.VectorizedNormalizer
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.process.feature.normalize.METHOD_MAP
+
+
+.. py:data:: METHOD_MAP
+   
+
+   
+
+.. py:class:: SklearnNormalizer(method: str)
+
+   
+   Sklearn normalizer wrapper.
+
+   .. attribute:: method
+
+      Name of normalization method.
+
+      :type: str
+
+   .. attribute:: scaler
+
+      Sklearn scaler object.
+
+      :type: sklearn.preprocessing.StandardScaler or sklearn.preprocessing.MinMaxScaler
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: __repr__()
+
+      
+      Repr method.
+
+      :returns: The normalization method name.
+      :rtype: str
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: fit(data: Union[numpy.ndarray, pandas.Series]) -> None
+
+      
+      Fit the scaler.
+
+      :param data: Data over which to fit.
+      :type data: numpy.ndarray or pandas.Series
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: _transform_by_method(data: Union[numpy.ndarray, pandas.Series], method: str) -> Union[numpy.ndarray, pandas.Series]
+
+      
+      Apply a method on the scaler.
+
+      If a numpy.ndarray is given, a numpy.ndarray is returned. Similarly, if a
+      pandas.Series is given, a pandas.Series is returned.
+
+      :param data: Input data.
+      :type data: numpy.ndarray or pandas.Series
+      :param method: Name of the method to apply.
+      :type method: str
+
+      :returns: Transformed data.
+      :rtype: numpy.ndarray or pandas.Series
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: transform(data: Union[numpy.ndarray, pandas.Series]) -> Union[numpy.ndarray, pandas.Series]
+
+      
+      Apply normalization.
+
+      If a numpy.ndarray is given, a numpy.ndarray is returned. Similarly, if a
+      pandas.Series is given, a pandas.Series is returned.
+
+      :param data: Input data.
+      :type data: numpy.ndarray or pandas.Series
+
+      :returns: Normalized data.
+      :rtype: numpy.ndarray or pandas.Series
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: inverse_transform(data: Union[numpy.ndarray, pandas.Series]) -> Union[numpy.ndarray, pandas.Series]
+
+      
+      Apply inverse normalization.
+
+      If a numpy.ndarray is given, a numpy.ndarray is returned. Similarly, if a
+      pandas.Series is given, a pandas.Series is returned.
+
+      :param data: Input data.
+      :type data: numpy.ndarray or pandas.Series
+
+      :returns: Inversely normalized data.
+      :rtype: numpy.ndarray or pandas.Series
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: GroupbyNormalizer(normalizer_map: dict, by: Optional[Union[str, List[str]]] = None)
+
+   
+   Perform normalization over a DataFrame.
+
+   Optionally normalize over specified groups rather than directly over columns.
+
+   .. attribute:: normalizer_map
+
+      A map from the column name to the type of normalization, e.g.,
+      {"event_values": "standard"}
+
+      :type: dict
+
+   .. attribute:: by
+
+      Columns to groupby, which affects how values are normalized.
+
+      :type: str or list of str, optional
+
+   .. attribute:: normalizers
+
+      The normalizer object information, where each column/group has a row
+      with a normalization object.
+
+      :type: dict
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: get_map() -> dict
+
+      
+      Get normalization mapping from features to type.
+
+      :returns: Normalization map.
+      :rtype: dict
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: get_by() -> Optional[List]
+
+      
+      Get groupby columns.
+
+      :returns: Groupby columns.
+      :rtype: dict
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: fit(data: pandas.DataFrame) -> None
+
+      
+      Fit the normalizing objects.
+
+      :param data: Data over which to fit.
+      :type data: pandas.DataFrame
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: _transform_by_method(data: pandas.DataFrame, method: str) -> pandas.DataFrame
+
+      
+      Apply a method from the normalizer object to the data.
+
+      :param data: Data to transform.
+      :type data: pandas.DataFrame
+      :param method: Name of normalizer method to apply.
+      :type method: str
+
+      :returns: The data with the method applied.
+      :rtype: pandas.DataFrame
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: transform(data: pandas.DataFrame)
+
+      
+      Normalize the data.
+
+      :param data: Data to transform.
+      :type data: pandas.DataFrame
+
+      :returns: The normalized data.
+      :rtype: pandas.DataFrame
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: inverse_transform(data: pandas.DataFrame)
+
+      
+      Inversely normalize the data.
+
+      :param data: Data to transform.
+      :type data: pandas.DataFrame
+
+      :returns: The inversely normalized data.
+      :rtype: pandas.DataFrame
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: VectorizedNormalizer(axis: int, normalizer_map: dict)
+
+   
+   Perform normalization over a NumPy array.
+
+   .. attribute:: axis
+
+      Axis over which to normalize.
+
+      :type: int
+
+   .. attribute:: normalizer_map
+
+      Mapping from an index to normalization type, e.g., {"eventA": "standard"}.
+
+      :type: dict
+
+   .. attribute:: normalizers
+
+      Mapping from an index to a normalizer object.
+
+      :type: dict
+
+   .. attribute:: is_fit
+
+      Whether or not the normalizers are fit.
+
+      :type: bool
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: get_map() -> Optional[dict]
+
+      
+      Get normalization mapping from features to type.
+
+      :returns: Normalization map.
+      :rtype: dict
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: _check_missing(index_map: Dict[str, int]) -> None
+
+      
+      Check if any of the normalizer_map features are missing a given index_map.
+
+      :param index_map: Map from feature name to index in the normalizer's given axis.
+      :type index_map: dict
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: fit(data: numpy.ndarray, index_map: Dict[str, int]) -> None
+
+      
+      Fit the normalizing objects.
+
+      :param data: Data over which to fit.
+      :type data: numpy.ndarray
+      :param index_map: Map from feature name to index in the normalizer's given axis.
+      :type index_map: dict
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: _transform_by_method(data: numpy.ndarray, index_map: Dict[str, int], method: str) -> numpy.ndarray
+
+      
+      Apply a method from the normalizer object to the data.
+
+      :param data: Data to transform.
+      :type data: numpy.ndarray
+      :param index_map: Map from feature name to index in the normalizer's given axis.
+      :type index_map: dict
+      :param method: Name of normalizer method to apply.
+      :type method: str
+
+      :returns: The data with the method applied.
+      :rtype: numpy.ndarray
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: transform(data: numpy.ndarray, index_map: Dict[str, int])
+
+      
+      Normalize the data.
+
+      :param data: Data to transform.
+      :type data: numpy.ndarray
+      :param index_map: Map from feature name to index in the normalizer's given axis.
+      :type index_map: dict
+
+      :returns: The normalized data.
+      :rtype: numpy.ndarray
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: inverse_transform(data: numpy.ndarray, index_map: Dict[str, int])
+
+      
+      Inversely normalize the data.
+
+      :param data: Data to transform.
+      :type data: numpy.ndarray
+      :param index_map: Map from feature name to index in the normalizer's given axis.
+      :type index_map: dict
+
+      :returns: The inversely normalized data.
+      :rtype: numpy.ndarray
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: set_normalizers(normalizers: Dict[str, Any]) -> None
+
+      
+      Directly set the normalizer objects rather than fitting.
+
+      :param normalizers: Mapping from an index to a normalizer object.
+      :type normalizers: dict
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: subset(indexes: numpy.ndarray) -> VectorizedNormalizer
+
+      
+      Subset the normalizers and return this new VectorizedNormalizer.
+
+      :param indexes: Indexes to keep.
+      :type indexes: numpy.ndarray
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

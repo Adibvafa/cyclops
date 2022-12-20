@@ -1,0 +1,424 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.query.process &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/cyclops.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="prev" title="cyclops.query.gemini" href="cyclops.query.gemini.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+    document.body.innerHTML = document.body.innerHTML.replace(/ package/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav">
+  <!--
+    Lie about what theme we really are when some RTD-injected JS fetches the
+    full versions panel from the RTD API.  RTD's JS replaces the stub versions
+    panel in the Sphinx-generated HTML with the full versions panel it fetches
+    from the RTD API.  If the API thinks we're not sphinx_rtd_theme, it will
+    serve us the wrong HTML and the panel will float as a "badge" when it
+    shouldn't.  As a customized version of sphinx_rtd_theme, we really do want
+    the same HTML it gets.  See also the diagnoses in
+    <https://github.com/nextstrain/docs.nextstrain.org/issues/76>.
+
+    This bit of JS finds the data RTD injects into the page and modifies it
+    before the code that RTD injects runs and looks at the data.  RTD's
+    <script>s (in <head>) run before this JS, but they wait until the DOM is
+    ready to actually do any work.  This gives us a chance to modify the data
+    during DOM load before the RTD code actually uses it.
+
+      -trs, 27 Jan 2022
+  -->
+  <script>
+    (() => {
+      try {
+        console.log("Lying about the theme to RTD's JS so the versions panel works properly. 🙈");
+
+        /* Update global variable, which is used in the request to get the RTD
+         * "footer" that includes the versions panel.
+         */
+        if (window.READTHEDOCS_DATA)
+          window.READTHEDOCS_DATA.theme = "sphinx_rtd_theme";
+
+        /* Update stored JSON in case anything else deserializes it later.
+         * Comments in the RTD-injected HTML source claim the global variable
+         * above is deprecated.
+         */
+        var script = document.querySelector("#READTHEDOCS_DATA");
+        if (script)
+          script.innerHTML = JSON.stringify({ ...JSON.parse(script.innerHTML), theme: "sphinx_rtd_theme" });
+      }
+      catch (err) {
+        console.log("Lying about the theme to RTD's JS failed… oh well. 🤷", err);
+      }
+    })();
+  </script>
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+
+
+
+
+  <a href="https://vectorinstitute.github.io/cyclops/">
+    <img src="../../../_static/cyclops_logo-dark.png" class="logo" alt="Logo"/>
+  </a>
+
+
+
+  <div class="subproject">
+    <a href="../../../index.html" class="project-name" alt="Documentation Home">
+      cyclops
+    </a>
+
+    
+    
+    
+
+  </div>
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#developing">🧑🏿‍💻 Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../cyclops.evaluate.metrics.html">cyclops.evaluate.metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cyclops.evaluate.metrics.functional.html">cyclops.evaluate.metrics.functional</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../cyclops.query.html">cyclops.query</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../cyclops.query.html#dataset-apis">dataset APIs</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../cyclops.query.html#query-operations">query operations</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">cyclops.query.process</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+  
+
+  
+  
+    <li><a href="https://vectorinstitute.github.io/cyclops/">Home</a></li>
+    <li><a href="../../../index.html">cyclops</a></li>
+  
+
+  
+  
+    <li><a href="../../../api.html">API Reference</a></li>
+  
+    <li><a href="../cyclops.query.html">cyclops.query</a></li>
+  
+
+  
+
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/reference/api/generated/cyclops.query.process.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-cyclops.query.process">
+<span id="cyclops-query-process"></span><h1>cyclops.query.process<a class="headerlink" href="#module-cyclops.query.process" title="Permalink to this headline"></a></h1>
+<p>Low-level query operations.</p>
+<p>This module contains query operation modules such as AddColumn, Join, DropNulls, etc.
+which can be used in high-level query API functions specific to datasets.</p>
+<p class="rubric">operations</p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.AddColumn" title="cyclops.query.process.AddColumn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AddColumn</span></code></a>(add_to, col[, negative, ...])</p></td>
+<td><p>Add an column to some columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.AddDeltaColumns" title="cyclops.query.process.AddDeltaColumns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AddDeltaColumns</span></code></a>(add_to[, negative, ...])</p></td>
+<td><p>Construct and add an interval column to some columns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.AddDeltaConstant" title="cyclops.query.process.AddDeltaConstant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AddDeltaConstant</span></code></a>(add_to, delta[, new_col_labels])</p></td>
+<td><p>Construct and add a datetime.timedelta object to some columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.AddNumeric" title="cyclops.query.process.AddNumeric"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AddNumeric</span></code></a>(add_to, num[, new_col_labels])</p></td>
+<td><p>Add a numeric value to some columns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.Cast" title="cyclops.query.process.Cast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cast</span></code></a>(cols, type_)</p></td>
+<td><p>Cast columns to a specified type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.ConditionAfterDate" title="cyclops.query.process.ConditionAfterDate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConditionAfterDate</span></code></a>(timestamp_col, timestamp)</p></td>
+<td><p>Filter rows based on a timestamp being after some date.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.ConditionBeforeDate" title="cyclops.query.process.ConditionBeforeDate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConditionBeforeDate</span></code></a>(timestamp_col, timestamp)</p></td>
+<td><p>Filter rows based on a timestamp being before some date.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.ConditionEndsWith" title="cyclops.query.process.ConditionEndsWith"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConditionEndsWith</span></code></a>(col, string[, not_, ...])</p></td>
+<td><p>Filter rows based on ending with some string.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.ConditionEquals" title="cyclops.query.process.ConditionEquals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConditionEquals</span></code></a>(col, value[, not_, binarize_col])</p></td>
+<td><p>Filter rows based on being equal, or not equal, to some value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.ConditionIn" title="cyclops.query.process.ConditionIn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConditionIn</span></code></a>(col, values[, not_, binarize_col])</p></td>
+<td><p>Filter rows based on having a value in list of values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.ConditionInMonths" title="cyclops.query.process.ConditionInMonths"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConditionInMonths</span></code></a>(timestamp_col, months[, ...])</p></td>
+<td><p>Filter rows based on a timestamp being in a list of years.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.ConditionInYears" title="cyclops.query.process.ConditionInYears"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConditionInYears</span></code></a>(timestamp_col, years[, ...])</p></td>
+<td><p>Filter rows based on a timestamp column being in a list of years.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.ConditionStartsWith" title="cyclops.query.process.ConditionStartsWith"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConditionStartsWith</span></code></a>(col, string[, not_, ...])</p></td>
+<td><p>Filter rows based on starting with some string.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.ConditionSubstring" title="cyclops.query.process.ConditionSubstring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConditionSubstring</span></code></a>(col, substrings[, any_, ...])</p></td>
+<td><p>Filter rows on based on having substrings.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.Drop" title="cyclops.query.process.Drop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Drop</span></code></a>(cols)</p></td>
+<td><p>Drop some columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.DropNulls" title="cyclops.query.process.DropNulls"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DropNulls</span></code></a>(cols)</p></td>
+<td><p>Remove rows with null values in some specified columns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.ExtractTimestampComponent" title="cyclops.query.process.ExtractTimestampComponent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExtractTimestampComponent</span></code></a>(timestamp_col, ...)</p></td>
+<td><p>Extract a component such as year or month from a timestamp column.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.FilterColumns" title="cyclops.query.process.FilterColumns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FilterColumns</span></code></a>(cols)</p></td>
+<td><p>Keep only the specified columns in a table.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.GroupByAggregate" title="cyclops.query.process.GroupByAggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GroupByAggregate</span></code></a>(groupby_cols, aggfuncs[, ...])</p></td>
+<td><p>Aggregate over a group by object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.Join" title="cyclops.query.process.Join"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Join</span></code></a>(join_table[, on, on_to_type, cond, ...])</p></td>
+<td><p>Join a table with another table.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.Limit" title="cyclops.query.process.Limit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Limit</span></code></a>(number)</p></td>
+<td><p>Limit the number of rows returned in a query.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.Literal" title="cyclops.query.process.Literal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>(value, col)</p></td>
+<td><p>Add a literal column to a table.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.OrderBy" title="cyclops.query.process.OrderBy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OrderBy</span></code></a>(cols[, ascending])</p></td>
+<td><p>Order, or sort, the rows of a table by some columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.QAP" title="cyclops.query.process.QAP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QAP</span></code></a>(kwarg_name[, required, transform_fn])</p></td>
+<td><p>Query argument placeholder (QAP) class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.RandomizeOrder" title="cyclops.query.process.RandomizeOrder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RandomizeOrder</span></code></a>()</p></td>
+<td><p>Randomize order of table rows.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.Rename" title="cyclops.query.process.Rename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Rename</span></code></a>(rename_map[, check_exists])</p></td>
+<td><p>Rename some columns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.Reorder" title="cyclops.query.process.Reorder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Reorder</span></code></a>(cols)</p></td>
+<td><p>Reorder the columns in a table.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.ReorderAfter" title="cyclops.query.process.ReorderAfter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReorderAfter</span></code></a>(cols, after)</p></td>
+<td><p>Reorder a number of columns to come after a specified column.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.Substring" title="cyclops.query.process.Substring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Substring</span></code></a>(col, start_index, stop_index, ...)</p></td>
+<td><p>Get substring of a string column.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../technical/api/cyclops/query/process/index.html#cyclops.query.process.Trim" title="cyclops.query.process.Trim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trim</span></code></a>(cols[, new_col_labels])</p></td>
+<td><p>Trim the whitespace from some string columns.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cyclops.query.gemini.html" class="btn btn-neutral float-left" title="cyclops.query.gemini" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  
+
+  <div class="citation">
+    CyclOps team <i>et al.,</i>
+    <a href="https://www.medrxiv.org/content/10.1101/2022.12.02.22283021v2">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, medarxiv</i> (2022)
+  </def>
+
+
+  <p class="avatar">cyclops is built by</p>
+  <div class="avatar">
+    
+    
+    <span>
+      <a href="https://github.com/amrit110">
+        <img src="../../../_static/team/amrit-krishnan.jpg" width="32"/>
+        Amrit Krishnan
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/KadenMc">
+        <img src="../../../_static/team/kaden-mckeen.jpg" width="32"/>
+        Kaden McKeen
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/vsubasri">
+        <img src="../../../_static/team/valli-subasri.jpg" width="32"/>
+        Valli Subasri
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/a-kore">
+        <img src="../../../_static/team/ali-kore.jpg" width="32"/>
+        Ali Kore
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/fcogidi">
+        <img src="../../../_static/team/franklin-ogidi.jpg" width="32"/>
+        Franklin Ogidi
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/mahshidaln">
+        <img src="../../../_static/team/mahshid-alinoori.jpg" width="32"/>
+        Mahshid Alinoori
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/elhamdolatabadi">
+        <img src="../../../_static/team/elham-dolatabadi.jpg" width="32"/>
+        Elham Dolatabadi
+      </a>
+    </span>
+    ,
+  </div>
+
+
+  <div class="footer-small-text">
+    All <a href="https://github.com/VectorInstitute/cyclops">source code for cyclops</a> is freely available under the terms of an <a href="https://opensource.org/licenses/Apache-2.0">Apache-2.0</a> license.
+  </div>
+
+  <div class="footer-small-text">
+    This work is made possible due to the data obtained from the
+    General Medicine Inpatient Initiative (GEMINI).
+  </div>
+
+  <hr/>
+
+  <div class="logo">
+    <a class="logo" href="https://vectorinstitute.ai/">
+      <span class="logo"></span>
+      <img alt="Logo of the Vector Institute" style="width:90px; max-width:90px;" src="../../../_static/logos/vector_logo.png" />
+    </a>
+    <a class="logo" href="https://www.geminimedicine.ca/">
+      <span class="logo"></span>
+      <img alt="Logo of GEMINI" style="width:90px; max-width:90px;" src="../../../_static/logos/gemini_logo.png" />
+    </a>
+  </div>
+
+  <div class="copyright">
+    &copy; Copyright 2022, Vector AI Engineering
+  </div>
+
+  <div class="copyright">
+    </p>
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using customised version of
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">base theme</a> provided by
+    <a href="https://readthedocs.org">Read the Docs</a>.
+  </div>
+
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

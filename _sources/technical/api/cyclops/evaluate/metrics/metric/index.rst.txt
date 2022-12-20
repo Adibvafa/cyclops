@@ -1,0 +1,600 @@
+:py:mod:`cyclops.evaluate.metrics.metric`
+=========================================
+
+.. py:module:: cyclops.evaluate.metrics.metric
+
+.. autoapi-nested-parse::
+
+   Base abstract class for all metrics.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.evaluate.metrics.metric.Metric
+   cyclops.evaluate.metrics.metric.MetricCollection
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.evaluate.metrics.metric.create_metric
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.evaluate.metrics.metric.LOGGER
+   cyclops.evaluate.metrics.metric._METRIC_REGISTRY
+
+
+.. py:data:: LOGGER
+   
+
+   
+
+.. py:data:: _METRIC_REGISTRY
+   
+
+   
+
+.. py:class:: Metric
+
+   Bases: :py:obj:`abc.ABC`
+
+   
+   Abstract base class for metrics classes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: __init_subclass__(registry_key: str = None, force_register: bool = False, **kwargs)
+      :classmethod:
+
+      
+      Register the subclass in the registry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: add_state(name: str, default: Union[List, numpy.ndarray]) -> None
+
+      
+      Add a state variable to the metric.
+
+      :param name: The name of the state variable.
+      :type name: str
+      :param default: The default value of the state variable.
+      :type default: Union[List, numpy.ndarray]
+
+      :rtype: None
+
+      :raises AttributeError: If the state variable already exists.
+      :raises ValueError: If the state variable is not a numpy.ndarray or an empty list.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: reset_state() -> None
+
+      
+      Reset the metric to its initial state.
+
+      :rtype: None
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: update_state(*args: Any, **kwargs: Any) -> None
+      :abstractmethod:
+
+      
+      Update the state of the metric.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: compute() -> Any
+      :abstractmethod:
+
+      
+      Compute the final value of the metric from the state variables.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: _wrap_update(update: Callable) -> Callable
+
+      
+      Manage the internal attributes before calling the update method.
+
+      Sets the ``_computed`` attribute to None and increments the ``_update_count``
+      attribute before calling the custom update method.
+
+      :param update: The update method of the metric.
+      :type update: Callable
+
+      :returns: **wrapped_func** -- The wrapped update method.
+      :rtype: Callable
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: _wrap_compute(compute: Callable) -> Callable
+
+      
+      Wrap the ``compute`` method to ensure safety and caching.
+
+      Raises a warning if the ``compute`` method is called before the ``update``
+      method has been called at least once. Also caches the result of the
+      ``compute`` method to avoid unnecessary recomputation.
+
+      :param compute: The compute method of the metric.
+      :type compute: Callable
+
+      :returns: **wrapped_func** -- The wrapped compute method.
+      :rtype: Callable
+
+      :Warns: **UserWarning** -- If the ``compute`` method has not been called at least once.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __call__(*args, **kwargs)
+
+      
+      Update the global metric state and compute the metric for a batch.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:function:: create_metric(metric_name: str, **kwargs: Optional[Dict[str, Any]]) -> Metric
+
+   
+   Create a metric instance from a name.
+
+   :param metric_name: The name of the metric.
+   :type metric_name: str
+   :param \*\*kwargs: The keyword arguments to pass to the metric constructor.
+   :type \*\*kwargs: Optional[Dict[str, Any]]
+
+   :returns: **metric** -- The metric instance.
+   :rtype: Metric
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: MetricCollection(metrics: Union[Metric, Sequence[Metric], Dict[str, Metric]])
+
+   Bases: :py:obj:`Metric`
+
+   
+   A collection of metrics.
+
+   Provides a convenient way to compute multiple metrics at once. It groups
+   metrics that have similar state variables and only updates the state variables
+   once per group, reducing the amount of computation required.
+
+   :param metrics: The list of metrics to collect.
+   :type metrics: List[Metric]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: add_state(*args: Any, **kwargs: Any) -> None
+      :abstractmethod:
+
+      
+      Add state variables to the metric.
+
+      Not implemented for ``MetricCollection``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: update_state(*args: Any, **kwargs: Any) -> None
+
+      
+      Update the state of all metrics in the collection.
+
+      Uses the metric groups to only update the state variables once per group.
+
+      :param \*args: The positional arguments to pass to the update_state method of each metric.
+      :type \*args: Any
+      :param \*\*kwargs: The keyword arguments to pass to the update_state method of each metric.
+      :type \*\*kwargs: Any
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: compute() -> Dict[str, Any]
+
+      
+      Compute the metrics in the collection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: reset_state() -> None
+
+      
+      Reset the state of all metrics in the collection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: _validate_input(metrics: Union[Metric, Sequence[Metric], Dict[str, Metric]])
+
+      
+      Validate the input to the constructor.
+
+      :param metrics: The input to the constructor.
+      :type metrics: Union[Metric, Sequence[Metric], Dict[str, Metric]]
+
+      :raises TypeError: If the input is not a metric, sequence of metrics, or dictionary of metrics.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: _has_same_update_state_parameters_check(metric_a: Metric, metric_b: Metric) -> None
+      :staticmethod:
+
+      
+      Check if two metrics have the same ``update_state`` method parameters.
+
+      :param metric_a: The first metric.
+      :type metric_a: Metric
+      :param metric_b: The second metric.
+      :type metric_b: Metric
+
+      :rtype: None
+
+      :raises ValueError: If the metrics do not have the same signature for their ``update_state``
+          method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: _has_same_task_type_check(metric_a: Metric, metric_b: Metric) -> None
+      :staticmethod:
+
+      
+      Check if two metrics are for the same task.
+
+      :param metric_a: The first metric.
+      :type metric_a: Metric
+      :param metric_b: The second metric.
+      :type metric_b: Metric
+
+      :rtype: None
+
+      :raises ValueError: If the metrics are not for the same task. If both metrics are for
+          multilabel tasks, then they must have the same ``num_labels``
+          parameter. If both metrics are for multiclass tasks, then they must
+          have the same ``num_classes`` parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: _get_metric_groups() -> Dict[int, List[str]]
+
+      
+      Group metrics by the state variables they use.
+
+      :returns: **metric_groups** -- A dictionary with the group id as the key and a list of metric names
+                as the value.
+      :rtype: Dict[int, List[str]]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __call__(*args, **kwargs)
+
+      
+      Update the global metric state and compute the metric for a batch.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

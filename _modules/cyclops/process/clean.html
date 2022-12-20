@@ -13,6 +13,7 @@
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/cyclops.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
@@ -126,9 +127,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#notebooks">🎓 Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#reference">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../design.html">Framework Design</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to cyclops</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
 </ul>
 
         </div>
@@ -202,11 +202,11 @@
 <span class="kn">from</span> <span class="nn">cyclops.utils.profile</span> <span class="kn">import</span> <span class="n">time_function</span>
 
 <span class="c1"># Logging.</span>
-<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<div class="viewcode-block" id="LOGGER"><a class="viewcode-back" href="../../../technical/api/cyclops/process/clean/index.html#cyclops.process.clean.LOGGER">[docs]</a><span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span></div>
 <span class="n">setup_logging</span><span class="p">(</span><span class="n">print_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">)</span>
 
 
-<span class="n">UNSUPPORTED</span> <span class="o">=</span> <span class="p">[</span>
+<div class="viewcode-block" id="UNSUPPORTED"><a class="viewcode-back" href="../../../technical/api/cyclops/process/clean/index.html#cyclops.process.clean.UNSUPPORTED">[docs]</a><span class="n">UNSUPPORTED</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;urinalysis&quot;</span><span class="p">,</span>
     <span class="s2">&quot;alp&quot;</span><span class="p">,</span>
     <span class="s2">&quot;alt&quot;</span><span class="p">,</span>
@@ -216,10 +216,10 @@
     <span class="s2">&quot;serum osmolality&quot;</span><span class="p">,</span>
     <span class="s2">&quot;tsh&quot;</span><span class="p">,</span>
     <span class="s2">&quot;urine osmolality&quot;</span><span class="p">,</span>
-<span class="p">]</span>
+<span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="combine_events"><a class="viewcode-back" href="../../../reference/api/cyclops.process.clean.html#cyclops.process.clean.combine_events">[docs]</a><span class="k">def</span> <span class="nf">combine_events</span><span class="p">(</span><span class="n">event_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="combine_events"><a class="viewcode-back" href="../../../technical/api/cyclops/process/clean/index.html#cyclops.process.clean.combine_events">[docs]</a><span class="k">def</span> <span class="nf">combine_events</span><span class="p">(</span><span class="n">event_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Gather event data from multiple dataframes into a single one.</span>
 
 <span class="sd">    Events can be in multiple raw dataframes like labs, vitals, etc. This</span>
@@ -257,8 +257,8 @@
     <span class="k">return</span> <span class="n">events</span></div>
 
 
-<div class="viewcode-block" id="convert_to_events"><a class="viewcode-back" href="../../../reference/api/cyclops.process.clean.html#cyclops.process.clean.convert_to_events">[docs]</a><span class="nd">@assert_has_columns</span><span class="p">([</span><span class="n">ENCOUNTER_ID</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">convert_to_events</span><span class="p">(</span>
+<span class="nd">@assert_has_columns</span><span class="p">([</span><span class="n">ENCOUNTER_ID</span><span class="p">])</span>
+<div class="viewcode-block" id="convert_to_events"><a class="viewcode-back" href="../../../technical/api/cyclops/process/clean/index.html#cyclops.process.clean.convert_to_events">[docs]</a><span class="k">def</span> <span class="nf">convert_to_events</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">event_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">event_category</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -307,7 +307,7 @@
     <span class="k">return</span> <span class="n">events</span></div>
 
 
-<div class="viewcode-block" id="is_supported"><a class="viewcode-back" href="../../../reference/api/cyclops.process.clean.html#cyclops.process.clean.is_supported">[docs]</a><span class="k">def</span> <span class="nf">is_supported</span><span class="p">(</span><span class="n">event_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="is_supported"><a class="viewcode-back" href="../../../technical/api/cyclops/process/clean/index.html#cyclops.process.clean.is_supported">[docs]</a><span class="k">def</span> <span class="nf">is_supported</span><span class="p">(</span><span class="n">event_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Check if event name is supported.</span>
 
 <span class="sd">    Processing events involves data cleaning, and hence some event names</span>
@@ -327,8 +327,8 @@
     <span class="k">return</span> <span class="n">event_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">UNSUPPORTED</span></div>
 
 
-<div class="viewcode-block" id="drop_unsupported"><a class="viewcode-back" href="../../../reference/api/cyclops.process.clean.html#cyclops.process.clean.drop_unsupported">[docs]</a><span class="nd">@assert_has_columns</span><span class="p">([</span><span class="n">EVENT_NAME</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">drop_unsupported</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="nd">@assert_has_columns</span><span class="p">([</span><span class="n">EVENT_NAME</span><span class="p">])</span>
+<div class="viewcode-block" id="drop_unsupported"><a class="viewcode-back" href="../../../technical/api/cyclops/process/clean/index.html#cyclops.process.clean.drop_unsupported">[docs]</a><span class="k">def</span> <span class="nf">drop_unsupported</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Drop events currently not supported for processing.</span>
 
 <span class="sd">    Parameters</span>
@@ -348,7 +348,7 @@
     <span class="k">return</span> <span class="n">data</span></div>
 
 
-<div class="viewcode-block" id="normalize_names"><a class="viewcode-back" href="../../../reference/api/cyclops.process.clean.html#cyclops.process.clean.normalize_names">[docs]</a><span class="k">def</span> <span class="nf">normalize_names</span><span class="p">(</span><span class="n">names</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<div class="viewcode-block" id="normalize_names"><a class="viewcode-back" href="../../../technical/api/cyclops/process/clean/index.html#cyclops.process.clean.normalize_names">[docs]</a><span class="k">def</span> <span class="nf">normalize_names</span><span class="p">(</span><span class="n">names</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Normalize event names.</span>
 
 <span class="sd">    Perform basic cleaning/house-keeping of event names.</span>
@@ -372,7 +372,7 @@
     <span class="k">return</span> <span class="n">names</span></div>
 
 
-<div class="viewcode-block" id="normalize_categories"><a class="viewcode-back" href="../../../reference/api/cyclops.process.clean.html#cyclops.process.clean.normalize_categories">[docs]</a><span class="k">def</span> <span class="nf">normalize_categories</span><span class="p">(</span><span class="n">categories</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<div class="viewcode-block" id="normalize_categories"><a class="viewcode-back" href="../../../technical/api/cyclops/process/clean/index.html#cyclops.process.clean.normalize_categories">[docs]</a><span class="k">def</span> <span class="nf">normalize_categories</span><span class="p">(</span><span class="n">categories</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Normalize event category names.</span>
 
 <span class="sd">    Perform basic cleaning/house-keeping of event category names.</span>
@@ -394,7 +394,7 @@
     <span class="k">return</span> <span class="n">categories</span></div>
 
 
-<div class="viewcode-block" id="normalize_values"><a class="viewcode-back" href="../../../reference/api/cyclops.process.clean.html#cyclops.process.clean.normalize_values">[docs]</a><span class="k">def</span> <span class="nf">normalize_values</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<div class="viewcode-block" id="normalize_values"><a class="viewcode-back" href="../../../technical/api/cyclops/process/clean/index.html#cyclops.process.clean.normalize_values">[docs]</a><span class="k">def</span> <span class="nf">normalize_values</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Normalize event values.</span>
 
 <span class="sd">    Perform basic cleaning/house-keeping of event values.</span>
@@ -427,7 +427,7 @@
     <span class="k">return</span> <span class="n">values</span></div>
 
 
-<div class="viewcode-block" id="normalize_units"><a class="viewcode-back" href="../../../reference/api/cyclops.process.clean.html#cyclops.process.clean.normalize_units">[docs]</a><span class="k">def</span> <span class="nf">normalize_units</span><span class="p">(</span><span class="n">units</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<div class="viewcode-block" id="normalize_units"><a class="viewcode-back" href="../../../technical/api/cyclops/process/clean/index.html#cyclops.process.clean.normalize_units">[docs]</a><span class="k">def</span> <span class="nf">normalize_units</span><span class="p">(</span><span class="n">units</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Normalize event value units.</span>
 
 <span class="sd">    Perform basic cleaning/house-keeping of event value units.</span>
@@ -453,7 +453,7 @@
 
 
 <span class="nd">@time_function</span>
-<span class="k">def</span> <span class="nf">normalize_events</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="normalize_events"><a class="viewcode-back" href="../../../technical/api/cyclops/process/clean/index.html#cyclops.process.clean.normalize_events">[docs]</a><span class="k">def</span> <span class="nf">normalize_events</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Pre-process and normalize (clean) raw event data.</span>
 
 <span class="sd">    Parameters</span>
@@ -484,10 +484,10 @@
     <span class="k">if</span> <span class="n">EVENT_CATEGORY</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
         <span class="n">data</span><span class="p">[</span><span class="n">EVENT_CATEGORY</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize_categories</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">EVENT_CATEGORY</span><span class="p">])</span>
 
-    <span class="k">return</span> <span class="n">data</span>
+    <span class="k">return</span> <span class="n">data</span></div>
 
 
-<div class="viewcode-block" id="dropna_rows"><a class="viewcode-back" href="../../../reference/api/cyclops.process.clean.html#cyclops.process.clean.dropna_rows">[docs]</a><span class="k">def</span> <span class="nf">dropna_rows</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="dropna_rows"><a class="viewcode-back" href="../../../technical/api/cyclops/process/clean/index.html#cyclops.process.clean.dropna_rows">[docs]</a><span class="k">def</span> <span class="nf">dropna_rows</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Drop null values in some specific columns.</span>
 
 <span class="sd">    Part of the utility of this function lies in its logging.</span>
@@ -532,8 +532,8 @@
 
   <div class="citation">
     CyclOps team <i>et al.,</i>
-    <a href="https://vectorinstitute.github.io/cyclops/">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
-    <i>, TBD</i> (2022)
+    <a href="https://www.medrxiv.org/content/10.1101/2022.12.02.22283021v2">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, medarxiv</i> (2022)
   </def>
 
 
@@ -582,9 +582,17 @@
     ,
     
     <span>
-      <a href="https://github.com/dhrumilp15">
-        <img src="../../../_static/team/dhrumil-patel.jpg" width="32"/>
-        Dhrumil Patel
+      <a href="https://github.com/mahshidaln">
+        <img src="../../../_static/team/mahshid-alinoori.jpg" width="32"/>
+        Mahshid Alinoori
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/elhamdolatabadi">
+        <img src="../../../_static/team/elham-dolatabadi.jpg" width="32"/>
+        Elham Dolatabadi
       </a>
     </span>
     ,

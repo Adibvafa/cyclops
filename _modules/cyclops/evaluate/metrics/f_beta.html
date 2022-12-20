@@ -13,6 +13,7 @@
       <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/css/cyclops.css" type="text/css" />
       <link rel="stylesheet" href="../../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
     <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
@@ -126,9 +127,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro.html#notebooks">🎓 Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro.html#reference">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../design.html">Framework Design</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../gemini_hpc.html">Using cyclops on the GEMINI HPC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing to cyclops</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
 </ul>
 
         </div>
@@ -182,7 +182,7 @@
 <span class="kn">from</span> <span class="nn">cyclops.evaluate.metrics.utils</span> <span class="kn">import</span> <span class="n">_check_average_arg</span>
 
 
-<div class="viewcode-block" id="BinaryFbetaScore"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.f_beta.html#cyclops.evaluate.metrics.f_beta.BinaryFbetaScore">[docs]</a><span class="k">class</span> <span class="nc">BinaryFbetaScore</span><span class="p">(</span><span class="n">BinaryStatScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;binary_fbeta_score&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="BinaryFbetaScore"><a class="viewcode-back" href="../../../../technical/api/cyclops/evaluate/metrics/index.html#cyclops.evaluate.metrics.f_beta.BinaryFbetaScore">[docs]</a><span class="k">class</span> <span class="nc">BinaryFbetaScore</span><span class="p">(</span><span class="n">BinaryStatScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;binary_fbeta_score&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the F-beta score for binary classification tasks.</span>
 
 <span class="sd">    Parameters</span>
@@ -230,7 +230,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zero_division</span> <span class="o">=</span> <span class="n">zero_division</span>
 
-<div class="viewcode-block" id="BinaryFbetaScore.compute"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.f_beta.html#cyclops.evaluate.metrics.f_beta.BinaryFbetaScore.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="BinaryFbetaScore.compute"><a class="viewcode-back" href="../../../../technical/api/cyclops/evaluate/metrics/f_beta/index.html#cyclops.evaluate.metrics.f_beta.BinaryFbetaScore.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Compute the metric from the state.&quot;&quot;&quot;</span>
         <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_final_state</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">_fbeta_reduce</span><span class="p">(</span>
@@ -243,7 +243,7 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="MulticlassFbetaScore"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.f_beta.html#cyclops.evaluate.metrics.f_beta.MulticlassFbetaScore">[docs]</a><span class="k">class</span> <span class="nc">MulticlassFbetaScore</span><span class="p">(</span><span class="n">MulticlassStatScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multiclass_fbeta_score&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="MulticlassFbetaScore"><a class="viewcode-back" href="../../../../technical/api/cyclops/evaluate/metrics/index.html#cyclops.evaluate.metrics.f_beta.MulticlassFbetaScore">[docs]</a><span class="k">class</span> <span class="nc">MulticlassFbetaScore</span><span class="p">(</span><span class="n">MulticlassStatScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multiclass_fbeta_score&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the F-beta score for multiclass classification tasks.</span>
 
 <span class="sd">    Parameters</span>
@@ -259,6 +259,7 @@
 <span class="sd">    average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
 <span class="sd">        If ``None``, return the score for each class. Otherwise,</span>
 <span class="sd">        use one of the following options to compute the average score:</span>
+
 <span class="sd">        - ``micro``: Calculate metric globally.</span>
 <span class="sd">        - ``macro``: Calculate metric for each class, and find their</span>
 <span class="sd">            unweighted mean. This does not take class imbalance into account.</span>
@@ -314,7 +315,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">average</span> <span class="o">=</span> <span class="n">average</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zero_division</span> <span class="o">=</span> <span class="n">zero_division</span>
 
-<div class="viewcode-block" id="MulticlassFbetaScore.compute"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.f_beta.html#cyclops.evaluate.metrics.f_beta.MulticlassFbetaScore.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="MulticlassFbetaScore.compute"><a class="viewcode-back" href="../../../../technical/api/cyclops/evaluate/metrics/f_beta/index.html#cyclops.evaluate.metrics.f_beta.MulticlassFbetaScore.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Compute the metric from the state.&quot;&quot;&quot;</span>
         <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_final_state</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">_fbeta_reduce</span><span class="p">(</span>
@@ -327,7 +328,7 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="MultilabelFbetaScore"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.f_beta.html#cyclops.evaluate.metrics.f_beta.MultilabelFbetaScore">[docs]</a><span class="k">class</span> <span class="nc">MultilabelFbetaScore</span><span class="p">(</span><span class="n">MultilabelStatScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multilabel_fbeta_score&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="MultilabelFbetaScore"><a class="viewcode-back" href="../../../../technical/api/cyclops/evaluate/metrics/index.html#cyclops.evaluate.metrics.f_beta.MultilabelFbetaScore">[docs]</a><span class="k">class</span> <span class="nc">MultilabelFbetaScore</span><span class="p">(</span><span class="n">MultilabelStatScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multilabel_fbeta_score&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the F-beta score for multilabel classification tasks.</span>
 
 <span class="sd">    Parameters</span>
@@ -347,6 +348,7 @@
 <span class="sd">    average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
 <span class="sd">        If ``None``, return the score for each label. Otherwise,</span>
 <span class="sd">        use one of the following options to compute the average score:</span>
+
 <span class="sd">        - ``micro``: Calculate metric globally.</span>
 <span class="sd">        - ``macro``: Calculate metric for each label, and find their</span>
 <span class="sd">            unweighted mean. This does not take label imbalance into account.</span>
@@ -395,7 +397,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">average</span> <span class="o">=</span> <span class="n">average</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zero_division</span> <span class="o">=</span> <span class="n">zero_division</span>
 
-<div class="viewcode-block" id="MultilabelFbetaScore.compute"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.f_beta.html#cyclops.evaluate.metrics.f_beta.MultilabelFbetaScore.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="MultilabelFbetaScore.compute"><a class="viewcode-back" href="../../../../technical/api/cyclops/evaluate/metrics/f_beta/index.html#cyclops.evaluate.metrics.f_beta.MultilabelFbetaScore.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Compute the metric from the state.&quot;&quot;&quot;</span>
         <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_final_state</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">_fbeta_reduce</span><span class="p">(</span>
@@ -408,7 +410,7 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="FbetaScore"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.f_beta.html#cyclops.evaluate.metrics.f_beta.FbetaScore">[docs]</a><span class="k">class</span> <span class="nc">FbetaScore</span><span class="p">(</span><span class="n">Metric</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;fbeta_score&quot;</span><span class="p">,</span> <span class="n">force_register</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="FbetaScore"><a class="viewcode-back" href="../../../../technical/api/cyclops/evaluate/metrics/index.html#cyclops.evaluate.metrics.f_beta.FbetaScore">[docs]</a><span class="k">class</span> <span class="nc">FbetaScore</span><span class="p">(</span><span class="n">Metric</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;fbeta_score&quot;</span><span class="p">,</span> <span class="n">force_register</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the F-beta score for different types of classification tasks.</span>
 
 <span class="sd">    Parameters</span>
@@ -433,6 +435,7 @@
 <span class="sd">    average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
 <span class="sd">        If ``None``, return the score for each label/class. Otherwise,</span>
 <span class="sd">        use one of the following options to compute the average score:</span>
+
 <span class="sd">        - ``micro``: Calculate metrics globally.</span>
 <span class="sd">        - ``macro``: Calculate metrics for each class/label, and find their</span>
 <span class="sd">            unweighted mean. This does not take label/class imbalance into</span>
@@ -447,7 +450,7 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    (binary)</span>
+<span class="sd">    &gt;&gt;&gt; # (binary)</span>
 <span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import FbetaScore</span>
 <span class="sd">    &gt;&gt;&gt; target = [0, 1, 1, 0]</span>
 <span class="sd">    &gt;&gt;&gt; preds = [0.1, 0.8, 0.4, 0.3]</span>
@@ -462,7 +465,7 @@
 <span class="sd">    &gt;&gt;&gt; metric.compute()</span>
 <span class="sd">    0.9090909090909091</span>
 
-<span class="sd">    (multiclass)</span>
+<span class="sd">    &gt;&gt;&gt; # (multiclass)</span>
 <span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import FbetaScore</span>
 <span class="sd">    &gt;&gt;&gt; target = [0, 1, 2, 0]</span>
 <span class="sd">    &gt;&gt;&gt; preds = [[0.1, 0.8, 0.1], [0.1, 0.1, 0.8], [0.1, 0.1, 0.8], [0.8, 0.1, 0.1]]</span>
@@ -478,7 +481,7 @@
 <span class="sd">    &gt;&gt;&gt; metric.compute()</span>
 <span class="sd">    array([0.83333333, 0.5       , 0.        ])</span>
 
-<span class="sd">    (multilabel)</span>
+<span class="sd">    &gt;&gt;&gt; # (multilabel)</span>
 <span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import FbetaScore</span>
 <span class="sd">    &gt;&gt;&gt; target = [[0, 1], [1, 1]]</span>
 <span class="sd">    &gt;&gt;&gt; preds = [[0.1, 0.9], [0.8, 0.2]]</span>
@@ -543,7 +546,7 @@
         <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="BinaryF1Score"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.f_beta.html#cyclops.evaluate.metrics.f_beta.BinaryF1Score">[docs]</a><span class="k">class</span> <span class="nc">BinaryF1Score</span><span class="p">(</span><span class="n">BinaryFbetaScore</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;binary_f1_score&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="BinaryF1Score"><a class="viewcode-back" href="../../../../technical/api/cyclops/evaluate/metrics/index.html#cyclops.evaluate.metrics.f_beta.BinaryF1Score">[docs]</a><span class="k">class</span> <span class="nc">BinaryF1Score</span><span class="p">(</span><span class="n">BinaryFbetaScore</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;binary_f1_score&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the F1 score for binary classification tasks.</span>
 
 <span class="sd">    Parameters</span>
@@ -589,7 +592,7 @@
         <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="MulticlassF1Score"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.f_beta.html#cyclops.evaluate.metrics.f_beta.MulticlassF1Score">[docs]</a><span class="k">class</span> <span class="nc">MulticlassF1Score</span><span class="p">(</span><span class="n">MulticlassFbetaScore</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multiclass_f1_score&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="MulticlassF1Score"><a class="viewcode-back" href="../../../../technical/api/cyclops/evaluate/metrics/index.html#cyclops.evaluate.metrics.f_beta.MulticlassF1Score">[docs]</a><span class="k">class</span> <span class="nc">MulticlassF1Score</span><span class="p">(</span><span class="n">MulticlassFbetaScore</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multiclass_f1_score&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the F1 score for multiclass classification tasks.</span>
 
 <span class="sd">    Parameters</span>
@@ -603,6 +606,7 @@
 <span class="sd">    average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
 <span class="sd">        If ``None``, return the score for each class. Otherwise, use one of</span>
 <span class="sd">        the following options to compute the average score:</span>
+
 <span class="sd">        - ``micro``: Calculate metric globally.</span>
 <span class="sd">        - ``macro``: Calculate metric for each class, and find their</span>
 <span class="sd">            unweighted mean. This does not take class imbalance into account.</span>
@@ -650,7 +654,7 @@
         <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="MultilabelF1Score"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.f_beta.html#cyclops.evaluate.metrics.f_beta.MultilabelF1Score">[docs]</a><span class="k">class</span> <span class="nc">MultilabelF1Score</span><span class="p">(</span><span class="n">MultilabelFbetaScore</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multilabel_f1_score&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="MultilabelF1Score"><a class="viewcode-back" href="../../../../technical/api/cyclops/evaluate/metrics/index.html#cyclops.evaluate.metrics.f_beta.MultilabelF1Score">[docs]</a><span class="k">class</span> <span class="nc">MultilabelF1Score</span><span class="p">(</span><span class="n">MultilabelFbetaScore</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multilabel_f1_score&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the F1 score for multilabel classification tasks.</span>
 
 <span class="sd">    Parameters</span>
@@ -666,6 +670,7 @@
 <span class="sd">    average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
 <span class="sd">        If ``None``, return the score for each label. Otherwise, use one of</span>
 <span class="sd">        the following options to compute the average score:</span>
+
 <span class="sd">        - ``micro``: Calculate metric globally from the total count of true</span>
 <span class="sd">            positives and false positives.</span>
 <span class="sd">        - ``macro``: Calculate metric for each label, and find their</span>
@@ -716,7 +721,7 @@
         <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="F1Score"><a class="viewcode-back" href="../../../../reference/api/cyclops.evaluate.metrics.f_beta.html#cyclops.evaluate.metrics.f_beta.F1Score">[docs]</a><span class="k">class</span> <span class="nc">F1Score</span><span class="p">(</span><span class="n">FbetaScore</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;f1_score&quot;</span><span class="p">,</span> <span class="n">force_register</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="F1Score"><a class="viewcode-back" href="../../../../technical/api/cyclops/evaluate/metrics/index.html#cyclops.evaluate.metrics.f_beta.F1Score">[docs]</a><span class="k">class</span> <span class="nc">F1Score</span><span class="p">(</span><span class="n">FbetaScore</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;f1_score&quot;</span><span class="p">,</span> <span class="n">force_register</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the F1 score for different types of classification tasks.</span>
 
 <span class="sd">    Parameters</span>
@@ -739,6 +744,7 @@
 <span class="sd">    average : Literal[&quot;micro&quot;, &quot;macro&quot;, &quot;weighted&quot;, None], default=None</span>
 <span class="sd">        If ``None``, return the score for each label/class. Otherwise,</span>
 <span class="sd">        use one of the following options to compute the average score:</span>
+
 <span class="sd">        - ``micro``: Calculate metrics globally.</span>
 <span class="sd">        - ``macro``: Calculate metrics for each class/label, and find their</span>
 <span class="sd">            unweighted mean. This does not take label/class imbalance into</span>
@@ -753,7 +759,7 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    (binary)</span>
+<span class="sd">    &gt;&gt;&gt; # (binary)</span>
 <span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import F1Score</span>
 <span class="sd">    &gt;&gt;&gt; target = [0, 1, 1, 0]</span>
 <span class="sd">    &gt;&gt;&gt; preds = [0.1, 0.8, 0.4, 0.3]</span>
@@ -768,7 +774,7 @@
 <span class="sd">    &gt;&gt;&gt; metric.compute()</span>
 <span class="sd">    0.8</span>
 
-<span class="sd">    (multiclass)</span>
+<span class="sd">    &gt;&gt;&gt; # (multiclass)</span>
 <span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import F1Score</span>
 <span class="sd">    &gt;&gt;&gt; target = [0, 1, 2, 0]</span>
 <span class="sd">    &gt;&gt;&gt; preds = [[0.1, 0.6, 0.3], [0.05, 0.95, 0], [0.1, 0.8, 0.1], [0.95, 0.05, 0]]</span>
@@ -784,7 +790,7 @@
 <span class="sd">    &gt;&gt;&gt; metric.compute()</span>
 <span class="sd">    array([0.        , 0.85714286, 0.        ])</span>
 
-<span class="sd">    (multilabel)</span>
+<span class="sd">    &gt;&gt;&gt; # (multilabel)</span>
 <span class="sd">    &gt;&gt;&gt; from cyclops.evaluation.metrics import F1Score</span>
 <span class="sd">    &gt;&gt;&gt; target = [[0, 1, 1], [1, 0, 0]]</span>
 <span class="sd">    &gt;&gt;&gt; preds = [[0.1, 0.9, 0.8], [0.05, 0.1, 0.2]]</span>
@@ -862,8 +868,8 @@
 
   <div class="citation">
     CyclOps team <i>et al.,</i>
-    <a href="https://vectorinstitute.github.io/cyclops/">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
-    <i>, TBD</i> (2022)
+    <a href="https://www.medrxiv.org/content/10.1101/2022.12.02.22283021v2">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, medarxiv</i> (2022)
   </def>
 
 
@@ -912,9 +918,17 @@
     ,
     
     <span>
-      <a href="https://github.com/dhrumilp15">
-        <img src="../../../../_static/team/dhrumil-patel.jpg" width="32"/>
-        Dhrumil Patel
+      <a href="https://github.com/mahshidaln">
+        <img src="../../../../_static/team/mahshid-alinoori.jpg" width="32"/>
+        Mahshid Alinoori
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/elhamdolatabadi">
+        <img src="../../../../_static/team/elham-dolatabadi.jpg" width="32"/>
+        Elham Dolatabadi
       </a>
     </span>
     ,

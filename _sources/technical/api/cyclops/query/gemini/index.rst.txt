@@ -1,0 +1,627 @@
+:py:mod:`cyclops.query.gemini`
+==============================
+
+.. py:module:: cyclops.query.gemini
+
+.. autoapi-nested-parse::
+
+   GEMINI query API.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.query.gemini.GEMINIQuerier
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   cyclops.query.gemini.LOGGER
+   cyclops.query.gemini.IP_ADMIN
+   cyclops.query.gemini.ER_ADMIN
+   cyclops.query.gemini.DIAGNOSIS
+   cyclops.query.gemini.LAB
+   cyclops.query.gemini.VITALS
+   cyclops.query.gemini.PHARMACY
+   cyclops.query.gemini.INTERVENTION
+   cyclops.query.gemini.LOOKUP_IP_ADMIN
+   cyclops.query.gemini.LOOKUP_ER_ADMIN
+   cyclops.query.gemini.LOOKUP_DIAGNOSIS
+   cyclops.query.gemini.LOOKUP_CCSR
+   cyclops.query.gemini.IP_SCU
+   cyclops.query.gemini.LOOKUP_ROOM_TRANSFER
+   cyclops.query.gemini.ROOM_TRANSFER
+   cyclops.query.gemini.BLOOD_TRANSFUSION
+   cyclops.query.gemini.IMAGING
+   cyclops.query.gemini.LOOKUP_IMAGING
+   cyclops.query.gemini.DERIVED_VARIABLES
+   cyclops.query.gemini.TABLE_MAP
+   cyclops.query.gemini.COLUMN_MAP
+   cyclops.query.gemini.EVENT_CATEGORIES
+
+
+.. py:data:: LOGGER
+   
+
+   
+
+.. py:data:: IP_ADMIN
+   :annotation: = ip_admin
+
+   
+
+.. py:data:: ER_ADMIN
+   :annotation: = er_admin
+
+   
+
+.. py:data:: DIAGNOSIS
+   :annotation: = diagnosis
+
+   
+
+.. py:data:: LAB
+   :annotation: = lab
+
+   
+
+.. py:data:: VITALS
+   :annotation: = vitals
+
+   
+
+.. py:data:: PHARMACY
+   :annotation: = pharmacy
+
+   
+
+.. py:data:: INTERVENTION
+   :annotation: = intervention
+
+   
+
+.. py:data:: LOOKUP_IP_ADMIN
+   :annotation: = lookup_ip_admin
+
+   
+
+.. py:data:: LOOKUP_ER_ADMIN
+   :annotation: = lookup_er_admin
+
+   
+
+.. py:data:: LOOKUP_DIAGNOSIS
+   :annotation: = lookup_diagnosis
+
+   
+
+.. py:data:: LOOKUP_CCSR
+   :annotation: = lookup_ccsr
+
+   
+
+.. py:data:: IP_SCU
+   :annotation: = ip_scu
+
+   
+
+.. py:data:: LOOKUP_ROOM_TRANSFER
+   :annotation: = lookup_room_transfer
+
+   
+
+.. py:data:: ROOM_TRANSFER
+   :annotation: = room_transfer
+
+   
+
+.. py:data:: BLOOD_TRANSFUSION
+   :annotation: = blood_transfusion
+
+   
+
+.. py:data:: IMAGING
+   :annotation: = imaging
+
+   
+
+.. py:data:: LOOKUP_IMAGING
+   :annotation: = lookup_imaging
+
+   
+
+.. py:data:: DERIVED_VARIABLES
+   :annotation: = derived_variables
+
+   
+
+.. py:data:: TABLE_MAP
+   
+
+   
+
+.. py:data:: COLUMN_MAP
+   
+
+   
+
+.. py:data:: EVENT_CATEGORIES
+   
+
+   
+
+.. py:class:: GEMINIQuerier(config_overrides: Optional[List] = None)
+
+   Bases: :py:obj:`cyclops.query.base.DatasetQuerier`
+
+   
+   GEMINI dataset querier.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: er_admin(**process_kwargs) -> cyclops.query.interface.QueryInterface
+
+      
+      Query emergency room administrative data.
+
+      :returns: Constructed table, wrapped in an interface object.
+      :rtype: cyclops.query.interface.QueryInterface
+
+      :param triage_level: Restrict to certain triage levels.
+      :type triage_level: int or list of int
+      :param before_date: Get data before some date.
+                          If a string, provide in YYYY-MM-DD format.
+      :type before_date: datetime.datetime or str
+      :param after_date: Get data after some date.
+                         If a string, provide in YYYY-MM-DD format.
+      :type after_date: datetime.datetime or str
+      :param years: Get data by year.
+      :type years: int or list of int, optional
+      :param months: Get data by month.
+      :type months: int or list of int, optional
+      :param limit: Limit the number of rows returned.
+      :type limit: int, optional
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: patient_encounters(er_admin_table: Optional[cyclops.query.util.TableTypes] = None, drop_null_subject_ids=True, **process_kwargs) -> cyclops.query.interface.QueryInterface
+
+      
+      Query GEMINI patient encounters.
+
+      :param er_admin_table: Gather Emergency Room data recorded for the particular encounter.
+      :type er_admin_table: Subquery, optional
+
+      :returns: Constructed query, wrapped in an interface object.
+      :rtype: cyclops.query.interface.QueryInterface
+
+      :param sex: Specify patient sex (one or multiple).
+      :type sex: str or list of string, optional
+      :param died: Specify True to get patients who have died, and False for those who haven't.
+      :type died: bool, optional
+      :param died_binarize_col: Binarize the died condition and save as a column with label
+                                died_binarize_col.
+      :type died_binarize_col: str, optional
+      :param before_date: Get patients encounters before some date.
+                          If a string, provide in YYYY-MM-DD format.
+      :type before_date: datetime.datetime or str
+      :param after_date: Get patients encounters after some date.
+                         If a string, provide in YYYY-MM-DD format.
+      :type after_date: datetime.datetime or str
+      :param hospitals: Get patient encounters by hospital sites.
+      :type hospitals: str or list of str, optional
+      :param years: Get patient encounters by year.
+      :type years: int or list of int, optional
+      :param months: Get patient encounters by month.
+      :type months: int or list of int, optional
+      :param limit: Limit the number of rows returned.
+      :type limit: int, optional
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: diagnoses(**process_kwargs) -> cyclops.query.interface.QueryInterface
+
+      
+      Query diagnosis data.
+
+      :returns: Constructed table, wrapped in an interface object.
+      :rtype: cyclops.query.interface.QueryInterface
+
+      :param diagnosis_codes: Get only the specified ICD codes.
+      :type diagnosis_codes: str or list of str, optional
+      :param diagnosis_types: Include only those diagnoses that are of certain type.
+      :type diagnosis_types: list of str, optional
+      :param limit: Limit the number of rows returned.
+      :type limit: int, optional
+
+      .. warning::
+
+         Setting the ``include_description`` parameter would join diagnosis types
+         with descriptions and if the diagnosis type is None, then those rows would
+         be dropped.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: patient_diagnoses(diagnoses_table: Optional[cyclops.query.util.TableTypes] = None, patient_encounters_table: Optional[cyclops.query.util.TableTypes] = None, **process_kwargs) -> cyclops.query.interface.QueryInterface
+
+      
+      Query diagnosis data.
+
+      :param diagnoses_table: Diagnoses table used to join.
+      :type diagnoses_table: cyclops.query.util.TableTypes, optional
+      :param patient_encounters_table: Patient encounters table used to join.
+      :type patient_encounters_table: cyclops.query.util.TableTypes, optional
+
+      :returns: Constructed table, wrapped in an interface object.
+      :rtype: cyclops.query.interface.QueryInterface
+
+      :param limit: Limit the number of rows returned.
+      :type limit: int, optional
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: room_transfers(**process_kwargs) -> cyclops.query.interface.QueryInterface
+
+      
+      Query room transfer data.
+
+      :returns: Constructed table, wrapped in an interface object.
+      :rtype: cyclops.query.interface.QueryInterface
+
+      :param limit: Limit the number of rows returned.
+      :type limit: int, optional
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: care_units(patient_encounters_table: Optional[cyclops.query.util.TableTypes] = None, **process_kwargs) -> cyclops.query.interface.QueryInterface
+
+      
+      Query care unit data.
+
+      :param patient_encounters_table: Patient encounters table used to join.
+      :type patient_encounters_table: cyclops.query.util.TableTypes, optional
+
+      :returns: Constructed table, wrapped in an interface object.
+      :rtype: cyclops.query.interface.QueryInterface
+
+      :param limit: Limit the number of rows returned.
+      :type limit: int, optional
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: events(event_category: str, patient_encounters_table: Optional[cyclops.query.util.TableTypes] = None, drop_null_event_names: bool = True, drop_null_event_values: bool = False, **process_kwargs) -> cyclops.query.interface.QueryInterface
+
+      
+      Query events.
+
+      :param event_category: Specify event category, e.g., lab, vitals, intervention, etc.
+      :type event_category: str or list of str
+      :param patient_encounters_table: Patient encounters table used to join.
+      :type patient_encounters_table: cyclops.query.util.TableTypes, optional
+      :param drop_null_event_names: Whether to drop rows with null or empty event names.
+      :type drop_null_event_names: bool, default = True
+      :param drop_null_event_values: Whether to drop rows with null event values.
+      :type drop_null_event_values: bool, default = False
+
+      :returns: Constructed table, wrapped in an interface object.
+      :rtype: cyclops.query.interface.QueryInterface
+
+      :param event_names: Get only certain event names.
+      :type event_names: str or list of str, optional
+      :param event_name_substring: Get only event names with some substring(s).
+      :type event_name_substring: str, optional
+      :param limit: Limit the number of rows returned.
+      :type limit: int, optional
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: blood_transfusions(**process_kwargs) -> cyclops.query.interface.QueryInterface
+
+      
+      Query blood transfusion data.
+
+      :returns: Constructed table, wrapped in an interface object.
+      :rtype: cyclops.query.interface.QueryInterface
+
+      :param rbc_mapped: Whether the patient was transfused with Red Blood Cells.
+      :type rbc_mapped: bool, optional
+      :param rbc_mapped_binarize_col: Binarize the rbc_mapped condition and save as a column with
+                                      label rbc_mapped_binarize_col.
+      :type rbc_mapped_binarize_col: str, optional
+      :param blood_product_raw_substring: Get only blood_product_raw rows with some substring(s).
+      :type blood_product_raw_substring: str, optional
+      :param blood_product_raw_names: Get only specified blood_product_raw rows.
+      :param before_date: Get tranfusions before some date.
+                          If a string, provide in YYYY-MM-DD format.
+      :type before_date: datetime.datetime or str
+      :param after_date: Get tranfusions after some date.
+                         If a string, provide in YYYY-MM-DD format.
+      :type after_date: datetime.datetime or str
+      :param years: Get tranfusions by year.
+      :type years: int or list of int, optional
+      :param months: Get tranfusions by month.
+      :type months: int or list of int, optional
+      :param limit: Limit the number of rows returned.
+      :type limit: int, optional
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: interventions(**process_kwargs) -> cyclops.query.interface.QueryInterface
+
+      
+      Query interventions data.
+
+      :returns: Constructed table, wrapped in an interface object.
+      :rtype: cyclops.query.interface.QueryInterface
+
+      :param limit: Limit the number of rows returned.
+      :type limit: int, optional
+      :param years: Get tests by year.
+      :type years: int or list of int, optional
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: imaging(**process_kwargs) -> cyclops.query.interface.QueryInterface
+
+      
+      Query imaging data.
+
+      :returns: Constructed table, wrapped in an interface object.
+      :rtype: cyclops.query.interface.QueryInterface
+
+      :param test_descriptions: Get only certain tests with the specified descriptions.
+      :type test_descriptions: str or list of str
+      :param raw_test_names: Get only certain raw test names.
+      :type raw_test_names: str or list of str
+      :param before_date: Get tests before some date.
+                          If a string, provide in YYYY-MM-DD format.
+      :type before_date: datetime.datetime or str
+      :param after_date: Get tests after some date.
+                         If a string, provide in YYYY-MM-DD format.
+      :type after_date: datetime.datetime or str
+      :param years: Get tests by year.
+      :type years: int or list of int, optional
+      :param months: Get tests by month.
+      :type months: int or list of int, optional
+      :param limit: Limit the number of rows returned.
+      :type limit: int, optional
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: derived_variables(**process_kwargs) -> cyclops.query.interface.QueryInterface
+
+      
+      Query derived variable data.
+
+      :returns: Constructed table, wrapped in an interface object.
+      :rtype: cyclops.query.interface.QueryInterface
+
+      :param variables: Variable columns to keep.
+      :type variables: str or list of str
+      :param limit: Limit the number of rows returned.
+      :type limit: int, optional
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: pharmacy(**process_kwargs) -> cyclops.query.interface.QueryInterface
+
+      
+      Query pharmacy data.
+
+      :returns: Constructed table, wrapped in an interface object.
+      :rtype: cyclops.query.interface.QueryInterface
+
+      :param limit: Limit the number of rows returned.
+      :type limit: int, optional
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

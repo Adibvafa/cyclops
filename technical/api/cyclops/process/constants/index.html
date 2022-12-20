@@ -1,0 +1,592 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.process.constants &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/cyclops.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/graphviz.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script src="../../../../../_static/clipboard.min.js"></script>
+        <script src="../../../../../_static/copybutton.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+    document.body.innerHTML = document.body.innerHTML.replace(/ package/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav">
+  <!--
+    Lie about what theme we really are when some RTD-injected JS fetches the
+    full versions panel from the RTD API.  RTD's JS replaces the stub versions
+    panel in the Sphinx-generated HTML with the full versions panel it fetches
+    from the RTD API.  If the API thinks we're not sphinx_rtd_theme, it will
+    serve us the wrong HTML and the panel will float as a "badge" when it
+    shouldn't.  As a customized version of sphinx_rtd_theme, we really do want
+    the same HTML it gets.  See also the diagnoses in
+    <https://github.com/nextstrain/docs.nextstrain.org/issues/76>.
+
+    This bit of JS finds the data RTD injects into the page and modifies it
+    before the code that RTD injects runs and looks at the data.  RTD's
+    <script>s (in <head>) run before this JS, but they wait until the DOM is
+    ready to actually do any work.  This gives us a chance to modify the data
+    during DOM load before the RTD code actually uses it.
+
+      -trs, 27 Jan 2022
+  -->
+  <script>
+    (() => {
+      try {
+        console.log("Lying about the theme to RTD's JS so the versions panel works properly. 🙈");
+
+        /* Update global variable, which is used in the request to get the RTD
+         * "footer" that includes the versions panel.
+         */
+        if (window.READTHEDOCS_DATA)
+          window.READTHEDOCS_DATA.theme = "sphinx_rtd_theme";
+
+        /* Update stored JSON in case anything else deserializes it later.
+         * Comments in the RTD-injected HTML source claim the global variable
+         * above is deprecated.
+         */
+        var script = document.querySelector("#READTHEDOCS_DATA");
+        if (script)
+          script.innerHTML = JSON.stringify({ ...JSON.parse(script.innerHTML), theme: "sphinx_rtd_theme" });
+      }
+      catch (err) {
+        console.log("Lying about the theme to RTD's JS failed… oh well. 🤷", err);
+      }
+    })();
+  </script>
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+
+
+
+
+  <a href="https://vectorinstitute.github.io/cyclops/">
+    <img src="../../../../../_static/cyclops_logo-dark.png" class="logo" alt="Logo"/>
+  </a>
+
+
+
+  <div class="subproject">
+    <a href="../../../../../index.html" class="project-name" alt="Documentation Home">
+      cyclops
+    </a>
+
+    
+    
+    
+
+  </div>
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#developing">🧑🏿‍💻 Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#notebooks">🎓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../design.html">Framework Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+  
+
+  
+  
+    <li><a href="https://vectorinstitute.github.io/cyclops/">Home</a></li>
+    <li><a href="../../../../../index.html">cyclops</a></li>
+  
+
+  
+  
+
+  
+
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../../_sources/technical/api/cyclops/process/constants/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-cyclops.process.constants">
+<span id="cyclops-process-constants"></span><h1><a class="reference internal" href="#module-cyclops.process.constants" title="cyclops.process.constants"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cyclops.process.constants</span></code></a><a class="headerlink" href="#module-cyclops.process.constants" title="Permalink to this headline"></a></h1>
+<p>Constants.</p>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.YEAR">
+<span class="sig-name descname"><span class="pre">YEAR</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">year</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#YEAR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.YEAR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.MONTH">
+<span class="sig-name descname"><span class="pre">MONTH</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">month</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#MONTH"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.MONTH" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.FEATURES">
+<span class="sig-name descname"><span class="pre">FEATURES</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">features</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#FEATURES"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.FEATURES" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.TARGETS">
+<span class="sig-name descname"><span class="pre">TARGETS</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">targets</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#TARGETS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.TARGETS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.GROUP">
+<span class="sig-name descname"><span class="pre">GROUP</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">group</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#GROUP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.GROUP" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.BY">
+<span class="sig-name descname"><span class="pre">BY</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">by</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#BY"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.BY" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.NAN_SUBSTITUTION_VALUE">
+<span class="sig-name descname"><span class="pre">NAN_SUBSTITUTION_VALUE</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">nan</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#NAN_SUBSTITUTION_VALUE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.NAN_SUBSTITUTION_VALUE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.NUMERIC">
+<span class="sig-name descname"><span class="pre">NUMERIC</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">numeric</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#NUMERIC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.NUMERIC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.BINARY">
+<span class="sig-name descname"><span class="pre">BINARY</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">binary</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#BINARY"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.BINARY" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.STRING">
+<span class="sig-name descname"><span class="pre">STRING</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">string</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#STRING"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.STRING" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.ORDINAL">
+<span class="sig-name descname"><span class="pre">ORDINAL</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">ordinal</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#ORDINAL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.ORDINAL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.CATEGORICAL_INDICATOR">
+<span class="sig-name descname"><span class="pre">CATEGORICAL_INDICATOR</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">categorical_indicator</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#CATEGORICAL_INDICATOR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.CATEGORICAL_INDICATOR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.FEATURE_TYPES">
+<span class="sig-name descname"><span class="pre">FEATURE_TYPES</span></span><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#FEATURE_TYPES"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.FEATURE_TYPES" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.FEATURE_TYPE_ATTR">
+<span class="sig-name descname"><span class="pre">FEATURE_TYPE_ATTR</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">type_</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#FEATURE_TYPE_ATTR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.FEATURE_TYPE_ATTR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.FEATURE_TARGET_ATTR">
+<span class="sig-name descname"><span class="pre">FEATURE_TARGET_ATTR</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">target</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#FEATURE_TARGET_ATTR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.FEATURE_TARGET_ATTR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.FEATURE_INDICATOR_ATTR">
+<span class="sig-name descname"><span class="pre">FEATURE_INDICATOR_ATTR</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">indicator_of</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#FEATURE_INDICATOR_ATTR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.FEATURE_INDICATOR_ATTR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.FEATURE_MAPPING_ATTR">
+<span class="sig-name descname"><span class="pre">FEATURE_MAPPING_ATTR</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">mapping</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#FEATURE_MAPPING_ATTR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.FEATURE_MAPPING_ATTR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.FEATURE_META_ATTRS">
+<span class="sig-name descname"><span class="pre">FEATURE_META_ATTRS</span></span><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#FEATURE_META_ATTRS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.FEATURE_META_ATTRS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.FEATURE_META_ATTR_DEFAULTS">
+<span class="sig-name descname"><span class="pre">FEATURE_META_ATTR_DEFAULTS</span></span><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#FEATURE_META_ATTR_DEFAULTS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.FEATURE_META_ATTR_DEFAULTS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.MISSING_CATEGORY">
+<span class="sig-name descname"><span class="pre">MISSING_CATEGORY</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">null_category</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#MISSING_CATEGORY"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.MISSING_CATEGORY" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.STANDARD">
+<span class="sig-name descname"><span class="pre">STANDARD</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">standard</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#STANDARD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.STANDARD" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.MIN_MAX">
+<span class="sig-name descname"><span class="pre">MIN_MAX</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">min-max</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#MIN_MAX"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.MIN_MAX" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.MEAN">
+<span class="sig-name descname"><span class="pre">MEAN</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">mean</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#MEAN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.MEAN" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.MEDIAN">
+<span class="sig-name descname"><span class="pre">MEDIAN</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">median</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#MEDIAN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.MEDIAN" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.MODE">
+<span class="sig-name descname"><span class="pre">MODE</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">mode</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#MODE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.MODE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.IGNORE">
+<span class="sig-name descname"><span class="pre">IGNORE</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">ignore</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#IGNORE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.IGNORE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.DROP">
+<span class="sig-name descname"><span class="pre">DROP</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">drop</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#DROP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.DROP" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.FFILL">
+<span class="sig-name descname"><span class="pre">FFILL</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">ffill</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#FFILL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.FFILL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.BFILL">
+<span class="sig-name descname"><span class="pre">BFILL</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">bffill</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#BFILL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.BFILL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.FFILL_BFILL">
+<span class="sig-name descname"><span class="pre">FFILL_BFILL</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">ffill_bfill</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#FFILL_BFILL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.FFILL_BFILL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.LINEAR_INTERP">
+<span class="sig-name descname"><span class="pre">LINEAR_INTERP</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">linear_interp</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#LINEAR_INTERP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.LINEAR_INTERP" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.INTRA">
+<span class="sig-name descname"><span class="pre">INTRA</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">intra</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#INTRA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.INTRA" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.INTER">
+<span class="sig-name descname"><span class="pre">INTER</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">inter</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#INTER"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.INTER" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.EXTRA">
+<span class="sig-name descname"><span class="pre">EXTRA</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">extra</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#EXTRA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.EXTRA" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.FIRST">
+<span class="sig-name descname"><span class="pre">FIRST</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">first</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#FIRST"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.FIRST" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.LAST">
+<span class="sig-name descname"><span class="pre">LAST</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">last</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#LAST"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.LAST" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.ALL">
+<span class="sig-name descname"><span class="pre">ALL</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">all</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#ALL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.ALL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.THPM">
+<span class="sig-name descname"><span class="pre">THPM</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">THPM</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#THPM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.THPM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.SBK">
+<span class="sig-name descname"><span class="pre">SBK</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">SBK</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#SBK"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.SBK" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.UHNTG">
+<span class="sig-name descname"><span class="pre">UHNTG</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">UHNTG</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#UHNTG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.UHNTG" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.SMH">
+<span class="sig-name descname"><span class="pre">SMH</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">SMH</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#SMH"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.SMH" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.UHNTW">
+<span class="sig-name descname"><span class="pre">UHNTW</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">UHNTW</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#UHNTW"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.UHNTW" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.THPC">
+<span class="sig-name descname"><span class="pre">THPC</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">THPC</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#THPC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.THPC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.PMH">
+<span class="sig-name descname"><span class="pre">PMH</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">PMH</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#PMH"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.PMH" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.MSH">
+<span class="sig-name descname"><span class="pre">MSH</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">MSH</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#MSH"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.MSH" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.HOSPITAL_ID_MAP">
+<span class="sig-name descname"><span class="pre">HOSPITAL_ID_MAP</span></span><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#HOSPITAL_ID_MAP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.HOSPITAL_ID_MAP" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.MORTALITY_DISCHARGE_DISPOSITION_CODES">
+<span class="sig-name descname"><span class="pre">MORTALITY_DISCHARGE_DISPOSITION_CODES</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">[7,</span> <span class="pre">72,</span> <span class="pre">73,</span> <span class="pre">74]</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#MORTALITY_DISCHARGE_DISPOSITION_CODES"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.MORTALITY_DISCHARGE_DISPOSITION_CODES" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.TRAJECTORIES">
+<span class="sig-name descname"><span class="pre">TRAJECTORIES</span></span><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#TRAJECTORIES"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.TRAJECTORIES" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.DRUG_SCREEN">
+<span class="sig-name descname"><span class="pre">DRUG_SCREEN</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">['amitriptyline',</span> <span class="pre">'amphetamine',</span> <span class="pre">'barbiturates',</span> <span class="pre">'barbiturates_scn',...</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#DRUG_SCREEN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.DRUG_SCREEN" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.EMPTY_STRING">
+<span class="sig-name descname"><span class="pre">EMPTY_STRING</span></span><em class="property"><span class="w"> </span><span class="pre">=</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#EMPTY_STRING"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.EMPTY_STRING" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.UNDERSCORE">
+<span class="sig-name descname"><span class="pre">UNDERSCORE</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">_</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#UNDERSCORE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.UNDERSCORE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.NEGATIVE_RESULT_TERMS">
+<span class="sig-name descname"><span class="pre">NEGATIVE_RESULT_TERMS</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">['neg',</span> <span class="pre">'not</span> <span class="pre">det',</span> <span class="pre">'no',</span> <span class="pre">'none</span> <span class="pre">seen',</span> <span class="pre">'arterial',</span> <span class="pre">'np',</span> <span class="pre">'non-reactive',</span> <span class="pre">'clear',</span> <span class="pre">'trace',</span> <span class="pre">'negative']</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#NEGATIVE_RESULT_TERMS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.NEGATIVE_RESULT_TERMS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.POSITIVE_RESULT_TERMS">
+<span class="sig-name descname"><span class="pre">POSITIVE_RESULT_TERMS</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">['pos',</span> <span class="pre">'^\\s*det',</span> <span class="pre">'yes',</span> <span class="pre">'venous',</span> <span class="pre">'present',</span> <span class="pre">'hazy',</span> <span class="pre">'slcloudy',</span> <span class="pre">'mild',</span> <span class="pre">'low</span> <span class="pre">reactive',...</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#POSITIVE_RESULT_TERMS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.POSITIVE_RESULT_TERMS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.IP">
+<span class="sig-name descname"><span class="pre">IP</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">IP</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#IP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.IP" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.ER">
+<span class="sig-name descname"><span class="pre">ER</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">ER</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#ER"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.ER" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.ICU">
+<span class="sig-name descname"><span class="pre">ICU</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">ICU</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#ICU"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.ICU" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="cyclops.process.constants.SCU">
+<span class="sig-name descname"><span class="pre">SCU</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">SCU</span></em><a class="reference internal" href="../../../../../_modules/cyclops/process/constants.html#SCU"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.process.constants.SCU" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  
+
+  <div class="citation">
+    CyclOps team <i>et al.,</i>
+    <a href="https://www.medrxiv.org/content/10.1101/2022.12.02.22283021v2">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, medarxiv</i> (2022)
+  </def>
+
+
+  <p class="avatar">cyclops is built by</p>
+  <div class="avatar">
+    
+    
+    <span>
+      <a href="https://github.com/amrit110">
+        <img src="../../../../../_static/team/amrit-krishnan.jpg" width="32"/>
+        Amrit Krishnan
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/KadenMc">
+        <img src="../../../../../_static/team/kaden-mckeen.jpg" width="32"/>
+        Kaden McKeen
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/vsubasri">
+        <img src="../../../../../_static/team/valli-subasri.jpg" width="32"/>
+        Valli Subasri
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/a-kore">
+        <img src="../../../../../_static/team/ali-kore.jpg" width="32"/>
+        Ali Kore
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/fcogidi">
+        <img src="../../../../../_static/team/franklin-ogidi.jpg" width="32"/>
+        Franklin Ogidi
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/mahshidaln">
+        <img src="../../../../../_static/team/mahshid-alinoori.jpg" width="32"/>
+        Mahshid Alinoori
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/elhamdolatabadi">
+        <img src="../../../../../_static/team/elham-dolatabadi.jpg" width="32"/>
+        Elham Dolatabadi
+      </a>
+    </span>
+    ,
+  </div>
+
+
+  <div class="footer-small-text">
+    All <a href="https://github.com/VectorInstitute/cyclops">source code for cyclops</a> is freely available under the terms of an <a href="https://opensource.org/licenses/Apache-2.0">Apache-2.0</a> license.
+  </div>
+
+  <div class="footer-small-text">
+    This work is made possible due to the data obtained from the
+    General Medicine Inpatient Initiative (GEMINI).
+  </div>
+
+  <hr/>
+
+  <div class="logo">
+    <a class="logo" href="https://vectorinstitute.ai/">
+      <span class="logo"></span>
+      <img alt="Logo of the Vector Institute" style="width:90px; max-width:90px;" src="../../../../../_static/logos/vector_logo.png" />
+    </a>
+    <a class="logo" href="https://www.geminimedicine.ca/">
+      <span class="logo"></span>
+      <img alt="Logo of GEMINI" style="width:90px; max-width:90px;" src="../../../../../_static/logos/gemini_logo.png" />
+    </a>
+  </div>
+
+  <div class="copyright">
+    &copy; Copyright 2022, Vector AI Engineering
+  </div>
+
+  <div class="copyright">
+    </p>
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using customised version of
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">base theme</a> provided by
+    <a href="https://readthedocs.org">Read the Docs</a>.
+  </div>
+
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
