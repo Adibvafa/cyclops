@@ -124,8 +124,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html">🐣 Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#developing">🧑🏿‍💻 Developing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#documentation">📚 Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#notebooks">🎓 Notebooks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#notebooks">📓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html#citation">🎓 Citation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../design.html">Framework Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../contributing.html">Contributing to cyclops</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api.html">API Reference</a></li>
@@ -185,7 +185,7 @@
 <span class="p">)</span>
 
 
-<div class="viewcode-block" id="_format_thresholds"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional._format_thresholds">[docs]</a><span class="k">def</span> <span class="nf">_format_thresholds</span><span class="p">(</span>
+<span class="k">def</span> <span class="nf">_format_thresholds</span><span class="p">(</span>
     <span class="n">thresholds</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Format thresholds to be a 1D numpy array of floats.&quot;&quot;&quot;</span>
@@ -194,10 +194,10 @@
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thresholds</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
         <span class="n">thresholds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">thresholds</span></div>
+    <span class="k">return</span> <span class="n">thresholds</span>
 
 
-<div class="viewcode-block" id="_ovr_multi_threshold_confusion_matrix"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional._ovr_multi_threshold_confusion_matrix">[docs]</a><span class="k">def</span> <span class="nf">_ovr_multi_threshold_confusion_matrix</span><span class="p">(</span>
+<span class="k">def</span> <span class="nf">_ovr_multi_threshold_confusion_matrix</span><span class="p">(</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">preds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_thresholds</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Compute multi-threshold confusion matrix for one-vs-rest classification.&quot;&quot;&quot;</span>
@@ -212,10 +212,10 @@
     <span class="c1"># pylint: disable=too-many-function-args</span>
     <span class="n">confmat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">num_thresholds</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">confmat</span></div>
+    <span class="k">return</span> <span class="n">confmat</span>
 
 
-<div class="viewcode-block" id="_precision_recall_curve_compute_from_confmat"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional._precision_recall_curve_compute_from_confmat">[docs]</a><span class="k">def</span> <span class="nf">_precision_recall_curve_compute_from_confmat</span><span class="p">(</span>
+<span class="k">def</span> <span class="nf">_precision_recall_curve_compute_from_confmat</span><span class="p">(</span>
     <span class="n">confmat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Compute precision-recall curve from a multi-threshold confusion matrix.&quot;&quot;&quot;</span>
@@ -241,10 +241,10 @@
     <span class="n">precision</span> <span class="o">=</span> <span class="n">precision</span><span class="p">[</span><span class="n">sort_idx</span><span class="p">]</span>
     <span class="n">recall</span> <span class="o">=</span> <span class="n">recall</span><span class="p">[</span><span class="n">sort_idx</span><span class="p">]</span>  <span class="c1"># in descending order</span>
 
-    <span class="k">return</span> <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">thresholds</span></div>
+    <span class="k">return</span> <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">thresholds</span>
 
 
-<div class="viewcode-block" id="_binary_precision_recall_curve_format"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional._binary_precision_recall_curve_format">[docs]</a><span class="k">def</span> <span class="nf">_binary_precision_recall_curve_format</span><span class="p">(</span>
+<span class="k">def</span> <span class="nf">_binary_precision_recall_curve_format</span><span class="p">(</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Check and format binary precision-recall curve input/data.</span>
@@ -313,10 +313,10 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">preds</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">preds</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">)):</span>
         <span class="n">preds</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">target</span><span class="p">,</span> <span class="n">preds</span></div>
+    <span class="k">return</span> <span class="n">target</span><span class="p">,</span> <span class="n">preds</span>
 
 
-<div class="viewcode-block" id="_binary_precision_recall_curve_update"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional._binary_precision_recall_curve_update">[docs]</a><span class="k">def</span> <span class="nf">_binary_precision_recall_curve_update</span><span class="p">(</span>
+<span class="k">def</span> <span class="nf">_binary_precision_recall_curve_update</span><span class="p">(</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">preds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Compute the state from which the precision-recall curve can be computed.</span>
@@ -354,10 +354,10 @@
 
     <span class="n">confmat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">len_t</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">confmat</span></div>
+    <span class="k">return</span> <span class="n">confmat</span>
 
 
-<div class="viewcode-block" id="_binary_precision_recall_curve_compute"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional._binary_precision_recall_curve_compute">[docs]</a><span class="k">def</span> <span class="nf">_binary_precision_recall_curve_compute</span><span class="p">(</span>
+<span class="k">def</span> <span class="nf">_binary_precision_recall_curve_compute</span><span class="p">(</span>
     <span class="n">state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
     <span class="n">thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -418,10 +418,10 @@
         <span class="n">recall</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">recall</span><span class="p">[</span><span class="n">sliced</span><span class="p">],</span> <span class="mi">0</span><span class="p">))</span>
         <span class="n">thresholds</span> <span class="o">=</span> <span class="n">thresholds</span><span class="p">[</span><span class="n">sliced</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">thresholds</span></div>
+    <span class="k">return</span> <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">thresholds</span>
 
 
-<div class="viewcode-block" id="binary_precision_recall_curve"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional.binary_precision_recall_curve">[docs]</a><span class="k">def</span> <span class="nf">binary_precision_recall_curve</span><span class="p">(</span>
+<div class="viewcode-block" id="binary_precision_recall_curve"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional.precision_recall_curve.binary_precision_recall_curve">[docs]</a><span class="k">def</span> <span class="nf">binary_precision_recall_curve</span><span class="p">(</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">thresholds</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -488,7 +488,7 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="_multiclass_precision_recall_curve_format"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional._multiclass_precision_recall_curve_format">[docs]</a><span class="k">def</span> <span class="nf">_multiclass_precision_recall_curve_format</span><span class="p">(</span>
+<span class="k">def</span> <span class="nf">_multiclass_precision_recall_curve_format</span><span class="p">(</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -582,10 +582,10 @@
             <span class="s2">&quot; i.e. they should sum up to 1.0 over classes&quot;</span>
         <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">target</span><span class="p">,</span> <span class="n">preds</span></div>
+    <span class="k">return</span> <span class="n">target</span><span class="p">,</span> <span class="n">preds</span>
 
 
-<div class="viewcode-block" id="_multiclass_precision_recall_curve_update"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional._multiclass_precision_recall_curve_update">[docs]</a><span class="k">def</span> <span class="nf">_multiclass_precision_recall_curve_update</span><span class="p">(</span>
+<span class="k">def</span> <span class="nf">_multiclass_precision_recall_curve_update</span><span class="p">(</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">preds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -631,10 +631,10 @@
         <span class="n">target_t</span><span class="p">,</span> <span class="n">preds_t</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">num_thresholds</span><span class="o">=</span><span class="n">len_t</span>
     <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">state</span></div>
+    <span class="k">return</span> <span class="n">state</span>
 
 
-<div class="viewcode-block" id="_multiclass_precision_recall_curve_compute"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional._multiclass_precision_recall_curve_compute">[docs]</a><span class="k">def</span> <span class="nf">_multiclass_precision_recall_curve_compute</span><span class="p">(</span>
+<span class="k">def</span> <span class="nf">_multiclass_precision_recall_curve_compute</span><span class="p">(</span>
     <span class="n">state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]],</span>
     <span class="n">thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -695,10 +695,10 @@
             <span class="n">recall</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">recall_i</span><span class="p">)</span>
             <span class="n">thresholds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thresholds_i</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">thresholds</span></div>
+    <span class="k">return</span> <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">thresholds</span>
 
 
-<div class="viewcode-block" id="multiclass_precision_recall_curve"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional.multiclass_precision_recall_curve">[docs]</a><span class="k">def</span> <span class="nf">multiclass_precision_recall_curve</span><span class="p">(</span>
+<div class="viewcode-block" id="multiclass_precision_recall_curve"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional.precision_recall_curve.multiclass_precision_recall_curve">[docs]</a><span class="k">def</span> <span class="nf">multiclass_precision_recall_curve</span><span class="p">(</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -776,7 +776,7 @@
     <span class="k">return</span> <span class="n">_multiclass_precision_recall_curve_compute</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="_multilabel_precision_recall_curve_format"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional._multilabel_precision_recall_curve_format">[docs]</a><span class="k">def</span> <span class="nf">_multilabel_precision_recall_curve_format</span><span class="p">(</span>
+<span class="k">def</span> <span class="nf">_multilabel_precision_recall_curve_format</span><span class="p">(</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -854,10 +854,10 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">preds</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">preds</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">)):</span>
         <span class="n">preds</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">target</span><span class="p">,</span> <span class="n">preds</span></div>
+    <span class="k">return</span> <span class="n">target</span><span class="p">,</span> <span class="n">preds</span>
 
 
-<div class="viewcode-block" id="_multilabel_precision_recall_curve_update"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional._multilabel_precision_recall_curve_update">[docs]</a><span class="k">def</span> <span class="nf">_multilabel_precision_recall_curve_update</span><span class="p">(</span>
+<span class="k">def</span> <span class="nf">_multilabel_precision_recall_curve_update</span><span class="p">(</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">preds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Update the multilabel precision-recall curve state.</span>
@@ -894,10 +894,10 @@
 
     <span class="n">state</span> <span class="o">=</span> <span class="n">_ovr_multi_threshold_confusion_matrix</span><span class="p">(</span><span class="n">target_t</span><span class="p">,</span> <span class="n">preds_t</span><span class="p">,</span> <span class="n">num_labels</span><span class="p">,</span> <span class="n">len_t</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">state</span></div>
+    <span class="k">return</span> <span class="n">state</span>
 
 
-<div class="viewcode-block" id="_multilabel_precision_recall_curve_compute"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional._multilabel_precision_recall_curve_compute">[docs]</a><span class="k">def</span> <span class="nf">_multilabel_precision_recall_curve_compute</span><span class="p">(</span>
+<span class="k">def</span> <span class="nf">_multilabel_precision_recall_curve_compute</span><span class="p">(</span>
     <span class="n">state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
     <span class="n">thresholds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -955,10 +955,10 @@
             <span class="n">recall</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">recall_i</span><span class="p">)</span>
             <span class="n">thresholds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thresholds_i</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">thresholds</span></div>
+    <span class="k">return</span> <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">thresholds</span>
 
 
-<div class="viewcode-block" id="multilabel_precision_recall_curve"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional.multilabel_precision_recall_curve">[docs]</a><span class="k">def</span> <span class="nf">multilabel_precision_recall_curve</span><span class="p">(</span>
+<div class="viewcode-block" id="multilabel_precision_recall_curve"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional.precision_recall_curve.multilabel_precision_recall_curve">[docs]</a><span class="k">def</span> <span class="nf">multilabel_precision_recall_curve</span><span class="p">(</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -1037,7 +1037,7 @@
     <span class="k">return</span> <span class="n">_multilabel_precision_recall_curve_compute</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">,</span> <span class="n">num_labels</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="precision_recall_curve"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional.precision_recall_curve">[docs]</a><span class="k">def</span> <span class="nf">precision_recall_curve</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+<div class="viewcode-block" id="precision_recall_curve"><a class="viewcode-back" href="../../../../../technical/api/cyclops/evaluate/metrics/functional/precision_recall_curve/index.html#cyclops.evaluate.metrics.functional.precision_recall_curve.precision_recall_curve">[docs]</a><span class="k">def</span> <span class="nf">precision_recall_curve</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">task</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">,</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">],</span>

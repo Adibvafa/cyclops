@@ -14,47 +14,9 @@
 Module Contents
 ---------------
 
-Classes
-~~~~~~~
-
-.. autoapisummary::
-
-   cyclops.evaluate.metrics.metric.Metric
-   cyclops.evaluate.metrics.metric.MetricCollection
-
-
-
-Functions
-~~~~~~~~~
-
-.. autoapisummary::
-
-   cyclops.evaluate.metrics.metric.create_metric
-
-
-
-Attributes
-~~~~~~~~~~
-
-.. autoapisummary::
-
-   cyclops.evaluate.metrics.metric.LOGGER
-   cyclops.evaluate.metrics.metric._METRIC_REGISTRY
-
-
-.. py:data:: LOGGER
-   
-
-   
-
-.. py:data:: _METRIC_REGISTRY
-   
-
-   
-
 .. py:class:: Metric
 
-   Bases: :py:obj:`abc.ABC`
+
 
    
    Abstract base class for metrics classes.
@@ -204,71 +166,6 @@ Attributes
       ..
           !! processed by numpydoc !!
 
-   .. py:method:: _wrap_update(update: Callable) -> Callable
-
-      
-      Manage the internal attributes before calling the update method.
-
-      Sets the ``_computed`` attribute to None and increments the ``_update_count``
-      attribute before calling the custom update method.
-
-      :param update: The update method of the metric.
-      :type update: Callable
-
-      :returns: **wrapped_func** -- The wrapped update method.
-      :rtype: Callable
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: _wrap_compute(compute: Callable) -> Callable
-
-      
-      Wrap the ``compute`` method to ensure safety and caching.
-
-      Raises a warning if the ``compute`` method is called before the ``update``
-      method has been called at least once. Also caches the result of the
-      ``compute`` method to avoid unnecessary recomputation.
-
-      :param compute: The compute method of the metric.
-      :type compute: Callable
-
-      :returns: **wrapped_func** -- The wrapped compute method.
-      :rtype: Callable
-
-      :Warns: **UserWarning** -- If the ``compute`` method has not been called at least once.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
    .. py:method:: __call__(*args, **kwargs)
 
       
@@ -325,7 +222,7 @@ Attributes
 
 .. py:class:: MetricCollection(metrics: Union[Metric, Sequence[Metric], Dict[str, Metric]])
 
-   Bases: :py:obj:`Metric`
+
 
    
    A collection of metrics.
@@ -435,127 +332,6 @@ Attributes
       
       Reset the state of all metrics in the collection.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: _validate_input(metrics: Union[Metric, Sequence[Metric], Dict[str, Metric]])
-
-      
-      Validate the input to the constructor.
-
-      :param metrics: The input to the constructor.
-      :type metrics: Union[Metric, Sequence[Metric], Dict[str, Metric]]
-
-      :raises TypeError: If the input is not a metric, sequence of metrics, or dictionary of metrics.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: _has_same_update_state_parameters_check(metric_a: Metric, metric_b: Metric) -> None
-      :staticmethod:
-
-      
-      Check if two metrics have the same ``update_state`` method parameters.
-
-      :param metric_a: The first metric.
-      :type metric_a: Metric
-      :param metric_b: The second metric.
-      :type metric_b: Metric
-
-      :rtype: None
-
-      :raises ValueError: If the metrics do not have the same signature for their ``update_state``
-          method.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: _has_same_task_type_check(metric_a: Metric, metric_b: Metric) -> None
-      :staticmethod:
-
-      
-      Check if two metrics are for the same task.
-
-      :param metric_a: The first metric.
-      :type metric_a: Metric
-      :param metric_b: The second metric.
-      :type metric_b: Metric
-
-      :rtype: None
-
-      :raises ValueError: If the metrics are not for the same task. If both metrics are for
-          multilabel tasks, then they must have the same ``num_labels``
-          parameter. If both metrics are for multiclass tasks, then they must
-          have the same ``num_classes`` parameter.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: _get_metric_groups() -> Dict[int, List[str]]
-
-      
-      Group metrics by the state variables they use.
-
-      :returns: **metric_groups** -- A dictionary with the group id as the key and a list of metric names
-                as the value.
-      :rtype: Dict[int, List[str]]
 
 
 

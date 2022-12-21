@@ -14,92 +14,6 @@
 Module Contents
 ---------------
 
-
-Functions
-~~~~~~~~~
-
-.. autoapisummary::
-
-   cyclops.evaluate.metrics.functional.roc._roc_compute_from_confmat
-   cyclops.evaluate.metrics.functional.roc._binary_roc_compute
-   cyclops.evaluate.metrics.functional.roc.binary_roc_curve
-   cyclops.evaluate.metrics.functional.roc._multiclass_roc_compute
-   cyclops.evaluate.metrics.functional.roc.multiclass_roc_curve
-   cyclops.evaluate.metrics.functional.roc._multilabel_roc_compute
-   cyclops.evaluate.metrics.functional.roc.multilabel_roc_curve
-   cyclops.evaluate.metrics.functional.roc.roc_curve
-
-
-
-.. py:function:: _roc_compute_from_confmat(confmat: numpy.ndarray, thresholds: numpy.ndarray = None) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
-
-   
-   Compute the ROC curve from a multi-threshold confusion matrix.
-
-   :param confmat: A multi-threshold confusion matrix of size (num_thresholds, 2, 2) or
-                   (num_thresholds, num_classes, 2, 2).
-   :type confmat: numpy.ndarray
-   :param thresholds:
-   :type thresholds: numpy.ndarray of floats, default=None
-
-   :returns: * **fpr** (*numpy.ndarray*) -- False positive rate.
-             * **tpr** (*numpy.ndarray*) -- True positive rate.
-             * **thresholds** (*numpy.ndarray*) -- Thresholds used to compute fpr and tpr.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
-
-.. py:function:: _binary_roc_compute(state: Union[Tuple[numpy.ndarray, numpy.ndarray], numpy.ndarray], thresholds: numpy.ndarray = None, pos_label: int = 1) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
-
-   
-   Compute the ROC curve for binary classification.
-
-   :param state: If ``thresholds`` is not None, ``state`` is a multi-threshold confusion
-                 matrix. If ``thresholds`` is None, ``state`` is a tuple of (target, preds).
-                 probabilities.
-   :type state: tuple of numpy.ndarray or numpy.ndarray
-   :param thresholds: Thresholds used to binarize the predicted probabilities. If None,
-                      the unique values of the predicted probabilities are used as
-                      thresholds.
-   :type thresholds: numpy.ndarray, default=None
-   :param pos_label: The label of the positive class.
-   :type pos_label: int, optional
-
-   :returns: * **fpr** (*numpy.ndarray*) -- False positive rate.
-             * **tpr** (*numpy.ndarray*) -- True positive rate.
-             * **thresholds** (*numpy.ndarray*) -- Thresholds used to compute fpr and tpr.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
-
 .. py:function:: binary_roc_curve(target: numpy.typing.ArrayLike, preds: numpy.typing.ArrayLike, thresholds: Union[int, List[float], numpy.ndarray] = None, pos_label: int = 1) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
 
    
@@ -136,47 +50,6 @@ Functions
    array([0., 1., 1., 1., 1.])
    >>> thresholds
    array([1.  , 0.75, 0.5 , 0.25, 0.  ])
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
-
-.. py:function:: _multiclass_roc_compute(state: Union[numpy.ndarray, Tuple[numpy.ndarray, numpy.ndarray]], num_classes: int, thresholds: numpy.ndarray = None) -> Union[Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray], Tuple[List[numpy.ndarray], List[numpy.ndarray], List[numpy.ndarray]]]
-
-   
-   Compute the ROC curve for multiclass classification tasks.
-
-   :param state: If ``thresholds`` is not None, ``state`` is a multi-threshold confusion
-                 matrix. If ``thresholds`` is None, ``state`` is a tuple of (target, preds).
-   :type state: numpy.ndarray or tuple of numpy.ndarray
-   :param num_classes: Number of classes.
-   :type num_classes: int
-   :param thresholds: Thresholds used for binarizing the predicted probabilities. If not
-                      None, must be a 1D numpy array of floats in the [0, 1] range and
-                      monotonically increasing.
-   :type thresholds: numpy.ndarray, default=None
-
-   :returns: * **fpr** (*numpy.ndarray or list of numpy.ndarray*) -- False positive rate. If ``threshold`` is not None, ``fpr`` is a 1d numpy
-               array. Otherwise, ``fpr`` is a list of 1d numpy arrays, one for each
-               class.
-             * **tpr** (*numpy.ndarray or list of numpy.ndarray*) -- True positive rate. If ``threshold`` is not None, ``tpr`` is a 1d numpy
-               array. Otherwise, ``tpr`` is a list of 1d numpy arrays, one for each class.
-             * **thresholds** (*numpy.ndarray or list of numpy.ndarray*) -- Thresholds used to compute fpr and tpr. ``threshold`` is not None,
-               thresholds is a 1d numpy array. Otherwise, thresholds is a list of
-               1d numpy arrays, one for each class.
 
 
 
@@ -243,47 +116,6 @@ Functions
    [0. , 1. , 1. , 1. , 1. ]])
    >>> thresholds
    array([1.  , 0.75, 0.5 , 0.25, 0.  ])
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
-
-.. py:function:: _multilabel_roc_compute(state: Union[Tuple[numpy.ndarray, numpy.ndarray], numpy.ndarray], num_labels: int, thresholds: numpy.ndarray = None) -> Union[Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray], Tuple[List[numpy.ndarray], List[numpy.ndarray], List[numpy.ndarray]]]
-
-   
-   Compute the ROC curve for multilabel classification tasks.
-
-   :param state: If ``thresholds`` is not None, ``state`` is a multi-threshold confusion
-                 matrix. Otherwise, ``state`` is a tuple of (target, preds).
-   :type state: numpy.ndarray or tuple of numpy.ndarray
-   :param num_labels: Number of labels.
-   :type num_labels: int
-   :param thresholds: Thresholds used for binarizing the predicted probabilities. If not
-                      None, must be a 1D numpy array of floats in the [0, 1] range and
-                      monotonically increasing.
-   :type thresholds: numpy.ndarray, default=None
-
-   :returns: * **fpr** (*numpy.ndarray or list of numpy.ndarray*) -- False positive rate. If ``threshold`` is not None, ``fpr`` is a 1d numpy
-               array. Otherwise, ``fpr`` is a list of 1d numpy arrays, one for each
-               label.
-             * **tpr** (*numpy.ndarray or list of numpy.ndarray*) -- True positive rate. If ``threshold`` is not None, ``tpr`` is a 1d numpy
-               array. Otherwise, ``tpr`` is a list of 1d numpy arrays, one for each label.
-             * **thresholds** (*numpy.ndarray or list of numpy.ndarray*) -- Thresholds used to compute fpr and tpr. ``threshold`` is not None,
-               thresholds is a 1d numpy array. Otherwise, thresholds is a list of
-               1d numpy arrays, one for each label.
 
 
 

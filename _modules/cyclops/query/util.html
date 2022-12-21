@@ -124,8 +124,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">🐣 Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#developing">🧑🏿‍💻 Developing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#documentation">📚 Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#notebooks">🎓 Notebooks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#notebooks">📓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#citation">🎓 Citation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../design.html">Framework Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to cyclops</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
@@ -179,22 +179,21 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">sqlalchemy</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Float</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">Interval</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">select</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.dialects.postgresql.base</span> <span class="kn">import</span> <span class="n">DATE</span><span class="p">,</span> <span class="n">TIMESTAMP</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">cast</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">select</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.sql.elements</span> <span class="kn">import</span> <span class="n">BinaryExpression</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.sql.expression</span> <span class="kn">import</span> <span class="n">ColumnClause</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.sql.schema</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Table</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.sql.selectable</span> <span class="kn">import</span> <span class="n">Select</span><span class="p">,</span> <span class="n">Subquery</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.types</span> <span class="kn">import</span> <span class="n">Boolean</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.types</span> <span class="kn">import</span> <span class="n">Boolean</span><span class="p">,</span> <span class="n">Date</span><span class="p">,</span> <span class="n">DateTime</span><span class="p">,</span> <span class="n">Float</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">Interval</span><span class="p">,</span> <span class="n">String</span>
 
 <span class="kn">from</span> <span class="nn">cyclops.utils.common</span> <span class="kn">import</span> <span class="n">to_list</span><span class="p">,</span> <span class="n">to_list_optional</span>
 <span class="kn">from</span> <span class="nn">cyclops.utils.log</span> <span class="kn">import</span> <span class="n">setup_logging</span>
 
 <span class="c1"># Logging.</span>
-<div class="viewcode-block" id="LOGGER"><a class="viewcode-back" href="../../../technical/api/cyclops/query/util/index.html#cyclops.query.util.LOGGER">[docs]</a><span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span></div>
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">setup_logging</span><span class="p">(</span><span class="n">print_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">)</span>
 
-<div class="viewcode-block" id="COLUMN_OBJECTS"><a class="viewcode-back" href="../../../technical/api/cyclops/query/util/index.html#cyclops.query.util.COLUMN_OBJECTS">[docs]</a><span class="n">COLUMN_OBJECTS</span> <span class="o">=</span> <span class="p">[</span><span class="n">Column</span><span class="p">,</span> <span class="n">ColumnClause</span><span class="p">]</span></div>
+<span class="n">COLUMN_OBJECTS</span> <span class="o">=</span> <span class="p">[</span><span class="n">Column</span><span class="p">,</span> <span class="n">ColumnClause</span><span class="p">]</span>
 
 
 <span class="nd">@dataclass</span>
@@ -210,8 +209,8 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="DBSchema.name"><a class="viewcode-back" href="../../../technical/api/cyclops/query/util/index.html#cyclops.query.util.DBSchema.name">[docs]</a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span></div>
-<div class="viewcode-block" id="DBSchema.data"><a class="viewcode-back" href="../../../technical/api/cyclops/query/util/index.html#cyclops.query.util.DBSchema.data">[docs]</a>    <span class="n">data</span><span class="p">:</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">sql</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">MetaData</span></div></div>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">sql</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">MetaData</span></div>
 
 
 <span class="nd">@dataclass</span>
@@ -227,12 +226,12 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="DBTable.name"><a class="viewcode-back" href="../../../technical/api/cyclops/query/util/index.html#cyclops.query.util.DBTable.name">[docs]</a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span></div>
-<div class="viewcode-block" id="DBTable.data"><a class="viewcode-back" href="../../../technical/api/cyclops/query/util/index.html#cyclops.query.util.DBTable.data">[docs]</a>    <span class="n">data</span><span class="p">:</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">sql</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">MetaData</span></div></div>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">sql</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">MetaData</span></div>
 
 
-<div class="viewcode-block" id="TABLE_OBJECTS"><a class="viewcode-back" href="../../../technical/api/cyclops/query/util/index.html#cyclops.query.util.TABLE_OBJECTS">[docs]</a><span class="n">TABLE_OBJECTS</span> <span class="o">=</span> <span class="p">[</span><span class="n">Table</span><span class="p">,</span> <span class="n">Select</span><span class="p">,</span> <span class="n">Subquery</span><span class="p">,</span> <span class="n">DBTable</span><span class="p">]</span></div>
-<div class="viewcode-block" id="TableTypes"><a class="viewcode-back" href="../../../technical/api/cyclops/query/util/index.html#cyclops.query.util.TableTypes">[docs]</a><span class="n">TableTypes</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Select</span><span class="p">,</span> <span class="n">Subquery</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">DBTable</span><span class="p">]</span></div>
+<span class="n">TABLE_OBJECTS</span> <span class="o">=</span> <span class="p">[</span><span class="n">Table</span><span class="p">,</span> <span class="n">Select</span><span class="p">,</span> <span class="n">Subquery</span><span class="p">,</span> <span class="n">DBTable</span><span class="p">]</span>
+<span class="n">TableTypes</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Select</span><span class="p">,</span> <span class="n">Subquery</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">DBTable</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="ckwarg"><a class="viewcode-back" href="../../../technical/api/cyclops/query/util/index.html#cyclops.query.util.ckwarg">[docs]</a><span class="k">def</span> <span class="nf">ckwarg</span><span class="p">(</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">kwarg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -278,7 +277,7 @@
     <span class="k">return</span> <span class="n">process_kwargs</span></div>
 
 
-<div class="viewcode-block" id="_to_subquery"><a class="viewcode-back" href="../../../technical/api/cyclops/query/util/index.html#cyclops.query.util._to_subquery">[docs]</a><span class="k">def</span> <span class="nf">_to_subquery</span><span class="p">(</span><span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_to_subquery</span><span class="p">(</span><span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Convert a table from a table type object to the Subquery type.</span>
 
 <span class="sd">    Parameters</span>
@@ -307,10 +306,10 @@
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Table has type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="si">}</span><span class="s2">, but must have one of the</span>
 <span class="s2">        following types: </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TABLE_OBJECTS</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
-    <span class="p">)</span></div>
+    <span class="p">)</span>
 
 
-<div class="viewcode-block" id="_to_select"><a class="viewcode-back" href="../../../technical/api/cyclops/query/util/index.html#cyclops.query.util._to_select">[docs]</a><span class="k">def</span> <span class="nf">_to_select</span><span class="p">(</span><span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Select</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_to_select</span><span class="p">(</span><span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Select</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Convert a table from a table type object to the Select type.</span>
 
 <span class="sd">    Parameters</span>
@@ -339,7 +338,7 @@
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Table has type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="si">}</span><span class="s2">, but must have one of the</span>
 <span class="s2">        following types: </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TABLE_OBJECTS</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
-    <span class="p">)</span></div>
+    <span class="p">)</span>
 
 
 <div class="viewcode-block" id="param_types_to_type"><a class="viewcode-back" href="../../../technical/api/cyclops/query/util/index.html#cyclops.query.util.param_types_to_type">[docs]</a><span class="k">def</span> <span class="nf">param_types_to_type</span><span class="p">(</span><span class="n">relevant_types</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">to_type_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
@@ -906,10 +905,10 @@
         <span class="n">col</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">Boolean</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">to_date</span><span class="p">:</span>
-        <span class="n">col</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">DATE</span><span class="p">)</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">Date</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">to_timestamp</span><span class="p">:</span>
-        <span class="n">col</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">TIMESTAMP</span><span class="p">)</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">DateTime</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">col</span></div>
 
@@ -1143,7 +1142,7 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="check_column_type"><a class="viewcode-back" href="../../../technical/api/cyclops/query/util/index.html#cyclops.query.util.check_column_type">[docs]</a><span class="k">def</span> <span class="nf">check_column_type</span><span class="p">(</span>
+<span class="k">def</span> <span class="nf">_check_column_type</span><span class="p">(</span>
     <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span>
     <span class="n">cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
     <span class="n">types</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span>
@@ -1174,7 +1173,6 @@
         <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">type_</span><span class="p">)</span> <span class="k">for</span> <span class="n">type_</span> <span class="ow">in</span> <span class="n">types</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span>
     <span class="p">]</span>
-
     <span class="k">if</span> <span class="n">raise_error</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">is_type</span><span class="p">):</span>
         <span class="n">incorrect_type</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
             <span class="nb">set</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span> <span class="o">-</span> <span class="p">{</span><span class="n">col</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span> <span class="k">if</span> <span class="n">is_type</span><span class="p">[</span><span class="n">i</span><span class="p">]}</span>
@@ -1186,13 +1184,13 @@
 <span class="s2">            They have types </span><span class="si">{</span><span class="n">actual_types_str</span><span class="si">}</span><span class="s2">.&quot;&quot;&quot;</span>
         <span class="p">)</span>
 
-    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">is_type</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">is_type</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="check_timestamp_columns"><a class="viewcode-back" href="../../../technical/api/cyclops/query/util/index.html#cyclops.query.util.check_timestamp_columns">[docs]</a><span class="k">def</span> <span class="nf">check_timestamp_columns</span><span class="p">(</span>
     <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">raise_error</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Check whether some columns are DATE or TIMESTAMP columns.</span>
+    <span class="sd">&quot;&quot;&quot;Check whether some columns are Date or DateTime columns.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1209,7 +1207,7 @@
 <span class="sd">        Whether all of the columns are one of the types.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">check_column_type</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="p">[</span><span class="n">DATE</span><span class="p">,</span> <span class="n">TIMESTAMP</span><span class="p">],</span> <span class="n">raise_error</span><span class="o">=</span><span class="n">raise_error</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_check_column_type</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="p">[</span><span class="n">Date</span><span class="p">,</span> <span class="n">DateTime</span><span class="p">],</span> <span class="n">raise_error</span><span class="o">=</span><span class="n">raise_error</span><span class="p">)</span></div>
 
 
 <span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Subquery</span><span class="p">)</span>

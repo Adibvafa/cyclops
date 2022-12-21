@@ -14,40 +14,6 @@
 Module Contents
 ---------------
 
-Classes
-~~~~~~~
-
-.. autoapisummary::
-
-   cyclops.process.feature.feature.FeatureMeta
-   cyclops.process.feature.feature.Features
-   cyclops.process.feature.feature.TabularFeatures
-   cyclops.process.feature.feature.TemporalFeatures
-
-
-
-Functions
-~~~~~~~~~
-
-.. autoapisummary::
-
-   cyclops.process.feature.feature.split_features
-
-
-
-Attributes
-~~~~~~~~~~
-
-.. autoapisummary::
-
-   cyclops.process.feature.feature.LOGGER
-
-
-.. py:data:: LOGGER
-   
-
-   
-
 .. py:class:: FeatureMeta(**kwargs)
 
    
@@ -541,91 +507,6 @@ Attributes
       ..
           !! processed by numpydoc !!
 
-   .. py:method:: _update_meta(meta_update: dict) -> None
-
-      
-      Update feature metadata.
-
-      :param meta_update: A dictionary in which the values will add/update
-                          the existing feature metadata dictionary.
-      :type meta_update: dict
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: _to_feature_types(data: pandas.DataFrame, new_types: dict, inplace: bool = True) -> pandas.DataFrame
-
-      
-      Convert feature types.
-
-      :param data: Features data.
-      :type data: pandas.DataFrame
-      :param new_types: A map from the feature name to the new feature type.
-      :type new_types: dict
-      :param inplace: Whether to perform in-place, or to simply return the DataFrame.
-      :type inplace: bool
-
-      :returns: The features data with the relevant conversions.
-      :rtype: pandas.DataFrame
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: _infer_feature_types(force_types: Optional[dict] = None)
-
-      
-      Infer feature types.
-
-      Can optionally force certain types on specified features.
-
-      :param force_types: A map from the feature name to the forced feature type.
-      :type force_types: dict
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
    .. py:method:: add_normalizer(key: str, normalizer: cyclops.process.feature.normalize.GroupbyNormalizer) -> None
 
       
@@ -738,36 +619,6 @@ Attributes
       ..
           !! processed by numpydoc !!
 
-   .. py:method:: _ordinal_to_indicators(data: pandas.DataFrame, features: Union[str, List[str]]) -> pandas.DataFrame
-
-      
-      Convert ordinal features to binary categorical indicators.
-
-      :param data: Features data.
-      :type data: pandas.DataFrame
-      :param features: Ordinal features to convert. If not provided, convert all ordinal features.
-      :type features: str or list of str, optional
-
-      :returns: Features data with the relevant conversions.
-      :rtype: pandas.DataFrame
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
    .. py:method:: save(save_path: str, file_format: str = 'parquet') -> str
 
       
@@ -836,7 +687,7 @@ Attributes
 
 .. py:class:: TabularFeatures(data: pandas.DataFrame, features: Union[str, List[str]], by: str, targets: Optional[Union[str, List[str]]] = None, force_types: Optional[dict] = None)
 
-   Bases: :py:obj:`Features`
+
 
    
    Tabular features.
@@ -917,7 +768,7 @@ Attributes
 
 .. py:class:: TemporalFeatures(data: pandas.DataFrame, features: Union[str, List[str]], by: Union[str, List[str]], timestamp_col: str, targets: Optional[Union[str, List[str]]] = None, force_types: Optional[dict] = None, aggregator: Optional[cyclops.process.aggregate.Aggregator] = None)
 
-   Bases: :py:obj:`Features`
+
 
    
    Temporal features.
@@ -939,9 +790,6 @@ Attributes
 
    ..
        !! processed by numpydoc !!
-   .. py:method:: _check_aggregator()
-
-
    .. py:method:: plot_features(features: Optional[Union[str, list]] = None) -> None
 
       
