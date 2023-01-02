@@ -173,8 +173,9 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
+<span class="kn">import</span> <span class="nn">dask.dataframe</span> <span class="k">as</span> <span class="nn">dd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
@@ -297,12 +298,12 @@
 
 
 <div class="viewcode-block" id="save_dataframe"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.save_dataframe">[docs]</a><span class="k">def</span> <span class="nf">save_dataframe</span><span class="p">(</span>
-    <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
     <span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;parquet&quot;</span><span class="p">,</span>
     <span class="n">log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Save a pandas.DataFrame object to file.</span>
+    <span class="sd">&quot;&quot;&quot;Save a pandas.DataFrame or dask.DataFrame object to file.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -321,16 +322,22 @@
 <span class="sd">        Processed save path for upstream use.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">save_path</span> <span class="o">=</span> <span class="n">process_file_save_path</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">file_format</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input data is not a DataFrame.&quot;</span><span class="p">)</span>
-
+    <span class="n">save_path</span> <span class="o">=</span> <span class="n">process_file_save_path</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">file_format</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="n">save_path</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">log</span><span class="p">:</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Saving dataframe to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">save_path</span><span class="p">)</span>
-
     <span class="k">if</span> <span class="n">file_format</span> <span class="o">==</span> <span class="s2">&quot;parquet&quot;</span><span class="p">:</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span>
+                <span class="n">save_path</span><span class="p">,</span>
+                <span class="n">schema</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">name_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;batch-</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2">.parquet&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
     <span class="k">elif</span> <span class="n">file_format</span> <span class="o">==</span> <span class="s2">&quot;csv&quot;</span><span class="p">:</span>
         <span class="n">data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -345,8 +352,8 @@
     <span class="n">load_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;parquet&quot;</span><span class="p">,</span>
     <span class="n">log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Load file to a pandas.DataFrame object.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Load file to a pandas.DataFrame or dask.DataFrame object.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -359,15 +366,13 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    pandas.DataFrame</span>
+<span class="sd">    pandas.DataFrame or dask.DataFrame</span>
 <span class="sd">        Loaded data.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">load_path</span> <span class="o">=</span> <span class="n">process_file_save_path</span><span class="p">(</span><span class="n">load_path</span><span class="p">,</span> <span class="n">file_format</span><span class="p">)</span>
-
     <span class="k">if</span> <span class="n">log</span><span class="p">:</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading DataFrame from </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">load_path</span><span class="p">)</span>
-
     <span class="k">if</span> <span class="n">file_format</span> <span class="o">==</span> <span class="s2">&quot;parquet&quot;</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">load_path</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">file_format</span> <span class="o">==</span> <span class="s2">&quot;csv&quot;</span><span class="p">:</span>
@@ -572,80 +577,6 @@
 
     <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
         <span class="k">yield</span> <span class="n">load_dataframe</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="n">file</span><span class="p">),</span> <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="concat_consequtive_dataframes"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.concat_consequtive_dataframes">[docs]</a><span class="k">def</span> <span class="nf">concat_consequtive_dataframes</span><span class="p">(</span>
-    <span class="n">dir_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">every_n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Yield DataFrames concatenated from consequtive files in a directory.</span>
-
-<span class="sd">    Any non-hidden files in the directory must be loadable as a DataFrame.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    dir_path: str</span>
-<span class="sd">        Directory path of files. Any non-hidden file must be loadable as a DataFrame.</span>
-<span class="sd">    every_n: int</span>
-<span class="sd">        Concatenate and yield every N consequtive files.</span>
-<span class="sd">    log: bool</span>
-<span class="sd">        Whether to log the occurence.</span>
-
-<span class="sd">    Yields</span>
-<span class="sd">    ------</span>
-<span class="sd">    pandas.DataFrame</span>
-<span class="sd">        Concatenated DataFrame.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">assert</span> <span class="n">every_n</span> <span class="o">&gt;</span> <span class="mi">1</span>
-
-    <span class="n">datas</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">yield_dataframes</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">)):</span>
-        <span class="n">datas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-
-        <span class="c1"># Yield full batches</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">every_n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">yield</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">datas</span><span class="p">)</span>
-            <span class="n">datas</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="c1"># Yield if any remaining</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">datas</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">yield</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">datas</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="save_consequtive_dataframes"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.save_consequtive_dataframes">[docs]</a><span class="k">def</span> <span class="nf">save_consequtive_dataframes</span><span class="p">(</span>
-    <span class="n">prev_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">new_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">every_n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Save DataFrames concatenated from consequtive files in a directory.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    prev_dir: str</span>
-<span class="sd">        Directory path of files. Any non-hidden file must be loadable as a DataFrame.</span>
-<span class="sd">    new_dir: str</span>
-<span class="sd">        Directory in which to save the newly concatenated DataFrames.</span>
-<span class="sd">    every_n: int</span>
-<span class="sd">        Concatenate and yield every N consequtive files.</span>
-<span class="sd">    log: bool</span>
-<span class="sd">        Whether to log the occurence.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">new_dir</span> <span class="o">=</span> <span class="n">process_dir_save_path</span><span class="p">(</span><span class="n">new_dir</span><span class="p">)</span>
-    <span class="n">generator</span> <span class="o">=</span> <span class="n">concat_consequtive_dataframes</span><span class="p">(</span><span class="n">prev_dir</span><span class="p">,</span> <span class="n">every_n</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">)</span>
-
-    <span class="n">save_count</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">save_dataframe</span><span class="p">(</span>
-                <span class="nb">next</span><span class="p">(</span><span class="n">generator</span><span class="p">),</span> <span class="n">join</span><span class="p">(</span><span class="n">new_dir</span><span class="p">,</span> <span class="s2">&quot;batch_&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">save_count</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="p">)</span>
-            <span class="n">save_count</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
-            <span class="k">return</span></div>
 
 
 <div class="viewcode-block" id="yield_pickled_files"><a class="viewcode-back" href="../../../technical/api/cyclops/utils/file/index.html#cyclops.utils.file.yield_pickled_files">[docs]</a><span class="k">def</span> <span class="nf">yield_pickled_files</span><span class="p">(</span>

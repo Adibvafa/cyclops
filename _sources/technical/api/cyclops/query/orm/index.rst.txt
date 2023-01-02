@@ -57,46 +57,20 @@ Module Contents
 
    ..
        !! processed by numpydoc !!
-   .. py:method:: run_query(query: cyclops.query.util.TableTypes, limit: Optional[int] = None) -> pandas.DataFrame
+   .. py:method:: run_query(query: Union[cyclops.query.util.TableTypes, str], limit: Optional[int] = None, backend: Literal[pandas, dask] = 'pandas', index_col: Optional[str] = None, n_partitions: Optional[int] = None) -> Union[pandas.DataFrame, dask.dataframe.DataFrame]
 
       
       Run query.
 
       :param query: Query to run.
-      :type query: cyclops.query.util.TableTypes
       :param limit: Limit query result to limit.
-      :type limit: Optional[int]
+      :param backend: Backend computing framework to use, Pandas or Dask.
+      :param index_col: Column which becomes the index, and defines the partitioning.
+                        Should be a indexed column in the SQL server, and any orderable type.
+      :param n_partitions: Number of partitions. Check dask documentation for additional details.
 
       :returns: Extracted data from query.
-      :rtype: pd.DataFrame
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: run_sql_string(query: str) -> pandas.DataFrame
-
-      
-      Run query from SQL raw SQL string.
-
-      :param query: Raw SQL query string.
-      :type query: str
-
-      :returns: Extracted data from query.
-      :rtype: pd.DataFrame
+      :rtype: pandas.DataFrame or dask.DataFrame
 
 
 
@@ -155,111 +129,6 @@ Module Contents
 
       :returns: Processed save path for upstream use.
       :rtype: str
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: query_batch_conditions(query: cyclops.query.util.TableTypes, id_col: str, batch_size: int) -> List[Union[sqlalchemy.sql.elements.BinaryExpression, sqlalchemy.sql.elements.BooleanClauseList]]
-
-      
-      Return a list of WHERE conditions to segment a query into batches.
-
-      Batches are created via SQL windowing, based on segmenting the values in a
-      given column, such as an ID column, into intervals.
-
-      Requires a database that supports window functions.
-
-      :param column: The column over which to create the interval ranges and conditions.
-      :type column: sqlalchemy.sql.schema.Column
-      :param window_size: The range of the interval to create.
-      :type window_size: int
-
-      :returns: * *list of sqlalchemy.sql.elements.BinaryExpression or*
-                * *sqlalchemy.sql.elements.BooleanClauseList* -- The window conditions on which to filter.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: run_id_batched_query(query: cyclops.query.util.TableTypes, id_col: str, batch_size: int) -> Generator[pandas.DataFrame, None, None]
-
-      
-      Generate query batches with complete sets of IDs in a batch.
-
-      Queries are sorted and grouped such that the rows for a given sample ID are kept
-      together in a single batch.
-
-      :param query: Query to run.
-      :type query: cyclops.query.util.TableTypes
-      :param window_size: Window size used to batch queries over the ID column.
-      :type window_size: int
-      :param id_col: Name of the sample ID column by which to batch.
-      :type id_col: str
-
-      :Yields: *pandas.DataFrame* -- A query batch with complete sets of sample IDs.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: save_id_batched_query(query: cyclops.query.util.TableTypes, dir_path: str, id_col: str, batch_size: int, file_format: str = 'parquet') -> None
-
-      
-      Save a query in different batches, keeping same sample IDs together.
-
-      Queries are sorted and grouped such that the rows for a given sample ID are kept
-      together in a single batch.
-
-      :param query: Query to run.
-      :type query: cyclops.query.util.TableTypes
-      :param dir_path: Path to directory in which to save the batches.
-      :type dir_path: str
-      :param batch_size: Approximate batch size before rearranging based on sample IDs.
-      :type batch_size: int
-      :param id_col: Name of the sample ID column by which to batch.
-      :type id_col: str
-      :param file_format: File format of the DataFrame to save.
-      :type file_format: str
 
 
 

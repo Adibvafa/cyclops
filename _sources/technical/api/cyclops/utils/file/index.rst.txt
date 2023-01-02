@@ -136,10 +136,10 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: save_dataframe(data: pandas.DataFrame, save_path: str, file_format: str = 'parquet', log: bool = True) -> str
+.. py:function:: save_dataframe(data: Union[pandas.DataFrame, dask.dataframe.DataFrame], save_path: str, file_format: str = 'parquet', log: bool = True) -> str
 
    
-   Save a pandas.DataFrame object to file.
+   Save a pandas.DataFrame or dask.DataFrame object to file.
 
    :param data: Dataframe to save.
    :type data: pandas.DataFrame
@@ -170,10 +170,10 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: load_dataframe(load_path: str, file_format: str = 'parquet', log: bool = True) -> pandas.DataFrame
+.. py:function:: load_dataframe(load_path: str, file_format: str = 'parquet', log: bool = True) -> Union[pandas.DataFrame, dask.dataframe.DataFrame]
 
    
-   Load file to a pandas.DataFrame object.
+   Load file to a pandas.DataFrame or dask.DataFrame object.
 
    :param load_path: Path where the file to load.
    :type load_path: str
@@ -183,7 +183,7 @@ Module Contents
    :type log: bool
 
    :returns: Loaded data.
-   :rtype: pandas.DataFrame
+   :rtype: pandas.DataFrame or dask.DataFrame
 
 
 
@@ -376,70 +376,6 @@ Module Contents
    :type log: bool
 
    :Yields: *pandas.DataFrame* -- A DataFrame.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
-
-.. py:function:: concat_consequtive_dataframes(dir_path: str, every_n: int, log: bool = True) -> Generator[pandas.DataFrame, None, None]
-
-   
-   Yield DataFrames concatenated from consequtive files in a directory.
-
-   Any non-hidden files in the directory must be loadable as a DataFrame.
-
-   :param dir_path: Directory path of files. Any non-hidden file must be loadable as a DataFrame.
-   :type dir_path: str
-   :param every_n: Concatenate and yield every N consequtive files.
-   :type every_n: int
-   :param log: Whether to log the occurence.
-   :type log: bool
-
-   :Yields: *pandas.DataFrame* -- Concatenated DataFrame.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
-
-.. py:function:: save_consequtive_dataframes(prev_dir: str, new_dir: str, every_n: int, log: bool = True) -> None
-
-   
-   Save DataFrames concatenated from consequtive files in a directory.
-
-   :param prev_dir: Directory path of files. Any non-hidden file must be loadable as a DataFrame.
-   :type prev_dir: str
-   :param new_dir: Directory in which to save the newly concatenated DataFrames.
-   :type new_dir: str
-   :param every_n: Concatenate and yield every N consequtive files.
-   :type every_n: int
-   :param log: Whether to log the occurence.
-   :type log: bool
 
 
 

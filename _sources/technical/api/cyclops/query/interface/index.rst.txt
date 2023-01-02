@@ -45,16 +45,19 @@ Module Contents
 
    ..
        !! processed by numpydoc !!
-   .. py:method:: run(limit: Optional[int] = None) -> pandas.DataFrame
+   .. py:method:: run(limit: Optional[int] = None, backend: Literal[pandas, dask] = 'pandas', index_col: Optional[str] = None, n_partitions: Optional[int] = None) -> Union[pandas.DataFrame, dask.dataframe.DataFrame]
 
       
       Run the query, and fetch data.
 
       :param limit: No. of rows to limit the query return.
-      :type limit: int, optional
+      :param backend: Backend computing framework to use, Pandas or Dask.
+      :param index_col: Column which becomes the index, and defines the partitioning.
+                        Should be a indexed column in the SQL server, and any orderable type.
+      :param n_partitions: Number of partitions. Check dask documentation for additional details.
 
       :returns: Query result dataframe.
-      :rtype: pandas.DataFrame
+      :rtype: pandas.DataFrame or dask.DataFrame
 
 
 
@@ -127,81 +130,13 @@ Module Contents
       ..
           !! processed by numpydoc !!
 
-   .. py:method:: run_in_grouped_batches(id_col: str, batch_size: int) -> Generator[pandas.DataFrame, None, None]
-
-      
-      Run the query in batches with complete sets of sample IDs.
-
-      Queries are sorted and grouped such that the rows for a given sample ID are kept
-      together in a single batch.
-
-      :param id_col: Name of the sample ID column by which to batch.
-      :type id_col: str
-      :param batch_size: Approximate batch size before rearranging based on sample IDs.
-      :type batch_size: int
-
-      :Yields: *pandas.DataFrame* -- A query batch with complete sets of sample IDs.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: save_in_grouped_batches(dir_path: str, id_col: str, batch_size: int, file_format: str = 'parquet') -> None
-
-      
-      Save a query in different batches, keeping same sample IDs together.
-
-      Queries are sorted and grouped such that the rows for a given sample ID are kept
-      together in a single batch.
-
-      :param query: Query to run.
-      :type query: cyclops.query.util.TableTypes
-      :param dir_path: Path to directory in which to save the batches.
-      :type dir_path: str
-      :param batch_size: Approximate batch size before rearranging based on sample IDs.
-      :type batch_size: int
-      :param id_col: Name of the sample ID column by which to batch.
-      :type id_col: str
-      :param file_format: File format of the DataFrame to save.
-      :type file_format: str
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
 
 .. py:class:: QueryInterfaceProcessed
 
    
    An interface dataclass to wrap queries, and run them with post-processing.
 
-   An similar dataclass to QueryInterface, where custom post-processing
+   A similar dataclass to QueryInterface, where custom post-processing
    functions on the pandas dataframe returned from the query can be run. However,
    this prevents the query from being further used, and hence is declared as
    private attribute.
@@ -234,16 +169,23 @@ Module Contents
 
    ..
        !! processed by numpydoc !!
-   .. py:method:: run(limit: Optional[int] = None) -> pandas.DataFrame
+   .. py:method:: run(limit: Optional[int] = None, backend: Optional[str] = 'pandas', index_col: Optional[str] = None, n_partitions: Optional[int] = None) -> Union[pandas.DataFrame, dask.dataframe.DataFrame]
 
       
       Run the query, and fetch data.
 
       :param limit: No. of rows to limit the query return.
       :type limit: int, optional
+      :param backend: Backend computing framework to use, Pandas or Dask.
+      :type backend: str, optional
+      :param index_col: Column which becomes the index, and defines the partitioning.
+                        Should be a indexed column in the SQL server, and any orderable type.
+      :type index_col: str, optional
+      :param n_partitions: Number of partitions. Check dask documentation for additional details.
+      :type n_partitions: int, optional
 
       :returns: Query result dataframe.
-      :rtype: pandas.DataFrame
+      :rtype: pandas.DataFrame or dask.DataFrame
 
 
 

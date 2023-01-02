@@ -174,33 +174,21 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">socket</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
+<span class="kn">import</span> <span class="nn">dask.dataframe</span> <span class="k">as</span> <span class="nn">dd</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">pyarrow.csv</span> <span class="k">as</span> <span class="nn">pv</span>
 <span class="kn">import</span> <span class="nn">pyarrow.parquet</span> <span class="k">as</span> <span class="nn">pq</span>
 <span class="kn">from</span> <span class="nn">omegaconf</span> <span class="kn">import</span> <span class="n">DictConfig</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">and_</span><span class="p">,</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">inspect</span><span class="p">,</span> <span class="n">select</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">inspect</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.engine.base</span> <span class="kn">import</span> <span class="n">Engine</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">sessionmaker</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.orm.session</span> <span class="kn">import</span> <span class="n">Session</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.sql.elements</span> <span class="kn">import</span> <span class="n">BinaryExpression</span><span class="p">,</span> <span class="n">BooleanClauseList</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.sql.selectable</span> <span class="kn">import</span> <span class="n">Select</span><span class="p">,</span> <span class="n">Subquery</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.sql.selectable</span> <span class="kn">import</span> <span class="n">Select</span>
 
-<span class="kn">from</span> <span class="nn">cyclops.query.util</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">DBSchema</span><span class="p">,</span>
-    <span class="n">DBTable</span><span class="p">,</span>
-    <span class="n">TableTypes</span><span class="p">,</span>
-    <span class="n">get_column</span><span class="p">,</span>
-    <span class="n">table_params_to_type</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">cyclops.utils.file</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">exchange_extension</span><span class="p">,</span>
-    <span class="n">join</span><span class="p">,</span>
-    <span class="n">process_dir_save_path</span><span class="p">,</span>
-    <span class="n">process_file_save_path</span><span class="p">,</span>
-    <span class="n">save_dataframe</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">cyclops.query.util</span> <span class="kn">import</span> <span class="n">DBSchema</span><span class="p">,</span> <span class="n">DBTable</span><span class="p">,</span> <span class="n">TableTypes</span><span class="p">,</span> <span class="n">table_params_to_type</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.file</span> <span class="kn">import</span> <span class="n">exchange_extension</span><span class="p">,</span> <span class="n">process_file_save_path</span>
 <span class="kn">from</span> <span class="nn">cyclops.utils.log</span> <span class="kn">import</span> <span class="n">setup_logging</span>
 <span class="kn">from</span> <span class="nn">cyclops.utils.profile</span> <span class="kn">import</span> <span class="n">time_function</span>
 
@@ -270,6 +258,14 @@
 
     <span class="k">def</span> <span class="nf">_create_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Engine</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create an engine.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">_get_db_url</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">dbms</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">password</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">database</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span>
             <span class="n">_get_db_url</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">dbms</span><span class="p">,</span>
@@ -313,58 +309,57 @@
     <span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Select</span><span class="p">)</span>
 <div class="viewcode-block" id="Database.run_query"><a class="viewcode-back" href="../../../technical/api/cyclops/query/orm/index.html#cyclops.query.orm.Database.run_query">[docs]</a>    <span class="k">def</span> <span class="nf">run_query</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">query</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TableTypes</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
         <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="n">backend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;pandas&quot;</span><span class="p">,</span> <span class="s2">&quot;dask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pandas&quot;</span><span class="p">,</span>
+        <span class="n">index_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">n_partitions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Run query.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        query: cyclops.query.util.TableTypes</span>
+<span class="sd">        query</span>
 <span class="sd">            Query to run.</span>
-<span class="sd">        limit: Optional[int]</span>
+<span class="sd">        limit</span>
 <span class="sd">            Limit query result to limit.</span>
+<span class="sd">        backend</span>
+<span class="sd">            Backend computing framework to use, Pandas or Dask.</span>
+<span class="sd">        index_col</span>
+<span class="sd">            Column which becomes the index, and defines the partitioning.</span>
+<span class="sd">            Should be a indexed column in the SQL server, and any orderable type.</span>
+<span class="sd">        n_partitions</span>
+<span class="sd">            Number of partitions. Check dask documentation for additional details.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        pd.DataFrame</span>
+<span class="sd">        pandas.DataFrame or dask.DataFrame</span>
 <span class="sd">            Extracted data from query.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Limit the results returned</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">limit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot use limit argument when running raw SQL string query!&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;pandas&quot;</span> <span class="ow">and</span> <span class="n">n_partitions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Partitions not applicable with Pandas backend, use Dask!&quot;</span><span class="p">)</span>
+        <span class="c1"># Limit the results returned.</span>
         <span class="k">if</span> <span class="n">limit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">limit</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
-        <span class="c1"># Run the query and return the results</span>
+        <span class="c1"># Run the query and return the results.</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">connection</span><span class="p">():</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
-
+            <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;pandas&quot;</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="n">index_col</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;dask&quot;</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">dd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span>
+                    <span class="n">query</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="n">index_col</span><span class="p">,</span> <span class="n">npartitions</span><span class="o">=</span><span class="n">n_partitions</span>
+                <span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid backend, can either be Pandas or Dask!&quot;</span><span class="p">)</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Query returned successfully!&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">data</span></div>
 
-    <span class="nd">@time_function</span>
-<div class="viewcode-block" id="Database.run_sql_string"><a class="viewcode-back" href="../../../technical/api/cyclops/query/orm/index.html#cyclops.query.orm.Database.run_sql_string">[docs]</a>    <span class="k">def</span> <span class="nf">run_sql_string</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Run query from SQL raw SQL string.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        query: str</span>
-<span class="sd">            Raw SQL query string.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        pd.DataFrame</span>
-<span class="sd">            Extracted data from query.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Run the query and return the results</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">connection</span><span class="p">():</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
-
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Query returned successfully!&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span></div>
 
     <span class="nd">@time_function</span>
@@ -422,169 +417,8 @@
         <span class="n">table</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_path</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">csv_path</span><span class="p">)</span>
         <span class="n">pq</span><span class="o">.</span><span class="n">write_table</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">path</span></div>
 
-<div class="viewcode-block" id="Database.query_batch_conditions"><a class="viewcode-back" href="../../../technical/api/cyclops/query/orm/index.html#cyclops.query.orm.Database.query_batch_conditions">[docs]</a>    <span class="k">def</span> <span class="nf">query_batch_conditions</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">query</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span>
-        <span class="n">id_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">BinaryExpression</span><span class="p">,</span> <span class="n">BooleanClauseList</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;Return a list of WHERE conditions to segment a query into batches.</span>
-
-<span class="sd">        Batches are created via SQL windowing, based on segmenting the values in a</span>
-<span class="sd">        given column, such as an ID column, into intervals.</span>
-
-<span class="sd">        Requires a database that supports window functions.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        column: sqlalchemy.sql.schema.Column</span>
-<span class="sd">            The column over which to create the interval ranges and conditions.</span>
-<span class="sd">        window_size: int</span>
-<span class="sd">            The range of the interval to create.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        list of sqlalchemy.sql.elements.BinaryExpression or</span>
-<span class="sd">        sqlalchemy.sql.elements.BooleanClauseList</span>
-<span class="sd">            The window conditions on which to filter.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">def</span> <span class="nf">compute_query_dividers</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">id_col</span><span class="p">,</span> <span class="n">maximum</span><span class="p">):</span>
-            <span class="c1"># Compute the row count for each unique value</span>
-            <span class="n">col</span> <span class="o">=</span> <span class="n">get_column</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">id_col</span><span class="p">)</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
-            <span class="n">count_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_query</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
-
-            <span class="c1"># Check that all values can actually fit into the maximum batch size</span>
-            <span class="n">max_count</span> <span class="o">=</span> <span class="n">count_data</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">maximum</span> <span class="o">&lt;</span> <span class="n">max_count</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Maximum must be at least </span><span class="si">{</span><span class="n">max_count</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-
-            <span class="c1"># Sort and create a cumulative sum of row counts</span>
-            <span class="n">count_data</span> <span class="o">=</span> <span class="n">count_data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">id_col</span><span class="p">)</span>
-            <span class="n">count_data</span><span class="p">[</span><span class="s2">&quot;cumsum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">count_data</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
-
-            <span class="c1"># Create query dividers</span>
-            <span class="n">last_sum</span> <span class="o">=</span> <span class="mi">0</span>
-
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">count_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Query is empty. Cannot return batched results.&quot;</span><span class="p">)</span>
-
-            <span class="n">dividers</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">count_data</span><span class="p">[</span><span class="n">id_col</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cumsum</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">count_data</span><span class="p">[</span><span class="s2">&quot;cumsum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
-                <span class="c1"># If adding the next value will put the sum over the max,</span>
-                <span class="c1"># then add another divider on the previous value</span>
-                <span class="k">if</span> <span class="n">cumsum</span> <span class="o">-</span> <span class="n">last_sum</span> <span class="o">&gt;</span> <span class="n">maximum</span><span class="p">:</span>
-                    <span class="n">dividers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">count_data</span><span class="p">[</span><span class="n">id_col</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
-                    <span class="n">last_sum</span> <span class="o">=</span> <span class="n">count_data</span><span class="p">[</span><span class="s2">&quot;cumsum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-
-            <span class="k">return</span> <span class="n">dividers</span>
-
-        <span class="k">def</span> <span class="nf">range_condition</span><span class="p">(</span><span class="n">start_id</span><span class="p">,</span> <span class="n">end_id</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">end_id</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">and_</span><span class="p">(</span><span class="n">column</span> <span class="o">&gt;=</span> <span class="n">start_id</span><span class="p">,</span> <span class="n">column</span> <span class="o">&lt;</span> <span class="n">end_id</span><span class="p">)</span>
-
-            <span class="k">return</span> <span class="n">column</span> <span class="o">&gt;=</span> <span class="n">start_id</span>
-
-        <span class="c1"># Create interval dividers</span>
-        <span class="n">dividers</span> <span class="o">=</span> <span class="n">compute_query_dividers</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">id_col</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
-        <span class="c1"># print(&quot;dividers&quot;, dividers)</span>
-
-        <span class="c1"># Create filtering conditions</span>
-        <span class="n">column</span> <span class="o">=</span> <span class="n">get_column</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">id_col</span><span class="p">)</span>
-        <span class="n">conditions</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">while</span> <span class="n">dividers</span><span class="p">:</span>
-            <span class="c1"># Create interval ranges</span>
-            <span class="n">start</span> <span class="o">=</span> <span class="n">dividers</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">dividers</span><span class="p">:</span>
-                <span class="n">end</span> <span class="o">=</span> <span class="n">dividers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">end</span> <span class="o">=</span> <span class="kc">None</span>
-
-            <span class="c1"># Create condition</span>
-            <span class="n">conditions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">range_condition</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">))</span>
-
-        <span class="k">return</span> <span class="n">conditions</span></div>
-
-    <span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Subquery</span><span class="p">)</span>
-<div class="viewcode-block" id="Database.run_id_batched_query"><a class="viewcode-back" href="../../../technical/api/cyclops/query/orm/index.html#cyclops.query.orm.Database.run_id_batched_query">[docs]</a>    <span class="k">def</span> <span class="nf">run_id_batched_query</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">query</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span>
-        <span class="n">id_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Generate query batches with complete sets of IDs in a batch.</span>
-
-<span class="sd">        Queries are sorted and grouped such that the rows for a given sample ID are kept</span>
-<span class="sd">        together in a single batch.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        query: cyclops.query.util.TableTypes</span>
-<span class="sd">            Query to run.</span>
-<span class="sd">        window_size: int</span>
-<span class="sd">            Window size used to batch queries over the ID column.</span>
-<span class="sd">        id_col: str</span>
-<span class="sd">            Name of the sample ID column by which to batch.</span>
-
-<span class="sd">        Yields</span>
-<span class="sd">        ------</span>
-<span class="sd">        pandas.DataFrame</span>
-<span class="sd">            A query batch with complete sets of sample IDs.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;limit&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="s2">&quot;Currently not supporting batching for queries with a LIMIT.&quot;</span>
-            <span class="p">)</span>
-
-        <span class="n">conditions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_batch_conditions</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">id_col</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
-        <span class="n">sess_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
-
-        <span class="c1"># Opportunity for easy multi-processing/parallelization here!</span>
-        <span class="k">for</span> <span class="n">condition</span> <span class="ow">in</span> <span class="n">conditions</span><span class="p">:</span>
-            <span class="n">run</span> <span class="o">=</span> <span class="p">(</span><span class="n">sess_query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">condition</span><span class="p">))</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
-            <span class="k">yield</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">run</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span></div>
-
-    <span class="nd">@time_function</span>
-<div class="viewcode-block" id="Database.save_id_batched_query"><a class="viewcode-back" href="../../../technical/api/cyclops/query/orm/index.html#cyclops.query.orm.Database.save_id_batched_query">[docs]</a>    <span class="k">def</span> <span class="nf">save_id_batched_query</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">query</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">,</span>
-        <span class="n">dir_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">id_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;parquet&quot;</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Save a query in different batches, keeping same sample IDs together.</span>
-
-<span class="sd">        Queries are sorted and grouped such that the rows for a given sample ID are kept</span>
-<span class="sd">        together in a single batch.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        query: cyclops.query.util.TableTypes</span>
-<span class="sd">            Query to run.</span>
-<span class="sd">        dir_path: str</span>
-<span class="sd">            Path to directory in which to save the batches.</span>
-<span class="sd">        batch_size: int</span>
-<span class="sd">            Approximate batch size before rearranging based on sample IDs.</span>
-<span class="sd">        id_col: str</span>
-<span class="sd">            Name of the sample ID column by which to batch.</span>
-<span class="sd">        file_format: str</span>
-<span class="sd">            File format of the DataFrame to save.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">dir_path</span> <span class="o">=</span> <span class="n">process_dir_save_path</span><span class="p">(</span><span class="n">dir_path</span><span class="p">)</span>
-        <span class="n">generator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_id_batched_query</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">id_col</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">generator</span><span class="p">):</span>
-            <span class="n">save_dataframe</span><span class="p">(</span>
-                <span class="n">batch</span><span class="p">,</span>
-                <span class="n">join</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="s2">&quot;batch_&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
-                <span class="n">file_format</span><span class="o">=</span><span class="n">file_format</span><span class="p">,</span>
-            <span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">path</span></div></div>
 </pre></div>
 
            </div>
