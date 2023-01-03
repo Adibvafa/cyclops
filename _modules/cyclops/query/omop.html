@@ -175,7 +175,7 @@
 
 <span class="kn">from</span> <span class="nn">sqlalchemy.sql.selectable</span> <span class="kn">import</span> <span class="n">Subquery</span>
 
-<span class="kn">from</span> <span class="nn">cyclops.query</span> <span class="kn">import</span> <span class="n">process</span> <span class="k">as</span> <span class="n">qp</span>
+<span class="kn">import</span> <span class="nn">cyclops.query.ops</span> <span class="k">as</span> <span class="nn">qo</span>
 <span class="kn">from</span> <span class="nn">cyclops.query.base</span> <span class="kn">import</span> <span class="n">DatasetQuerier</span>
 <span class="kn">from</span> <span class="nn">cyclops.query.interface</span> <span class="kn">import</span> <span class="n">QueryInterface</span>
 <span class="kn">from</span> <span class="nn">cyclops.query.util</span> <span class="kn">import</span> <span class="n">TableTypes</span><span class="p">,</span> <span class="n">table_params_to_type</span>
@@ -305,13 +305,13 @@
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">to_list</span><span class="p">(</span><span class="n">source_cols</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">ID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">col</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Specified column not a concept ID column!&quot;</span><span class="p">)</span>
-            <span class="n">source_table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
+            <span class="n">source_table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
                 <span class="n">concept_table</span><span class="p">,</span>
                 <span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">CONCEPT_ID</span><span class="p">),</span>
                 <span class="n">join_table_cols</span><span class="o">=</span><span class="p">[</span><span class="n">CONCEPT_NAME</span><span class="p">],</span>
                 <span class="n">isouter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)(</span><span class="n">source_table</span><span class="p">)</span>
-            <span class="n">source_table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">Rename</span><span class="p">({</span><span class="n">CONCEPT_NAME</span><span class="p">:</span> <span class="n">col</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">ID</span><span class="p">,</span> <span class="n">NAME</span><span class="p">)})(</span>
+            <span class="n">source_table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Rename</span><span class="p">({</span><span class="n">CONCEPT_NAME</span><span class="p">:</span> <span class="n">col</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">ID</span><span class="p">,</span> <span class="n">NAME</span><span class="p">)})(</span>
                 <span class="n">source_table</span>
             <span class="p">)</span>
 
@@ -332,7 +332,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">care_site_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">CARE_SITE</span><span class="p">)</span>
-        <span class="n">source_table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
+        <span class="n">source_table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
             <span class="n">care_site_table</span><span class="p">,</span>
             <span class="n">on</span><span class="o">=</span><span class="n">CARE_SITE_ID</span><span class="p">,</span>
             <span class="n">join_table_cols</span><span class="o">=</span><span class="p">[</span><span class="n">CARE_SITE_NAME</span><span class="p">,</span> <span class="n">CARE_SITE_SOURCE_VALUE</span><span class="p">],</span>
@@ -380,10 +380,10 @@
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">VISIT_OCCURRENCE</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">drop_null_person_ids</span><span class="p">:</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">DropNulls</span><span class="p">(</span><span class="n">PERSON_ID</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">DropNulls</span><span class="p">(</span><span class="n">PERSON_ID</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
 
         <span class="c1"># Possibly cast string representations to timestamps.</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">Cast</span><span class="p">([</span><span class="n">VISIT_START_DATETIME</span><span class="p">],</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Cast</span><span class="p">([</span><span class="n">VISIT_START_DATETIME</span><span class="p">],</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
 
         <span class="c1"># Map concept IDs to concept table cols.</span>
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_map_concept_ids_to_name</span><span class="p">(</span>
@@ -394,19 +394,19 @@
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_map_care_site_id</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
 
         <span class="n">operations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionBeforeDate</span><span class="p">,</span> <span class="p">[</span><span class="n">VISIT_START_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;before_date&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">,</span> <span class="p">[</span><span class="n">VISIT_START_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;after_date&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">,</span> <span class="p">[</span><span class="n">VISIT_START_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;years&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionInMonths</span><span class="p">,</span> <span class="p">[</span><span class="n">VISIT_START_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;months&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionBeforeDate</span><span class="p">,</span> <span class="p">[</span><span class="n">VISIT_START_DATETIME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;before_date&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">,</span> <span class="p">[</span><span class="n">VISIT_START_DATETIME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;after_date&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">,</span> <span class="p">[</span><span class="n">VISIT_START_DATETIME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;years&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionInMonths</span><span class="p">,</span> <span class="p">[</span><span class="n">VISIT_START_DATETIME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;months&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
             <span class="p">(</span>
-                <span class="n">qp</span><span class="o">.</span><span class="n">ConditionIn</span><span class="p">,</span>
-                <span class="p">[</span><span class="n">CARE_SITE_SOURCE_VALUE</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;hospitals&quot;</span><span class="p">)],</span>
+                <span class="n">qo</span><span class="o">.</span><span class="n">ConditionIn</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">CARE_SITE_SOURCE_VALUE</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;hospitals&quot;</span><span class="p">)],</span>
                 <span class="p">{</span><span class="s2">&quot;to_str&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
             <span class="p">),</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">Limit</span><span class="p">,</span> <span class="p">[</span><span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;limit&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">Limit</span><span class="p">,</span> <span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;limit&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
         <span class="p">]</span>
 
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">process_operations</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">operations</span><span class="p">,</span> <span class="n">process_kwargs</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">process_operations</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">operations</span><span class="p">,</span> <span class="n">process_kwargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
 
@@ -449,10 +449,10 @@
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">VISIT_DETAIL</span><span class="p">)</span>
 
         <span class="c1"># Possibly cast string representations to timestamps</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">Cast</span><span class="p">([</span><span class="n">VISIT_DETAIL_START_DATETIME</span><span class="p">],</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Cast</span><span class="p">([</span><span class="n">VISIT_DETAIL_START_DATETIME</span><span class="p">],</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">visit_occurrence_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
                 <span class="n">visit_occurrence_table</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="n">PERSON_ID</span><span class="p">,</span> <span class="n">VISIT_OCCURRENCE_ID</span><span class="p">]</span>
             <span class="p">)(</span><span class="n">table</span><span class="p">)</span>
 
@@ -462,26 +462,26 @@
 
         <span class="n">operations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">(</span>
-                <span class="n">qp</span><span class="o">.</span><span class="n">ConditionBeforeDate</span><span class="p">,</span>
-                <span class="p">[</span><span class="n">VISIT_DETAIL_START_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;before_date&quot;</span><span class="p">)],</span>
+                <span class="n">qo</span><span class="o">.</span><span class="n">ConditionBeforeDate</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">VISIT_DETAIL_START_DATETIME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;before_date&quot;</span><span class="p">)],</span>
                 <span class="p">{},</span>
             <span class="p">),</span>
             <span class="p">(</span>
-                <span class="n">qp</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">,</span>
-                <span class="p">[</span><span class="n">VISIT_DETAIL_START_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;after_date&quot;</span><span class="p">)],</span>
+                <span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">VISIT_DETAIL_START_DATETIME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;after_date&quot;</span><span class="p">)],</span>
                 <span class="p">{},</span>
             <span class="p">),</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">,</span> <span class="p">[</span><span class="n">VISIT_DETAIL_START_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;years&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionInMonths</span><span class="p">,</span> <span class="p">[</span><span class="n">VISIT_DETAIL_START_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;months&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">,</span> <span class="p">[</span><span class="n">VISIT_DETAIL_START_DATETIME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;years&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionInMonths</span><span class="p">,</span> <span class="p">[</span><span class="n">VISIT_DETAIL_START_DATETIME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;months&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
             <span class="p">(</span>
-                <span class="n">qp</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">,</span>
-                <span class="p">[</span><span class="n">VISIT_DETAIL_CONCEPT_NAME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;care_unit&quot;</span><span class="p">)],</span>
+                <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">VISIT_DETAIL_CONCEPT_NAME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;care_unit&quot;</span><span class="p">)],</span>
                 <span class="p">{},</span>
             <span class="p">),</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">Limit</span><span class="p">,</span> <span class="p">[</span><span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;limit&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">Limit</span><span class="p">,</span> <span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;limit&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
         <span class="p">]</span>
 
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">process_operations</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">operations</span><span class="p">,</span> <span class="n">process_kwargs</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">process_operations</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">operations</span><span class="p">,</span> <span class="n">process_kwargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
 
@@ -518,20 +518,20 @@
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">PERSON</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">visit_occurrence_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span><span class="n">visit_occurrence_table</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">PERSON_ID</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span><span class="n">visit_occurrence_table</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">PERSON_ID</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
 
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_map_concept_ids_to_name</span><span class="p">(</span>
             <span class="n">table</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;gender_concept_id&quot;</span><span class="p">,</span> <span class="s2">&quot;race_concept_id&quot;</span><span class="p">,</span> <span class="s2">&quot;ethnicity_concept_id&quot;</span><span class="p">]</span>
         <span class="p">)</span>
 
         <span class="n">operations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionIn</span><span class="p">,</span> <span class="p">[</span><span class="n">GENDER_CONCEPT_NAME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;gender&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionIn</span><span class="p">,</span> <span class="p">[</span><span class="n">RACE_CONCEPT_NAME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;race&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionIn</span><span class="p">,</span> <span class="p">[</span><span class="n">ETHNICITY_CONCEPT_NAME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;ethnicity&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">Limit</span><span class="p">,</span> <span class="p">[</span><span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;limit&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionIn</span><span class="p">,</span> <span class="p">[</span><span class="n">GENDER_CONCEPT_NAME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;gender&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionIn</span><span class="p">,</span> <span class="p">[</span><span class="n">RACE_CONCEPT_NAME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;race&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionIn</span><span class="p">,</span> <span class="p">[</span><span class="n">ETHNICITY_CONCEPT_NAME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;ethnicity&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">Limit</span><span class="p">,</span> <span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;limit&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
         <span class="p">]</span>
 
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">process_operations</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">operations</span><span class="p">,</span> <span class="n">process_kwargs</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">process_operations</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">operations</span><span class="p">,</span> <span class="n">process_kwargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
 
@@ -572,26 +572,26 @@
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">OBSERVATION</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">visit_occurrence_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
                 <span class="n">visit_occurrence_table</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="n">PERSON_ID</span><span class="p">,</span> <span class="n">VISIT_OCCURRENCE_ID</span><span class="p">]</span>
             <span class="p">)(</span><span class="n">table</span><span class="p">)</span>
 
         <span class="c1"># Possibly cast string representations to timestamps</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">Cast</span><span class="p">([</span><span class="n">OBSERVATION_DATETIME</span><span class="p">],</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Cast</span><span class="p">([</span><span class="n">OBSERVATION_DATETIME</span><span class="p">],</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
 
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_map_concept_ids_to_name</span><span class="p">(</span>
             <span class="n">table</span><span class="p">,</span> <span class="p">[</span><span class="n">OBSERVATION_CONCEPT_ID</span><span class="p">,</span> <span class="n">OBSERVATION_TYPE_CONCEPT_ID</span><span class="p">]</span>
         <span class="p">)</span>
 
         <span class="n">operations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionBeforeDate</span><span class="p">,</span> <span class="p">[</span><span class="n">OBSERVATION_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;before_date&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">,</span> <span class="p">[</span><span class="n">OBSERVATION_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;after_date&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">,</span> <span class="p">[</span><span class="n">OBSERVATION_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;years&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionInMonths</span><span class="p">,</span> <span class="p">[</span><span class="n">OBSERVATION_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;months&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">Limit</span><span class="p">,</span> <span class="p">[</span><span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;limit&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionBeforeDate</span><span class="p">,</span> <span class="p">[</span><span class="n">OBSERVATION_DATETIME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;before_date&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">,</span> <span class="p">[</span><span class="n">OBSERVATION_DATETIME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;after_date&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">,</span> <span class="p">[</span><span class="n">OBSERVATION_DATETIME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;years&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionInMonths</span><span class="p">,</span> <span class="p">[</span><span class="n">OBSERVATION_DATETIME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;months&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">Limit</span><span class="p">,</span> <span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;limit&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
         <span class="p">]</span>
 
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">process_operations</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">operations</span><span class="p">,</span> <span class="n">process_kwargs</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">process_operations</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">operations</span><span class="p">,</span> <span class="n">process_kwargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
 
@@ -632,15 +632,15 @@
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">MEASUREMENT</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">visit_occurrence_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
                 <span class="n">visit_occurrence_table</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="n">PERSON_ID</span><span class="p">,</span> <span class="n">VISIT_OCCURRENCE_ID</span><span class="p">]</span>
             <span class="p">)(</span><span class="n">table</span><span class="p">)</span>
 
         <span class="c1"># Possibly cast string representations to timestamps</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">Cast</span><span class="p">([</span><span class="n">MEASUREMENT_DATETIME</span><span class="p">],</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Cast</span><span class="p">([</span><span class="n">MEASUREMENT_DATETIME</span><span class="p">],</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
 
         <span class="c1"># Cast value_as_concept_id to int.</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">Cast</span><span class="p">([</span><span class="n">VALUE_AS_CONCEPT_ID</span><span class="p">],</span> <span class="s2">&quot;int&quot;</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Cast</span><span class="p">([</span><span class="n">VALUE_AS_CONCEPT_ID</span><span class="p">],</span> <span class="s2">&quot;int&quot;</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
 
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_map_concept_ids_to_name</span><span class="p">(</span>
             <span class="n">table</span><span class="p">,</span>
@@ -648,14 +648,14 @@
         <span class="p">)</span>
 
         <span class="n">operations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionBeforeDate</span><span class="p">,</span> <span class="p">[</span><span class="n">MEASUREMENT_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;before_date&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">,</span> <span class="p">[</span><span class="n">MEASUREMENT_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;after_date&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">,</span> <span class="p">[</span><span class="n">MEASUREMENT_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;years&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">ConditionInMonths</span><span class="p">,</span> <span class="p">[</span><span class="n">MEASUREMENT_DATETIME</span><span class="p">,</span> <span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;months&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">Limit</span><span class="p">,</span> <span class="p">[</span><span class="n">qp</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;limit&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionBeforeDate</span><span class="p">,</span> <span class="p">[</span><span class="n">MEASUREMENT_DATETIME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;before_date&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">,</span> <span class="p">[</span><span class="n">MEASUREMENT_DATETIME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;after_date&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">,</span> <span class="p">[</span><span class="n">MEASUREMENT_DATETIME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;years&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionInMonths</span><span class="p">,</span> <span class="p">[</span><span class="n">MEASUREMENT_DATETIME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;months&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
+            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">Limit</span><span class="p">,</span> <span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;limit&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
         <span class="p">]</span>
 
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qp</span><span class="o">.</span><span class="n">process_operations</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">operations</span><span class="p">,</span> <span class="n">process_kwargs</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">process_operations</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">operations</span><span class="p">,</span> <span class="n">process_kwargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div></div>
 </pre></div>

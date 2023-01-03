@@ -10,7 +10,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>cyclops.query.postprocess.gemini &mdash; cyclops  documentation</title>
+  <title>cyclops.query.post_process.mimiciv &mdash; cyclops  documentation</title>
       <link rel="stylesheet" href="../../../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../../../../_static/css/cyclops.css" type="text/css" />
       <link rel="stylesheet" href="../../../../../../_static/copybutton.css" type="text/css" />
@@ -159,7 +159,7 @@
   
 
       <li class="wy-breadcrumbs-aside">
-            <a href="../../../../../../_sources/technical/api/cyclops/query/postprocess/gemini/index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../../../../../_sources/technical/api/cyclops/query/post_process/mimiciv/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -167,29 +167,48 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-cyclops.query.postprocess.gemini">
-<span id="cyclops-query-postprocess-gemini"></span><h1><a class="reference internal" href="#module-cyclops.query.postprocess.gemini" title="cyclops.query.postprocess.gemini"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cyclops.query.postprocess.gemini</span></code></a><a class="headerlink" href="#module-cyclops.query.postprocess.gemini" title="Permalink to this headline"></a></h1>
-<p>Post-processing functions applied to queried GEMINI data (Pandas DataFrames).</p>
+  <section id="module-cyclops.query.post_process.mimiciv">
+<span id="cyclops-query-post-process-mimiciv"></span><h1><a class="reference internal" href="#module-cyclops.query.post_process.mimiciv" title="cyclops.query.post_process.mimiciv"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cyclops.query.post_process.mimiciv</span></code></a><a class="headerlink" href="#module-cyclops.query.post_process.mimiciv" title="Permalink to this headline"></a></h1>
+<p>Post-processing functions applied to queried MIMIC data (Pandas DataFrames).</p>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline"></a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="cyclops.query.postprocess.gemini.process_gemini_care_unit_changepoints">
-<span class="sig-name descname"><span class="pre">process_gemini_care_unit_changepoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.2)"><span class="pre">pandas.DataFrame</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.2)"><span class="pre">pandas.DataFrame</span></a></span></span><a class="reference internal" href="../../../../../../_modules/cyclops/query/postprocess/gemini.html#process_gemini_care_unit_changepoints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.postprocess.gemini.process_gemini_care_unit_changepoints" title="Permalink to this definition"></a></dt>
-<dd><p>Process GEMINI changepoint care unit information in a hierarchical fashion.</p>
+<dt class="sig sig-object py" id="cyclops.query.post_process.mimiciv.process_mimic_care_unit_changepoints">
+<span class="sig-name descname"><span class="pre">process_mimic_care_unit_changepoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.2)"><span class="pre">pandas.DataFrame</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.2)"><span class="pre">pandas.DataFrame</span></a></span></span><a class="reference internal" href="../../../../../../_modules/cyclops/query/post_process/mimiciv.html#process_mimic_care_unit_changepoints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.post_process.mimiciv.process_mimic_care_unit_changepoints" title="Permalink to this definition"></a></dt>
+<dd><p>Process MIMIC changepoint care unit information in a hierarchical fashion.</p>
 <p>Using the admit, discharge, and care unit information, create a
 changepoint DataFrame usable for aggregation labelling purposes.
 If a patient is in multiple care units at a changepoint, the care
 unit highest in the hierarchy is selected.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.2)"><em>pandas.DataFrame</em></a>) – The admit, discharge, and care unit information for a single encounter.
-Expects columns “admit”, “discharge”, and CARE_UNIT.</p></li>
-<li><p><strong>care_unit_hierarchy</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – Ordered list of care units from most relevant to to least.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.2)"><em>pandas.DataFrame</em></a>) – The admit, discharge, and care unit information for a single encounter.
+Expects columns “admit”, “discharge”, and CARE_UNIT.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Changepoint information with associated care unit.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.2)">pandas.DataFrame</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cyclops.query.post_process.mimiciv.process_mimic_care_units">
+<span class="sig-name descname"><span class="pre">process_mimic_care_units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transfers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.2)"><span class="pre">pandas.DataFrame</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">specific</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.2)"><span class="pre">pandas.DataFrame</span></a></span></span><a class="reference internal" href="../../../../../../_modules/cyclops/query/post_process/mimiciv.html#process_mimic_care_units"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.post_process.mimiciv.process_mimic_care_units" title="Permalink to this definition"></a></dt>
+<dd><p>Process care unit data.</p>
+<p>Processes the MIMIC Transfers table into a cleaned and simplified care
+units DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>transfers</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.2)"><em>pandas.DataFrame</em></a>) – MIMIC transfers table as a DataFrame.</p></li>
+<li><p><strong>specific</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether care_unit_name column has specific or non-specific care units.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Processed care units for MIMIC encounters.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.2)">pandas.DataFrame</a></p>
