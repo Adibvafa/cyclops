@@ -13,7 +13,6 @@
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/cyclops.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
@@ -187,8 +186,8 @@
 <span class="n">setup_logging</span><span class="p">(</span><span class="n">print_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">)</span>
 
 
-<span class="nd">@dataclass</span>
-<div class="viewcode-block" id="QueryInterface"><a class="viewcode-back" href="../../../technical/api/cyclops/query/interface/index.html#cyclops.query.interface.QueryInterface">[docs]</a><span class="k">class</span> <span class="nc">QueryInterface</span><span class="p">:</span>
+<div class="viewcode-block" id="QueryInterface"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">QueryInterface</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;An interface dataclass to wrap queries, and run them.</span>
 
 <span class="sd">    Parameters</span>
@@ -197,7 +196,7 @@
 <span class="sd">        Database object to create ORM, and query data.</span>
 <span class="sd">    query: cyclops.query.util.TableTypes</span>
 <span class="sd">        The query.</span>
-<span class="sd">    data: pandas.DataFrame</span>
+<span class="sd">    data: pandas.DataFrame or dask.DataFrame</span>
 <span class="sd">        Data returned from executing the query, as Pandas DataFrame.</span>
 <span class="sd">    _run_args: dict</span>
 <span class="sd">        Private dictionary attribute to keep track of arguments</span>
@@ -207,10 +206,10 @@
 
     <span class="n">database</span><span class="p">:</span> <span class="n">Database</span>
     <span class="n">query</span><span class="p">:</span> <span class="n">TableTypes</span>
-    <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">_run_args</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
 
-<div class="viewcode-block" id="QueryInterface.run"><a class="viewcode-back" href="../../../technical/api/cyclops/query/interface/index.html#cyclops.query.interface.QueryInterface.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+<div class="viewcode-block" id="QueryInterface.run"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">backend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;pandas&quot;</span><span class="p">,</span> <span class="s2">&quot;dask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pandas&quot;</span><span class="p">,</span>
@@ -250,14 +249,16 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
 
-<div class="viewcode-block" id="QueryInterface.save"><a class="viewcode-back" href="../../../technical/api/cyclops/query/interface/index.html#cyclops.query.interface.QueryInterface.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;parquet&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="QueryInterface.save"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;parquet&quot;</span><span class="p">,</span> <span class="s2">&quot;csv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;parquet&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Save the query.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        save_path: str</span>
+<span class="sd">        save_path</span>
 <span class="sd">            Path where the file will be saved.</span>
-<span class="sd">        file_format: str</span>
+<span class="sd">        file_format</span>
 <span class="sd">            File format of the file to save.</span>
 
 <span class="sd">        Returns</span>
@@ -281,7 +282,7 @@
 
         <span class="k">return</span> <span class="n">path</span></div>
 
-<div class="viewcode-block" id="QueryInterface.clear_data"><a class="viewcode-back" href="../../../technical/api/cyclops/query/interface/index.html#cyclops.query.interface.QueryInterface.clear_data">[docs]</a>    <span class="k">def</span> <span class="nf">clear_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="QueryInterface.clear_data"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface.clear_data">[docs]</a>    <span class="k">def</span> <span class="nf">clear_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Clear data container.</span>
 
 <span class="sd">        Sets the data attribute to None, thus clearing the dataframe contained.</span>
@@ -290,8 +291,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="kc">None</span></div></div>
 
 
-<span class="nd">@dataclass</span>
-<div class="viewcode-block" id="QueryInterfaceProcessed"><a class="viewcode-back" href="../../../technical/api/cyclops/query/interface/index.html#cyclops.query.interface.QueryInterfaceProcessed">[docs]</a><span class="k">class</span> <span class="nc">QueryInterfaceProcessed</span><span class="p">:</span>
+<div class="viewcode-block" id="QueryInterfaceProcessed"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterfaceProcessed.html#cyclops.query.interface.QueryInterfaceProcessed">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">QueryInterfaceProcessed</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;An interface dataclass to wrap queries, and run them with post-processing.</span>
 
 <span class="sd">    A similar dataclass to QueryInterface, where custom post-processing</span>
@@ -310,7 +311,7 @@
 <span class="sd">    _run_args: dict</span>
 <span class="sd">        Private dictionary attribute to keep track of arguments</span>
 <span class="sd">        passed to run() method.</span>
-<span class="sd">    data: pandas.DataFrame</span>
+<span class="sd">    data: pandas.DataFrame or dask.DataFrame</span>
 <span class="sd">        Data returned from executing the query, as Pandas DataFrame.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -318,13 +319,13 @@
     <span class="n">database</span><span class="p">:</span> <span class="n">Database</span>
     <span class="n">_query</span><span class="p">:</span> <span class="n">TableTypes</span>
     <span class="n">process_fn</span><span class="p">:</span> <span class="n">Callable</span>
-    <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">_run_args</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
 
-<div class="viewcode-block" id="QueryInterfaceProcessed.run"><a class="viewcode-back" href="../../../technical/api/cyclops/query/interface/index.html#cyclops.query.interface.QueryInterfaceProcessed.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+<div class="viewcode-block" id="QueryInterfaceProcessed.run"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterfaceProcessed.html#cyclops.query.interface.QueryInterfaceProcessed.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">backend</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pandas&quot;</span><span class="p">,</span>
+        <span class="n">backend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;pandas&quot;</span><span class="p">,</span> <span class="s2">&quot;dask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pandas&quot;</span><span class="p">,</span>
         <span class="n">index_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">n_partitions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
@@ -332,14 +333,14 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        limit: int, optional</span>
+<span class="sd">        limit</span>
 <span class="sd">            No. of rows to limit the query return.</span>
-<span class="sd">        backend: str, optional</span>
+<span class="sd">        backend</span>
 <span class="sd">            Backend computing framework to use, Pandas or Dask.</span>
-<span class="sd">        index_col: str, optional</span>
+<span class="sd">        index_col</span>
 <span class="sd">            Column which becomes the index, and defines the partitioning.</span>
 <span class="sd">            Should be a indexed column in the SQL server, and any orderable type.</span>
-<span class="sd">        n_partitions: int, optional</span>
+<span class="sd">        n_partitions</span>
 <span class="sd">            Number of partitions. Check dask documentation for additional details.</span>
 
 <span class="sd">        Returns</span>
@@ -367,14 +368,16 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
 
-<div class="viewcode-block" id="QueryInterfaceProcessed.save"><a class="viewcode-back" href="../../../technical/api/cyclops/query/interface/index.html#cyclops.query.interface.QueryInterfaceProcessed.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;parquet&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="QueryInterfaceProcessed.save"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterfaceProcessed.html#cyclops.query.interface.QueryInterfaceProcessed.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;parquet&quot;</span><span class="p">,</span> <span class="s2">&quot;csv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;parquet&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Save the processed query.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        save_path: str</span>
+<span class="sd">        save_path</span>
 <span class="sd">            Path where the file will be saved.</span>
-<span class="sd">        file_format: str</span>
+<span class="sd">        file_format</span>
 <span class="sd">            File format of the file to save.</span>
 
 <span class="sd">        Returns</span>
@@ -390,7 +393,7 @@
 
         <span class="k">return</span> <span class="n">path</span></div>
 
-<div class="viewcode-block" id="QueryInterfaceProcessed.clear_data"><a class="viewcode-back" href="../../../technical/api/cyclops/query/interface/index.html#cyclops.query.interface.QueryInterfaceProcessed.clear_data">[docs]</a>    <span class="k">def</span> <span class="nf">clear_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="QueryInterfaceProcessed.clear_data"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterfaceProcessed.html#cyclops.query.interface.QueryInterfaceProcessed.clear_data">[docs]</a>    <span class="k">def</span> <span class="nf">clear_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Clear data container.</span>
 
 <span class="sd">        Sets the data attribute to None, thus clearing the dataframe contained.</span>
