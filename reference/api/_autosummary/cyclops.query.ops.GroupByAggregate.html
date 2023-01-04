@@ -230,9 +230,9 @@
 <li><p><strong>groupby_cols</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em>) – Columns by which to group.</p></li>
 <li><p><strong>aggfuncs</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – Specify a dictionary of key-value pairs:
 column name: aggfunc string or
-column name: (aggfunc string, new column label) or
-This labelling allows for the aggregation of the same column with
-different functions.</p></li>
+column name: (aggfunc string, new column label)
+This labelling prevents the aggregation of the same column using multiple
+aggregation functions.</p></li>
 <li><p><strong>aggseps</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em>, </em><em>optional</em>) – Specify a dictionary of key-value pairs:
 column name: string_aggfunc separator
 If string_agg used as aggfunc for a column, then a separator must be provided
@@ -244,6 +244,7 @@ for the same column.</p></li>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">GroupByAggregate</span><span class="p">(</span><span class="s2">&quot;person_id&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;person_id&quot;</span><span class="p">:</span> <span class="s2">&quot;count&quot;</span><span class="p">})(</span><span class="n">table</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">GroupByAggregate</span><span class="p">(</span><span class="s2">&quot;person_id&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;person_id&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;visit_count&quot;</span><span class="p">)})(</span><span class="n">table</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">GroupByAggregate</span><span class="p">(</span><span class="s2">&quot;person_id&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;lab_name&quot;</span><span class="p">:</span> <span class="s2">&quot;string_agg&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;lab_name&quot;</span><span class="p">:</span> <span class="s2">&quot;, &quot;</span><span class="p">})(</span><span class="n">table</span><span class="p">)</span>  <span class="c1"># noqa: E501, pylint: disable=line-too-long</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GroupByAggregate</span><span class="p">(</span><span class="s2">&quot;person_id&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;lab_name&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;string_agg&quot;</span><span class="p">,</span> <span class="s2">&quot;lab_name_agg&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;lab_name&quot;</span><span class="p">:</span> <span class="s2">&quot;, &quot;</span><span class="p">})(</span><span class="n">table</span><span class="p">)</span>  <span class="c1"># noqa: E501, pylint: disable=line-too-long</span>
 </pre></div>
 </div>
 <p class="rubric">Methods</p>

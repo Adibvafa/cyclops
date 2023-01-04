@@ -1927,9 +1927,9 @@
 <span class="sd">    aggfuncs: dict</span>
 <span class="sd">        Specify a dictionary of key-value pairs:</span>
 <span class="sd">        column name: aggfunc string or</span>
-<span class="sd">        column name: (aggfunc string, new column label) or</span>
-<span class="sd">        This labelling allows for the aggregation of the same column with</span>
-<span class="sd">        different functions.</span>
+<span class="sd">        column name: (aggfunc string, new column label)</span>
+<span class="sd">        This labelling prevents the aggregation of the same column using multiple</span>
+<span class="sd">        aggregation functions.</span>
 <span class="sd">    aggseps: dict, optional</span>
 <span class="sd">        Specify a dictionary of key-value pairs:</span>
 <span class="sd">        column name: string_aggfunc separator</span>
@@ -1941,6 +1941,7 @@
 <span class="sd">    &gt;&gt;&gt; GroupByAggregate(&quot;person_id&quot;, {&quot;person_id&quot;: &quot;count&quot;})(table)</span>
 <span class="sd">    &gt;&gt;&gt; GroupByAggregate(&quot;person_id&quot;, {&quot;person_id&quot;: (&quot;count&quot;, &quot;visit_count&quot;)})(table)</span>
 <span class="sd">    &gt;&gt;&gt; GroupByAggregate(&quot;person_id&quot;, {&quot;lab_name&quot;: &quot;string_agg&quot;}, {&quot;lab_name&quot;: &quot;, &quot;})(table)  # noqa: E501, pylint: disable=line-too-long</span>
+<span class="sd">    &gt;&gt;&gt; GroupByAggregate(&quot;person_id&quot;, {&quot;lab_name&quot;: (&quot;string_agg&quot;, &quot;lab_name_agg&quot;}, {&quot;lab_name&quot;: &quot;, &quot;})(table)  # noqa: E501, pylint: disable=line-too-long</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
