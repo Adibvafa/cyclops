@@ -181,6 +181,7 @@
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
 
+<span class="kn">import</span> <span class="nn">sqlalchemy</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">and_</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">extract</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">literal_column</span><span class="p">,</span> <span class="n">or_</span><span class="p">,</span> <span class="n">select</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.sql.elements</span> <span class="kn">import</span> <span class="n">BinaryExpression</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.sql.expression</span> <span class="kn">import</span> <span class="n">literal</span>
@@ -1863,6 +1864,45 @@
 
         <span class="n">cond</span> <span class="o">=</span> <span class="n">and_</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">not_equals</span><span class="p">(</span><span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">col</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="Apply"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.Apply.html#cyclops.query.ops.Apply">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Apply</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Apply a function to column(s).</span>
+
+<span class="sd">    The function must take a sqlalchemy column object and also return a column object.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cols: str or list of str</span>
+<span class="sd">        Column(s) to apply the function to.</span>
+<span class="sd">    func: Callable</span>
+<span class="sd">        Function that takes in single sqlalchemy column object and returns a column</span>
+<span class="sd">        after applying the function.</span>
+<span class="sd">    new_cols: str or list of str, optional</span>
+<span class="sd">        New column name(s) after function is applied to the specified column(s).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+    <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">sqlalchemy</span><span class="o">.</span><span class="n">sql</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Column</span><span class="p">],</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">sql</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Column</span><span class="p">]</span>
+    <span class="n">new_cols</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Apply.__call__"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.Apply.html#cyclops.query.ops.Apply.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">apply_to_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_cols</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="OrderBy"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.OrderBy.html#cyclops.query.ops.OrderBy">[docs]</a><span class="nd">@dataclass</span>
