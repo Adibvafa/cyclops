@@ -24,6 +24,7 @@
         <script src="../../../../_static/doctools.js"></script>
         <script src="../../../../_static/clipboard.min.js"></script>
         <script src="../../../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -125,8 +126,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro.html#documentation">📚 Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro.html#notebooks">📓 Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro.html#citation">🎓 Citation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../design.html">Framework Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api.html">API Reference</a></li>
 </ul>
 
@@ -190,10 +191,10 @@
 
 
 <span class="k">class</span> <span class="nc">_AbstractScores</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Abstract base class for classes that compute stat scores.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract base class for classes that compute stat scores.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_create_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Create the state variables.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the state variables.</span>
 
 <span class="sd">        For the stat scores, the state variables are the true positives (tp),</span>
 <span class="sd">        false positives (fp), true negatives (tn), and false negatives (fn).</span>
@@ -225,7 +226,7 @@
     <span class="k">def</span> <span class="nf">_update_state</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">tp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tn</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Update the state variables.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the state variables.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -250,7 +251,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">fn</span> <span class="o">+=</span> <span class="n">fn</span>
 
     <span class="k">def</span> <span class="nf">_final_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return the final state variables.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the final state variables.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -268,7 +269,7 @@
 
 
 <div class="viewcode-block" id="BinaryStatScores"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.metrics.stat_scores.BinaryStatScores.html#cyclops.evaluate.metrics.stat_scores.BinaryStatScores">[docs]</a><span class="k">class</span> <span class="nc">BinaryStatScores</span><span class="p">(</span><span class="n">_AbstractScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;binary_stat_scores&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Compute binary stat scores.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute binary stat scores.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -310,7 +311,7 @@
 <div class="viewcode-block" id="BinaryStatScores.update_state"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.metrics.stat_scores.BinaryStatScores.html#cyclops.evaluate.metrics.stat_scores.BinaryStatScores.update_state">[docs]</a>    <span class="k">def</span> <span class="nf">update_state</span><span class="p">(</span>  <span class="c1"># pylint: disable=arguments-differ</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-        <span class="sd">&quot;&quot;&quot;Update the state variables.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the state variables.&quot;&quot;&quot;</span>
         <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_binary_stat_scores_format</span><span class="p">(</span>
             <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pos_label</span>
         <span class="p">)</span>
@@ -321,7 +322,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_state</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BinaryStatScores.compute"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.metrics.stat_scores.BinaryStatScores.html#cyclops.evaluate.metrics.stat_scores.BinaryStatScores.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Compute the binary stat scores from the state variables.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the binary stat scores from the state variables.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -336,7 +337,7 @@
 
 
 <div class="viewcode-block" id="MulticlassStatScores"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.metrics.stat_scores.MulticlassStatScores.html#cyclops.evaluate.metrics.stat_scores.MulticlassStatScores">[docs]</a><span class="k">class</span> <span class="nc">MulticlassStatScores</span><span class="p">(</span><span class="n">_AbstractScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multiclass_stat_scores&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Compute multiclass stat scores.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute multiclass stat scores.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -403,7 +404,7 @@
 <div class="viewcode-block" id="MulticlassStatScores.update_state"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.metrics.stat_scores.MulticlassStatScores.html#cyclops.evaluate.metrics.stat_scores.MulticlassStatScores.update_state">[docs]</a>    <span class="k">def</span> <span class="nf">update_state</span><span class="p">(</span>  <span class="c1"># pylint: disable=arguments-differ</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-        <span class="sd">&quot;&quot;&quot;Update the state variables.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the state variables.&quot;&quot;&quot;</span>
         <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_multiclass_stat_scores_format</span><span class="p">(</span>
             <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">top_k</span>
         <span class="p">)</span>
@@ -413,7 +414,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_state</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MulticlassStatScores.compute"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.metrics.stat_scores.MulticlassStatScores.html#cyclops.evaluate.metrics.stat_scores.MulticlassStatScores.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Compute the multiclass stat scores from the state variables.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the multiclass stat scores from the state variables.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -431,7 +432,7 @@
 
 
 <div class="viewcode-block" id="MultilabelStatScores"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.metrics.stat_scores.MultilabelStatScores.html#cyclops.evaluate.metrics.stat_scores.MultilabelStatScores">[docs]</a><span class="k">class</span> <span class="nc">MultilabelStatScores</span><span class="p">(</span><span class="n">_AbstractScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multilabel_stat_scores&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Compute stat scores for multilabel problems.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute stat scores for multilabel problems.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -489,7 +490,7 @@
 <div class="viewcode-block" id="MultilabelStatScores.update_state"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.metrics.stat_scores.MultilabelStatScores.html#cyclops.evaluate.metrics.stat_scores.MultilabelStatScores.update_state">[docs]</a>    <span class="k">def</span> <span class="nf">update_state</span><span class="p">(</span>  <span class="c1"># pylint: disable=arguments-differ</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-        <span class="sd">&quot;&quot;&quot;Update the state variables.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the state variables.&quot;&quot;&quot;</span>
         <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_multilabel_stat_scores_format</span><span class="p">(</span>
             <span class="n">target</span><span class="p">,</span>
             <span class="n">preds</span><span class="p">,</span>
@@ -503,7 +504,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_state</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">tn</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MultilabelStatScores.compute"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.metrics.stat_scores.MultilabelStatScores.html#cyclops.evaluate.metrics.stat_scores.MultilabelStatScores.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Compute the multilabel stat scores from the state variables.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the multilabel stat scores from the state variables.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -521,7 +522,7 @@
 
 
 <div class="viewcode-block" id="StatScores"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.metrics.stat_scores.StatScores.html#cyclops.evaluate.metrics.stat_scores.StatScores">[docs]</a><span class="k">class</span> <span class="nc">StatScores</span><span class="p">(</span><span class="n">Metric</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;stat_scores&quot;</span><span class="p">,</span> <span class="n">force_register</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Compute stat scores for binary, multiclass and multilabel problems.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute stat scores for binary, multiclass and multilabel problems.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -634,7 +635,7 @@
         <span class="n">num_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">labelwise</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Metric</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Create a task-specific instance of the StatScores metric.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a task-specific instance of the StatScores metric.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;binary&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">BinaryStatScores</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">:</span>
