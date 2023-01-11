@@ -1297,6 +1297,66 @@
         <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div></div>
 
 
+<div class="viewcode-block" id="ConditionRegexMatch"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.ConditionRegexMatch.html#cyclops.query.ops.ConditionRegexMatch">[docs]</a><span class="k">class</span> <span class="nc">ConditionRegexMatch</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter rows based on matching a regular expression.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    col: str</span>
+<span class="sd">        Column name on which to condition.</span>
+<span class="sd">    regex: str</span>
+<span class="sd">        Regular expression to match.</span>
+<span class="sd">    not_: bool, default=False</span>
+<span class="sd">        Take negation of condition.</span>
+<span class="sd">    binarize_col: str, optional</span>
+<span class="sd">        If specified, create a Boolean column of name binarize_col instead of filtering.</span>
+<span class="sd">    **cond_kwargs</span>
+<span class="sd">        Optional keyword arguments for processing the condition.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ConditionRegexMatch.__init__"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.ConditionRegexMatch.html#cyclops.query.ops.ConditionRegexMatch.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">regex</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">not_</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">binarize_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">cond_kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col</span> <span class="o">=</span> <span class="n">col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regex</span> <span class="o">=</span> <span class="n">regex</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">not_</span> <span class="o">=</span> <span class="n">not_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="o">=</span> <span class="n">binarize_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span> <span class="o">=</span> <span class="n">cond_kwargs</span></div>
+
+<div class="viewcode-block" id="ConditionRegexMatch.__call__"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.ConditionRegexMatch.html#cyclops.query.ops.ConditionRegexMatch.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+        <span class="n">cond</span> <span class="o">=</span> <span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">regexp_match</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_</span><span class="p">:</span>
+            <span class="n">cond</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">_negate</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">select</span><span class="p">(</span>
+                <span class="n">table</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">Boolean</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div></div>
+
+
 <div class="viewcode-block" id="ConditionIn"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.ConditionIn.html#cyclops.query.ops.ConditionIn">[docs]</a><span class="k">class</span> <span class="nc">ConditionIn</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter rows based on having a value in list of values.</span>
 
