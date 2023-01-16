@@ -137,17 +137,18 @@
 <li class="toctree-l3"><a class="reference internal" href="#Imports-and-instantiate-MIMICIVQuerier">Imports and instantiate <code class="docutils literal notranslate"><span class="pre">MIMICIVQuerier</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Example-1.-Get-all-patient-encounters-from-2015-(approximate-year-of-care).">Example 1. Get all patient encounters from 2015 (approximate year of care).</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Example-2.-Get-all-patient-encounters-with-diagnoses-(schizophrenia-in-ICD-long-title),-in-the-year-2015.">Example 2. Get all patient encounters with diagnoses (<code class="docutils literal notranslate"><span class="pre">schizophrenia</span></code> in ICD long title), in the year 2015.</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Example-3.-Advanced---uses-regexp_match-from-sqlalchemy.-Get-all-patient-encounters-with-diagnoses-(ICD-long-title-contains-schizophrenia-and-chronic-),-in-the-year-2015.">Example 3. Advanced - uses regexp_match from sqlalchemy. Get all patient encounters with diagnoses (ICD long title contains <code class="docutils literal notranslate"><span class="pre">schizophrenia</span></code> and <code class="docutils literal notranslate"><span class="pre">chronic</span></code> ), in the year 2015.</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Example-4.-Advanced---uses-cyclops.query.utils.starts_with-helper-function.-Get-all-patient-encounters-with-diagnoses-(starts-with-Paranoid-in-ICD-long-title),-in-the-year-2015.">Example 4. Advanced - uses cyclops.query.utils.starts_with helper function. Get all patient encounters with diagnoses (starts with <code class="docutils literal notranslate"><span class="pre">Paranoid</span></code> in ICD long title), in the year 2015.</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Example-3.-Advanced---uses-ConditionRegexMatch-from-cyclops.query.ops.-Get-all-patient-encounters-with-diagnoses-(ICD-long-title-contains-schizophrenia-and-chronic-),-in-the-year-2015.">Example 3. Advanced - uses <code class="docutils literal notranslate"><span class="pre">ConditionRegexMatch</span></code> from <code class="docutils literal notranslate"><span class="pre">cyclops.query.ops</span></code>. Get all patient encounters with diagnoses (ICD long title contains <code class="docutils literal notranslate"><span class="pre">schizophrenia</span></code> and <code class="docutils literal notranslate"><span class="pre">chronic</span></code> ), in the year 2015.</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Example-4.-Advanced---uses-ConditionStartsWith-from-cyclops.query.ops.-Get-all-patient-encounters-with-diagnoses-(starts-with-Paranoid-in-ICD-long-title),-in-the-year-2015.">Example 4. Advanced - uses <code class="docutils literal notranslate"><span class="pre">ConditionStartsWith</span></code> from cyclops.query.ops. Get all patient encounters with diagnoses (starts with <code class="docutils literal notranslate"><span class="pre">Paranoid</span></code> in ICD long title), in the year 2015.</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Example-5.-Get-all-patient-encounters-with-diagnoses-(ICD-code-is-F209).">Example 5. Get all patient encounters with diagnoses (ICD code is F209).</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Example-6.-Get-all-patient-encounters-with-diagnoses-(delirium-in-ICD-long-title).">Example 6. Get all patient encounters with diagnoses (<code class="docutils literal notranslate"><span class="pre">delirium</span></code> in ICD long title).</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Example-7.-Get-routine-vital-signs-for-patients-from-year-2015,-limit-to-100-rows.">Example 7. Get routine vital signs for patients from year 2015, limit to 100 rows.</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Example-8.-Get-hemoglobin-lab-tests-for-patients-from-year-2009,-limit-to-100-rows.">Example 8. Get hemoglobin lab tests for patients from year 2009, limit to 100 rows.</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Example-9.-Get-all-lab-events-for-patients-from-year-2010,-that-match-substring-“sodium”,-limit-to-100-rows.">Example 9. Get all lab events for patients from year 2010, that match substring “sodium”, limit to 100 rows.</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Example-10.-Get-respiratory-events-for-patients-from-year-2009,-limit-to-100-rows.">Example 10. Get respiratory events for patients from year 2009, limit to 100 rows.</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Example-11.-Get-heart-rate-measurements-of-patients-with-delirium-diagnoses,-limit-to-1000-rows.">Example 11. Get heart rate measurements of patients with delirium diagnoses, limit to 1000 rows.</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Example-11.-Get-heart-rate-measurements-of-patients-with-delirium-diagnoses,-limit-to-100-rows.">Example 11. Get heart rate measurements of patients with delirium diagnoses, limit to 100 rows.</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Example-12.-Get-d_items-dimension-table,-for-quick-reference.">Example 12. Get d_items dimension table, for quick reference.</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Example-13.-Running-a-raw-SQL-string.">Example 13. Running a raw SQL string.</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Example-13.-Get-all-female-patient-encounters-from-year-2015,-and-return-as-dask-dataframe-(lazy-evaluation)-with-4-partitions-(batches).">Example 13. Get all female patient encounters from year 2015, and return as dask dataframe (lazy evaluation) with 4 partitions (batches).</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Example-14.-Running-a-raw-SQL-string.">Example 14. Running a raw SQL string.</a></li>
 </ul>
 </li>
 </ul>
@@ -451,7 +452,7 @@ div.rendered_html tbody tr:hover {
 </style>
 <section id="MIMIC-IV-query-API-tutorial">
 <h1>MIMIC-IV query API tutorial<a class="headerlink" href="#MIMIC-IV-query-API-tutorial" title="Permalink to this headline"></a></h1>
-<p>This notebook shows examples of how to use the cyclops.query API on MIMIC-IV.</p>
+<p>This notebook shows examples of how to use the cyclops.query API on <a class="reference external" href="https://physionet.org/content/mimiciv/2.0/">MIMIC-IV v2.0</a>.</p>
 <ul class="simple">
 <li><p>First, setup the MIMIC-IV database according to the instructions in <a class="reference external" href="https://github.com/MIT-LCP/mimic-code/tree/main/mimic-iv/buildmimic/postgres">mimic-code</a>.</p></li>
 <li><p>The database is assumed to be hosted using postgres. Update the config parameters such as username and password, passed to <code class="docutils literal notranslate"><span class="pre">MIMICIVQuerier</span></code> accordingly.</p></li>
@@ -462,10 +463,8 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">select</span>
-
-<span class="kn">import</span> <span class="nn">cyclops.query.util</span> <span class="k">as</span> <span class="nn">query_util</span>
-<span class="kn">from</span> <span class="nn">cyclops.query.mimiciv</span> <span class="kn">import</span> <span class="n">MIMICIVQuerier</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cyclops.query</span> <span class="kn">import</span> <span class="n">MIMICIVQuerier</span>
+<span class="kn">from</span> <span class="nn">cyclops.query.ops</span> <span class="kn">import</span> <span class="n">ConditionRegexMatch</span><span class="p">,</span> <span class="n">ConditionStartsWith</span>
 
 <span class="n">mimic</span> <span class="o">=</span> <span class="n">MIMICIVQuerier</span><span class="p">(</span>
     <span class="n">dbms</span><span class="o">=</span><span class="s2">&quot;postgresql&quot;</span><span class="p">,</span>
@@ -483,7 +482,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-10 11:40:23,775 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
+2023-01-16 12:34:11,469 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
 </pre></div></div>
 </div>
 </section>
@@ -504,8 +503,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-10 11:40:25,133 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-10 11:40:25,135 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 1.330279 s
+2023-01-16 12:34:12,619 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-01-16 12:34:12,620 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 1.107362 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -538,8 +537,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-10 11:40:25,928 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-10 11:40:25,929 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.760619 s
+2023-01-16 12:34:13,405 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-01-16 12:34:13,406 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.756868 s
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -591,27 +590,19 @@ Name: diagnosis_title, dtype: int64
 </pre></div></div>
 </div>
 </section>
-<section id="Example-3.-Advanced---uses-regexp_match-from-sqlalchemy.-Get-all-patient-encounters-with-diagnoses-(ICD-long-title-contains-schizophrenia-and-chronic-),-in-the-year-2015.">
-<h2>Example 3. Advanced - uses regexp_match from sqlalchemy. Get all patient encounters with diagnoses (ICD long title contains <code class="docutils literal notranslate"><span class="pre">schizophrenia</span></code> and <code class="docutils literal notranslate"><span class="pre">chronic</span></code> ), in the year 2015.<a class="headerlink" href="#Example-3.-Advanced---uses-regexp_match-from-sqlalchemy.-Get-all-patient-encounters-with-diagnoses-(ICD-long-title-contains-schizophrenia-and-chronic-),-in-the-year-2015." title="Permalink to this headline"></a></h2>
+<section id="Example-3.-Advanced---uses-ConditionRegexMatch-from-cyclops.query.ops.-Get-all-patient-encounters-with-diagnoses-(ICD-long-title-contains-schizophrenia-and-chronic-),-in-the-year-2015.">
+<h2>Example 3. Advanced - uses <code class="docutils literal notranslate"><span class="pre">ConditionRegexMatch</span></code> from <code class="docutils literal notranslate"><span class="pre">cyclops.query.ops</span></code>. Get all patient encounters with diagnoses (ICD long title contains <code class="docutils literal notranslate"><span class="pre">schizophrenia</span></code> and <code class="docutils literal notranslate"><span class="pre">chronic</span></code> ), in the year 2015.<a class="headerlink" href="#Example-3.-Advanced---uses-ConditionRegexMatch-from-cyclops.query.ops.-Get-all-patient-encounters-with-diagnoses-(ICD-long-title-contains-schizophrenia-and-chronic-),-in-the-year-2015." title="Permalink to this headline"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">encounters</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">patient_encounters</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="p">[</span><span class="mi">2015</span><span class="p">])</span>
 <span class="n">diagnoses</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">patient_diagnoses</span><span class="p">(</span><span class="n">patients</span><span class="o">=</span><span class="n">encounters</span><span class="p">)</span>
-<span class="n">subquery</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">select</span><span class="p">(</span><span class="n">diagnoses</span><span class="o">.</span><span class="n">query</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">where</span><span class="p">(</span>
-        <span class="n">diagnoses</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">diagnosis_title</span><span class="o">.</span><span class="n">regexp_match</span><span class="p">(</span>
-            <span class="s2">&quot;(?=.*schizophrenia)(?=.*chronic)&quot;</span>
-        <span class="p">)</span>
-    <span class="p">)</span>
-    <span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
-<span class="p">)</span>
-<span class="n">patients_schizophrenia_chronic</span> <span class="o">=</span> <span class="n">diagnoses</span>
-<span class="n">patients_schizophrenia_chronic</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">subquery</span>
-<span class="n">patients_schizophrenia_chronic</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">patients_schizophrenia_chronic</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
+<span class="n">patients_schizophrenia_chronic</span> <span class="o">=</span> <span class="n">ConditionRegexMatch</span><span class="p">(</span>
+    <span class="s2">&quot;diagnosis_title&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;(?=.*schizophrenia)(?=.*chronic)&quot;</span>
+<span class="p">)(</span><span class="n">diagnoses</span><span class="o">.</span><span class="n">query</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">get_interface</span><span class="p">(</span><span class="n">patients_schizophrenia_chronic</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -620,8 +611,8 @@ Name: diagnosis_title, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-10 11:40:27,576 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-10 11:40:27,577 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 1.606089 s
+2023-01-16 12:34:14,681 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-01-16 12:34:14,682 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 1.248306 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -633,23 +624,17 @@ Name: diagnosis_title, dtype: int64
 </pre></div></div>
 </div>
 </section>
-<section id="Example-4.-Advanced---uses-cyclops.query.utils.starts_with-helper-function.-Get-all-patient-encounters-with-diagnoses-(starts-with-Paranoid-in-ICD-long-title),-in-the-year-2015.">
-<h2>Example 4. Advanced - uses cyclops.query.utils.starts_with helper function. Get all patient encounters with diagnoses (starts with <code class="docutils literal notranslate"><span class="pre">Paranoid</span></code> in ICD long title), in the year 2015.<a class="headerlink" href="#Example-4.-Advanced---uses-cyclops.query.utils.starts_with-helper-function.-Get-all-patient-encounters-with-diagnoses-(starts-with-Paranoid-in-ICD-long-title),-in-the-year-2015." title="Permalink to this headline"></a></h2>
+<section id="Example-4.-Advanced---uses-ConditionStartsWith-from-cyclops.query.ops.-Get-all-patient-encounters-with-diagnoses-(starts-with-Paranoid-in-ICD-long-title),-in-the-year-2015.">
+<h2>Example 4. Advanced - uses <code class="docutils literal notranslate"><span class="pre">ConditionStartsWith</span></code> from cyclops.query.ops. Get all patient encounters with diagnoses (starts with <code class="docutils literal notranslate"><span class="pre">Paranoid</span></code> in ICD long title), in the year 2015.<a class="headerlink" href="#Example-4.-Advanced---uses-ConditionStartsWith-from-cyclops.query.ops.-Get-all-patient-encounters-with-diagnoses-(starts-with-Paranoid-in-ICD-long-title),-in-the-year-2015." title="Permalink to this headline"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">encounters</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">patient_encounters</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="p">[</span><span class="mi">2015</span><span class="p">])</span>
 <span class="n">diagnoses</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">patient_diagnoses</span><span class="p">(</span><span class="n">patients</span><span class="o">=</span><span class="n">encounters</span><span class="p">)</span>
-<span class="n">subquery</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">select</span><span class="p">(</span><span class="n">diagnoses</span><span class="o">.</span><span class="n">query</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">query_util</span><span class="o">.</span><span class="n">starts_with</span><span class="p">(</span><span class="n">diagnoses</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">diagnosis_title</span><span class="p">,</span> <span class="s2">&quot;Paranoid&quot;</span><span class="p">))</span>
-    <span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
-<span class="p">)</span>
-<span class="n">patients_schizophrenia</span> <span class="o">=</span> <span class="n">diagnoses</span>
-<span class="n">patients_schizophrenia</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">subquery</span>
-<span class="n">patients_schizophrenia</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">patients_schizophrenia</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
+<span class="n">patients_paranoia</span> <span class="o">=</span> <span class="n">ConditionStartsWith</span><span class="p">(</span><span class="s2">&quot;diagnosis_title&quot;</span><span class="p">,</span> <span class="s2">&quot;Paranoid&quot;</span><span class="p">)(</span><span class="n">diagnoses</span><span class="o">.</span><span class="n">query</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">get_interface</span><span class="p">(</span><span class="n">patients_paranoia</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -658,8 +643,8 @@ Name: diagnosis_title, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-10 11:40:36,607 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-10 11:40:36,608 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 8.971026 s
+2023-01-16 12:34:24,056 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-01-16 12:34:24,057 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 9.342424 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -689,8 +674,8 @@ Name: diagnosis_title, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-10 11:40:46,239 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-10 11:40:46,239 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 9.602344 s
+2023-01-16 12:34:32,477 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-01-16 12:34:32,478 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 8.393982 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -722,8 +707,8 @@ Name: diagnosis_title, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-10 11:40:47,116 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-10 11:40:47,117 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.858650 s
+2023-01-16 12:34:33,139 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-01-16 12:34:33,140 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.645764 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -764,19 +749,19 @@ Opioid use, unspecified with intoxication delirium                              
 Presenile dementia with delirium                                                    8
 Other stimulant abuse with intoxication delirium                                    7
 Other psychoactive substance abuse with intoxication delirium                       6
-Opioid abuse with intoxication delirium                                             5
 Cocaine abuse with intoxication with delirium                                       5
+Opioid abuse with intoxication delirium                                             5
 Other psychoactive substance use, unspecified with withdrawal delirium              4
-Other stimulant dependence with intoxication delirium                               3
 Hallucinogen abuse with intoxication with delirium                                  3
+Other stimulant dependence with intoxication delirium                               3
 Cocaine dependence with intoxication delirium                                       3
-Cannabis abuse with intoxication delirium                                           2
-Sedative, hypnotic or anxiolytic use, unspecified with intoxication delirium        2
-Sedative, hypnotic or anxiolytic dependence with intoxication delirium              2
-Sedative, hypnotic or anxiolytic abuse with intoxication delirium                   2
 Hallucinogen use, unspecified with intoxication with delirium                       2
-Opioid dependence with intoxication delirium                                        2
+Sedative, hypnotic or anxiolytic abuse with intoxication delirium                   2
+Sedative, hypnotic or anxiolytic dependence with intoxication delirium              2
 Other psychoactive substance dependence with intoxication delirium                  2
+Opioid dependence with intoxication delirium                                        2
+Sedative, hypnotic or anxiolytic use, unspecified with intoxication delirium        2
+Cannabis abuse with intoxication delirium                                           2
 Other stimulant use, unspecified with intoxication delirium                         1
 Cannabis use, unspecified with intoxication delirium                                1
 Other psychoactive substance dependence with withdrawal delirium                    1
@@ -805,8 +790,8 @@ Name: diagnosis_title, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-10 11:42:37,628 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-10 11:42:37,630 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 110.449480 s
+2023-01-16 12:36:09,988 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-01-16 12:36:09,990 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 96.810362 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -840,8 +825,8 @@ Name: diagnosis_title, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-10 11:42:39,817 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-10 11:42:39,819 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 1.730873 s
+2023-01-16 12:36:11,696 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-01-16 12:36:11,698 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 1.677006 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -875,8 +860,8 @@ Name: diagnosis_title, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-10 11:42:41,187 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-10 11:42:41,188 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 1.321206 s
+2023-01-16 12:36:14,289 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-01-16 12:36:14,290 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 2.549300 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -908,8 +893,8 @@ Name: diagnosis_title, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-10 11:44:01,944 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-10 11:44:01,946 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 80.729833 s
+2023-01-16 12:37:35,834 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-01-16 12:37:35,836 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 81.502515 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -921,8 +906,8 @@ Name: diagnosis_title, dtype: int64
 </pre></div></div>
 </div>
 </section>
-<section id="Example-11.-Get-heart-rate-measurements-of-patients-with-delirium-diagnoses,-limit-to-1000-rows.">
-<h2>Example 11. Get heart rate measurements of patients with delirium diagnoses, limit to 1000 rows.<a class="headerlink" href="#Example-11.-Get-heart-rate-measurements-of-patients-with-delirium-diagnoses,-limit-to-1000-rows." title="Permalink to this headline"></a></h2>
+<section id="Example-11.-Get-heart-rate-measurements-of-patients-with-delirium-diagnoses,-limit-to-100-rows.">
+<h2>Example 11. Get heart rate measurements of patients with delirium diagnoses, limit to 100 rows.<a class="headerlink" href="#Example-11.-Get-heart-rate-measurements-of-patients-with-delirium-diagnoses,-limit-to-100-rows." title="Permalink to this headline"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
@@ -935,7 +920,7 @@ Name: diagnosis_title, dtype: int64
 <span class="n">patients_delirium_heart_rate</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">events</span><span class="p">(</span>
     <span class="n">event_names</span><span class="o">=</span><span class="s2">&quot;Heart Rate&quot;</span><span class="p">,</span> <span class="n">patient_encounters_table</span><span class="o">=</span><span class="n">delirium_encounters</span><span class="o">.</span><span class="n">query</span>
 <span class="p">)</span>
-<span class="n">patients_delirium_heart_rate</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">patients_delirium_heart_rate</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">patients_delirium_heart_rate</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -945,8 +930,8 @@ Name: diagnosis_title, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-10 11:45:19,801 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-10 11:45:19,802 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 77.812058 s
+2023-01-16 12:38:50,455 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-01-16 12:38:50,457 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 74.580848 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -954,7 +939,7 @@ Name: diagnosis_title, dtype: int64
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-1000 rows extracted!
+100 rows extracted!
 </pre></div></div>
 </div>
 </section>
@@ -975,8 +960,8 @@ Name: diagnosis_title, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-10 11:45:19,829 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-10 11:45:19,830 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.019274 s
+2023-01-16 12:38:50,497 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-01-16 12:38:50,498 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.030484 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -988,10 +973,44 @@ Name: diagnosis_title, dtype: int64
 </pre></div></div>
 </div>
 </section>
-<section id="Example-13.-Running-a-raw-SQL-string.">
-<h2>Example 13. Running a raw SQL string.<a class="headerlink" href="#Example-13.-Running-a-raw-SQL-string." title="Permalink to this headline"></a></h2>
+<section id="Example-13.-Get-all-female-patient-encounters-from-year-2015,-and-return-as-dask-dataframe-(lazy-evaluation)-with-4-partitions-(batches).">
+<h2>Example 13. Get all female patient encounters from year 2015, and return as dask dataframe (lazy evaluation) with 4 partitions (batches).<a class="headerlink" href="#Example-13.-Get-all-female-patient-encounters-from-year-2015,-and-return-as-dask-dataframe-(lazy-evaluation)-with-4-partitions-(batches)." title="Permalink to this headline"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">encounters</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">patient_encounters</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">2015</span><span class="p">,</span> <span class="n">sex</span><span class="o">=</span><span class="s2">&quot;F&quot;</span><span class="p">)</span>
+<span class="n">encounters</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s2">&quot;dask&quot;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="s2">&quot;encounter_id&quot;</span><span class="p">,</span> <span class="n">n_partitions</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">encounters</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Return type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">encounters</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of partitions: </span><span class="si">{</span><span class="n">encounters</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">npartitions</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+2023-01-16 12:38:51,143 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-01-16 12:38:51,143 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.618330 s
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+35639 rows extracted!
+Return type: &lt;class &#39;dask.dataframe.core.DataFrame&#39;&gt;
+Number of partitions: 4
+</pre></div></div>
+</div>
+</section>
+<section id="Example-14.-Running-a-raw-SQL-string.">
+<h2>Example 14. Running a raw SQL string.<a class="headerlink" href="#Example-14.-Running-a-raw-SQL-string." title="Permalink to this headline"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">_db</span><span class="o">.</span><span class="n">run_query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM mimiciv_hosp.admissions LIMIT 100&quot;</span><span class="p">)</span>
@@ -1004,8 +1023,8 @@ Name: diagnosis_title, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-10 11:45:19,842 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-10 11:45:19,843 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.006526 s
+2023-01-16 12:38:52,854 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-01-16 12:38:52,854 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.008507 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
