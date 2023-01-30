@@ -210,7 +210,7 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.gemini.GEMINIQuerier.care_units" title="cyclops.query.gemini.GEMINIQuerier.care_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">care_units</span></code></a></p></td>
-<td><p>Query care unit data.</p></td>
+<td><p>Query care unit data, fetches transfer info from multiple tables.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.gemini.GEMINIQuerier.diagnoses" title="cyclops.query.gemini.GEMINIQuerier.diagnoses"><code class="xref py py-obj docutils literal notranslate"><span class="pre">diagnoses</span></code></a></p></td>
 <td><p>Query diagnosis data.</p></td>
@@ -222,7 +222,7 @@
 <td><p>Get a table and possibly map columns to have standard names.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.gemini.GEMINIQuerier.imaging" title="cyclops.query.gemini.GEMINIQuerier.imaging"><code class="xref py py-obj docutils literal notranslate"><span class="pre">imaging</span></code></a></p></td>
-<td><p>Query imaging data.</p></td>
+<td><p>Query imaging reports data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.gemini.GEMINIQuerier.ip_admin" title="cyclops.query.gemini.GEMINIQuerier.ip_admin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ip_admin</span></code></a></p></td>
 <td><p>Query GEMINI patient encounters.</p></td>
@@ -249,12 +249,12 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="cyclops.query.gemini.GEMINIQuerier.care_units">
 <span class="sig-name descname"><span class="pre">care_units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">join</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/gemini.html#GEMINIQuerier.care_units"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.gemini.GEMINIQuerier.care_units" title="Permalink to this definition"></a></dt>
-<dd><p>Query care unit data.</p>
+<dd><p>Query care unit data, fetches transfer info from multiple tables.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>join</strong> (<em>qo.JoinArgs</em><em>, </em><em>optional</em>) – </p></li>
-<li><p><strong>ops</strong> (<em>qo.Sequential</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>join</strong> (<em>qo.JoinArgs</em><em>, </em><em>optional</em>) – Join arguments.</p></li>
+<li><p><strong>ops</strong> (<em>qo.Sequential</em><em>, </em><em>optional</em>) – Additional operations to perform on the table.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -273,8 +273,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>join</strong> (<em>qo.JoinArgs</em><em>, </em><em>optional</em>) – </p></li>
-<li><p><strong>ops</strong> (<em>qo.Sequential</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>join</strong> (<em>qo.JoinArgs</em><em>, </em><em>optional</em>) – Join arguments.</p></li>
+<li><p><strong>ops</strong> (<em>qo.Sequential</em><em>, </em><em>optional</em>) – Additional operations to perform on the table.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -336,12 +336,12 @@ recognized in downstream processing.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="cyclops.query.gemini.GEMINIQuerier.imaging">
 <span class="sig-name descname"><span class="pre">imaging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">join</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/gemini.html#GEMINIQuerier.imaging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.gemini.GEMINIQuerier.imaging" title="Permalink to this definition"></a></dt>
-<dd><p>Query imaging data.</p>
+<dd><p>Query imaging reports data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>join</strong> (<em>qo.JoinArgs</em><em>, </em><em>optional</em>) – </p></li>
-<li><p><strong>ops</strong> (<em>qo.Sequential</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>join</strong> (<em>qo.JoinArgs</em><em>, </em><em>optional</em>) – Join arguments.</p></li>
+<li><p><strong>ops</strong> (<em>qo.Sequential</em><em>, </em><em>optional</em>) – Additional operations to perform on the table.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -358,11 +358,17 @@ recognized in downstream processing.</p>
 <span class="sig-name descname"><span class="pre">ip_admin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">join</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/gemini.html#GEMINIQuerier.ip_admin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.gemini.GEMINIQuerier.ip_admin" title="Permalink to this definition"></a></dt>
 <dd><p>Query GEMINI patient encounters.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Constructed query, wrapped in an interface object.</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>join</strong> (<em>qo.JoinArgs</em><em>, </em><em>optional</em>) – Join arguments.</p></li>
+<li><p><strong>ops</strong> (<em>qo.Sequential</em><em>, </em><em>optional</em>) – Additional operations to perform on the table.</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface">cyclops.query.interface.QueryInterface</a></p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Constructed query, wrapped in an interface object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface">cyclops.query.interface.QueryInterface</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -388,8 +394,8 @@ recognized in downstream processing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>join</strong> (<em>qo.JoinArgs</em><em>, </em><em>optional</em>) – </p></li>
-<li><p><strong>ops</strong> (<em>qo.Sequential</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>join</strong> (<em>qo.JoinArgs</em><em>, </em><em>optional</em>) – Join arguments.</p></li>
+<li><p><strong>ops</strong> (<em>qo.Sequential</em><em>, </em><em>optional</em>) – Additional operations to perform on the table.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
