@@ -137,7 +137,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Synthea query API tutorial</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Imports-and-instantiate-OMOPQuerier">Imports and instantiate <code class="docutils literal notranslate"><span class="pre">OMOPQuerier</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Example-1.-Get-all-patient-visits-in-or-after-2010.">Example 1. Get all patient visits in or after 2010.</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Example-2.-Get-measurements-for-all-visits-in-or-after-2020.">Example 2. Get measurements for all visits in or after 2020.</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Example-2.-Get-measurements-for-all-visits-in-or-after-2020,-limit-to-first-100-rows.">Example 2. Get measurements for all visits in or after 2020, limit to first 100 rows.</a></li>
 </ul>
 </li>
 </ul>
@@ -449,13 +449,13 @@ div.rendered_html tbody tr:hover {
 <section id="Imports-and-instantiate-OMOPQuerier">
 <h2>Imports and instantiate <code class="docutils literal notranslate"><span class="pre">OMOPQuerier</span></code><a class="headerlink" href="#Imports-and-instantiate-OMOPQuerier" title="Permalink to this headline"></a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
+<span class="kn">import</span> <span class="nn">cyclops.query.ops</span> <span class="k">as</span> <span class="nn">qo</span>
 <span class="kn">from</span> <span class="nn">cyclops.query</span> <span class="kn">import</span> <span class="n">OMOPQuerier</span>
-<span class="kn">from</span> <span class="nn">cyclops.query.ops</span> <span class="kn">import</span> <span class="n">ConditionAfterDate</span>
 
 <span class="n">synthea</span> <span class="o">=</span> <span class="n">OMOPQuerier</span><span class="p">(</span>
     <span class="n">dbms</span><span class="o">=</span><span class="s2">&quot;postgresql&quot;</span><span class="p">,</span>
@@ -466,29 +466,8 @@ div.rendered_html tbody tr:hover {
     <span class="n">password</span><span class="o">=</span><span class="s2">&quot;pwd&quot;</span><span class="p">,</span>
     <span class="n">schema_name</span><span class="o">=</span><span class="s2">&quot;cdm_synthea10&quot;</span><span class="p">,</span>
 <span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-2023-01-16 12:41:50,331 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
-</pre></div></div>
-</div>
-</section>
-<section id="Example-1.-Get-all-patient-visits-in-or-after-2010.">
-<h2>Example 1. Get all patient visits in or after 2010.<a class="headerlink" href="#Example-1.-Get-all-patient-visits-in-or-after-2010." title="Permalink to this headline"></a></h2>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">visits</span> <span class="o">=</span> <span class="n">synthea</span><span class="o">.</span><span class="n">visit_occurrence</span><span class="p">()</span><span class="o">.</span><span class="n">query</span>
-<span class="n">visits</span> <span class="o">=</span> <span class="n">ConditionAfterDate</span><span class="p">(</span><span class="s2">&quot;visit_start_date&quot;</span><span class="p">,</span> <span class="s2">&quot;2010-01-01&quot;</span><span class="p">)(</span><span class="n">visits</span><span class="p">)</span>
-<span class="n">visits</span> <span class="o">=</span> <span class="n">synthea</span><span class="o">.</span><span class="n">get_interface</span><span class="p">(</span><span class="n">visits</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">visits</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">visits</span><span class="p">[</span><span class="s2">&quot;visit_start_date&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+<span class="c1"># List all tables.</span>
+<span class="n">synthea</span><span class="o">.</span><span class="n">list_tables</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -497,8 +476,46 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-16 12:43:15,959 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-16 12:43:15,960 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 5.230168 s
+2023-01-30 14:47:55,129 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;visit_occurrence&#39;,
+ &#39;visit_detail&#39;,
+ &#39;person&#39;,
+ &#39;measurement&#39;,
+ &#39;observation&#39;,
+ &#39;concept&#39;,
+ &#39;care_site&#39;,
+ &#39;provider&#39;]
+</pre></div></div>
+</div>
+</section>
+<section id="Example-1.-Get-all-patient-visits-in-or-after-2010.">
+<h2>Example 1. Get all patient visits in or after 2010.<a class="headerlink" href="#Example-1.-Get-all-patient-visits-in-or-after-2010." title="Permalink to this headline"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">(</span><span class="s2">&quot;visit_start_date&quot;</span><span class="p">,</span> <span class="s2">&quot;2010-01-01&quot;</span><span class="p">)])</span>
+<span class="n">visits</span> <span class="o">=</span> <span class="n">synthea</span><span class="o">.</span><span class="n">visit_occurrence</span><span class="p">(</span><span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">visits</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">visits</span><span class="p">[</span><span class="s2">&quot;visit_start_date&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+2023-01-30 14:48:00,694 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-01-30 14:48:00,695 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 5.527511 s
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -510,39 +527,40 @@ div.rendered_html tbody tr:hover {
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-2014    44476
-2020    39073
-2019    32257
-2018    31251
-2017    30804
-2015    30647
-2022    30542
-2016    30158
-2021    29654
-2013    29625
-2012    10250
-2011     8380
 2010     7968
+2011     8380
+2012    10250
+2013    29625
+2014    44476
+2015    30647
+2016    30158
+2017    30804
+2018    31251
+2019    32257
+2020    39073
+2021    29654
+2022    30542
 2023      209
 Name: visit_start_date, dtype: int64
 </pre></div></div>
 </div>
 </section>
-<section id="Example-2.-Get-measurements-for-all-visits-in-or-after-2020.">
-<h2>Example 2. Get measurements for all visits in or after 2020.<a class="headerlink" href="#Example-2.-Get-measurements-for-all-visits-in-or-after-2020." title="Permalink to this headline"></a></h2>
+<section id="Example-2.-Get-measurements-for-all-visits-in-or-after-2020,-limit-to-first-100-rows.">
+<h2>Example 2. Get measurements for all visits in or after 2020, limit to first 100 rows.<a class="headerlink" href="#Example-2.-Get-measurements-for-all-visits-in-or-after-2020,-limit-to-first-100-rows." title="Permalink to this headline"></a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">visits</span> <span class="o">=</span> <span class="n">synthea</span><span class="o">.</span><span class="n">visit_occurrence</span><span class="p">()</span><span class="o">.</span><span class="n">query</span>
-<span class="n">visits</span> <span class="o">=</span> <span class="n">ConditionAfterDate</span><span class="p">(</span><span class="s2">&quot;visit_start_date&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)(</span><span class="n">visits</span><span class="p">)</span>
-<span class="n">measurements</span> <span class="o">=</span> <span class="n">synthea</span><span class="o">.</span><span class="n">measurement</span><span class="p">(</span><span class="n">visit_occurrence_table</span><span class="o">=</span><span class="n">visits</span><span class="p">)</span><span class="o">.</span><span class="n">query</span>
-<span class="n">measurements</span> <span class="o">=</span> <span class="n">synthea</span><span class="o">.</span><span class="n">get_interface</span><span class="p">(</span><span class="n">measurements</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">(</span><span class="s2">&quot;visit_start_date&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)])</span>
+<span class="n">visits</span> <span class="o">=</span> <span class="n">synthea</span><span class="o">.</span><span class="n">visit_occurrence</span><span class="p">(</span><span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span>
+<span class="n">measurements</span> <span class="o">=</span> <span class="n">synthea</span><span class="o">.</span><span class="n">measurement</span><span class="p">(</span>
+    <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">visits</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;visit_occurrence_id&quot;</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">measurements</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -552,8 +570,8 @@ Name: visit_start_date, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-16 13:48:57,161 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-16 13:48:57,163 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 47.342620 s
+2023-01-30 14:48:00,923 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-01-30 14:48:00,924 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.073149 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -561,7 +579,7 @@ Name: visit_start_date, dtype: int64
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-1781444 rows extracted!
+100 rows extracted!
 </pre></div></div>
 </div>
 </section>

@@ -10,7 +10,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>cyclops.query.ops.FilterColumns &mdash; cyclops  documentation</title>
+  <title>cyclops.query.ops.JoinArgs &mdash; cyclops  documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/cyclops.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
@@ -29,8 +29,8 @@
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="cyclops.query.ops.GroupByAggregate" href="cyclops.query.ops.GroupByAggregate.html" />
-    <link rel="prev" title="cyclops.query.ops.ExtractTimestampComponent" href="cyclops.query.ops.ExtractTimestampComponent.html" />
+    <link rel="next" title="cyclops.query.ops.Keep" href="cyclops.query.ops.Keep.html" />
+    <link rel="prev" title="cyclops.query.ops.Join" href="cyclops.query.ops.Join.html" />
 <script type="text/javascript">
   window.onload = function() {
     document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
@@ -139,7 +139,7 @@
 <li class="toctree-l3 current"><a class="reference internal" href="cyclops.query.ops.html">cyclops.query.ops</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.process_operations.html">cyclops.query.ops.process_operations</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.AddColumn.html">cyclops.query.ops.AddColumn</a></li>
-<li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.AddDeltaColumns.html">cyclops.query.ops.AddDeltaColumns</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.AddDeltaColumn.html">cyclops.query.ops.AddDeltaColumn</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.AddDeltaConstant.html">cyclops.query.ops.AddDeltaConstant</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.AddNumeric.html">cyclops.query.ops.AddNumeric</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.Apply.html">cyclops.query.ops.Apply</a></li>
@@ -157,17 +157,20 @@
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.Drop.html">cyclops.query.ops.Drop</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.DropNulls.html">cyclops.query.ops.DropNulls</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.ExtractTimestampComponent.html">cyclops.query.ops.ExtractTimestampComponent</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">cyclops.query.ops.FilterColumns</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.GroupByAggregate.html">cyclops.query.ops.GroupByAggregate</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.Join.html">cyclops.query.ops.Join</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">cyclops.query.ops.JoinArgs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.Keep.html">cyclops.query.ops.Keep</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.Limit.html">cyclops.query.ops.Limit</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.Literal.html">cyclops.query.ops.Literal</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.OrderBy.html">cyclops.query.ops.OrderBy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.QAP.html">cyclops.query.ops.QAP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.QueryOp.html">cyclops.query.ops.QueryOp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.RandomizeOrder.html">cyclops.query.ops.RandomizeOrder</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.Rename.html">cyclops.query.ops.Rename</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.Reorder.html">cyclops.query.ops.Reorder</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.ReorderAfter.html">cyclops.query.ops.ReorderAfter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.Sequential.html">cyclops.query.ops.Sequential</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.Substring.html">cyclops.query.ops.Substring</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cyclops.query.ops.Trim.html">cyclops.query.ops.Trim</a></li>
 </ul>
@@ -212,7 +215,7 @@
   
 
       <li class="wy-breadcrumbs-aside">
-            <a href="../../../_sources/reference/api/_autosummary/cyclops.query.ops.FilterColumns.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../../_sources/reference/api/_autosummary/cyclops.query.ops.JoinArgs.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -220,16 +223,25 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="cyclops-query-ops-filtercolumns">
-<h1>cyclops.query.ops.FilterColumns<a class="headerlink" href="#cyclops-query-ops-filtercolumns" title="Permalink to this headline"></a></h1>
+  <section id="cyclops-query-ops-joinargs">
+<h1>cyclops.query.ops.JoinArgs<a class="headerlink" href="#cyclops-query-ops-joinargs" title="Permalink to this headline"></a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="cyclops.query.ops.FilterColumns">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FilterColumns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cols</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/ops.html#FilterColumns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.ops.FilterColumns" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="cyclops.query.ops.JoinArgs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">JoinArgs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">join_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_to_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cond</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">join_table_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isouter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/ops.html#JoinArgs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.ops.JoinArgs" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.9/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Keep only the specified columns in a table.</p>
+<p>Arguments for joining tables.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em>) – The columns to keep.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>join_table</strong> (<em>cyclops.query.util.TableTypes</em>) – Table to join.</p></li>
+<li><p><strong>on</strong> (<em>list of str</em><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>on_to_type</strong> (<em>list of type</em><em>, </em><em>optional</em>) – A list of types to which to convert the on columns before joining. Useful when
+two columns have the same values but in different format, e.g., strings of int.</p></li>
+<li><p><strong>cond</strong> (<em>BinaryExpression</em><em>, </em><em>optional</em>) – Condition on which to join to tables.</p></li>
+<li><p><strong>table_cols</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em><em>, </em><em>optional</em>) – Filters to keep only these columns from the table.</p></li>
+<li><p><strong>join_table_cols</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>]</em><em>]</em><em>]</em>) – Filters to keep only these columns from the join_table.</p></li>
+<li><p><strong>isouter</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>]</em>) – Flag to say if the join is a left outer join.</p></li>
+</ul>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
@@ -248,28 +260,29 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cols</span></code></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cond</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">isouter</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">join_table_cols</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">on</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">on_to_type</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">table_cols</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">join_table</span></code></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
-<dl class="py method">
-<dt class="sig sig-object py" id="cyclops.query.ops.FilterColumns.__call__">
-<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/ops.html#FilterColumns.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.ops.FilterColumns.__call__" title="Permalink to this definition"></a></dt>
-<dd><p>Process the table.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>table</strong> (<em>cyclops.query.util.TableTypes</em>) – Table on which to perform the operation.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Processed table.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.selectable.Subquery</a></p>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 </section>
@@ -278,8 +291,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="cyclops.query.ops.ExtractTimestampComponent.html" class="btn btn-neutral float-left" title="cyclops.query.ops.ExtractTimestampComponent" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="cyclops.query.ops.GroupByAggregate.html" class="btn btn-neutral float-right" title="cyclops.query.ops.GroupByAggregate" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cyclops.query.ops.Join.html" class="btn btn-neutral float-left" title="cyclops.query.ops.Join" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cyclops.query.ops.Keep.html" class="btn btn-neutral float-right" title="cyclops.query.ops.Keep" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

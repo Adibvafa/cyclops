@@ -219,19 +219,22 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.OMOPQuerier.get_table" title="cyclops.query.omop.OMOPQuerier.get_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_table</span></code></a></p></td>
 <td><p>Get a table and possibly map columns to have standard names.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.OMOPQuerier.measurement" title="cyclops.query.omop.OMOPQuerier.measurement"><code class="xref py py-obj docutils literal notranslate"><span class="pre">measurement</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.OMOPQuerier.list_tables" title="cyclops.query.omop.OMOPQuerier.list_tables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_tables</span></code></a></p></td>
+<td><p>List table methods that can be queried using the database.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.OMOPQuerier.measurement" title="cyclops.query.omop.OMOPQuerier.measurement"><code class="xref py py-obj docutils literal notranslate"><span class="pre">measurement</span></code></a></p></td>
 <td><p>Query OMOP measurement table.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.OMOPQuerier.observation" title="cyclops.query.omop.OMOPQuerier.observation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">observation</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.OMOPQuerier.observation" title="cyclops.query.omop.OMOPQuerier.observation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">observation</span></code></a></p></td>
 <td><p>Query OMOP observation table.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.OMOPQuerier.person" title="cyclops.query.omop.OMOPQuerier.person"><code class="xref py py-obj docutils literal notranslate"><span class="pre">person</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.OMOPQuerier.person" title="cyclops.query.omop.OMOPQuerier.person"><code class="xref py py-obj docutils literal notranslate"><span class="pre">person</span></code></a></p></td>
 <td><p>Query OMOP person table.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.OMOPQuerier.visit_detail" title="cyclops.query.omop.OMOPQuerier.visit_detail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visit_detail</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.OMOPQuerier.visit_detail" title="cyclops.query.omop.OMOPQuerier.visit_detail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visit_detail</span></code></a></p></td>
 <td><p>Query OMOP visit_detail table.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.omop.OMOPQuerier.visit_occurrence" title="cyclops.query.omop.OMOPQuerier.visit_occurrence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visit_occurrence</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.omop.OMOPQuerier.visit_occurrence" title="cyclops.query.omop.OMOPQuerier.visit_occurrence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visit_occurrence</span></code></a></p></td>
 <td><p>Query OMOP visit_occurrence table.</p></td>
 </tr>
 </tbody>
@@ -252,12 +255,13 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cyclops.query.omop.OMOPQuerier.get_interface">
-<span class="sig-name descname"><span class="pre">get_interface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.get_interface" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_interface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.get_interface" title="Permalink to this definition"></a></dt>
 <dd><p>Get a query interface for a GEMINI table.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>table</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Select" title="(in SQLAlchemy v1.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Select</span></code></a>, <a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subquery</span></code></a>, <a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Table" title="(in SQLAlchemy v1.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DBTable</span></code>]) – Table to wrap in the interface.</p></li>
+<li><p><strong>table</strong> (<em>cyclops.query.util.TableTypes</em>) – Table to wrap in the interface.</p></li>
+<li><p><strong>ops</strong> (<a class="reference internal" href="cyclops.query.ops.Sequential.html#cyclops.query.ops.Sequential" title="cyclops.query.ops.Sequential"><em>cyclops.query.ops.Sequential</em></a>) – Operations to perform on the query.</p></li>
 <li><p><strong>process_fn</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Callable" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>]) – Process function to apply on the Pandas DataFrame returned from the query.</p></li>
 </ul>
 </dd>
@@ -276,41 +280,49 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cyclops.query.omop.OMOPQuerier.get_table">
-<span class="sig-name descname"><span class="pre">get_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.get_table" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cast_timestamp_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.get_table" title="Permalink to this definition"></a></dt>
 <dd><p>Get a table and possibly map columns to have standard names.</p>
 <p>Standardizing column names allows for for columns to be
 recognized in downstream processing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>table_name</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Name of GEMINI table.</p></li>
-<li><p><strong>rename</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether to map the column names</p></li>
+<li><p><strong>table_name</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of GEMINI table.</p></li>
+<li><p><strong>cast_timestamp_cols</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to cast timestamp columns to datetime.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Table with mapped columns.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.selectable.Subquery</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v2.0)">sqlalchemy.sql.selectable.Subquery</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.query.omop.OMOPQuerier.list_tables">
+<span class="sig-name descname"><span class="pre">list_tables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.list_tables" title="Permalink to this definition"></a></dt>
+<dd><p>List table methods that can be queried using the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of table names.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cyclops.query.omop.OMOPQuerier.measurement">
-<span class="sig-name descname"><span class="pre">measurement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">visit_occurrence_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">process_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/omop.html#OMOPQuerier.measurement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.measurement" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">measurement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">join</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/omop.html#OMOPQuerier.measurement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.measurement" title="Permalink to this definition"></a></dt>
 <dd><p>Query OMOP measurement table.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>visit_occurrence_table</strong> (<em>Subquery</em><em>, </em><em>optional</em>) – Visit occurrence table to join on.</p></li>
-<li><p><strong>before_date</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><em>datetime.datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Get patient measurements starting before some date.
-If a string, provide in YYYY-MM-DD format.</p></li>
-<li><p><strong>after_date</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><em>datetime.datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Get patient measurements starting after some date.
-If a string, provide in YYYY-MM-DD format.</p></li>
-<li><p><strong>years</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get patient measurements by year.</p></li>
-<li><p><strong>months</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get patient measurements by month.</p></li>
-<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Limit the number of rows returned.</p></li>
+<li><p><strong>join</strong> (<em>qo.JoinArgs</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>ops</strong> (<em>qo.Sequential</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -324,19 +336,13 @@ If a string, provide in YYYY-MM-DD format.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cyclops.query.omop.OMOPQuerier.observation">
-<span class="sig-name descname"><span class="pre">observation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">visit_occurrence_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">process_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/omop.html#OMOPQuerier.observation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.observation" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">observation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">join</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/omop.html#OMOPQuerier.observation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.observation" title="Permalink to this definition"></a></dt>
 <dd><p>Query OMOP observation table.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>visit_occurrence_table</strong> (<em>Subquery</em><em>, </em><em>optional</em>) – Visit occurrence table to join on.</p></li>
-<li><p><strong>before_date</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><em>datetime.datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Get patient observations starting before some date.
-If a string, provide in YYYY-MM-DD format.</p></li>
-<li><p><strong>after_date</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><em>datetime.datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Get patient observations starting after some date.
-If a string, provide in YYYY-MM-DD format.</p></li>
-<li><p><strong>years</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get patient observations by year.</p></li>
-<li><p><strong>months</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get patient observations by month.</p></li>
-<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Limit the number of rows returned.</p></li>
+<li><p><strong>join</strong> (<em>qo.JoinArgs</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>ops</strong> (<em>qo.Sequential</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -350,16 +356,13 @@ If a string, provide in YYYY-MM-DD format.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cyclops.query.omop.OMOPQuerier.person">
-<span class="sig-name descname"><span class="pre">person</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">visit_occurrence_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">process_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/omop.html#OMOPQuerier.person"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.person" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">person</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">join</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/omop.html#OMOPQuerier.person"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.person" title="Permalink to this definition"></a></dt>
 <dd><p>Query OMOP person table.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>visit_occurrence_table</strong> (<em>Subquery</em><em>, </em><em>optional</em>) – Visit occurrence table to join on.</p></li>
-<li><p><strong>gender</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em>) – Filter on gender.</p></li>
-<li><p><strong>race</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em>) – Filter on race.</p></li>
-<li><p><strong>ethnicity</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em>) – Filter on ethnicity.</p></li>
-<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Limit the number of rows returned.</p></li>
+<li><p><strong>join</strong> (<em>qo.JoinArgs</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>ops</strong> (<em>qo.Sequential</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -373,20 +376,13 @@ If a string, provide in YYYY-MM-DD format.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cyclops.query.omop.OMOPQuerier.visit_detail">
-<span class="sig-name descname"><span class="pre">visit_detail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">visit_occurrence_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">process_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/omop.html#OMOPQuerier.visit_detail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.visit_detail" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">visit_detail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">join</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/omop.html#OMOPQuerier.visit_detail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.visit_detail" title="Permalink to this definition"></a></dt>
 <dd><p>Query OMOP visit_detail table.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>visit_occurrence_table</strong> (<em>Subquery</em><em>, </em><em>optional</em>) – Visit occurrence table to join on.</p></li>
-<li><p><strong>before_date</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><em>datetime.datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Get patient visits starting before some date.
-If a string, provide in YYYY-MM-DD format.</p></li>
-<li><p><strong>after_date</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><em>datetime.datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Get patient visits starting after some date.
-If a string, provide in YYYY-MM-DD format.</p></li>
-<li><p><strong>years</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get patient visits by year.</p></li>
-<li><p><strong>months</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get patient visits by month.</p></li>
-<li><p><strong>care_unit</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em>) – Filter on care_unit, accepts substring e.g. “Emergency Room”.</p></li>
-<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Limit the number of rows returned.</p></li>
+<li><p><strong>join</strong> (<em>qo.JoinArgs</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>ops</strong> (<em>qo.Sequential</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -400,20 +396,13 @@ If a string, provide in YYYY-MM-DD format.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cyclops.query.omop.OMOPQuerier.visit_occurrence">
-<span class="sig-name descname"><span class="pre">visit_occurrence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">drop_null_person_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">process_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/omop.html#OMOPQuerier.visit_occurrence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.visit_occurrence" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">visit_occurrence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">join</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/omop.html#OMOPQuerier.visit_occurrence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.omop.OMOPQuerier.visit_occurrence" title="Permalink to this definition"></a></dt>
 <dd><p>Query OMOP visit_occurrence table.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>drop_null_person_ids</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag to say if entries should be dropped if ‘person_id’ is missing.</p></li>
-<li><p><strong>before_date</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><em>datetime.datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Get patient visits starting before some date.
-If a string, provide in YYYY-MM-DD format.</p></li>
-<li><p><strong>after_date</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><em>datetime.datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Get patient visits starting after some date.
-If a string, provide in YYYY-MM-DD format.</p></li>
-<li><p><strong>hospitals</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em><em>, </em><em>optional</em>) – Get patient visits by hospital sites.</p></li>
-<li><p><strong>years</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get patient visits by year.</p></li>
-<li><p><strong>months</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get patient visits by month.</p></li>
-<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Limit the number of rows returned.</p></li>
+<li><p><strong>join</strong> (<a class="reference internal" href="cyclops.query.ops.JoinArgs.html#cyclops.query.ops.JoinArgs" title="cyclops.query.ops.JoinArgs"><em>cyclops.query.ops.JoinArgs</em></a><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>ops</strong> (<em>qo.Sequential</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

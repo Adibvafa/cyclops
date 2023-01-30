@@ -193,7 +193,7 @@
 <h1>cyclops.query.interface.QueryInterfaceProcessed<a class="headerlink" href="#cyclops-query-interface-queryinterfaceprocessed" title="Permalink to this headline"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="cyclops.query.interface.QueryInterfaceProcessed">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">QueryInterfaceProcessed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_run_args=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/interface.html#QueryInterfaceProcessed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.interface.QueryInterfaceProcessed" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">QueryInterfaceProcessed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">join=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_data=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_run_args=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/interface.html#QueryInterfaceProcessed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.interface.QueryInterfaceProcessed" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.9/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>An interface dataclass to wrap queries, and run them with post-processing.</p>
 <p>A similar dataclass to QueryInterface, where custom post-processing
@@ -206,12 +206,17 @@ private attribute.</p>
 <li><p><strong>database</strong> (<em>cyclops.orm.Database</em>) – Database object to create ORM, and query data.</p></li>
 <li><p><strong>_query</strong> (<em>cyclops.query.util.TableTypes</em>) – The query.</p></li>
 <li><p><strong>process_fn</strong> (<em>Callable</em>) – Process function to apply on the pandas dataframe returned from the query.</p></li>
+<li><p><strong>join</strong> (<a class="reference internal" href="cyclops.query.ops.JoinArgs.html#cyclops.query.ops.JoinArgs" title="cyclops.query.ops.JoinArgs"><em>cyclops.query.ops.JoinArgs</em></a><em>, </em><em>optional</em>) – Join arguments to join the query with another table.</p></li>
+<li><p><strong>ops</strong> (<a class="reference internal" href="cyclops.query.ops.Sequential.html#cyclops.query.ops.Sequential" title="cyclops.query.ops.Sequential"><em>cyclops.query.ops.Sequential</em></a><em>, </em><em>optional</em>) – Operations to perform on the query.</p></li>
+<li><p><strong>_data</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.3)"><em>pandas.DataFrame</em></a><em> or </em><em>dask.DataFrame</em>) – Data returned from executing the query, as Pandas DataFrame.</p></li>
 <li><p><strong>_run_args</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – Private dictionary attribute to keep track of arguments
 passed to run() method.</p></li>
-<li><p><strong>data</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.2)"><em>pandas.DataFrame</em></a><em> or </em><em>dask.DataFrame</em>) – Data returned from executing the query, as Pandas DataFrame.</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>After initialization, the query, join operation and chaining of provided operations,
+are automatically done and the query attribute is updated.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <colgroup>
@@ -237,7 +242,13 @@ passed to run() method.</p></li>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.interface.QueryInterfaceProcessed.data" title="cyclops.query.interface.QueryInterfaceProcessed.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
+<td><p>Get data.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">join</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ops</span></code></p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">database</span></code></p></td>
@@ -260,6 +271,17 @@ passed to run() method.</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="cyclops.query.interface.QueryInterfaceProcessed.data">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.3)"><span class="pre">pandas.core.frame.DataFrame</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.dask.org/en/stable/generated/dask.dataframe.DataFrame.html#dask.dataframe.DataFrame" title="(in Dask)"><span class="pre">dask.dataframe.core.DataFrame</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cyclops.query.interface.QueryInterfaceProcessed.data" title="Permalink to this definition"></a></dt>
+<dd><p>Get data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a>, <a class="reference external" href="https://docs.dask.org/en/stable/generated/dask.dataframe.DataFrame.html#dask.dataframe.DataFrame" title="(in Dask)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a>, <a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="cyclops.query.interface.QueryInterfaceProcessed.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pandas'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_partitions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/interface.html#QueryInterfaceProcessed.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.interface.QueryInterfaceProcessed.run" title="Permalink to this definition"></a></dt>
@@ -278,7 +300,7 @@ Should be a indexed column in the SQL server, and any orderable type.</p></li>
 <dd class="field-even"><p>Query result dataframe.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.2)">pandas.DataFrame</a> or dask.DataFrame</p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.3)">pandas.DataFrame</a> or dask.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>

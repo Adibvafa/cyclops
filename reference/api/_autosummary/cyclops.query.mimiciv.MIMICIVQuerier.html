@@ -213,11 +213,11 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.mimiciv.MIMICIVQuerier.care_units" title="cyclops.query.mimiciv.MIMICIVQuerier.care_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">care_units</span></code></a></p></td>
 <td><p>Get care unit table within a given set of encounters.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.mimiciv.MIMICIVQuerier.diagnoses" title="cyclops.query.mimiciv.MIMICIVQuerier.diagnoses"><code class="xref py py-obj docutils literal notranslate"><span class="pre">diagnoses</span></code></a></p></td>
-<td><p>Query MIMIC diagnoses.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.mimiciv.MIMICIVQuerier.chartevents" title="cyclops.query.mimiciv.MIMICIVQuerier.chartevents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chartevents</span></code></a></p></td>
+<td><p>Query ICU chart events from the ICU module.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.mimiciv.MIMICIVQuerier.events" title="cyclops.query.mimiciv.MIMICIVQuerier.events"><code class="xref py py-obj docutils literal notranslate"><span class="pre">events</span></code></a></p></td>
-<td><p>Query MIMIC events.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.mimiciv.MIMICIVQuerier.diagnoses" title="cyclops.query.mimiciv.MIMICIVQuerier.diagnoses"><code class="xref py py-obj docutils literal notranslate"><span class="pre">diagnoses</span></code></a></p></td>
+<td><p>Query MIMIC diagnosis data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.mimiciv.MIMICIVQuerier.get_interface" title="cyclops.query.mimiciv.MIMICIVQuerier.get_interface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_interface</span></code></a></p></td>
 <td><p>Get a query interface for a GEMINI table.</p></td>
@@ -225,17 +225,14 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.mimiciv.MIMICIVQuerier.get_table" title="cyclops.query.mimiciv.MIMICIVQuerier.get_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_table</span></code></a></p></td>
 <td><p>Get a table and possibly map columns to have standard names.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.mimiciv.MIMICIVQuerier.patient_diagnoses" title="cyclops.query.mimiciv.MIMICIVQuerier.patient_diagnoses"><code class="xref py py-obj docutils literal notranslate"><span class="pre">patient_diagnoses</span></code></a></p></td>
-<td><p>Query MIMIC patient diagnoses.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.mimiciv.MIMICIVQuerier.labevents" title="cyclops.query.mimiciv.MIMICIVQuerier.labevents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">labevents</span></code></a></p></td>
+<td><p>Query lab events from the hospital module.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.mimiciv.MIMICIVQuerier.patient_encounters" title="cyclops.query.mimiciv.MIMICIVQuerier.patient_encounters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">patient_encounters</span></code></a></p></td>
-<td><p>Query MIMIC patient encounters.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.mimiciv.MIMICIVQuerier.list_tables" title="cyclops.query.mimiciv.MIMICIVQuerier.list_tables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_tables</span></code></a></p></td>
+<td><p>List table methods that can be queried using the database.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.mimiciv.MIMICIVQuerier.patients" title="cyclops.query.mimiciv.MIMICIVQuerier.patients"><code class="xref py py-obj docutils literal notranslate"><span class="pre">patients</span></code></a></p></td>
 <td><p>Query MIMIC patient data.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.mimiciv.MIMICIVQuerier.transfers" title="cyclops.query.mimiciv.MIMICIVQuerier.transfers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transfers</span></code></a></p></td>
-<td><p>Get care unit table within a given set of encounters.</p></td>
 </tr>
 </tbody>
 </table>
@@ -252,13 +249,13 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cyclops.query.mimiciv.MIMICIVQuerier.care_units">
-<span class="sig-name descname"><span class="pre">care_units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patients_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">process_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/mimiciv.html#MIMICIVQuerier.care_units"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.care_units" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">care_units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">join</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/mimiciv.html#MIMICIVQuerier.care_units"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.care_units" title="Permalink to this definition"></a></dt>
 <dd><p>Get care unit table within a given set of encounters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>patients_table</strong> (<em>cyclops.query.util.TableTypes</em><em>, </em><em>optional</em>) – Patient encounters to join with transfers.</p></li>
-<li><p><strong>encounters</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get the specific encounter IDs.</p></li>
+<li><p><strong>join</strong> (<em>qo.JoinArgs</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>ops</strong> (<em>qo.Sequential</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -271,39 +268,14 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="cyclops.query.mimiciv.MIMICIVQuerier.diagnoses">
-<span class="sig-name descname"><span class="pre">diagnoses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">process_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/mimiciv.html#MIMICIVQuerier.diagnoses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.diagnoses" title="Permalink to this definition"></a></dt>
-<dd><p>Query MIMIC diagnoses.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Constructed table, wrapped in an interface object.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface">cyclops.query.interface.QueryInterface</a></p>
-</dd>
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>diagnosis_versions</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get codes having certain ICD versions.</p></li>
-<li><p><strong>diagnosis_substring</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – Substring to match in the ICD code.</p></li>
-<li><p><strong>diagnosis_codes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em><em>, </em><em>optional</em>) – Get only the specified ICD codes.</p></li>
-<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Limit the number of rows returned.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cyclops.query.mimiciv.MIMICIVQuerier.events">
-<span class="sig-name descname"><span class="pre">events</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patient_encounters_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">process_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/mimiciv.html#MIMICIVQuerier.events"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.events" title="Permalink to this definition"></a></dt>
-<dd><p>Query MIMIC events.</p>
+<dt class="sig sig-object py" id="cyclops.query.mimiciv.MIMICIVQuerier.chartevents">
+<span class="sig-name descname"><span class="pre">chartevents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">join</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/mimiciv.html#MIMICIVQuerier.chartevents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.chartevents" title="Permalink to this definition"></a></dt>
+<dd><p>Query ICU chart events from the ICU module.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>patient_encounters_table</strong> (<em>cyclops.query.util.TableTypes</em><em>, </em><em>optional</em>) – Optionally provide a patient encounter table to join with events.</p></li>
-<li><p><strong>categories</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em><em>, </em><em>optional</em>) – Restrict to certain categories.</p></li>
-<li><p><strong>event_names</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em><em>, </em><em>optional</em>) – Restrict to certain event names.</p></li>
-<li><p><strong>event_name_substring</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – Substring to search event names to filter.</p></li>
-<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Limit the number of rows returned.</p></li>
+<li><p><strong>join</strong> (<em>qo.JoinArgs</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>ops</strong> (<em>qo.Sequential</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -316,13 +288,34 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="cyclops.query.mimiciv.MIMICIVQuerier.diagnoses">
+<span class="sig-name descname"><span class="pre">diagnoses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">join</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/mimiciv.html#MIMICIVQuerier.diagnoses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.diagnoses" title="Permalink to this definition"></a></dt>
+<dd><p>Query MIMIC diagnosis data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>join</strong> (<em>qo.JoinArgs</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>ops</strong> (<em>qo.Sequential</em><em>, </em><em>optional</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Constructed query, wrapped in an interface object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface">cyclops.query.interface.QueryInterface</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="cyclops.query.mimiciv.MIMICIVQuerier.get_interface">
-<span class="sig-name descname"><span class="pre">get_interface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.get_interface" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_interface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.get_interface" title="Permalink to this definition"></a></dt>
 <dd><p>Get a query interface for a GEMINI table.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>table</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Select" title="(in SQLAlchemy v1.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Select</span></code></a>, <a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subquery</span></code></a>, <a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/metadata.html#sqlalchemy.schema.Table" title="(in SQLAlchemy v1.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DBTable</span></code>]) – Table to wrap in the interface.</p></li>
+<li><p><strong>table</strong> (<em>cyclops.query.util.TableTypes</em>) – Table to wrap in the interface.</p></li>
+<li><p><strong>ops</strong> (<a class="reference internal" href="cyclops.query.ops.Sequential.html#cyclops.query.ops.Sequential" title="cyclops.query.ops.Sequential"><em>cyclops.query.ops.Sequential</em></a>) – Operations to perform on the query.</p></li>
 <li><p><strong>process_fn</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Callable" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>]) – Process function to apply on the Pandas DataFrame returned from the query.</p></li>
 </ul>
 </dd>
@@ -341,41 +334,39 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cyclops.query.mimiciv.MIMICIVQuerier.get_table">
-<span class="sig-name descname"><span class="pre">get_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.get_table" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cast_timestamp_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.get_table" title="Permalink to this definition"></a></dt>
 <dd><p>Get a table and possibly map columns to have standard names.</p>
 <p>Standardizing column names allows for for columns to be
 recognized in downstream processing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>table_name</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Name of GEMINI table.</p></li>
-<li><p><strong>rename</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether to map the column names</p></li>
+<li><p><strong>table_name</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of GEMINI table.</p></li>
+<li><p><strong>cast_timestamp_cols</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to cast timestamp columns to datetime.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Table with mapped columns.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/14/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v1.4)">sqlalchemy.sql.selectable.Subquery</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v2.0)">sqlalchemy.sql.selectable.Subquery</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="cyclops.query.mimiciv.MIMICIVQuerier.patient_diagnoses">
-<span class="sig-name descname"><span class="pre">patient_diagnoses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patients_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">process_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/mimiciv.html#MIMICIVQuerier.patient_diagnoses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.patient_diagnoses" title="Permalink to this definition"></a></dt>
-<dd><p>Query MIMIC patient diagnoses.</p>
+<dt class="sig sig-object py" id="cyclops.query.mimiciv.MIMICIVQuerier.labevents">
+<span class="sig-name descname"><span class="pre">labevents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">join</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/mimiciv.html#MIMICIVQuerier.labevents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.labevents" title="Permalink to this definition"></a></dt>
+<dd><p>Query lab events from the hospital module.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>patients</strong> (<em>cyclops.query.util.TableTypes</em><em>, </em><em>optional</em>) – Patient encounters query used to join.</p></li>
-<li><p><strong>diagnosis_versions</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get codes having certain ICD versions.</p></li>
-<li><p><strong>diagnosis_substring</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – Substring to match in the ICD code.</p></li>
-<li><p><strong>diagnosis_codes</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of str</em><em>, </em><em>optional</em>) – Get only the specified ICD codes.</p></li>
+<li><p><strong>join</strong> (<em>qo.JoinArgs</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>ops</strong> (<em>qo.Sequential</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Constructed table, wrapped in an interface object.</p>
+<dd class="field-even"><p>Constructed query, wrapped in an interface object.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface">cyclops.query.interface.QueryInterface</a></p>
@@ -384,72 +375,42 @@ recognized in downstream processing.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="cyclops.query.mimiciv.MIMICIVQuerier.patient_encounters">
-<span class="sig-name descname"><span class="pre">patient_encounters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patients_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">process_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/mimiciv.html#MIMICIVQuerier.patient_encounters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.patient_encounters" title="Permalink to this definition"></a></dt>
-<dd><p>Query MIMIC patient encounters.</p>
+<dt class="sig sig-object py" id="cyclops.query.mimiciv.MIMICIVQuerier.list_tables">
+<span class="sig-name descname"><span class="pre">list_tables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.list_tables" title="Permalink to this definition"></a></dt>
+<dd><p>List table methods that can be queried using the database.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>patients_table</strong> (<em>cyclops.query.util.TableTypes</em><em>, </em><em>optional</em>) – Optionally provide a patient table when getting patient encounters.</p></li>
-<li><p><strong>sex</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of string</em><em>, </em><em>optional</em>) – Specify patient sex (one or multiple).</p></li>
-<li><p><strong>died</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – Specify True to get patients who have died, and False for those who haven’t.</p></li>
-<li><p><strong>died_binarize_col</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – Binarize the died condition and save as a column with label
-died_binarize_col.</p></li>
-<li><p><strong>before_date</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><em>datetime.datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Get patients encounters before some date.
-If a string, provide in YYYY-MM-DD format.</p></li>
-<li><p><strong>after_date</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><em>datetime.datetime</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Get patients encounters after some date.
-If a string, provide in YYYY-MM-DD format.</p></li>
-<li><p><strong>years</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get patient encounters by year.</p></li>
-<li><p><strong>months</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><em>list of int</em><em>, </em><em>optional</em>) – Get patient encounters by month.</p></li>
-<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Limit the number of rows returned.</p></li>
-</ul>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of table names.</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Constructed table, wrapped in an interface object.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface">cyclops.query.interface.QueryInterface</a></p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cyclops.query.mimiciv.MIMICIVQuerier.patients">
-<span class="sig-name descname"><span class="pre">patients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">process_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/mimiciv.html#MIMICIVQuerier.patients"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.patients" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">patients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">join</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/mimiciv.html#MIMICIVQuerier.patients"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.patients" title="Permalink to this definition"></a></dt>
 <dd><p>Query MIMIC patient data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sex</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of string</em><em>, </em><em>optional</em>) – Specify patient sex (one or multiple).</p></li>
-<li><p><strong>died</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – Specify True to get patients who have died, and False for those who haven’t.</p></li>
-<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Limit the number of rows returned.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">QueryInterface</span></code></a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="cyclops.query.mimiciv.MIMICIVQuerier.transfers">
-<span class="sig-name descname"><span class="pre">transfers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patients_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">process_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/mimiciv.html#MIMICIVQuerier.transfers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.transfers" title="Permalink to this definition"></a></dt>
-<dd><p>Get care unit table within a given set of encounters.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>patients_table</strong> (<em>cyclops.query.util.TableTypes</em><em>, </em><em>optional</em>) – Patient encounters used to join.</p></li>
-<li><p><strong>encounters</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>, </em><em>optional</em>) – The encounter IDs on which to filter. If None, consider all encounters.</p></li>
-<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – Limit the number of rows returned.</p></li>
+<li><p><strong>join</strong> (<em>qo.JoinArgs</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>ops</strong> (<em>qo.Sequential</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Constructed table, wrapped in an interface object.</p>
+<dd class="field-even"><p>Constructed query, wrapped in an interface object.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface">cyclops.query.interface.QueryInterface</a></p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>The function infers the approximate year a patient received care, using the
+<cite>anchor_year</cite> and <cite>anchor_year_group</cite> columns. The <cite>join</cite> and <cite>ops</cite> supplied
+are applied after the approximate year is inferred. <cite>dod</cite> is
+adjusted based on the inferred approximate year of care.</p>
 </dd></dl>
 
 </dd></dl>

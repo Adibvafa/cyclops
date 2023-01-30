@@ -174,43 +174,16 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="c1"># pylint: disable=duplicate-code</span>
-
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">select</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.sql.selectable</span> <span class="kn">import</span> <span class="n">Subquery</span>
 
 <span class="kn">import</span> <span class="nn">cyclops.query.ops</span> <span class="k">as</span> <span class="nn">qo</span>
-<span class="kn">from</span> <span class="nn">cyclops.process.column_names</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">ADMIT_TIMESTAMP</span><span class="p">,</span>
-    <span class="n">AGE</span><span class="p">,</span>
-    <span class="n">DATE_OF_DEATH</span><span class="p">,</span>
-    <span class="n">DIAGNOSIS_CODE</span><span class="p">,</span>
-    <span class="n">DIAGNOSIS_TITLE</span><span class="p">,</span>
-    <span class="n">DIAGNOSIS_VERSION</span><span class="p">,</span>
-    <span class="n">DISCHARGE_TIMESTAMP</span><span class="p">,</span>
-    <span class="n">ENCOUNTER_ID</span><span class="p">,</span>
-    <span class="n">EVENT_CATEGORY</span><span class="p">,</span>
-    <span class="n">EVENT_NAME</span><span class="p">,</span>
-    <span class="n">EVENT_TIMESTAMP</span><span class="p">,</span>
-    <span class="n">EVENT_VALUE</span><span class="p">,</span>
-    <span class="n">EVENT_VALUE_UNIT</span><span class="p">,</span>
-    <span class="n">SEX</span><span class="p">,</span>
-    <span class="n">SUBJECT_ID</span><span class="p">,</span>
-<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">cyclops.query.base</span> <span class="kn">import</span> <span class="n">DatasetQuerier</span>
 <span class="kn">from</span> <span class="nn">cyclops.query.interface</span> <span class="kn">import</span> <span class="n">QueryInterface</span><span class="p">,</span> <span class="n">QueryInterfaceProcessed</span>
 <span class="kn">from</span> <span class="nn">cyclops.query.post_process.mimiciv</span> <span class="kn">import</span> <span class="n">process_mimic_care_units</span>
-<span class="kn">from</span> <span class="nn">cyclops.query.util</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">TableTypes</span><span class="p">,</span>
-    <span class="n">assert_table_has_columns</span><span class="p">,</span>
-    <span class="n">ckwarg</span><span class="p">,</span>
-    <span class="n">get_column</span><span class="p">,</span>
-    <span class="n">remove_kwargs</span><span class="p">,</span>
-    <span class="n">table_params_to_type</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">cyclops.query.util</span> <span class="kn">import</span> <span class="n">get_column</span>
 <span class="kn">from</span> <span class="nn">cyclops.utils.log</span> <span class="kn">import</span> <span class="n">setup_logging</span>
 
 <span class="c1"># Logging.</span>
@@ -222,35 +195,27 @@
 <span class="n">PATIENTS</span> <span class="o">=</span> <span class="s2">&quot;patients&quot;</span>
 <span class="n">ADMISSIONS</span> <span class="o">=</span> <span class="s2">&quot;admissions&quot;</span>
 <span class="n">DIAGNOSES</span> <span class="o">=</span> <span class="s2">&quot;diagnoses&quot;</span>
-<span class="n">PATIENT_DIAGNOSES</span> <span class="o">=</span> <span class="s2">&quot;patient_diagnoses&quot;</span>
-<span class="n">EVENT_LABELS</span> <span class="o">=</span> <span class="s2">&quot;event_labels&quot;</span>
-<span class="n">EVENTS</span> <span class="o">=</span> <span class="s2">&quot;events&quot;</span>
+<span class="n">DIM_DIAGNOSES</span> <span class="o">=</span> <span class="s2">&quot;dim_diagnoses&quot;</span>
+<span class="n">DIM_ITEMS</span> <span class="o">=</span> <span class="s2">&quot;dim_items&quot;</span>
+<span class="n">DIM_LABITEMS</span> <span class="o">=</span> <span class="s2">&quot;dim_labitems&quot;</span>
+<span class="n">CHARTEVENTS</span> <span class="o">=</span> <span class="s2">&quot;chartevents&quot;</span>
 <span class="n">TRANSFERS</span> <span class="o">=</span> <span class="s2">&quot;transfers&quot;</span>
-<span class="n">ED_STAYS</span> <span class="o">=</span> <span class="s2">&quot;ed_stays&quot;</span>
+<span class="n">PHARMACY</span> <span class="o">=</span> <span class="s2">&quot;pharmacy&quot;</span>
+<span class="n">LABEVENTS</span> <span class="o">=</span> <span class="s2">&quot;labevents&quot;</span>
+<span class="n">EDSTAYS</span> <span class="o">=</span> <span class="s2">&quot;ed_stays&quot;</span>
+
 <span class="n">TABLE_MAP</span> <span class="o">=</span> <span class="p">{</span>
     <span class="n">PATIENTS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">patients</span><span class="p">,</span>
     <span class="n">ADMISSIONS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">admissions</span><span class="p">,</span>
-    <span class="n">DIAGNOSES</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">d_icd_diagnoses</span><span class="p">,</span>
-    <span class="n">PATIENT_DIAGNOSES</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">diagnoses_icd</span><span class="p">,</span>
-    <span class="n">EVENT_LABELS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_icu</span><span class="o">.</span><span class="n">d_items</span><span class="p">,</span>
-    <span class="n">EVENTS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_icu</span><span class="o">.</span><span class="n">chartevents</span><span class="p">,</span>
+    <span class="n">DIAGNOSES</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">diagnoses_icd</span><span class="p">,</span>
+    <span class="n">DIM_DIAGNOSES</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">d_icd_diagnoses</span><span class="p">,</span>
+    <span class="n">DIM_LABITEMS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">d_labitems</span><span class="p">,</span>
+    <span class="n">DIM_ITEMS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_icu</span><span class="o">.</span><span class="n">d_items</span><span class="p">,</span>
+    <span class="n">CHARTEVENTS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_icu</span><span class="o">.</span><span class="n">chartevents</span><span class="p">,</span>
+    <span class="n">LABEVENTS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">labevents</span><span class="p">,</span>
+    <span class="n">PHARMACY</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">pharmacy</span><span class="p">,</span>
     <span class="n">TRANSFERS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">transfers</span><span class="p">,</span>
-    <span class="n">ED_STAYS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimic_ed</span><span class="o">.</span><span class="n">edstays</span><span class="p">,</span>
-<span class="p">}</span>
-<span class="n">COLUMN_MAP</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;hadm_id&quot;</span><span class="p">:</span> <span class="n">ENCOUNTER_ID</span><span class="p">,</span>
-    <span class="s2">&quot;subject_id&quot;</span><span class="p">:</span> <span class="n">SUBJECT_ID</span><span class="p">,</span>
-    <span class="s2">&quot;admittime&quot;</span><span class="p">:</span> <span class="n">ADMIT_TIMESTAMP</span><span class="p">,</span>
-    <span class="s2">&quot;dischtime&quot;</span><span class="p">:</span> <span class="n">DISCHARGE_TIMESTAMP</span><span class="p">,</span>
-    <span class="s2">&quot;gender&quot;</span><span class="p">:</span> <span class="n">SEX</span><span class="p">,</span>
-    <span class="s2">&quot;anchor_age&quot;</span><span class="p">:</span> <span class="n">AGE</span><span class="p">,</span>
-    <span class="s2">&quot;valueuom&quot;</span><span class="p">:</span> <span class="n">EVENT_VALUE_UNIT</span><span class="p">,</span>
-    <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">EVENT_NAME</span><span class="p">,</span>
-    <span class="s2">&quot;valuenum&quot;</span><span class="p">:</span> <span class="n">EVENT_VALUE</span><span class="p">,</span>
-    <span class="s2">&quot;charttime&quot;</span><span class="p">:</span> <span class="n">EVENT_TIMESTAMP</span><span class="p">,</span>
-    <span class="s2">&quot;icd_code&quot;</span><span class="p">:</span> <span class="n">DIAGNOSIS_CODE</span><span class="p">,</span>
-    <span class="s2">&quot;icd_version&quot;</span><span class="p">:</span> <span class="n">DIAGNOSIS_VERSION</span><span class="p">,</span>
-    <span class="s2">&quot;dod&quot;</span><span class="p">:</span> <span class="n">DATE_OF_DEATH</span><span class="p">,</span>
+    <span class="n">EDSTAYS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimic_ed</span><span class="o">.</span><span class="n">edstays</span><span class="p">,</span>
 <span class="p">}</span>
 
 
@@ -269,19 +234,31 @@
         <span class="n">overrides</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">config_overrides</span><span class="p">:</span>
             <span class="n">overrides</span> <span class="o">=</span> <span class="n">config_overrides</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">TABLE_MAP</span><span class="p">,</span> <span class="n">COLUMN_MAP</span><span class="p">,</span> <span class="o">**</span><span class="n">overrides</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">TABLE_MAP</span><span class="p">,</span> <span class="o">**</span><span class="n">overrides</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MIMICIVQuerier.patients"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.mimiciv.MIMICIVQuerier.html#cyclops.query.mimiciv.MIMICIVQuerier.patients">[docs]</a>    <span class="k">def</span> <span class="nf">patients</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">process_kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
+<div class="viewcode-block" id="MIMICIVQuerier.patients"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.mimiciv.MIMICIVQuerier.html#cyclops.query.mimiciv.MIMICIVQuerier.patients">[docs]</a>    <span class="k">def</span> <span class="nf">patients</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Query MIMIC patient data.</span>
 
-<span class="sd">        Other Parameters</span>
-<span class="sd">        ----------------</span>
-<span class="sd">        sex: str or list of string, optional</span>
-<span class="sd">            Specify patient sex (one or multiple).</span>
-<span class="sd">        died: bool, optional</span>
-<span class="sd">            Specify True to get patients who have died, and False for those who haven&#39;t.</span>
-<span class="sd">        limit: int, optional</span>
-<span class="sd">            Limit the number of rows returned.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        join: qo.JoinArgs, optional</span>
+<span class="sd">        ops: qo.Sequential, optional</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        cyclops.query.interface.QueryInterface</span>
+<span class="sd">            Constructed query, wrapped in an interface object.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The function infers the approximate year a patient received care, using the</span>
+<span class="sd">        `anchor_year` and `anchor_year_group` columns. The `join` and `ops` supplied</span>
+<span class="sd">        are applied after the approximate year is inferred. `dod` is</span>
+<span class="sd">        adjusted based on the inferred approximate year of care.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">PATIENTS</span><span class="p">)</span>
@@ -319,398 +296,124 @@
         <span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
 
         <span class="c1"># Shift relevant columns by anchor year difference</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">AddColumn</span><span class="p">(</span><span class="s2">&quot;anchor_year&quot;</span><span class="p">,</span> <span class="s2">&quot;anchor_year_difference&quot;</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">AddDeltaColumns</span><span class="p">([</span><span class="n">DATE_OF_DEATH</span><span class="p">],</span> <span class="n">years</span><span class="o">=</span><span class="s2">&quot;anchor_year_difference&quot;</span><span class="p">)(</span>
-            <span class="n">table</span>
-        <span class="p">)</span>
-
-        <span class="c1"># Calculate approximate year of birth</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">AddColumn</span><span class="p">(</span>
-            <span class="s2">&quot;anchor_year&quot;</span><span class="p">,</span> <span class="s2">&quot;age&quot;</span><span class="p">,</span> <span class="n">negative</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">new_col_labels</span><span class="o">=</span><span class="s2">&quot;birth_year&quot;</span>
-        <span class="p">)(</span><span class="n">table</span><span class="p">)</span>
-
+        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">AddDeltaColumn</span><span class="p">(</span><span class="s2">&quot;dod&quot;</span><span class="p">,</span> <span class="n">years</span><span class="o">=</span><span class="s2">&quot;anchor_year_difference&quot;</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Drop</span><span class="p">(</span>
             <span class="p">[</span>
-                <span class="s2">&quot;age&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;anchor_year&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;anchor_year_group&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;anchor_year_group_start&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;anchor_year_group_end&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;anchor_year_group_middle&quot;</span><span class="p">,</span>
             <span class="p">]</span>
         <span class="p">)(</span><span class="n">table</span><span class="p">)</span>
 
-        <span class="c1"># Reorder nicely.</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Reorder</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">SUBJECT_ID</span><span class="p">,</span> <span class="n">SEX</span><span class="p">,</span> <span class="s2">&quot;birth_year&quot;</span><span class="p">,</span> <span class="n">DATE_OF_DEATH</span><span class="p">,</span> <span class="s2">&quot;anchor_year_difference&quot;</span><span class="p">]</span>
-        <span class="p">)(</span><span class="n">table</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div>
 
-        <span class="c1"># Process optional operations</span>
-        <span class="k">if</span> <span class="s2">&quot;died&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">process_kwargs</span> <span class="ow">and</span> <span class="s2">&quot;died_binarize_col&quot;</span> <span class="ow">in</span> <span class="n">process_kwargs</span><span class="p">:</span>
-            <span class="n">process_kwargs</span><span class="p">[</span><span class="s2">&quot;died&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<div class="viewcode-block" id="MIMICIVQuerier.diagnoses"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.mimiciv.MIMICIVQuerier.html#cyclops.query.mimiciv.MIMICIVQuerier.diagnoses">[docs]</a>    <span class="k">def</span> <span class="nf">diagnoses</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Query MIMIC diagnosis data.</span>
 
-        <span class="n">operations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="c1"># Must convert to string since CHAR(1) type doesn&#39;t recognize equality</span>
-            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionIn</span><span class="p">,</span> <span class="p">[</span><span class="n">SEX</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;sex&quot;</span><span class="p">)],</span> <span class="p">{</span><span class="s2">&quot;to_str&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}),</span>
-            <span class="p">(</span>
-                <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">,</span>
-                <span class="p">[</span><span class="s2">&quot;discharge_location&quot;</span><span class="p">,</span> <span class="s2">&quot;DIED&quot;</span><span class="p">],</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;not_&quot;</span><span class="p">:</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;died&quot;</span><span class="p">,</span> <span class="n">transform_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="ow">not</span> <span class="n">x</span><span class="p">),</span>
-                    <span class="s2">&quot;binarize_col&quot;</span><span class="p">:</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;died_binarize_col&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-                <span class="p">},</span>
-            <span class="p">),</span>
-            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">Limit</span><span class="p">,</span> <span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;limit&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-        <span class="p">]</span>
-
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">process_operations</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">operations</span><span class="p">,</span> <span class="n">process_kwargs</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="MIMICIVQuerier.diagnoses"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.mimiciv.MIMICIVQuerier.html#cyclops.query.mimiciv.MIMICIVQuerier.diagnoses">[docs]</a>    <span class="k">def</span> <span class="nf">diagnoses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">process_kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Query MIMIC diagnoses.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        join: qo.JoinArgs, optional</span>
+<span class="sd">        ops: qo.Sequential, optional</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        cyclops.query.interface.QueryInterface</span>
-<span class="sd">            Constructed table, wrapped in an interface object.</span>
-
-<span class="sd">        Other Parameters</span>
-<span class="sd">        ----------------</span>
-<span class="sd">        diagnosis_versions: int or list of int, optional</span>
-<span class="sd">            Get codes having certain ICD versions.</span>
-<span class="sd">        diagnosis_substring : str, optional</span>
-<span class="sd">            Substring to match in the ICD code.</span>
-<span class="sd">        diagnosis_codes : str or list of str, optional</span>
-<span class="sd">            Get only the specified ICD codes.</span>
-<span class="sd">        limit: int, optional</span>
-<span class="sd">            Limit the number of rows returned.</span>
+<span class="sd">            Constructed query, wrapped in an interface object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">DIAGNOSES</span><span class="p">)</span>
 
-        <span class="c1"># Rename long_title</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Rename</span><span class="p">({</span><span class="s2">&quot;long_title&quot;</span><span class="p">:</span> <span class="n">DIAGNOSIS_TITLE</span><span class="p">})(</span><span class="n">table</span><span class="p">)</span>
-
-        <span class="c1"># Trim whitespace from ICD codes.</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Trim</span><span class="p">(</span><span class="n">DIAGNOSIS_CODE</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
-
-        <span class="c1"># Process optional operations</span>
-        <span class="n">operations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span>
-                <span class="n">qo</span><span class="o">.</span><span class="n">ConditionIn</span><span class="p">,</span>
-                <span class="p">[</span><span class="n">DIAGNOSIS_VERSION</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;diagnosis_versions&quot;</span><span class="p">)],</span>
-                <span class="p">{</span><span class="s2">&quot;to_int&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
-            <span class="p">),</span>
-            <span class="p">(</span>
-                <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">,</span>
-                <span class="p">[</span><span class="n">DIAGNOSIS_TITLE</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;diagnosis_substring&quot;</span><span class="p">)],</span>
-                <span class="p">{},</span>
-            <span class="p">),</span>
-            <span class="p">(</span>
-                <span class="n">qo</span><span class="o">.</span><span class="n">ConditionIn</span><span class="p">,</span>
-                <span class="p">[</span><span class="n">DIAGNOSIS_CODE</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;diagnosis_codes&quot;</span><span class="p">)],</span>
-                <span class="p">{</span><span class="s2">&quot;to_str&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
-            <span class="p">),</span>
-            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">Limit</span><span class="p">,</span> <span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;limit&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-        <span class="p">]</span>
-
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">process_operations</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">operations</span><span class="p">,</span> <span class="n">process_kwargs</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="MIMICIVQuerier.patient_diagnoses"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.mimiciv.MIMICIVQuerier.html#cyclops.query.mimiciv.MIMICIVQuerier.patient_diagnoses">[docs]</a>    <span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Subquery</span><span class="p">)</span>
-    <span class="nd">@assert_table_has_columns</span><span class="p">(</span><span class="n">patients_table</span><span class="o">=</span><span class="n">SUBJECT_ID</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">patient_diagnoses</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">patients_table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TableTypes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">process_kwargs</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Query MIMIC patient diagnoses.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        patients: cyclops.query.util.TableTypes, optional</span>
-<span class="sd">            Patient encounters query used to join.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        cyclops.query.interface.QueryInterface</span>
-<span class="sd">            Constructed table, wrapped in an interface object.</span>
-
-<span class="sd">        Other Parameters</span>
-<span class="sd">        ----------------</span>
-<span class="sd">        diagnosis_versions: int or list of int, optional</span>
-<span class="sd">            Get codes having certain ICD versions.</span>
-<span class="sd">        diagnosis_substring: str, optional</span>
-<span class="sd">            Substring to match in the ICD code.</span>
-<span class="sd">        diagnosis_codes: str or list of str, optional</span>
-<span class="sd">            Get only the specified ICD codes.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Get patient diagnoses.</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">PATIENT_DIAGNOSES</span><span class="p">)</span>
-
-        <span class="c1"># Trim whitespace from ICD codes.</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Trim</span><span class="p">(</span><span class="n">DIAGNOSIS_CODE</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
-
-        <span class="c1"># If provided, join with a patients table</span>
-        <span class="k">if</span> <span class="n">patients_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span><span class="n">patients_table</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">SUBJECT_ID</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
-
-        <span class="c1"># Get diagnosis codes.</span>
-        <span class="n">diagnoses_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagnoses</span><span class="p">(</span>
-            <span class="n">diagnosis_versions</span><span class="o">=</span><span class="n">ckwarg</span><span class="p">(</span><span class="n">process_kwargs</span><span class="p">,</span> <span class="s2">&quot;diagnosis_versions&quot;</span><span class="p">),</span>
-            <span class="n">diagnosis_substring</span><span class="o">=</span><span class="n">ckwarg</span><span class="p">(</span><span class="n">process_kwargs</span><span class="p">,</span> <span class="s2">&quot;diagnosis_substring&quot;</span><span class="p">),</span>
-            <span class="n">diagnosis_codes</span><span class="o">=</span><span class="n">ckwarg</span><span class="p">(</span><span class="n">process_kwargs</span><span class="p">,</span> <span class="s2">&quot;diagnosis_codes&quot;</span><span class="p">),</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">query</span>
-        <span class="n">process_kwargs</span> <span class="o">=</span> <span class="n">remove_kwargs</span><span class="p">(</span>
-            <span class="n">process_kwargs</span><span class="p">,</span>
-            <span class="p">[</span><span class="s2">&quot;diagnosis_versions&quot;</span><span class="p">,</span> <span class="s2">&quot;diagnosis_substring&quot;</span><span class="p">,</span> <span class="s2">&quot;diagnosis_codes&quot;</span><span class="p">],</span>
-        <span class="p">)</span>
-
-        <span class="c1"># Include DIAGNOSIS_TITLE in patient diagnoses.</span>
+        <span class="c1"># Join with diagnoses dimension table.</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
-            <span class="n">diagnoses_table</span><span class="p">,</span>
-            <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="n">DIAGNOSIS_CODE</span><span class="p">,</span> <span class="n">DIAGNOSIS_VERSION</span><span class="p">],</span>
-            <span class="n">join_table_cols</span><span class="o">=</span><span class="n">DIAGNOSIS_TITLE</span><span class="p">,</span>
+            <span class="n">join_table</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">DIM_DIAGNOSES</span><span class="p">),</span>
+            <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;icd_code&quot;</span><span class="p">,</span> <span class="s2">&quot;icd_version&quot;</span><span class="p">],</span>
+            <span class="n">on_to_type</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;str&quot;</span><span class="p">,</span> <span class="s2">&quot;int&quot;</span><span class="p">],</span>
         <span class="p">)(</span><span class="n">table</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MIMICIVQuerier.transfers"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.mimiciv.MIMICIVQuerier.html#cyclops.query.mimiciv.MIMICIVQuerier.transfers">[docs]</a>    <span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Subquery</span><span class="p">)</span>
-    <span class="nd">@assert_table_has_columns</span><span class="p">(</span><span class="n">patients_table</span><span class="o">=</span><span class="n">SUBJECT_ID</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">transfers</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">patients_table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TableTypes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">process_kwargs</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get care unit table within a given set of encounters.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        patients_table: cyclops.query.util.TableTypes, optional</span>
-<span class="sd">            Patient encounters used to join.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        cyclops.query.interface.QueryInterface</span>
-<span class="sd">            Constructed table, wrapped in an interface object.</span>
-
-<span class="sd">        Other Parameters</span>
-<span class="sd">        ----------------</span>
-<span class="sd">        encounters : list, optional</span>
-<span class="sd">            The encounter IDs on which to filter. If None, consider all encounters.</span>
-<span class="sd">        limit: int, optional</span>
-<span class="sd">            Limit the number of rows returned.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">TRANSFERS</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">patients_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span><span class="n">patients_table</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">SUBJECT_ID</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
-
-            <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">AddDeltaColumns</span><span class="p">(</span>
-                <span class="p">[</span><span class="s2">&quot;intime&quot;</span><span class="p">,</span> <span class="s2">&quot;outtime&quot;</span><span class="p">],</span> <span class="n">years</span><span class="o">=</span><span class="s2">&quot;anchor_year_difference&quot;</span>
-            <span class="p">)(</span><span class="n">table</span><span class="p">)</span>
-
-        <span class="c1"># Process optional operations</span>
-        <span class="n">operations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionIn</span><span class="p">,</span> <span class="p">[</span><span class="n">ENCOUNTER_ID</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;encounters&quot;</span><span class="p">)],</span> <span class="p">{</span><span class="s2">&quot;to_int&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}),</span>
-            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">Limit</span><span class="p">,</span> <span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;limit&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-        <span class="p">]</span>
-
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">process_operations</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">operations</span><span class="p">,</span> <span class="n">process_kwargs</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="MIMICIVQuerier.care_units"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.mimiciv.MIMICIVQuerier.html#cyclops.query.mimiciv.MIMICIVQuerier.care_units">[docs]</a>    <span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Subquery</span><span class="p">)</span>
-    <span class="nd">@assert_table_has_columns</span><span class="p">(</span><span class="n">patients_table</span><span class="o">=</span><span class="n">SUBJECT_ID</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">care_units</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">patients_table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TableTypes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">process_kwargs</span>
+<div class="viewcode-block" id="MIMICIVQuerier.care_units"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.mimiciv.MIMICIVQuerier.html#cyclops.query.mimiciv.MIMICIVQuerier.care_units">[docs]</a>    <span class="k">def</span> <span class="nf">care_units</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterfaceProcessed</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get care unit table within a given set of encounters.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        patients_table: cyclops.query.util.TableTypes, optional</span>
-<span class="sd">            Patient encounters to join with transfers.</span>
+<span class="sd">        join: qo.JoinArgs, optional</span>
+<span class="sd">        ops: qo.Sequential, optional</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        cyclops.query.interface.QueryInterfaceProcessed</span>
 <span class="sd">            Constructed table, wrapped in an interface object.</span>
 
-<span class="sd">        Other Parameters</span>
-<span class="sd">        ----------------</span>
-<span class="sd">        encounters : int or list of int, optional</span>
-<span class="sd">            Get the specific encounter IDs.</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transfers</span><span class="p">(</span>
-            <span class="n">patients_table</span><span class="o">=</span><span class="n">patients_table</span><span class="p">,</span>
-            <span class="n">encounters</span><span class="o">=</span><span class="n">ckwarg</span><span class="p">(</span><span class="n">process_kwargs</span><span class="p">,</span> <span class="s2">&quot;encounters&quot;</span><span class="p">),</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">query</span>
-
-        <span class="n">process_kwargs</span> <span class="o">=</span> <span class="n">remove_kwargs</span><span class="p">(</span><span class="n">process_kwargs</span><span class="p">,</span> <span class="s2">&quot;encounters&quot;</span><span class="p">)</span>
-
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">TRANSFERS</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">QueryInterfaceProcessed</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span>
             <span class="n">table</span><span class="p">,</span>
             <span class="n">process_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">process_mimic_care_units</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">specific</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span>
+            <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="MIMICIVQuerier.patient_encounters"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.mimiciv.MIMICIVQuerier.html#cyclops.query.mimiciv.MIMICIVQuerier.patient_encounters">[docs]</a>    <span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Subquery</span><span class="p">)</span>
-    <span class="nd">@assert_table_has_columns</span><span class="p">(</span><span class="n">patients_table</span><span class="o">=</span><span class="n">SUBJECT_ID</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">patient_encounters</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">patients_table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TableTypes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">process_kwargs</span>
+<div class="viewcode-block" id="MIMICIVQuerier.labevents"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.mimiciv.MIMICIVQuerier.html#cyclops.query.mimiciv.MIMICIVQuerier.labevents">[docs]</a>    <span class="k">def</span> <span class="nf">labevents</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Query MIMIC patient encounters.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Query lab events from the hospital module.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        patients_table: cyclops.query.util.TableTypes, optional</span>
-<span class="sd">            Optionally provide a patient table when getting patient encounters.</span>
+<span class="sd">        join: qo.JoinArgs, optional</span>
+<span class="sd">        ops: qo.Sequential, optional</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        cyclops.query.interface.QueryInterface</span>
-<span class="sd">            Constructed table, wrapped in an interface object.</span>
-
-<span class="sd">        Other Parameters</span>
-<span class="sd">        ----------------</span>
-<span class="sd">        sex: str or list of string, optional</span>
-<span class="sd">            Specify patient sex (one or multiple).</span>
-<span class="sd">        died: bool, optional</span>
-<span class="sd">            Specify True to get patients who have died, and False for those who haven&#39;t.</span>
-<span class="sd">        died_binarize_col: str, optional</span>
-<span class="sd">            Binarize the died condition and save as a column with label</span>
-<span class="sd">            died_binarize_col.</span>
-<span class="sd">        before_date: datetime.datetime or str</span>
-<span class="sd">            Get patients encounters before some date.</span>
-<span class="sd">            If a string, provide in YYYY-MM-DD format.</span>
-<span class="sd">        after_date: datetime.datetime or str</span>
-<span class="sd">            Get patients encounters after some date.</span>
-<span class="sd">            If a string, provide in YYYY-MM-DD format.</span>
-<span class="sd">        years: int or list of int, optional</span>
-<span class="sd">            Get patient encounters by year.</span>
-<span class="sd">        months: int or list of int, optional</span>
-<span class="sd">            Get patient encounters by month.</span>
-<span class="sd">        limit: int, optional</span>
-<span class="sd">            Limit the number of rows returned.</span>
+<span class="sd">            Constructed query, wrapped in an interface object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">ADMISSIONS</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">LABEVENTS</span><span class="p">)</span>
+        <span class="n">dim_items_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">DIM_LABITEMS</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">patients_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">patients_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span><span class="o">.</span><span class="n">query</span>
-
-        <span class="c1"># Join admissions and patient table</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span><span class="n">patients_table</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;subject_id&quot;</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
-
-        <span class="c1"># Update timestamps with anchor year difference</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">AddDeltaColumns</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">ADMIT_TIMESTAMP</span><span class="p">,</span>
-                <span class="n">DISCHARGE_TIMESTAMP</span><span class="p">,</span>
-                <span class="s2">&quot;deathtime&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;edregtime&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;edouttime&quot;</span><span class="p">,</span>
-            <span class="p">],</span>
-            <span class="n">years</span><span class="o">=</span><span class="s2">&quot;anchor_year_difference&quot;</span><span class="p">,</span>
-        <span class="p">)(</span><span class="n">table</span><span class="p">)</span>
-
-        <span class="c1"># Extract approximate age at time of admission</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">ExtractTimestampComponent</span><span class="p">(</span><span class="n">ADMIT_TIMESTAMP</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="n">AGE</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">AddColumn</span><span class="p">(</span><span class="n">AGE</span><span class="p">,</span> <span class="s2">&quot;birth_year&quot;</span><span class="p">,</span> <span class="n">negative</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">ReorderAfter</span><span class="p">(</span><span class="n">AGE</span><span class="p">,</span> <span class="n">SEX</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
-
-        <span class="c1"># Process optional operations</span>
-        <span class="k">if</span> <span class="s2">&quot;died&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">process_kwargs</span> <span class="ow">and</span> <span class="s2">&quot;died_binarize_col&quot;</span> <span class="ow">in</span> <span class="n">process_kwargs</span><span class="p">:</span>
-            <span class="n">process_kwargs</span><span class="p">[</span><span class="s2">&quot;died&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-
-        <span class="n">operations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionBeforeDate</span><span class="p">,</span> <span class="p">[</span><span class="n">ADMIT_TIMESTAMP</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;before_date&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">,</span> <span class="p">[</span><span class="n">ADMIT_TIMESTAMP</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;after_date&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">,</span> <span class="p">[</span><span class="n">ADMIT_TIMESTAMP</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;years&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionInMonths</span><span class="p">,</span> <span class="p">[</span><span class="n">ADMIT_TIMESTAMP</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;months&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionIn</span><span class="p">,</span> <span class="p">[</span><span class="n">SEX</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;sex&quot;</span><span class="p">)],</span> <span class="p">{</span><span class="s2">&quot;to_str&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}),</span>
-            <span class="p">(</span>
-                <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">,</span>
-                <span class="p">[</span><span class="s2">&quot;discharge_location&quot;</span><span class="p">,</span> <span class="s2">&quot;DIED&quot;</span><span class="p">],</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;not_&quot;</span><span class="p">:</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;died&quot;</span><span class="p">,</span> <span class="n">transform_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="ow">not</span> <span class="n">x</span><span class="p">),</span>
-                    <span class="s2">&quot;binarize_col&quot;</span><span class="p">:</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;died_binarize_col&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-                <span class="p">},</span>
-            <span class="p">),</span>
-            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">Limit</span><span class="p">,</span> <span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;limit&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-        <span class="p">]</span>
-
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">process_operations</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">operations</span><span class="p">,</span> <span class="n">process_kwargs</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="MIMICIVQuerier.events"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.mimiciv.MIMICIVQuerier.html#cyclops.query.mimiciv.MIMICIVQuerier.events">[docs]</a>    <span class="nd">@table_params_to_type</span><span class="p">(</span><span class="n">Subquery</span><span class="p">)</span>
-    <span class="nd">@assert_table_has_columns</span><span class="p">(</span><span class="n">patient_encounters_table</span><span class="o">=</span><span class="p">[</span><span class="n">ENCOUNTER_ID</span><span class="p">,</span> <span class="n">SUBJECT_ID</span><span class="p">])</span>
-    <span class="k">def</span> <span class="nf">events</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">patient_encounters_table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TableTypes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">process_kwargs</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Query MIMIC events.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        patient_encounters_table: cyclops.query.util.TableTypes, optional</span>
-<span class="sd">            Optionally provide a patient encounter table to join with events.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        cyclops.query.interface.QueryInterface</span>
-<span class="sd">            Constructed table, wrapped in an interface object.</span>
-
-<span class="sd">        Other Parameters</span>
-<span class="sd">        ----------------</span>
-<span class="sd">        categories: str or list of str, optional</span>
-<span class="sd">            Restrict to certain categories.</span>
-<span class="sd">        event_names: str or list of str, optional</span>
-<span class="sd">            Restrict to certain event names.</span>
-<span class="sd">        event_name_substring: str, optional</span>
-<span class="sd">            Substring to search event names to filter.</span>
-<span class="sd">        limit: int, optional</span>
-<span class="sd">            Limit the number of rows returned.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">EVENTS</span><span class="p">)</span>
-        <span class="n">event_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">EVENT_LABELS</span><span class="p">)</span>
-
-        <span class="c1"># Get category and event name</span>
+        <span class="c1"># Join with lab items dimension table.</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
-            <span class="n">event_labels</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;itemid&quot;</span><span class="p">,</span> <span class="n">join_table_cols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;category&quot;</span><span class="p">,</span> <span class="s2">&quot;event_name&quot;</span><span class="p">]</span>
+            <span class="n">join_table</span><span class="o">=</span><span class="n">dim_items_table</span><span class="p">,</span>
+            <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;itemid&quot;</span><span class="p">],</span>
         <span class="p">)(</span><span class="n">table</span><span class="p">)</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Rename</span><span class="p">({</span><span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="n">EVENT_CATEGORY</span><span class="p">})(</span><span class="n">table</span><span class="p">)</span>
 
-        <span class="c1"># Process optional operations</span>
-        <span class="n">operations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionBeforeDate</span><span class="p">,</span> <span class="p">[</span><span class="n">EVENT_TIMESTAMP</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;before_date&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">,</span> <span class="p">[</span><span class="n">EVENT_TIMESTAMP</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;after_date&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">,</span> <span class="p">[</span><span class="n">EVENT_TIMESTAMP</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;years&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionInMonths</span><span class="p">,</span> <span class="p">[</span><span class="n">EVENT_TIMESTAMP</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;months&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionIn</span><span class="p">,</span> <span class="p">[</span><span class="n">EVENT_CATEGORY</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;categories&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionIn</span><span class="p">,</span> <span class="p">[</span><span class="n">EVENT_NAME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;event_names&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">,</span> <span class="p">[</span><span class="n">EVENT_NAME</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;event_name_substring&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-            <span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">Limit</span><span class="p">,</span> <span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">QAP</span><span class="p">(</span><span class="s2">&quot;limit&quot;</span><span class="p">)],</span> <span class="p">{}),</span>
-        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div>
 
-        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">process_operations</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">operations</span><span class="p">,</span> <span class="n">process_kwargs</span><span class="p">)</span>
+<div class="viewcode-block" id="MIMICIVQuerier.chartevents"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.mimiciv.MIMICIVQuerier.html#cyclops.query.mimiciv.MIMICIVQuerier.chartevents">[docs]</a>    <span class="k">def</span> <span class="nf">chartevents</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Query ICU chart events from the ICU module.</span>
 
-        <span class="c1"># Join on patient encounters</span>
-        <span class="k">if</span> <span class="n">patient_encounters_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
-                <span class="n">patient_encounters_table</span><span class="p">,</span>
-                <span class="n">on</span><span class="o">=</span><span class="n">ENCOUNTER_ID</span><span class="p">,</span>
-            <span class="p">)(</span><span class="n">table</span><span class="p">)</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        join: qo.JoinArgs, optional</span>
+<span class="sd">        ops: qo.Sequential, optional</span>
 
-            <span class="c1"># Add MIMIC patient-specific time difference to event/store timestamps</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">AddDeltaColumns</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">EVENT_TIMESTAMP</span><span class="p">,</span> <span class="s2">&quot;storetime&quot;</span><span class="p">],</span> <span class="n">years</span><span class="o">=</span><span class="s2">&quot;anchor_year_difference&quot;</span>
-            <span class="p">)(</span><span class="n">table</span><span class="p">)</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        cyclops.query.interface.QueryInterface</span>
+<span class="sd">            Constructed table, wrapped in an interface object.</span>
 
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div></div>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">CHARTEVENTS</span><span class="p">)</span>
+        <span class="n">dim_items_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">DIM_ITEMS</span><span class="p">)</span>
+
+        <span class="c1"># Join with items dimension table.</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
+            <span class="n">dim_items_table</span><span class="p">,</span>
+            <span class="n">on</span><span class="o">=</span><span class="s2">&quot;itemid&quot;</span><span class="p">,</span>
+        <span class="p">)(</span><span class="n">table</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
