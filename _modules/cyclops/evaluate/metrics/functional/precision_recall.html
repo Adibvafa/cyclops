@@ -170,10 +170,10 @@
   <h1>Source code for cyclops.evaluate.metrics.functional.precision_recall</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Functions for computing precision and recall scores on different input types.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">ArrayLike</span>
+<span class="kn">import</span> <span class="nn">numpy.typing</span> <span class="k">as</span> <span class="nn">npt</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics._classification</span> <span class="kn">import</span> <span class="n">_prf_divide</span>
 
 <span class="kn">from</span> <span class="nn">cyclops.evaluate.metrics.functional.stat_scores</span> <span class="kn">import</span> <span class="p">(</span>
@@ -192,13 +192,13 @@
 
 
 <span class="k">def</span> <span class="nf">_precision_recall_reduce</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
-    <span class="n">tp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">fp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">fn</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">tp</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+    <span class="n">fp</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
+    <span class="n">fn</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
     <span class="n">metric</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;precision&quot;</span><span class="p">,</span> <span class="s2">&quot;recall&quot;</span><span class="p">],</span>
     <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
     <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute precision or recall scores and apply specified average.</span>
 
 <span class="sd">    Parameters</span>
@@ -248,7 +248,7 @@
     <span class="k">if</span> <span class="n">average</span> <span class="o">==</span> <span class="s2">&quot;weighted&quot;</span><span class="p">:</span>
         <span class="n">weights</span> <span class="o">=</span> <span class="n">tp</span> <span class="o">+</span> <span class="n">fn</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">zero_division</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">]:</span>
                 <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">result</span>
@@ -258,14 +258,14 @@
     <span class="k">if</span> <span class="n">average</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">score</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">score</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">_get_value_if_singleton_array</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">_get_value_if_singleton_array</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>  <span class="c1"># type: ignore[assignment]</span>
 
     <span class="k">return</span> <span class="n">result</span>
 
 
 <div class="viewcode-block" id="binary_precision"><a class="viewcode-back" href="../../../../../reference/api/_autosummary/cyclops.evaluate.metrics.functional.precision_recall.binary_precision.html#cyclops.evaluate.metrics.functional.precision_recall.binary_precision">[docs]</a><span class="k">def</span> <span class="nf">binary_precision</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
-    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
     <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
@@ -274,9 +274,9 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    target : ArrayLike</span>
+<span class="sd">    target : npt.ArrayLike</span>
 <span class="sd">        Ground truth (correct) target values.</span>
-<span class="sd">    preds : ArrayLike</span>
+<span class="sd">    preds : npt.ArrayLike</span>
 <span class="sd">        Predictions as returned by a classifier.</span>
 <span class="sd">    pos_label : int, default=1</span>
 <span class="sd">        The label of the positive class.</span>
@@ -312,31 +312,33 @@
 
     <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_binary_stat_scores_update</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">_precision_recall_reduce</span><span class="p">(</span>
+    <span class="n">precision_score</span> <span class="o">=</span> <span class="n">_precision_recall_reduce</span><span class="p">(</span>
         <span class="n">tp</span><span class="p">,</span>
         <span class="n">fp</span><span class="p">,</span>
         <span class="n">fn</span><span class="p">,</span>
         <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;precision&quot;</span><span class="p">,</span>
         <span class="n">average</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
-    <span class="p">)</span></div>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">precision_score</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="multiclass_precision"><a class="viewcode-back" href="../../../../../reference/api/_autosummary/cyclops.evaluate.metrics.functional.precision_recall.multiclass_precision.html#cyclops.evaluate.metrics.functional.precision_recall.multiclass_precision">[docs]</a><span class="k">def</span> <span class="nf">multiclass_precision</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
-    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute precision score for multiclass classification tasks.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    target : ArrayLike</span>
+<span class="sd">    target : npt.ArrayLike</span>
 <span class="sd">        Ground truth (correct) target values.</span>
-<span class="sd">    preds : ArrayLike</span>
+<span class="sd">    preds : npt.ArrayLike</span>
 <span class="sd">        Predictions as returned by a classifier.</span>
 <span class="sd">    num_classes : int</span>
 <span class="sd">        Number of classes in the dataset.</span>
@@ -399,14 +401,14 @@
 
 
 <div class="viewcode-block" id="multilabel_precision"><a class="viewcode-back" href="../../../../../reference/api/_autosummary/cyclops.evaluate.metrics.functional.precision_recall.multilabel_precision.html#cyclops.evaluate.metrics.functional.precision_recall.multilabel_precision">[docs]</a><span class="k">def</span> <span class="nf">multilabel_precision</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
-    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
-<span class="p">):</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute precision score for multilabel classification tasks.</span>
 
 <span class="sd">    The input is expected to be an array-like of shape (N, L), where N is the</span>
@@ -416,9 +418,9 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    target : ArrayLike</span>
+<span class="sd">    target : npt.ArrayLike</span>
 <span class="sd">        Ground truth (correct) target values.</span>
-<span class="sd">    preds : ArrayLike</span>
+<span class="sd">    preds : npt.ArrayLike</span>
 <span class="sd">        Predictions as returned by a classifier.</span>
 <span class="sd">    num_labels : int</span>
 <span class="sd">        Number of labels for the task.</span>
@@ -479,8 +481,8 @@
 
 
 <div class="viewcode-block" id="precision"><a class="viewcode-back" href="../../../../../reference/api/_autosummary/cyclops.evaluate.metrics.functional.precision_recall.precision.html#cyclops.evaluate.metrics.functional.precision_recall.precision">[docs]</a><span class="k">def</span> <span class="nf">precision</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
-    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">task</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">,</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">],</span>
     <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="n">num_classes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -489,7 +491,7 @@
     <span class="n">num_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute precision score for different classification tasks.</span>
 
 <span class="sd">    Precision is the ratio of correctly predicted positive observations to the</span>
@@ -497,9 +499,9 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    target : ArrayLike</span>
+<span class="sd">    target : npt.ArrayLike</span>
 <span class="sd">        Ground truth (correct) target values.</span>
-<span class="sd">    preds : ArrayLike</span>
+<span class="sd">    preds : npt.ArrayLike</span>
 <span class="sd">        Predictions as returned by a classifier.</span>
 <span class="sd">    task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
 <span class="sd">        Task type.</span>
@@ -569,30 +571,30 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;binary&quot;</span><span class="p">:</span>
-        <span class="n">precision_score</span> <span class="o">=</span> <span class="n">binary_precision</span><span class="p">(</span>
+        <span class="k">return</span> <span class="n">binary_precision</span><span class="p">(</span>
             <span class="n">target</span><span class="p">,</span>
             <span class="n">preds</span><span class="p">,</span>
             <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">,</span>
             <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
             <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">:</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_classes</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_classes</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="p">),</span> <span class="s2">&quot;Number of classes must be specified for multiclass classification.&quot;</span>
-        <span class="n">precision_score</span> <span class="o">=</span> <span class="n">multiclass_precision</span><span class="p">(</span>
+        <span class="k">return</span> <span class="n">multiclass_precision</span><span class="p">(</span>
             <span class="n">target</span><span class="p">,</span>
             <span class="n">preds</span><span class="p">,</span>
             <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
-            <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+            <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">,</span>
             <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
             <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">:</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_labels</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_labels</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="p">),</span> <span class="s2">&quot;Number of labels must be specified for multilabel classification.&quot;</span>
-        <span class="n">precision_score</span> <span class="o">=</span> <span class="n">multilabel_precision</span><span class="p">(</span>
+        <span class="k">return</span> <span class="n">multilabel_precision</span><span class="p">(</span>
             <span class="n">target</span><span class="p">,</span>
             <span class="n">preds</span><span class="p">,</span>
             <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">,</span>
@@ -601,29 +603,27 @@
             <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
             <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Task &#39;</span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">&#39; not supported, expected &#39;binary&#39;, &#39;multiclass&#39; or &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;&#39;multilabel&#39;.&quot;</span>
-        <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">precision_score</span></div>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Task &#39;</span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">&#39; not supported, expected &#39;binary&#39;, &#39;multiclass&#39; or &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;&#39;multilabel&#39;.&quot;</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="binary_recall"><a class="viewcode-back" href="../../../../../reference/api/_autosummary/cyclops.evaluate.metrics.functional.precision_recall.binary_recall.html#cyclops.evaluate.metrics.functional.precision_recall.binary_recall">[docs]</a><span class="k">def</span> <span class="nf">binary_recall</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
-    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
     <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
-<span class="p">):</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute recall score for binary classification.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    target : ArrayLike</span>
+<span class="sd">    target : npt.ArrayLike</span>
 <span class="sd">        Ground truth (correct) target values.</span>
-<span class="sd">    preds : ArrayLike</span>
+<span class="sd">    preds : npt.ArrayLike</span>
 <span class="sd">        Predictions as returned by a classifier.</span>
 <span class="sd">    pos_label : int, default=1</span>
 <span class="sd">        Label of the positive class.</span>
@@ -653,31 +653,33 @@
 
     <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="n">_binary_stat_scores_update</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">_precision_recall_reduce</span><span class="p">(</span>
+    <span class="n">recall_score</span> <span class="o">=</span> <span class="n">_precision_recall_reduce</span><span class="p">(</span>
         <span class="n">tp</span><span class="p">,</span>
         <span class="n">fp</span><span class="p">,</span>
         <span class="n">fn</span><span class="p">,</span>
         <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;recall&quot;</span><span class="p">,</span>
         <span class="n">average</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
-    <span class="p">)</span></div>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">recall_score</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="multiclass_recall"><a class="viewcode-back" href="../../../../../reference/api/_autosummary/cyclops.evaluate.metrics.functional.precision_recall.multiclass_recall.html#cyclops.evaluate.metrics.functional.precision_recall.multiclass_recall">[docs]</a><span class="k">def</span> <span class="nf">multiclass_recall</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
-    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
-<span class="p">):</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute recall score for multiclass classification.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    target : ArrayLike</span>
+<span class="sd">    target : npt.ArrayLike</span>
 <span class="sd">        Ground truth (correct) target values.</span>
-<span class="sd">    preds : ArrayLike</span>
+<span class="sd">    preds : npt.ArrayLike</span>
 <span class="sd">        Predictions as returned by a classifier.</span>
 <span class="sd">    num_classes : int</span>
 <span class="sd">        Number of classes.</span>
@@ -741,14 +743,14 @@
 
 
 <div class="viewcode-block" id="multilabel_recall"><a class="viewcode-back" href="../../../../../reference/api/_autosummary/cyclops.evaluate.metrics.functional.precision_recall.multilabel_recall.html#cyclops.evaluate.metrics.functional.precision_recall.multilabel_recall">[docs]</a><span class="k">def</span> <span class="nf">multilabel_recall</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
-    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
     <span class="n">top_k</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
-<span class="p">):</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute recall score for multilabel classification tasks.</span>
 
 <span class="sd">    The input is expected to be an array-like of shape (N, L), where N is the</span>
@@ -758,9 +760,9 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    target : ArrayLike</span>
+<span class="sd">    target : npt.ArrayLike</span>
 <span class="sd">        Ground truth (correct) target values.</span>
-<span class="sd">    preds : ArrayLike</span>
+<span class="sd">    preds : npt.ArrayLike</span>
 <span class="sd">        Predictions as returned by a classifier.</span>
 <span class="sd">    num_labels : int</span>
 <span class="sd">        Number of labels in the dataset.</span>
@@ -821,8 +823,8 @@
 
 
 <div class="viewcode-block" id="recall"><a class="viewcode-back" href="../../../../../reference/api/_autosummary/cyclops.evaluate.metrics.functional.precision_recall.recall.html#cyclops.evaluate.metrics.functional.precision_recall.recall">[docs]</a><span class="k">def</span> <span class="nf">recall</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
-    <span class="n">target</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-    <span class="n">preds</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">preds</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">task</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">,</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">],</span>
     <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="n">num_classes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -831,7 +833,7 @@
     <span class="n">num_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">average</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">zero_division</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute recall score for different classification tasks.</span>
 
 <span class="sd">    Recall is the ratio tp / (tp + fn) where tp is the number of true positives</span>
@@ -840,9 +842,9 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    target : ArrayLike</span>
+<span class="sd">    target : npt.ArrayLike</span>
 <span class="sd">        Ground truth (correct) target values.</span>
-<span class="sd">    preds : ArrayLike</span>
+<span class="sd">    preds : npt.ArrayLike</span>
 <span class="sd">        Predictions as returned by a classifier.</span>
 <span class="sd">    task : Literal[&quot;binary&quot;, &quot;multiclass&quot;, &quot;multilabel&quot;]</span>
 <span class="sd">        Task type.</span>
@@ -908,30 +910,30 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;binary&quot;</span><span class="p">:</span>
-        <span class="n">recall_score</span> <span class="o">=</span> <span class="n">binary_recall</span><span class="p">(</span>
+        <span class="k">return</span> <span class="n">binary_recall</span><span class="p">(</span>
             <span class="n">target</span><span class="p">,</span>
             <span class="n">preds</span><span class="p">,</span>
             <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">,</span>
             <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
             <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">:</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_classes</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_classes</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="p">),</span> <span class="s2">&quot;Number of classes must be specified for multiclass classification.&quot;</span>
-        <span class="n">recall_score</span> <span class="o">=</span> <span class="n">multiclass_recall</span><span class="p">(</span>
+        <span class="k">return</span> <span class="n">multiclass_recall</span><span class="p">(</span>
             <span class="n">target</span><span class="p">,</span>
             <span class="n">preds</span><span class="p">,</span>
             <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
-            <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+            <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">,</span>
             <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
             <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">:</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_labels</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_labels</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="p">),</span> <span class="s2">&quot;Number of labels must be specified for multilabel classification.&quot;</span>
-        <span class="n">recall_score</span> <span class="o">=</span> <span class="n">multilabel_recall</span><span class="p">(</span>
+        <span class="k">return</span> <span class="n">multilabel_recall</span><span class="p">(</span>
             <span class="n">target</span><span class="p">,</span>
             <span class="n">preds</span><span class="p">,</span>
             <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">,</span>
@@ -940,13 +942,11 @@
             <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
             <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Task &#39;</span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">&#39; not supported, expected &#39;binary&#39;, &#39;multiclass&#39; or &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;&#39;multilabel&#39;.&quot;</span>
-        <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">recall_score</span></div>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Task &#39;</span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">&#39; not supported, expected &#39;binary&#39;, &#39;multiclass&#39; or &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;&#39;multilabel&#39;.&quot;</span>
+    <span class="p">)</span></div>
 </pre></div>
 
            </div>

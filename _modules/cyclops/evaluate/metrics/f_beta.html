@@ -170,7 +170,10 @@
   <h1>Source code for cyclops.evaluate.metrics.f_beta</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Classes for computing the F-beta score.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.typing</span> <span class="k">as</span> <span class="nn">npt</span>
 
 <span class="kn">from</span> <span class="nn">cyclops.evaluate.metrics.functional.f_beta</span> <span class="kn">import</span> <span class="n">_check_beta</span><span class="p">,</span> <span class="n">_fbeta_reduce</span>
 <span class="kn">from</span> <span class="nn">cyclops.evaluate.metrics.metric</span> <span class="kn">import</span> <span class="n">Metric</span>
@@ -230,17 +233,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zero_division</span> <span class="o">=</span> <span class="n">zero_division</span>
 
-<div class="viewcode-block" id="BinaryFbetaScore.compute"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.metrics.f_beta.BinaryFbetaScore.html#cyclops.evaluate.metrics.f_beta.BinaryFbetaScore.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="BinaryFbetaScore.compute"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.metrics.f_beta.BinaryFbetaScore.html#cyclops.evaluate.metrics.f_beta.BinaryFbetaScore.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>  <span class="c1"># type: ignore[override]</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the metric from the state.&quot;&quot;&quot;</span>
         <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_final_state</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">_fbeta_reduce</span><span class="p">(</span>
+        <span class="n">f_score</span> <span class="o">=</span> <span class="n">_fbeta_reduce</span><span class="p">(</span>
             <span class="n">tp</span><span class="o">=</span><span class="n">tp</span><span class="p">,</span>
             <span class="n">fp</span><span class="o">=</span><span class="n">fp</span><span class="p">,</span>
             <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">,</span>
             <span class="n">beta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span>
             <span class="n">average</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">zero_division</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">zero_division</span><span class="p">,</span>
-        <span class="p">)</span></div></div>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">f_score</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="MulticlassFbetaScore"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.metrics.f_beta.MulticlassFbetaScore.html#cyclops.evaluate.metrics.f_beta.MulticlassFbetaScore">[docs]</a><span class="k">class</span> <span class="nc">MulticlassFbetaScore</span><span class="p">(</span><span class="n">MulticlassStatScores</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multiclass_fbeta_score&quot;</span><span class="p">):</span>
@@ -315,7 +319,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">average</span> <span class="o">=</span> <span class="n">average</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zero_division</span> <span class="o">=</span> <span class="n">zero_division</span>
 
-<div class="viewcode-block" id="MulticlassFbetaScore.compute"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.metrics.f_beta.MulticlassFbetaScore.html#cyclops.evaluate.metrics.f_beta.MulticlassFbetaScore.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="MulticlassFbetaScore.compute"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.metrics.f_beta.MulticlassFbetaScore.html#cyclops.evaluate.metrics.f_beta.MulticlassFbetaScore.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]]:</span>  <span class="c1"># type: ignore[override]</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the metric from the state.&quot;&quot;&quot;</span>
         <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_final_state</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">_fbeta_reduce</span><span class="p">(</span>
@@ -397,7 +401,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">average</span> <span class="o">=</span> <span class="n">average</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zero_division</span> <span class="o">=</span> <span class="n">zero_division</span>
 
-<div class="viewcode-block" id="MultilabelFbetaScore.compute"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.metrics.f_beta.MultilabelFbetaScore.html#cyclops.evaluate.metrics.f_beta.MultilabelFbetaScore.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="MultilabelFbetaScore.compute"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.metrics.f_beta.MultilabelFbetaScore.html#cyclops.evaluate.metrics.f_beta.MultilabelFbetaScore.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]]:</span>  <span class="c1"># type: ignore[override]</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the metric from the state.&quot;&quot;&quot;</span>
         <span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_final_state</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">_fbeta_reduce</span><span class="p">(</span>
@@ -499,7 +503,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span>  <span class="c1"># type: ignore # mypy expects a subclass of FbetaScore</span>
-        <span class="bp">cls</span><span class="p">,</span>
+        <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Metric</span><span class="p">],</span>
         <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">task</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">,</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">],</span>
         <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -811,7 +815,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span>  <span class="c1"># type: ignore # mypy expects a subclass of F1Score</span>
-        <span class="bp">cls</span><span class="p">,</span>
+        <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Metric</span><span class="p">],</span>
         <span class="n">task</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">,</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">],</span>
         <span class="n">pos_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">num_classes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
