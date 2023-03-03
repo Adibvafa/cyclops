@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocusaurus=self.webpackChunkdocusaurus||[]).push([[544],{2379:s=>{s.exports=JSON.parse('[{"label":"alpha","permalink":"/cyclops/blog/tags/alpha","count":1}]')}}]);
