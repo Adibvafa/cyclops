@@ -168,14 +168,14 @@
            <div itemprop="articleBody">
              
   <h1>Source code for cyclops.query.ops</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Low-level query operations.</span>
+<span></span><span class="c1"># pylint: disable=too-many-lines</span>
+
+<span class="sd">&quot;&quot;&quot;Low-level query operations.</span>
 
 <span class="sd">This module contains query operation modules such which can be used in high-level query</span>
 <span class="sd">API functions specific to datasets.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="c1"># pylint: disable=too-many-lines</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
@@ -204,9 +204,11 @@
     <span class="n">get_column_names</span><span class="p">,</span>
     <span class="n">get_columns</span><span class="p">,</span>
     <span class="n">get_delta_column</span><span class="p">,</span>
+    <span class="n">greater_than</span><span class="p">,</span>
     <span class="n">has_columns</span><span class="p">,</span>
     <span class="n">has_substring</span><span class="p">,</span>
     <span class="n">in_</span><span class="p">,</span>
+    <span class="n">less_than</span><span class="p">,</span>
     <span class="n">not_equals</span><span class="p">,</span>
     <span class="n">process_column</span><span class="p">,</span>
     <span class="n">rename_columns</span><span class="p">,</span>
@@ -1005,6 +1007,7 @@
             <span class="s2">&quot;int&quot;</span><span class="p">:</span> <span class="s2">&quot;to_int&quot;</span><span class="p">,</span>
             <span class="s2">&quot;float&quot;</span><span class="p">:</span> <span class="s2">&quot;to_float&quot;</span><span class="p">,</span>
             <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;to_date&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;bool&quot;</span><span class="p">:</span> <span class="s2">&quot;to_bool&quot;</span><span class="p">,</span>
             <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;to_timestamp&quot;</span><span class="p">,</span>
         <span class="p">}</span>
 
@@ -1213,6 +1216,148 @@
         <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
         <span class="n">cond</span> <span class="o">=</span> <span class="n">equals</span><span class="p">(</span>
             <span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_</span><span class="p">:</span>
+            <span class="n">cond</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">_negate</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">select</span><span class="p">(</span>
+                <span class="n">table</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">Boolean</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="ConditionGreaterThan"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.ConditionGreaterThan.html#cyclops.query.ops.ConditionGreaterThan">[docs]</a><span class="k">class</span> <span class="nc">ConditionGreaterThan</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">QueryOp</span><span class="p">):</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter rows based on greater than (or equal), to some value.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    col: str</span>
+<span class="sd">        Column name on which to condition.</span>
+<span class="sd">    value: any</span>
+<span class="sd">        Value greater than.</span>
+<span class="sd">    equal: bool, default=False</span>
+<span class="sd">        Include equality to the value.</span>
+<span class="sd">    not_: bool, default=False</span>
+<span class="sd">        Take negation of condition.</span>
+<span class="sd">    binarize_col: str, optional</span>
+<span class="sd">        If specified, create a Boolean column of name binarize_col instead of filtering.</span>
+<span class="sd">    **cond_kwargs</span>
+<span class="sd">        Optional keyword arguments for processing the condition.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ConditionGreaterThan.__init__"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.ConditionGreaterThan.html#cyclops.query.ops.ConditionGreaterThan.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">equal</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">not_</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">binarize_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">cond_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col</span> <span class="o">=</span> <span class="n">col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">equal</span> <span class="o">=</span> <span class="n">equal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">not_</span> <span class="o">=</span> <span class="n">not_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="o">=</span> <span class="n">binarize_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span> <span class="o">=</span> <span class="n">cond_kwargs</span></div>
+
+<div class="viewcode-block" id="ConditionGreaterThan.__call__"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.ConditionGreaterThan.html#cyclops.query.ops.ConditionGreaterThan.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+        <span class="n">cond</span> <span class="o">=</span> <span class="n">greater_than</span><span class="p">(</span>
+            <span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">equal</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_</span><span class="p">:</span>
+            <span class="n">cond</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">_negate</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">select</span><span class="p">(</span>
+                <span class="n">table</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">Boolean</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="ConditionLessThan"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.ConditionLessThan.html#cyclops.query.ops.ConditionLessThan">[docs]</a><span class="k">class</span> <span class="nc">ConditionLessThan</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">QueryOp</span><span class="p">):</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter rows based on less than (or equal), to some value.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    col: str</span>
+<span class="sd">        Column name on which to condition.</span>
+<span class="sd">    value: any</span>
+<span class="sd">        Value greater than.</span>
+<span class="sd">    equal: bool, default=False</span>
+<span class="sd">        Include equality to the value.</span>
+<span class="sd">    not_: bool, default=False</span>
+<span class="sd">        Take negation of condition.</span>
+<span class="sd">    binarize_col: str, optional</span>
+<span class="sd">        If specified, create a Boolean column of name binarize_col instead of filtering.</span>
+<span class="sd">    **cond_kwargs</span>
+<span class="sd">        Optional keyword arguments for processing the condition.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ConditionLessThan.__init__"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.ConditionLessThan.html#cyclops.query.ops.ConditionLessThan.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">equal</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">not_</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">binarize_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">cond_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col</span> <span class="o">=</span> <span class="n">col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">equal</span> <span class="o">=</span> <span class="n">equal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">not_</span> <span class="o">=</span> <span class="n">not_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span> <span class="o">=</span> <span class="n">binarize_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span> <span class="o">=</span> <span class="n">cond_kwargs</span></div>
+
+<div class="viewcode-block" id="ConditionLessThan.__call__"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.ConditionLessThan.html#cyclops.query.ops.ConditionLessThan.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">cols_not_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binarize_col</span><span class="p">)</span>
+        <span class="n">cond</span> <span class="o">=</span> <span class="n">less_than</span><span class="p">(</span>
+            <span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">equal</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">cond_kwargs</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_</span><span class="p">:</span>
             <span class="n">cond</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">_negate</span><span class="p">()</span>
