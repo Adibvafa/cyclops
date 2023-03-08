@@ -10,7 +10,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Synthea query API tutorial &mdash; cyclops  documentation</title>
+  <title>OMOP query API tutorial &mdash; cyclops  documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/cyclops.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
@@ -31,8 +31,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="eICU-CRD query API tutorial" href="../eicu/query_api.html" />
-    <link rel="prev" title="MIMIC-IV query API tutorial" href="../mimiciv/query_api.html" />
+    <link rel="next" title="API Reference" href="../../api.html" />
+    <link rel="prev" title="eICU-CRD query API tutorial" href="../eicu/query_api.html" />
 <script type="text/javascript">
   window.onload = function() {
     document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
@@ -133,15 +133,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html#citation">🎓 Citation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to cyclops</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../tutorials.html">Tutorials</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../mimiciii/query_api.html">MIMIC-III query API tutorial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mimiciv/query_api.html">MIMIC-IV query API tutorial</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Synthea query API tutorial</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#Imports-and-instantiate-OMOPQuerier">Imports and instantiate <code class="docutils literal notranslate"><span class="pre">OMOPQuerier</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Example-1.-Get-all-patient-visits-in-or-after-2010.">Example 1. Get all patient visits in or after 2010.</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Example-2.-Get-measurements-for-all-visits-in-or-after-2020,-limit-to-first-100-rows.">Example 2. Get measurements for all visits in or after 2020, limit to first 100 rows.</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../tutorials_query.html">query API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../mimiciii/query_api.html">MIMIC-III query API tutorial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mimiciv/query_api.html">MIMIC-IV query API tutorial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../eicu/query_api.html">eICU-CRD query API tutorial</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">OMOP query API tutorial</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Imports-and-instantiate-OMOPQuerier">Imports and instantiate <code class="docutils literal notranslate"><span class="pre">OMOPQuerier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Example-1.-Get-all-patient-visits-in-or-after-2010.">Example 1. Get all patient visits in or after 2010.</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Example-2.-Get-measurements-for-all-visits-in-or-after-2020,-limit-to-first-100-rows.">Example 2. Get measurements for all visits in or after 2020, limit to first 100 rows.</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../eicu/query_api.html">eICU-CRD query API tutorial</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
@@ -172,11 +175,13 @@
   
     <li><a href="../../tutorials.html">Tutorials</a></li>
   
+    <li><a href="../../tutorials_query.html">query API</a></li>
+  
 
   
 
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/tutorials/synthea/query_api.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/tutorials/omop/query_api.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -441,13 +446,17 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<section id="Synthea-query-API-tutorial">
-<h1>Synthea query API tutorial<a class="headerlink" href="#Synthea-query-API-tutorial" title="Permalink to this headline"></a></h1>
-<p>This notebook shows examples of how to use the cyclops.query API on <a class="reference external" href="https://github.com/synthetichealth/synthea">Synthea</a> in OMOP format.</p>
+<section id="OMOP-query-API-tutorial">
+<h1>OMOP query API tutorial<a class="headerlink" href="#OMOP-query-API-tutorial" title="Permalink to this headline"></a></h1>
+<p>This notebook shows examples of how to use the cyclops.query API to query EHR databases that follow the OMOP common data model. We showcase the examples on:</p>
+<ol class="arabic simple">
+<li><p><a class="reference external" href="https://github.com/synthetichealth/synthea">Synthea</a> in OMOP format.</p>
 <ul class="simple">
 <li><p>First, generate synthea data using their releases. We used <a class="reference external" href="https://github.com/synthetichealth/synthea/releases/tag/v2.7.0">v2.7.0</a> to generate data .</p></li>
 <li><p>Follow instructions provided in <a class="reference external" href="https://github.com/OHDSI/ETL-Synthea">ETL-Synthea</a> to load the CSV data into a postgres database, and perform ETL to load the data into OMOP format.</p></li>
 </ul>
+</li>
+</ol>
 <section id="Imports-and-instantiate-OMOPQuerier">
 <h2>Imports and instantiate <code class="docutils literal notranslate"><span class="pre">OMOPQuerier</span></code><a class="headerlink" href="#Imports-and-instantiate-OMOPQuerier" title="Permalink to this headline"></a></h2>
 <div class="nbinput docutils container">
@@ -591,8 +600,8 @@ Name: visit_start_date, dtype: int64
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../mimiciv/query_api.html" class="btn btn-neutral float-left" title="MIMIC-IV query API tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../eicu/query_api.html" class="btn btn-neutral float-right" title="eICU-CRD query API tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../eicu/query_api.html" class="btn btn-neutral float-left" title="eICU-CRD query API tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
