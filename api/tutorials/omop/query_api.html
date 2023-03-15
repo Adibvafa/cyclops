@@ -138,9 +138,12 @@
 <li class="toctree-l3"><a class="reference internal" href="../mimiciv/query_api.html">MIMIC-IV query API tutorial</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../eicu/query_api.html">eICU-CRD query API tutorial</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">OMOP query API tutorial</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#Imports-and-instantiate-OMOPQuerier">Imports and instantiate <code class="docutils literal notranslate"><span class="pre">OMOPQuerier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Imports-and-instantiate-OMOPQuerier.">Imports and instantiate <code class="docutils literal notranslate"><span class="pre">OMOPQuerier</span></code>.</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Example-1.-Get-all-patient-visits-in-or-after-2010.">Example 1. Get all patient visits in or after 2010.</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Example-2.-Get-measurements-for-all-visits-in-or-after-2020,-limit-to-first-100-rows.">Example 2. Get measurements for all visits in or after 2020, limit to first 100 rows.</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Example-2.-Get-measurements-for-all-visits-in-or-after-2020.">Example 2. Get measurements for all visits in or after 2020.</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Imports and instantiate <code class="docutils literal notranslate"><span class="pre">OMOPQuerier</span></code>.</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Example-1.-Get-all-patient-visits-that-ended-in-a-mortality-outcome-in-or-after-2010.">Example 1. Get all patient visits that ended in a mortality outcome in or after 2010.</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Example-2.-Get-all-measurements-for-female-patient-visits-with-sepsis-diagnoses,-that-ended-in-a-mortality-outcome-(limit-to-10000-rows).">Example 2. Get all measurements for female patient visits with <code class="docutils literal notranslate"><span class="pre">sepsis</span></code> diagnoses, that ended in a mortality outcome (limit to 10000 rows).</a></li>
 </ul>
 </li>
 </ul>
@@ -457,8 +460,9 @@ div.rendered_html tbody tr:hover {
 </ul>
 </li>
 </ol>
-<section id="Imports-and-instantiate-OMOPQuerier">
-<h2>Imports and instantiate <code class="docutils literal notranslate"><span class="pre">OMOPQuerier</span></code><a class="headerlink" href="#Imports-and-instantiate-OMOPQuerier" title="Permalink to this headline"></a></h2>
+<section id="Imports-and-instantiate-OMOPQuerier.">
+<h2>Imports and instantiate <code class="docutils literal notranslate"><span class="pre">OMOPQuerier</span></code>.<a class="headerlink" href="#Imports-and-instantiate-OMOPQuerier." title="Permalink to this headline"></a></h2>
+<p>Pass in the <code class="docutils literal notranslate"><span class="pre">schema_name</span></code> which is the name of the postgres schema which houses all the OMOP tables.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -472,7 +476,7 @@ div.rendered_html tbody tr:hover {
     <span class="n">dbms</span><span class="o">=</span><span class="s2">&quot;postgresql&quot;</span><span class="p">,</span>
     <span class="n">port</span><span class="o">=</span><span class="mi">5432</span><span class="p">,</span>
     <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
-    <span class="n">database</span><span class="o">=</span><span class="s2">&quot;synthea_fl&quot;</span><span class="p">,</span>
+    <span class="n">database</span><span class="o">=</span><span class="s2">&quot;synthea_integration_test&quot;</span><span class="p">,</span>
     <span class="n">user</span><span class="o">=</span><span class="s2">&quot;postgres&quot;</span><span class="p">,</span>
     <span class="n">password</span><span class="o">=</span><span class="s2">&quot;pwd&quot;</span><span class="p">,</span>
     <span class="n">schema_name</span><span class="o">=</span><span class="s2">&quot;cdm_synthea10&quot;</span><span class="p">,</span>
@@ -487,7 +491,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-30 14:47:55,129 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
+2023-03-14 15:32:10,904 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -503,7 +507,8 @@ div.rendered_html tbody tr:hover {
  &#39;observation&#39;,
  &#39;concept&#39;,
  &#39;care_site&#39;,
- &#39;provider&#39;]
+ &#39;provider&#39;,
+ &#39;condition_occurrence&#39;]
 </pre></div></div>
 </div>
 </section>
@@ -525,8 +530,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-30 14:48:00,694 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-30 14:48:00,695 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 5.527511 s
+2023-03-14 15:32:11,101 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-03-14 15:32:11,102 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.153861 s
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -534,7 +539,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-355294 rows extracted!
+3119 rows extracted!
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -543,26 +548,25 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-2010     7968
-2011     8380
-2012    10250
-2013    29625
-2014    44476
-2015    30647
-2016    30158
-2017    30804
-2018    31251
-2019    32257
-2020    39073
-2021    29654
-2022    30542
-2023      209
+2010     52
+2011     55
+2012     97
+2013    246
+2014    385
+2015    258
+2016    279
+2017    261
+2018    279
+2019    253
+2020    295
+2021    375
+2022    284
 Name: visit_start_date, dtype: int64
 </pre></div></div>
 </div>
 </section>
-<section id="Example-2.-Get-measurements-for-all-visits-in-or-after-2020,-limit-to-first-100-rows.">
-<h2>Example 2. Get measurements for all visits in or after 2020, limit to first 100 rows.<a class="headerlink" href="#Example-2.-Get-measurements-for-all-visits-in-or-after-2020,-limit-to-first-100-rows." title="Permalink to this headline"></a></h2>
+<section id="Example-2.-Get-measurements-for-all-visits-in-or-after-2020.">
+<h2>Example 2. Get measurements for all visits in or after 2020.<a class="headerlink" href="#Example-2.-Get-measurements-for-all-visits-in-or-after-2020." title="Permalink to this headline"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
@@ -571,7 +575,7 @@ Name: visit_start_date, dtype: int64
 <span class="n">visits</span> <span class="o">=</span> <span class="n">synthea</span><span class="o">.</span><span class="n">visit_occurrence</span><span class="p">(</span><span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span>
 <span class="n">measurements</span> <span class="o">=</span> <span class="n">synthea</span><span class="o">.</span><span class="n">measurement</span><span class="p">(</span>
     <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">visits</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;visit_occurrence_id&quot;</span><span class="p">)</span>
-<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">measurements</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -581,8 +585,8 @@ Name: visit_start_date, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-30 14:48:00,923 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-30 14:48:00,924 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.073149 s
+2023-03-14 15:32:14,262 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-03-14 15:32:14,263 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 3.058070 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -590,7 +594,193 @@ Name: visit_start_date, dtype: int64
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-100 rows extracted!
+7555 rows extracted!
+</pre></div></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p><a class="reference external" href="https://physionet.org/content/mimiciii/1.4/">MIMIC-III v1.4</a> in OMOP format.</p></li>
+</ol>
+<ul class="simple">
+<li><p>First, setup the MIMIC-III database according to the instructions in <a class="reference external" href="https://github.com/MIT-LCP/mimic-code/tree/main/mimic-iii/buildmimic/postgres">mimic-code</a>.</p></li>
+<li><p>Perform the ETL in the <a class="reference external" href="https://github.com/MIT-LCP/mimic-omop">mimic-omop</a> repo.</p></li>
+<li><p>The database is assumed to be hosted using postgres. Update the config parameters such as username and password, passed to <code class="docutils literal notranslate"><span class="pre">MIMICIIIQuerier</span></code> accordingly.</p></li>
+</ul>
+</section>
+<section id="id1">
+<h2>Imports and instantiate <code class="docutils literal notranslate"><span class="pre">OMOPQuerier</span></code>.<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h2>
+<p>Pass in the <code class="docutils literal notranslate"><span class="pre">schema_name</span></code> which is the name of the postgres schema which houses all the OMOP tables.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mimic_omop</span> <span class="o">=</span> <span class="n">OMOPQuerier</span><span class="p">(</span>
+    <span class="n">dbms</span><span class="o">=</span><span class="s2">&quot;postgresql&quot;</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">5432</span><span class="p">,</span>
+    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+    <span class="n">database</span><span class="o">=</span><span class="s2">&quot;mimiciii&quot;</span><span class="p">,</span>
+    <span class="n">user</span><span class="o">=</span><span class="s2">&quot;postgres&quot;</span><span class="p">,</span>
+    <span class="n">password</span><span class="o">=</span><span class="s2">&quot;pwd&quot;</span><span class="p">,</span>
+    <span class="n">schema_name</span><span class="o">=</span><span class="s2">&quot;omop&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># List all tables.</span>
+<span class="n">mimic_omop</span><span class="o">.</span><span class="n">list_tables</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+2023-03-14 15:32:20,825 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;visit_occurrence&#39;,
+ &#39;visit_detail&#39;,
+ &#39;person&#39;,
+ &#39;measurement&#39;,
+ &#39;observation&#39;,
+ &#39;concept&#39;,
+ &#39;care_site&#39;,
+ &#39;provider&#39;,
+ &#39;condition_occurrence&#39;]
+</pre></div></div>
+</div>
+</section>
+<section id="Example-1.-Get-all-patient-visits-that-ended-in-a-mortality-outcome-in-or-after-2010.">
+<h2>Example 1. Get all patient visits that ended in a mortality outcome in or after 2010.<a class="headerlink" href="#Example-1.-Get-all-patient-visits-that-ended-in-a-mortality-outcome-in-or-after-2010." title="Permalink to this headline"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">(</span><span class="s2">&quot;visit_start_date&quot;</span><span class="p">,</span> <span class="s2">&quot;2010-01-01&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+<span class="n">visits</span> <span class="o">=</span> <span class="n">mimic_omop</span><span class="o">.</span><span class="n">visit_occurrence</span><span class="p">(</span><span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span>
+<span class="n">visits_concept_mapped</span> <span class="o">=</span> <span class="n">mimic_omop</span><span class="o">.</span><span class="n">map_concept_ids_to_name</span><span class="p">(</span>
+    <span class="n">visits</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;discharge_to_concept_id&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;admitting_concept_id&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="n">visits_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;discharge_to_concept_name&quot;</span><span class="p">,</span> <span class="s2">&quot;died&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+<span class="n">visits</span> <span class="o">=</span> <span class="n">mimic_omop</span><span class="o">.</span><span class="n">get_interface</span><span class="p">(</span><span class="n">visits_concept_mapped</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">visits_ops</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">visits</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+2023-03-14 15:32:22,312 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-03-14 15:32:22,313 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 1.444854 s
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+5815 rows extracted!
+</pre></div></div>
+</div>
+</section>
+<section id="Example-2.-Get-all-measurements-for-female-patient-visits-with-sepsis-diagnoses,-that-ended-in-a-mortality-outcome-(limit-to-10000-rows).">
+<h2>Example 2. Get all measurements for female patient visits with <code class="docutils literal notranslate"><span class="pre">sepsis</span></code> diagnoses, that ended in a mortality outcome (limit to 10000 rows).<a class="headerlink" href="#Example-2.-Get-all-measurements-for-female-patient-visits-with-sepsis-diagnoses,-that-ended-in-a-mortality-outcome-(limit-to-10000-rows)." title="Permalink to this headline"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">persons_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;gender_concept_name&quot;</span><span class="p">,</span> <span class="s2">&quot;FEMALE&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+<span class="n">cohort</span> <span class="o">=</span> <span class="n">mimic_omop</span><span class="o">.</span><span class="n">person</span><span class="p">(</span><span class="n">ops</span><span class="o">=</span><span class="n">persons_ops</span><span class="p">)</span>
+<span class="n">cohort</span> <span class="o">=</span> <span class="n">mimic_omop</span><span class="o">.</span><span class="n">visit_occurrence</span><span class="p">(</span><span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">cohort</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;person_id&quot;</span><span class="p">))</span>
+<span class="n">cohort</span> <span class="o">=</span> <span class="n">mimic_omop</span><span class="o">.</span><span class="n">condition_occurrence</span><span class="p">(</span>
+    <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">cohort</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;visit_occurrence_id&quot;</span><span class="p">,</span> <span class="n">isouter</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">cohort</span> <span class="o">=</span> <span class="n">mimic_omop</span><span class="o">.</span><span class="n">measurement</span><span class="p">(</span>
+    <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">cohort</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;visit_occurrence_id&quot;</span><span class="p">,</span> <span class="n">isouter</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">cohort_query</span> <span class="o">=</span> <span class="n">mimic_omop</span><span class="o">.</span><span class="n">map_concept_ids_to_name</span><span class="p">(</span>
+    <span class="n">cohort</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;discharge_to_concept_id&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;admitting_concept_id&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;condition_concept_id&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="n">sepsis_died_filter</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;discharge_to_concept_name&quot;</span><span class="p">,</span> <span class="s2">&quot;died&quot;</span><span class="p">),</span>
+        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;condition_concept_name&quot;</span><span class="p">,</span> <span class="s2">&quot;sepsis&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+<span class="n">cohort</span> <span class="o">=</span> <span class="n">mimic_omop</span><span class="o">.</span><span class="n">get_interface</span><span class="p">(</span><span class="n">cohort_query</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">sepsis_died_filter</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cohort</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+2023-03-14 15:35:05,602 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-03-14 15:35:05,604 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 162.706524 s
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+10000 rows extracted!
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cohort</span><span class="p">[</span><span class="s2">&quot;measurement_concept_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+No matching concept                                                      5602
+Systolic blood pressure                                                   327
+Mean blood pressure                                                       321
+Respiratory rate                                                          243
+Urine output                                                              212
+                                                                         ...
+cefTRIAXone [Susceptibility] by Disk diffusion (KB)                         1
+Ciprofloxacin [Susceptibility] by Disk diffusion (KB)                       1
+Trimethoprim+Sulfamethoxazole [Susceptibility] by Disk diffusion (KB)       1
+Imipenem [Susceptibility] by Disk diffusion (KB)                            1
+Piperacillin [Susceptibility] by Disk diffusion (KB)                        1
+Name: measurement_concept_name, Length: 135, dtype: int64
 </pre></div></div>
 </div>
 </section>
