@@ -2256,6 +2256,43 @@
             <span class="n">agg_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agg_col</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="n">aggfunc_names</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
 
         <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="o">*</span><span class="n">groupby_cols</span><span class="p">,</span> <span class="o">*</span><span class="n">agg_cols</span><span class="p">)</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="o">*</span><span class="n">groupby_cols</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="Distinct"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.Distinct.html#cyclops.query.ops.Distinct">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Distinct</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">QueryOp</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get distinct rows.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cols: str or list of str</span>
+<span class="sd">        Columns to use for distinct.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; Distinct(&quot;person_id&quot;)(table)</span>
+<span class="sd">    &gt;&gt;&gt; Distinct([&quot;person_id&quot;, &quot;visit_id&quot;])(table)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cols</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+
+<div class="viewcode-block" id="Distinct.__call__"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.Distinct.html#cyclops.query.ops.Distinct.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">(</span><span class="o">*</span><span class="n">get_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="p">))</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span></div></div>
 </pre></div>
 
            </div>

@@ -200,7 +200,7 @@
 <span class="sd">        The query.</span>
 <span class="sd">    join: cyclops.query.ops.JoinArgs, optional</span>
 <span class="sd">        Join arguments to join the query with another table.</span>
-<span class="sd">    ops: cyclops.query.ops.Sequential, optional</span>
+<span class="sd">    ops: cyclops.query.ops.Sequential or cyclops.query.ops.QueryOp, optional</span>
 <span class="sd">        Operations to perform on the query.</span>
 <span class="sd">    _data: pandas.DataFrame or dask.DataFrame</span>
 <span class="sd">        Data returned from executing the query, as Pandas DataFrame.</span>
@@ -217,7 +217,7 @@
     <span class="n">database</span><span class="p">:</span> <span class="n">Database</span>
     <span class="n">query</span><span class="p">:</span> <span class="n">TableTypes</span>
     <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">QueryOp</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">_run_args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
 
@@ -334,7 +334,7 @@
 <span class="sd">        Process function to apply on the pandas dataframe returned from the query.</span>
 <span class="sd">    join: cyclops.query.ops.JoinArgs, optional</span>
 <span class="sd">        Join arguments to join the query with another table.</span>
-<span class="sd">    ops: cyclops.query.ops.Sequential, optional</span>
+<span class="sd">    ops: cyclops.query.ops.Sequential or cyclops.query.ops.QueryOp, optional</span>
 <span class="sd">        Operations to perform on the query.</span>
 <span class="sd">    _data: pandas.DataFrame or dask.DataFrame</span>
 <span class="sd">        Data returned from executing the query, as Pandas DataFrame.</span>
@@ -353,7 +353,7 @@
     <span class="n">_query</span><span class="p">:</span> <span class="n">TableTypes</span>
     <span class="n">process_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
     <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">QueryOp</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">_run_args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
 
