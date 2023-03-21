@@ -230,6 +230,12 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.mimiciv.MIMICIVQuerier.labevents" title="cyclops.query.mimiciv.MIMICIVQuerier.labevents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">labevents</span></code></a></p></td>
 <td><p>Query lab events from the hospital module.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.mimiciv.MIMICIVQuerier.list_custom_tables" title="cyclops.query.mimiciv.MIMICIVQuerier.list_custom_tables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_custom_tables</span></code></a></p></td>
+<td><p>List custom tables methods provided by the dataset API.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.mimiciv.MIMICIVQuerier.list_schemas" title="cyclops.query.mimiciv.MIMICIVQuerier.list_schemas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_schemas</span></code></a></p></td>
+<td><p>List schemas in the database to query.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.mimiciv.MIMICIVQuerier.list_tables" title="cyclops.query.mimiciv.MIMICIVQuerier.list_tables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_tables</span></code></a></p></td>
 <td><p>List table methods that can be queried using the database.</p></td>
 </tr>
@@ -336,13 +342,14 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cyclops.query.mimiciv.MIMICIVQuerier.get_table">
-<span class="sig-name descname"><span class="pre">get_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cast_timestamp_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.get_table" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cast_timestamp_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.get_table" title="Permalink to this definition"></a></dt>
 <dd><p>Get a table and possibly map columns to have standard names.</p>
-<p>Standardizing column names allows for for columns to be
+<p>Standardizing column names allows for columns to be
 recognized in downstream processing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>schema_name</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of schema in the database.</p></li>
 <li><p><strong>table_name</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of GEMINI table.</p></li>
 <li><p><strong>cast_timestamp_cols</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to cast timestamp columns to datetime.</p></li>
 </ul>
@@ -372,6 +379,34 @@ recognized in downstream processing.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface">cyclops.query.interface.QueryInterface</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.query.mimiciv.MIMICIVQuerier.list_custom_tables">
+<span class="sig-name descname"><span class="pre">list_custom_tables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.list_custom_tables" title="Permalink to this definition"></a></dt>
+<dd><p>List custom tables methods provided by the dataset API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of custom table names.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.query.mimiciv.MIMICIVQuerier.list_schemas">
+<span class="sig-name descname"><span class="pre">list_schemas</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cyclops.query.mimiciv.MIMICIVQuerier.list_schemas" title="Permalink to this definition"></a></dt>
+<dd><p>List schemas in the database to query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of schema names.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
 </dd>
 </dl>
 </dd></dl>

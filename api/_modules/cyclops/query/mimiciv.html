@@ -191,34 +191,6 @@
 <span class="n">setup_logging</span><span class="p">(</span><span class="n">print_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">)</span>
 
 
-<span class="c1"># Constants.</span>
-<span class="n">PATIENTS</span> <span class="o">=</span> <span class="s2">&quot;patients&quot;</span>
-<span class="n">ADMISSIONS</span> <span class="o">=</span> <span class="s2">&quot;admissions&quot;</span>
-<span class="n">DIAGNOSES</span> <span class="o">=</span> <span class="s2">&quot;diagnoses&quot;</span>
-<span class="n">DIM_DIAGNOSES</span> <span class="o">=</span> <span class="s2">&quot;dim_diagnoses&quot;</span>
-<span class="n">DIM_ITEMS</span> <span class="o">=</span> <span class="s2">&quot;dim_items&quot;</span>
-<span class="n">DIM_LABITEMS</span> <span class="o">=</span> <span class="s2">&quot;dim_labitems&quot;</span>
-<span class="n">CHARTEVENTS</span> <span class="o">=</span> <span class="s2">&quot;chartevents&quot;</span>
-<span class="n">TRANSFERS</span> <span class="o">=</span> <span class="s2">&quot;transfers&quot;</span>
-<span class="n">PHARMACY</span> <span class="o">=</span> <span class="s2">&quot;pharmacy&quot;</span>
-<span class="n">LABEVENTS</span> <span class="o">=</span> <span class="s2">&quot;labevents&quot;</span>
-<span class="n">EDSTAYS</span> <span class="o">=</span> <span class="s2">&quot;ed_stays&quot;</span>
-
-<span class="n">TABLE_MAP</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="n">PATIENTS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">patients</span><span class="p">,</span>
-    <span class="n">ADMISSIONS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">admissions</span><span class="p">,</span>
-    <span class="n">DIAGNOSES</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">diagnoses_icd</span><span class="p">,</span>
-    <span class="n">DIM_DIAGNOSES</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">d_icd_diagnoses</span><span class="p">,</span>
-    <span class="n">DIM_LABITEMS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">d_labitems</span><span class="p">,</span>
-    <span class="n">DIM_ITEMS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_icu</span><span class="o">.</span><span class="n">d_items</span><span class="p">,</span>
-    <span class="n">CHARTEVENTS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_icu</span><span class="o">.</span><span class="n">chartevents</span><span class="p">,</span>
-    <span class="n">LABEVENTS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">labevents</span><span class="p">,</span>
-    <span class="n">PHARMACY</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">pharmacy</span><span class="p">,</span>
-    <span class="n">TRANSFERS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">transfers</span><span class="p">,</span>
-    <span class="n">EDSTAYS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">mimic_ed</span><span class="o">.</span><span class="n">edstays</span><span class="p">,</span>
-<span class="p">}</span>
-
-
 <div class="viewcode-block" id="MIMICIVQuerier"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.mimiciv.MIMICIVQuerier.html#cyclops.query.mimiciv.MIMICIVQuerier">[docs]</a><span class="k">class</span> <span class="nc">MIMICIVQuerier</span><span class="p">(</span><span class="n">DatasetQuerier</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;MIMICIV dataset querier.&quot;&quot;&quot;</span>
 
@@ -234,7 +206,7 @@
         <span class="n">overrides</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">config_overrides</span><span class="p">:</span>
             <span class="n">overrides</span> <span class="o">=</span> <span class="n">config_overrides</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">TABLE_MAP</span><span class="p">,</span> <span class="o">**</span><span class="n">overrides</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">overrides</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MIMICIVQuerier.patients"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.mimiciv.MIMICIVQuerier.html#cyclops.query.mimiciv.MIMICIVQuerier.patients">[docs]</a>    <span class="k">def</span> <span class="nf">patients</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -263,7 +235,7 @@
 <span class="sd">        adjusted based on the inferred approximate year of care.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">PATIENTS</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="s2">&quot;mimiciv_hosp&quot;</span><span class="p">,</span> <span class="s2">&quot;patients&quot;</span><span class="p">)</span>
 
         <span class="c1"># Process and include patient&#39;s anchor year.</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span>
@@ -307,7 +279,7 @@
             <span class="p">]</span>
         <span class="p">)(</span><span class="n">table</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MIMICIVQuerier.diagnoses"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.mimiciv.MIMICIVQuerier.html#cyclops.query.mimiciv.MIMICIVQuerier.diagnoses">[docs]</a>    <span class="k">def</span> <span class="nf">diagnoses</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -329,16 +301,16 @@
 <span class="sd">            Constructed query, wrapped in an interface object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">DIAGNOSES</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="s2">&quot;mimiciv_hosp&quot;</span><span class="p">,</span> <span class="s2">&quot;diagnoses_icd&quot;</span><span class="p">)</span>
 
         <span class="c1"># Join with diagnoses dimension table.</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
-            <span class="n">join_table</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">DIM_DIAGNOSES</span><span class="p">),</span>
+            <span class="n">join_table</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="s2">&quot;mimiciv_hosp&quot;</span><span class="p">,</span> <span class="s2">&quot;d_icd_diagnoses&quot;</span><span class="p">),</span>
             <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;icd_code&quot;</span><span class="p">,</span> <span class="s2">&quot;icd_version&quot;</span><span class="p">],</span>
             <span class="n">on_to_type</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;str&quot;</span><span class="p">,</span> <span class="s2">&quot;int&quot;</span><span class="p">],</span>
         <span class="p">)(</span><span class="n">table</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MIMICIVQuerier.care_units"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.mimiciv.MIMICIVQuerier.html#cyclops.query.mimiciv.MIMICIVQuerier.care_units">[docs]</a>    <span class="k">def</span> <span class="nf">care_units</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -358,9 +330,9 @@
 <span class="sd">            Constructed table, wrapped in an interface object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">TRANSFERS</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="s2">&quot;mimiciv_hosp&quot;</span><span class="p">,</span> <span class="s2">&quot;transfers&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">QueryInterfaceProcessed</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span>
             <span class="n">table</span><span class="p">,</span>
             <span class="n">process_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">process_mimic_care_units</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">specific</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
             <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span>
@@ -385,8 +357,8 @@
 <span class="sd">            Constructed query, wrapped in an interface object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">LABEVENTS</span><span class="p">)</span>
-        <span class="n">dim_items_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">DIM_LABITEMS</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="s2">&quot;mimiciv_hosp&quot;</span><span class="p">,</span> <span class="s2">&quot;labevents&quot;</span><span class="p">)</span>
+        <span class="n">dim_items_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="s2">&quot;mimiciv_hosp&quot;</span><span class="p">,</span> <span class="s2">&quot;d_labitems&quot;</span><span class="p">)</span>
 
         <span class="c1"># Join with lab items dimension table.</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
@@ -394,7 +366,7 @@
             <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;itemid&quot;</span><span class="p">],</span>
         <span class="p">)(</span><span class="n">table</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MIMICIVQuerier.chartevents"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.mimiciv.MIMICIVQuerier.html#cyclops.query.mimiciv.MIMICIVQuerier.chartevents">[docs]</a>    <span class="k">def</span> <span class="nf">chartevents</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -414,8 +386,8 @@
 <span class="sd">            Constructed table, wrapped in an interface object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">CHARTEVENTS</span><span class="p">)</span>
-        <span class="n">dim_items_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">DIM_ITEMS</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="s2">&quot;mimiciv_icu&quot;</span><span class="p">,</span> <span class="s2">&quot;chartevents&quot;</span><span class="p">)</span>
+        <span class="n">dim_items_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="s2">&quot;mimiciv_icu&quot;</span><span class="p">,</span> <span class="s2">&quot;d_items&quot;</span><span class="p">)</span>
 
         <span class="c1"># Join with items dimension table.</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
@@ -423,7 +395,7 @@
             <span class="n">on</span><span class="o">=</span><span class="s2">&quot;itemid&quot;</span><span class="p">,</span>
         <span class="p">)(</span><span class="n">table</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

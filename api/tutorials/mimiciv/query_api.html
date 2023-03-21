@@ -467,7 +467,7 @@ div.rendered_html tbody tr:hover {
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cyclops.query.ops</span> <span class="k">as</span> <span class="nn">qo</span>
 <span class="kn">from</span> <span class="nn">cyclops.query</span> <span class="kn">import</span> <span class="n">MIMICIVQuerier</span>
 
-<span class="n">mimic</span> <span class="o">=</span> <span class="n">MIMICIVQuerier</span><span class="p">(</span>
+<span class="n">querier</span> <span class="o">=</span> <span class="n">MIMICIVQuerier</span><span class="p">(</span>
     <span class="n">dbms</span><span class="o">=</span><span class="s2">&quot;postgresql&quot;</span><span class="p">,</span>
     <span class="n">port</span><span class="o">=</span><span class="mi">5432</span><span class="p">,</span>
     <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
@@ -475,8 +475,8 @@ div.rendered_html tbody tr:hover {
     <span class="n">user</span><span class="o">=</span><span class="s2">&quot;postgres&quot;</span><span class="p">,</span>
     <span class="n">password</span><span class="o">=</span><span class="s2">&quot;pwd&quot;</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="c1"># List all tables.</span>
-<span class="n">mimic</span><span class="o">.</span><span class="n">list_tables</span><span class="p">()</span>
+<span class="c1"># List all schemas.</span>
+<span class="n">querier</span><span class="o">.</span><span class="n">list_schemas</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -485,7 +485,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-30 15:16:11,459 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
+2023-03-21 10:55:19,273 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -494,17 +494,15 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-[&#39;patients&#39;,
- &#39;admissions&#39;,
- &#39;diagnoses&#39;,
- &#39;dim_diagnoses&#39;,
- &#39;dim_labitems&#39;,
- &#39;dim_items&#39;,
- &#39;chartevents&#39;,
- &#39;labevents&#39;,
- &#39;pharmacy&#39;,
- &#39;transfers&#39;,
- &#39;ed_stays&#39;]
+[&#39;fhir_etl&#39;,
+ &#39;fhir_trm&#39;,
+ &#39;information_schema&#39;,
+ &#39;mimic_fhir&#39;,
+ &#39;mimiciv_derived&#39;,
+ &#39;mimiciv_ed&#39;,
+ &#39;mimiciv_hosp&#39;,
+ &#39;mimiciv_icu&#39;,
+ &#39;public&#39;]
 </pre></div></div>
 </div>
 </section>
@@ -514,14 +512,14 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">patients</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span>
 <span class="n">ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
     <span class="p">[</span>
         <span class="n">qo</span><span class="o">.</span><span class="n">AddDeltaColumn</span><span class="p">([</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;dischtime&quot;</span><span class="p">],</span> <span class="n">years</span><span class="o">=</span><span class="s2">&quot;anchor_year_difference&quot;</span><span class="p">),</span>
         <span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">(</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;2021-01-01&quot;</span><span class="p">),</span>
     <span class="p">]</span>
 <span class="p">)</span>
-<span class="n">admissions</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
+<span class="n">admissions</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
     <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">patients</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;subject_id&quot;</span><span class="p">),</span>
     <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">,</span>
 <span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
@@ -534,8 +532,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-30 15:16:11,879 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-30 15:16:11,880 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.284805 s
+2023-03-21 10:55:22,420 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-03-21 10:55:22,421 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.457140 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -565,12 +563,12 @@ div.rendered_html tbody tr:hover {
         <span class="n">qo</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">(</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;2015&quot;</span><span class="p">),</span>
     <span class="p">]</span>
 <span class="p">)</span>
-<span class="n">patients</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span>
-<span class="n">admissions</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
+<span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span>
+<span class="n">admissions</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
     <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">patients</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;subject_id&quot;</span><span class="p">),</span>
     <span class="n">ops</span><span class="o">=</span><span class="n">admissions_ops</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">diagnoses</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">diagnoses</span><span class="p">(</span>
+<span class="n">diagnoses</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">diagnoses</span><span class="p">(</span>
     <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span>
         <span class="n">join_table</span><span class="o">=</span><span class="n">admissions</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
         <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;subject_id&quot;</span><span class="p">,</span> <span class="s2">&quot;hadm_id&quot;</span><span class="p">],</span>
@@ -586,8 +584,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-30 15:16:12,872 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-30 15:16:12,873 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.874558 s
+2023-03-21 10:55:23,381 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-03-21 10:55:23,382 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.851405 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -617,12 +615,12 @@ div.rendered_html tbody tr:hover {
         <span class="n">qo</span><span class="o">.</span><span class="n">ConditionRegexMatch</span><span class="p">(</span><span class="s2">&quot;long_title&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;(?=.*schizophrenia)(?=.*chronic)&quot;</span><span class="p">),</span>
     <span class="p">]</span>
 <span class="p">)</span>
-<span class="n">patients</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span>
-<span class="n">admissions</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
+<span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span>
+<span class="n">admissions</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
     <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">patients</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;subject_id&quot;</span><span class="p">),</span>
     <span class="n">ops</span><span class="o">=</span><span class="n">admissions_ops</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">diagnoses</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">diagnoses</span><span class="p">(</span>
+<span class="n">diagnoses</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">diagnoses</span><span class="p">(</span>
     <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span>
         <span class="n">join_table</span><span class="o">=</span><span class="n">admissions</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
         <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;subject_id&quot;</span><span class="p">,</span> <span class="s2">&quot;hadm_id&quot;</span><span class="p">],</span>
@@ -638,8 +636,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-30 15:16:14,524 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-30 15:16:14,525 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 1.533797 s
+2023-03-21 10:55:25,071 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-03-21 10:55:25,072 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 1.487202 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -664,12 +662,12 @@ div.rendered_html tbody tr:hover {
     <span class="p">]</span>
 <span class="p">)</span>
 <span class="n">chartevents_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">,</span> <span class="s2">&quot;Routine Vital Signs&quot;</span><span class="p">)])</span>
-<span class="n">patients</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span>
-<span class="n">admissions</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
+<span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span>
+<span class="n">admissions</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
     <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">patients</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;subject_id&quot;</span><span class="p">),</span>
     <span class="n">ops</span><span class="o">=</span><span class="n">admissions_ops</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">vitals</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">chartevents</span><span class="p">(</span>
+<span class="n">vitals</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">chartevents</span><span class="p">(</span>
     <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span>
         <span class="n">join_table</span><span class="o">=</span><span class="n">admissions</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
         <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;subject_id&quot;</span><span class="p">,</span> <span class="s2">&quot;hadm_id&quot;</span><span class="p">],</span>
@@ -685,8 +683,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-30 15:17:49,765 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-30 15:17:49,765 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 95.007937 s
+2023-03-21 10:56:48,290 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-03-21 10:56:48,292 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 83.105180 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -711,12 +709,12 @@ div.rendered_html tbody tr:hover {
     <span class="p">]</span>
 <span class="p">)</span>
 <span class="n">labevents_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;hemoglobin&quot;</span><span class="p">)])</span>
-<span class="n">patients</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span>
-<span class="n">admissions</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
+<span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span>
+<span class="n">admissions</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
     <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">patients</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;subject_id&quot;</span><span class="p">),</span>
     <span class="n">ops</span><span class="o">=</span><span class="n">admissions_ops</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">labs</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">chartevents</span><span class="p">(</span>
+<span class="n">labs</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">chartevents</span><span class="p">(</span>
     <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span>
         <span class="n">join_table</span><span class="o">=</span><span class="n">admissions</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
         <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;subject_id&quot;</span><span class="p">,</span> <span class="s2">&quot;hadm_id&quot;</span><span class="p">],</span>
@@ -732,8 +730,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-30 15:19:03,562 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-30 15:19:03,563 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 73.678148 s
+2023-03-21 10:58:00,473 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-03-21 10:58:00,476 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 72.076855 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -759,8 +757,8 @@ div.rendered_html tbody tr:hover {
         <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;gender&quot;</span><span class="p">,</span> <span class="s2">&quot;F&quot;</span><span class="p">),</span>
     <span class="p">]</span>
 <span class="p">)</span>
-<span class="n">patients</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span>
-<span class="n">admissions</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
+<span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span>
+<span class="n">admissions</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
     <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">patients</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;subject_id&quot;</span><span class="p">),</span>
     <span class="n">ops</span><span class="o">=</span><span class="n">admissions_ops</span><span class="p">,</span>
 <span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s2">&quot;dask&quot;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="s2">&quot;subject_id&quot;</span><span class="p">,</span> <span class="n">n_partitions</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
@@ -775,8 +773,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-30 15:19:04,056 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-30 15:19:04,057 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.442855 s
+2023-03-21 10:58:01,003 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-03-21 10:58:01,004 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.465366 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -796,7 +794,7 @@ Number of partitions: 4
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">mimic</span><span class="o">.</span><span class="n">_db</span><span class="o">.</span><span class="n">run_query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM mimiciv_hosp.admissions LIMIT 100&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">run_query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM mimiciv_hosp.admissions LIMIT 100&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -806,8 +804,8 @@ Number of partitions: 4
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-01-30 15:19:05,133 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-01-30 15:19:05,134 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.006734 s
+2023-03-21 10:58:01,981 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-03-21 10:58:01,983 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.010728 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">

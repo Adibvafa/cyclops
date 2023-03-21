@@ -194,12 +194,12 @@
 <h1>cyclops.query.base.DatasetQuerier<a class="headerlink" href="#cyclops-query-base-datasetquerier" title="Permalink to this headline"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="cyclops.query.base.DatasetQuerier">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DatasetQuerier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_map</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">config_overrides</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/base.html#DatasetQuerier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.base.DatasetQuerier" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DatasetQuerier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">config_overrides</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/base.html#DatasetQuerier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.base.DatasetQuerier" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.9/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Base class to query EHR datasets.</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="cyclops.query.base.DatasetQuerier._db">
-<span class="sig-name descname"><span class="pre">_db</span></span><a class="headerlink" href="#cyclops.query.base.DatasetQuerier._db" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="cyclops.query.base.DatasetQuerier.db">
+<span class="sig-name descname"><span class="pre">db</span></span><a class="headerlink" href="#cyclops.query.base.DatasetQuerier.db" title="Permalink to this definition"></a></dt>
 <dd><p>ORM Database used to run queries.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -208,30 +208,17 @@
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="cyclops.query.base.DatasetQuerier._table_map">
-<span class="sig-name descname"><span class="pre">_table_map</span></span><a class="headerlink" href="#cyclops.query.base.DatasetQuerier._table_map" title="Permalink to this definition"></a></dt>
-<dd><p>A dictionary mapping table names to table objects in the DB.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Mapping</p>
-</dd>
-</dl>
-</dd></dl>
-
 <p class="rubric">Notes</p>
 <p>This class is intended to be subclassed to provide methods for querying tables in
-the database. The subclass accepts a table map as an argument, which is a mapping
-from table names to table objects. By default, the methods are named after the
-table names. The subclass can override the table methods by defining a method with
-the same name as the table. The subclass can also add additional methods.</p>
+the database. This class automatically creates methods for querying tables in the
+database. The methods are named after the schema and table name, i.e.
+<cite>self.schema_name.table_name()</cite>. The methods are created when the class is
+instantiated. The subclass can provide custom methods for querying tables in the
+database which can build on the methods created by this class.</p>
 <p>Initialize.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>table_map</strong> (<em>Mapping</em>) – A dictionary mapping table names to table objects in the DB.</p></li>
-<li><p><strong>**config_overrides</strong> – Override configuration parameters, specified as kwargs.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>**config_overrides</strong> – Override configuration parameters, specified as kwargs.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
@@ -247,6 +234,12 @@ the same name as the table. The subclass can also add additional methods.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.base.DatasetQuerier.get_table" title="cyclops.query.base.DatasetQuerier.get_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_table</span></code></a></p></td>
 <td><p>Get a table and possibly map columns to have standard names.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.base.DatasetQuerier.list_custom_tables" title="cyclops.query.base.DatasetQuerier.list_custom_tables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_custom_tables</span></code></a></p></td>
+<td><p>List custom tables methods provided by the dataset API.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.base.DatasetQuerier.list_schemas" title="cyclops.query.base.DatasetQuerier.list_schemas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_schemas</span></code></a></p></td>
+<td><p>List schemas in the database to query.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.base.DatasetQuerier.list_tables" title="cyclops.query.base.DatasetQuerier.list_tables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_tables</span></code></a></p></td>
 <td><p>List table methods that can be queried using the database.</p></td>
 </tr>
@@ -254,14 +247,11 @@ the same name as the table. The subclass can also add additional methods.</p>
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="cyclops.query.base.DatasetQuerier.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_map</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">config_overrides</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/base.html#DatasetQuerier.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.base.DatasetQuerier.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">config_overrides</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/base.html#DatasetQuerier.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.base.DatasetQuerier.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>table_map</strong> (<em>Mapping</em>) – A dictionary mapping table names to table objects in the DB.</p></li>
-<li><p><strong>**config_overrides</strong> – Override configuration parameters, specified as kwargs.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>**config_overrides</strong> – Override configuration parameters, specified as kwargs.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -293,13 +283,14 @@ the same name as the table. The subclass can also add additional methods.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cyclops.query.base.DatasetQuerier.get_table">
-<span class="sig-name descname"><span class="pre">get_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cast_timestamp_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/base.html#DatasetQuerier.get_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.base.DatasetQuerier.get_table" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cast_timestamp_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/base.html#DatasetQuerier.get_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.base.DatasetQuerier.get_table" title="Permalink to this definition"></a></dt>
 <dd><p>Get a table and possibly map columns to have standard names.</p>
-<p>Standardizing column names allows for for columns to be
+<p>Standardizing column names allows for columns to be
 recognized in downstream processing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>schema_name</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of schema in the database.</p></li>
 <li><p><strong>table_name</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Name of GEMINI table.</p></li>
 <li><p><strong>cast_timestamp_cols</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to cast timestamp columns to datetime.</p></li>
 </ul>
@@ -309,6 +300,34 @@ recognized in downstream processing.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v2.0)">sqlalchemy.sql.selectable.Subquery</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.query.base.DatasetQuerier.list_custom_tables">
+<span class="sig-name descname"><span class="pre">list_custom_tables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/base.html#DatasetQuerier.list_custom_tables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.base.DatasetQuerier.list_custom_tables" title="Permalink to this definition"></a></dt>
+<dd><p>List custom tables methods provided by the dataset API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of custom table names.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.query.base.DatasetQuerier.list_schemas">
+<span class="sig-name descname"><span class="pre">list_schemas</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/base.html#DatasetQuerier.list_schemas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.base.DatasetQuerier.list_schemas" title="Permalink to this definition"></a></dt>
+<dd><p>List schemas in the database to query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of schema names.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
 </dd>
 </dl>
 </dd></dl>
