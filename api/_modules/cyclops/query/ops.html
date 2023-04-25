@@ -414,6 +414,67 @@
     <span class="k">return</span> <span class="n">table</span>
 
 
+<div class="viewcode-block" id="FillNull"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.FillNull.html#cyclops.query.ops.FillNull">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">FillNull</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">QueryOp</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fill NULL values with a given value.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cols: str or list of str</span>
+<span class="sd">        Columns to fill.</span>
+<span class="sd">    fill_values: typing.Any or list of typing.Any</span>
+<span class="sd">        Value(s) to fill with.</span>
+<span class="sd">    new_col_names: str or list of str, optional</span>
+<span class="sd">        New column name(s) for the filled columns. If not provided,</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cols</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+    <span class="n">fill_values</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span>
+    <span class="n">new_col_names</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="FillNull.__call__"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.FillNull.html#cyclops.query.ops.FillNull.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fill NULL values with a given value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table: TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Subquery</span>
+<span class="sd">            Table with NULL values filled.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="n">fill_values</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fill_values</span><span class="p">)</span>
+        <span class="n">new_col_names</span> <span class="o">=</span> <span class="n">to_list_optional</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_names</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_col_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_col_names</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<span class="w">                    </span><span class="sd">&quot;&quot;&quot;Number of columns to fill and number of new column names</span>
+<span class="sd">                    must match.&quot;&quot;&quot;</span>
+                <span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fill_values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">fill_values</span> <span class="o">=</span> <span class="n">fill_values</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">fill</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cols</span><span class="p">,</span> <span class="n">fill_values</span><span class="p">):</span>
+            <span class="n">coalesced_col</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">coalesce</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">fill</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;coalesced_col_</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">select</span><span class="p">([</span><span class="n">table</span><span class="p">,</span> <span class="n">coalesced_col</span><span class="p">])</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">new_col_names</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">new_col</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cols</span><span class="p">,</span> <span class="n">new_col_names</span><span class="p">):</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">Rename</span><span class="p">({</span><span class="sa">f</span><span class="s2">&quot;coalesced_col_</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">new_col</span><span class="p">})(</span><span class="n">table</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">drop_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">Rename</span><span class="p">({</span><span class="sa">f</span><span class="s2">&quot;coalesced_col_</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">col</span><span class="p">})(</span><span class="n">table</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">table</span></div></div>
+
+
 <div class="viewcode-block" id="Drop"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.Drop.html#cyclops.query.ops.Drop">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Drop</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">QueryOp</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Drop some columns.</span>
