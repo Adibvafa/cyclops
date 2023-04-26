@@ -2153,6 +2153,18 @@
 <span class="sd">            Processed table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">arg_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_argcount</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_cols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">new_cols</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">arg_count</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">new_cols</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<span class="w">                    </span><span class="sd">&quot;&quot;&quot;Only one result column possible, and needed when</span>
+<span class="sd">                computing function using multiple column args.&quot;&quot;&quot;</span>
+                <span class="p">)</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="n">get_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+            <span class="n">result_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">cols</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">new_cols</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">add_columns</span><span class="p">(</span><span class="n">result_col</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
+
         <span class="k">return</span> <span class="n">apply_to_columns</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_cols</span><span class="p">)</span></div></div>
 
 
