@@ -1,0 +1,688 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.evaluate.evaluator &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/cyclops.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+    document.body.innerHTML = document.body.innerHTML.replace(/ package/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav">
+  <!--
+    Lie about what theme we really are when some RTD-injected JS fetches the
+    full versions panel from the RTD API.  RTD's JS replaces the stub versions
+    panel in the Sphinx-generated HTML with the full versions panel it fetches
+    from the RTD API.  If the API thinks we're not sphinx_rtd_theme, it will
+    serve us the wrong HTML and the panel will float as a "badge" when it
+    shouldn't.  As a customized version of sphinx_rtd_theme, we really do want
+    the same HTML it gets.  See also the diagnoses in
+    <https://github.com/nextstrain/docs.nextstrain.org/issues/76>.
+
+    This bit of JS finds the data RTD injects into the page and modifies it
+    before the code that RTD injects runs and looks at the data.  RTD's
+    <script>s (in <head>) run before this JS, but they wait until the DOM is
+    ready to actually do any work.  This gives us a chance to modify the data
+    during DOM load before the RTD code actually uses it.
+
+      -trs, 27 Jan 2022
+  -->
+  <script>
+    (() => {
+      try {
+        console.log("Lying about the theme to RTD's JS so the versions panel works properly. 🙈");
+
+        /* Update global variable, which is used in the request to get the RTD
+         * "footer" that includes the versions panel.
+         */
+        if (window.READTHEDOCS_DATA)
+          window.READTHEDOCS_DATA.theme = "sphinx_rtd_theme";
+
+        /* Update stored JSON in case anything else deserializes it later.
+         * Comments in the RTD-injected HTML source claim the global variable
+         * above is deprecated.
+         */
+        var script = document.querySelector("#READTHEDOCS_DATA");
+        if (script)
+          script.innerHTML = JSON.stringify({ ...JSON.parse(script.innerHTML), theme: "sphinx_rtd_theme" });
+      }
+      catch (err) {
+        console.log("Lying about the theme to RTD's JS failed… oh well. 🤷", err);
+      }
+    })();
+  </script>
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+
+
+
+
+  <a href="https://vectorinstitute.github.io/cyclops/">
+    <img src="../../../_static/cyclops_logo-dark.png" class="logo" alt="Logo"/>
+  </a>
+
+
+
+  <div class="subproject">
+    <a href="../../../index.html" class="project-name" alt="Documentation Home">
+      cyclops
+    </a>
+
+    
+    
+    
+
+  </div>
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#developing">🧑🏿‍💻 Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#notebooks">📓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#citation">🎓 Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+  
+
+  
+  
+    <li><a href="https://vectorinstitute.github.io/cyclops/">Home</a></li>
+    <li><a href="../../../index.html">cyclops</a></li>
+  
+
+  
+  
+    <li><a href="../../index.html">Module code</a></li>
+  
+
+  
+
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cyclops.evaluate.evaluator</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Evaluate one or more models on a dataset.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">asdict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">get_args</span>
+
+<span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DatasetDict</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">load_dataset</span>
+<span class="kn">from</span> <span class="nn">datasets.splits</span> <span class="kn">import</span> <span class="n">Split</span>
+<span class="kn">from</span> <span class="nn">sklearn.compose</span> <span class="kn">import</span> <span class="n">ColumnTransformer</span>
+
+<span class="kn">from</span> <span class="nn">cyclops.data.slicer</span> <span class="kn">import</span> <span class="n">SliceSpec</span>
+<span class="kn">from</span> <span class="nn">cyclops.data.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_required_columns</span><span class="p">,</span>
+    <span class="n">get_columns_as_numpy_array</span><span class="p">,</span>
+    <span class="n">set_decode</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">cyclops.evaluate.fairness.config</span> <span class="kn">import</span> <span class="n">FairnessConfig</span>
+<span class="kn">from</span> <span class="nn">cyclops.evaluate.fairness.evaluator</span> <span class="kn">import</span> <span class="n">evaluate_fairness</span>
+<span class="kn">from</span> <span class="nn">cyclops.evaluate.metrics.metric</span> <span class="kn">import</span> <span class="n">Metric</span><span class="p">,</span> <span class="n">MetricCollection</span>
+<span class="kn">from</span> <span class="nn">cyclops.evaluate.utils</span> <span class="kn">import</span> <span class="n">choose_split</span>
+<span class="kn">from</span> <span class="nn">cyclops.models.wrappers</span> <span class="kn">import</span> <span class="n">WrappedModel</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.log</span> <span class="kn">import</span> <span class="n">setup_logging</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">setup_logging</span><span class="p">(</span><span class="n">print_level</span><span class="o">=</span><span class="s2">&quot;WARN&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">)</span>
+
+<span class="c1"># pylint: disable=fixme # TODOs</span>
+
+
+<div class="viewcode-block" id="evaluate"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.evaluate.evaluator.evaluate.html#cyclops.evaluate.evaluator.evaluate">[docs]</a><span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-function-args</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DatasetDict</span><span class="p">],</span>
+    <span class="n">metrics</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Metric</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Metric</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Metric</span><span class="p">],</span> <span class="n">MetricCollection</span><span class="p">],</span>
+    <span class="n">target_columns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">feature_columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">prediction_column_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;predictions&quot;</span><span class="p">,</span>
+    <span class="n">remove_columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">models</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+        <span class="n">Union</span><span class="p">[</span><span class="n">WrappedModel</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">WrappedModel</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">WrappedModel</span><span class="p">]]</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">transforms</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">ColumnTransformer</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">slice_spec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SliceSpec</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">split</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Split</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">DEFAULT_MAX_BATCH_SIZE</span><span class="p">,</span>
+    <span class="n">fairness_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FairnessConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">override_fairness_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">load_dataset_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate one or more models on a dataset using one or more metrics.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dataset : Union[str, Dataset, DatasetDict]</span>
+<span class="sd">        The dataset to evaluate on. If a string, the dataset will be loaded</span>
+<span class="sd">        using `datasets.load_dataset`. If `DatasetDict`, the `split` argument</span>
+<span class="sd">        must be specified.</span>
+<span class="sd">    metrics : Union[Metric, Sequence[Metric], Dict[str, Metric], MetricCollection]</span>
+<span class="sd">        The metrics to compute.</span>
+<span class="sd">    target_columns : Union[str, List[str]]</span>
+<span class="sd">        The name of the column(s) containing the target values.</span>
+<span class="sd">    feature_columns : Union[str, List[str]], optional</span>
+<span class="sd">        The name of the column(s) containing the feature values. This must be provided</span>
+<span class="sd">        if `models` is not None.</span>
+<span class="sd">    prediction_column_prefix : str, optional</span>
+<span class="sd">        The prefix of the column(s) containing the predictions. If `models` is not</span>
+<span class="sd">        None, the predictions will be added to the dataset and the column names will</span>
+<span class="sd">        be `{prediction_column_prefix}.{model_name}`. If `models` is None, the</span>
+<span class="sd">        predictions will be read from the dataset and the column names must start</span>
+<span class="sd">        with `prediction_column_prefix`.</span>
+<span class="sd">    remove_columns : Union[str, List[str]], optional</span>
+<span class="sd">        The name of the column(s) to remove from the dataset before filtering</span>
+<span class="sd">        and computing metrics. This is useful if the dataset contains columns</span>
+<span class="sd">        that are not needed for computing metrics but may be expensive to</span>
+<span class="sd">        keep in memory (e.g. image columns).</span>
+<span class="sd">    models : Union[WrappedModel, Sequence[WrappedModel], Dict[str, WrappedModel]]</span>
+<span class="sd">        The model(s) to evaluate. If a `Sequence` of `WrappedModel`, each model will</span>
+<span class="sd">        be evaluated on the entire dataset and the model class name will be used as</span>
+<span class="sd">        the model name. If a `Dict` of `WrappedModel`, each model will be evaluated</span>
+<span class="sd">        on the entire dataset and the keys will be used as the model names.</span>
+<span class="sd">    transforms : Callable, optional</span>
+<span class="sd">        A function that transforms the dataset before doing inference. This is</span>
+<span class="sd">        useful if the dataset needs to be transformed before being passed to</span>
+<span class="sd">        the model.</span>
+<span class="sd">    slice_spec : SliceSpec, optional</span>
+<span class="sd">        The slice specification to use for computing metrics. If None, no slices</span>
+<span class="sd">        will be computed - the metrics will be computed on the entire dataset.</span>
+<span class="sd">        Note that this is not used for computing fairness metrics.</span>
+<span class="sd">    split : Union[str, Split], optional</span>
+<span class="sd">        The split of the dataset to use. If None and `dataset` is a string, a</span>
+<span class="sd">        split will be chosen based on the available splits in the dataset. The</span>
+<span class="sd">        first split that matches one of the following in order will be chosen:</span>
+<span class="sd">        (&quot;test&quot;, &quot;testing&quot;, &quot;eval&quot;, &quot;evaluation&quot;, &quot;validation&quot;, &quot;val&quot;, &quot;valid&quot;,</span>
+<span class="sd">        &quot;dev&quot;, &quot;train&quot;, &quot;training&quot;)</span>
+<span class="sd">        If `dataset` is a `DatasetDict`, this must be specified.</span>
+<span class="sd">    batch_size : int, optional</span>
+<span class="sd">        The batch size to use when computing metrics. If None or a negative</span>
+<span class="sd">        integer, the entire dataset will be loaded into memory and metrics</span>
+<span class="sd">        will be computed in one batch.</span>
+<span class="sd">    fairness_config : Optional[FairnessConfig], optional</span>
+<span class="sd">        The configuration for computing fairness metrics. If None, no fairness</span>
+<span class="sd">        metrics will be computed. Before computing fairness metrics, the following</span>
+<span class="sd">        arguments in the configuration will be overridden by the arguments provided</span>
+<span class="sd">        to this function: `dataset`, `target_columns`, `prediction_columns`,</span>
+<span class="sd">        `remove_columns`, and `batch_size`. If `override_fairness_metrics` is True,</span>
+<span class="sd">        the metrics in the configuration will be overridden by the metrics provided</span>
+<span class="sd">        to this function.</span>
+<span class="sd">    override_fairness_metrics : bool, optional, default=True</span>
+<span class="sd">        If True, the `metrics` argument in fairness_config will be overridden by</span>
+<span class="sd">        the `metrics` argument provided to this function.</span>
+<span class="sd">    load_dataset_kwargs : Dict[str, Any], optional</span>
+<span class="sd">        Keyword arguments to pass to `datasets.load_dataset`. Only used if</span>
+<span class="sd">        `dataset` is a string.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Dict[str, Any]</span>
+<span class="sd">        A dictionary containing the results of the evaluation.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        - If `dataset` is a `DatasetDict` and `split` is None.</span>
+<span class="sd">        - If `models` is None and `dataset` does not have a column that starts</span>
+<span class="sd">          with `prediction_column_prefix`.</span>
+<span class="sd">        - If `models` is not None and `feature_columns` is None.</span>
+<span class="sd">        - If multiple models are provided and only one set of results is found</span>
+<span class="sd">          after computing metrics.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">_load_data</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="o">**</span><span class="p">(</span><span class="n">load_dataset_kwargs</span> <span class="ow">or</span> <span class="p">{}))</span>
+
+    <span class="n">column_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">column_names</span>
+    <span class="n">check_required_columns</span><span class="p">(</span>
+        <span class="n">column_names</span><span class="p">,</span> <span class="n">target_columns</span><span class="p">,</span> <span class="n">feature_columns</span><span class="p">,</span> <span class="n">remove_columns</span>
+    <span class="p">)</span>
+
+    <span class="n">metrics</span> <span class="o">=</span> <span class="n">_prepare_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">models</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">col</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prediction_column_prefix</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">column_names</span>
+    <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Got `model=None` but `dataset` does not have a column that &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;starts with `</span><span class="si">{</span><span class="n">prediction_column_prefix</span><span class="si">}</span><span class="s2">`. Please specify a &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;model or add a column that starts with `</span><span class="si">{</span><span class="n">prediction_column_prefix</span><span class="si">}</span><span class="s2">` &quot;</span>
+            <span class="s2">&quot;to the dataset.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">models</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">feature_columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Got `models` but `feature_columns` is None. Please specify &quot;</span>
+                <span class="s2">&quot;`feature_columns` argument.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="n">_prepare_models</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+                <span class="n">dataset</span><span class="p">,</span>
+                <span class="n">feature_columns</span><span class="p">,</span>
+                <span class="n">prediction_column_prefix</span><span class="o">=</span><span class="n">prediction_column_prefix</span><span class="p">,</span>
+                <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
+                <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span>
+                <span class="n">only_predictions</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="c1"># compute metrics for each model</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="n">slice_spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">slice_spec</span> <span class="o">=</span> <span class="n">SliceSpec</span><span class="p">()</span>
+
+    <span class="n">metric_results</span> <span class="o">=</span> <span class="n">_compute_metrics</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="p">,</span>
+        <span class="n">metrics</span><span class="p">,</span>
+        <span class="n">slice_spec</span><span class="p">,</span>
+        <span class="n">target_columns</span><span class="o">=</span><span class="n">target_columns</span><span class="p">,</span>
+        <span class="n">prediction_column_prefix</span><span class="o">=</span><span class="n">prediction_column_prefix</span><span class="p">,</span>
+        <span class="n">remove_columns</span><span class="o">=</span><span class="n">remove_columns</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;default&quot;</span> <span class="ow">in</span> <span class="n">metric_results</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">models</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Got multiple models but only one set of predictions. &quot;</span>
+                <span class="s2">&quot;Please make sure that the predictions for each model &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;starts with `</span><span class="si">{</span><span class="n">prediction_column_prefix</span><span class="si">}</span><span class="s2">` followed by &quot;</span>
+                <span class="s2">&quot;the model name. For example, if the model name is &quot;</span>
+                <span class="s2">&quot;`my_model`, the predictions should be in a column &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;called `</span><span class="si">{</span><span class="n">prediction_column_prefix</span><span class="si">}</span><span class="s2">.my_model`.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">models</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># only one model; replace &quot;default&quot; with model name</span>
+            <span class="n">model_name</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">metric_results</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">metric_results</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># no models; don&#39;t name the results</span>
+            <span class="n">metric_results</span> <span class="o">=</span> <span class="n">metric_results</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
+
+    <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metric_results</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">fairness_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">override_fairness_metrics</span><span class="p">:</span>
+            <span class="n">fairness_config</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="n">metrics</span>
+
+        <span class="n">fairness_config</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
+        <span class="n">fairness_config</span><span class="o">.</span><span class="n">target_columns</span> <span class="o">=</span> <span class="n">target_columns</span>
+        <span class="n">fairness_config</span><span class="o">.</span><span class="n">prediction_columns</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">col</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">column_names</span>
+            <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prediction_column_prefix</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">fairness_config</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="n">fairness_config</span><span class="o">.</span><span class="n">remove_columns</span> <span class="o">=</span> <span class="n">remove_columns</span>
+
+        <span class="n">fairness_results</span> <span class="o">=</span> <span class="n">evaluate_fairness</span><span class="p">(</span><span class="o">**</span><span class="n">asdict</span><span class="p">(</span><span class="n">fairness_config</span><span class="p">))</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;fairness&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fairness_results</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
+
+
+<span class="k">def</span> <span class="nf">_load_data</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DatasetDict</span><span class="p">],</span>
+    <span class="n">split</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Split</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">load_dataset_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load data for evaluation.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">split</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">split</span> <span class="o">=</span> <span class="n">choose_split</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="o">**</span><span class="n">load_dataset_kwargs</span><span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Got `split=None` but `dataset` is a string. &quot;</span>
+                <span class="s2">&quot;Using `split=</span><span class="si">%s</span><span class="s2">` instead.&quot;</span><span class="p">,</span>
+                <span class="n">split</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">load_dataset_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">load_dataset_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># remove `split` from `load_dataset_kwargs` if it&#39;s there</span>
+        <span class="n">load_dataset_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;split&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">dataset_</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="n">split</span><span class="p">,</span> <span class="o">**</span><span class="n">load_dataset_kwargs</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">dataset_</span><span class="p">,</span> <span class="n">Dataset</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expected a `Dataset` but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">dataset_</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="k">return</span> <span class="n">dataset_</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">DatasetDict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">split</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">split</span> <span class="o">=</span> <span class="n">choose_split</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Got `split=None` but `dataset` is a DatasetDict or &quot;</span>
+                <span class="s2">&quot;IterableDatasetDict. Using `split=</span><span class="si">%s</span><span class="s2">` instead.&quot;</span><span class="p">,</span>
+                <span class="n">split</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">split</span> <span class="o">==</span> <span class="n">Split</span><span class="o">.</span><span class="n">ALL</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Got `split=Split.ALL` but `dataset` is a DatasetDict. &quot;</span>
+                <span class="s2">&quot;Please specify a split name.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dataset</span><span class="p">[</span><span class="n">split</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dataset</span>
+
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Invalid type for `dataset`: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">. Expected one of: &quot;</span>
+        <span class="s2">&quot;string, Dataset, DatasetDict.&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_prepare_metrics</span><span class="p">(</span>
+    <span class="n">metrics</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Metric</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Metric</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Metric</span><span class="p">],</span> <span class="n">MetricCollection</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MetricCollection</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Prepare metrics for evaluation.&quot;&quot;&quot;</span>
+    <span class="c1"># TODO: wrap in BootstrappedMetric if computing confidence intervals</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="p">(</span><span class="n">Metric</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Dict</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
+        <span class="n">metrics</span><span class="p">,</span> <span class="n">MetricCollection</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">MetricCollection</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">MetricCollection</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">metrics</span>
+
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Invalid type for `metrics`: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span><span class="si">}</span><span class="s2">. &quot;</span>
+        <span class="s2">&quot;Expected one of: Metric, Sequence[Metric], Dict[str, Metric], &quot;</span>
+        <span class="s2">&quot;MetricCollection.&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_prepare_models</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WrappedModel</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">WrappedModel</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">WrappedModel</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">WrappedModel</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Prepare models for evaluation.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">get_args</span><span class="p">(</span><span class="n">WrappedModel</span><span class="p">)):</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">model_</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>  <span class="c1"># type: ignore</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">model_name</span><span class="p">:</span> <span class="n">model</span><span class="p">}</span>  <span class="c1"># type: ignore[dict-item]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">get_args</span><span class="p">(</span><span class="n">WrappedModel</span><span class="p">))</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">model</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">m</span><span class="o">.</span><span class="n">getattr</span><span class="p">(</span><span class="s2">&quot;model_&quot;</span><span class="p">)</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span> <span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">model</span><span class="p">}</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">get_args</span><span class="p">(</span><span class="n">WrappedModel</span><span class="p">))</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">model</span>
+
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Invalid type for `model`: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="si">}</span><span class="s2">. &quot;</span>
+        <span class="s2">&quot;Expected one of: WrappedModel, Sequence[WrappedModel], &quot;</span>
+        <span class="s2">&quot;Dict[str, WrappedModel].&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_compute_metrics</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
+    <span class="n">metrics</span><span class="p">:</span> <span class="n">MetricCollection</span><span class="p">,</span>
+    <span class="n">slice_spec</span><span class="p">:</span> <span class="n">SliceSpec</span><span class="p">,</span>
+    <span class="n">target_columns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">prediction_column_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;predictions&quot;</span><span class="p">,</span>
+    <span class="n">remove_columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">DEFAULT_MAX_BATCH_SIZE</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute metrics for a dataset.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_columns</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">target_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">target_columns</span><span class="p">]</span>
+
+    <span class="c1"># get the predictions (there could be multiple)</span>
+    <span class="c1"># any column starting with `prediction_column_prefix` is considered a</span>
+    <span class="c1"># prediction column, for a single model</span>
+    <span class="n">prediction_columns</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">column_names</span> <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prediction_column_prefix</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="c1"># temporarily stop decoding features to save memory</span>
+    <span class="n">set_decode</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">target_columns</span> <span class="o">+</span> <span class="n">prediction_columns</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">dataset</span><span class="o">.</span><span class="n">formatted_as</span><span class="p">(</span>
+        <span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">target_columns</span> <span class="o">+</span> <span class="n">prediction_columns</span><span class="p">,</span> <span class="n">output_all_columns</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">):</span>
+        <span class="n">results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">slice_name</span><span class="p">,</span> <span class="n">slice_fn</span> <span class="ow">in</span> <span class="n">slice_spec</span><span class="o">.</span><span class="n">slices</span><span class="p">():</span>
+            <span class="n">sliced_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">remove_columns</span><span class="p">(</span><span class="n">remove_columns</span> <span class="ow">or</span> <span class="p">[])</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">slice_fn</span><span class="p">,</span>
+                <span class="n">batched</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+                <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Filter -&gt; </span><span class="si">{</span><span class="n">slice_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sliced_dataset</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Slice </span><span class="si">{</span><span class="n">slice_name</span><span class="si">}</span><span class="s2"> is empty. Please check your slice &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;configuration or the data.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">prediction_column</span> <span class="ow">in</span> <span class="n">prediction_columns</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">batch_size</span> <span class="o">&lt;</span> <span class="mi">0</span>
+                <span class="p">):</span>  <span class="c1"># dataset.iter does not support getting all batches at once</span>
+                    <span class="n">targets</span> <span class="o">=</span> <span class="n">get_columns_as_numpy_array</span><span class="p">(</span>
+                        <span class="n">dataset</span><span class="o">=</span><span class="n">sliced_dataset</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">target_columns</span>
+                    <span class="p">)</span>
+                    <span class="n">predictions</span> <span class="o">=</span> <span class="n">get_columns_as_numpy_array</span><span class="p">(</span>
+                        <span class="n">dataset</span><span class="o">=</span><span class="n">sliced_dataset</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">prediction_column</span>
+                    <span class="p">)</span>
+                    <span class="n">metric_output</span> <span class="o">=</span> <span class="n">metrics</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">sliced_dataset</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">):</span>
+                        <span class="n">targets</span> <span class="o">=</span> <span class="n">get_columns_as_numpy_array</span><span class="p">(</span>
+                            <span class="n">dataset</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">target_columns</span>
+                        <span class="p">)</span>
+                        <span class="n">predictions</span> <span class="o">=</span> <span class="n">get_columns_as_numpy_array</span><span class="p">(</span>
+                            <span class="n">dataset</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">prediction_column</span>
+                        <span class="p">)</span>
+
+                        <span class="c1"># update the metric state</span>
+                        <span class="n">metrics</span><span class="o">.</span><span class="n">update_state</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+
+                    <span class="n">metric_output</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+                    <span class="n">metrics</span><span class="o">.</span><span class="n">reset_state</span><span class="p">()</span>
+
+                <span class="c1"># get the model name from the prediction column name</span>
+                <span class="c1"># model name is everything after the first `prediction_column_prefix.`</span>
+                <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+                <span class="n">pred_col_split</span> <span class="o">=</span> <span class="n">prediction_column</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred_col_split</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">model_name</span> <span class="o">=</span> <span class="n">pred_col_split</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="n">results</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="p">{})</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">model_name</span><span class="p">][</span><span class="n">slice_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">metric_output</span>
+
+        <span class="n">set_decode</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>  <span class="c1"># restore decoding features</span>
+
+        <span class="k">return</span> <span class="n">results</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  
+
+  <div class="citation">
+    CyclOps team <i>et al.,</i>
+    <a href="https://www.medrxiv.org/content/10.1101/2022.12.02.22283021v2">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, medarxiv</i> (2022)
+  </def>
+
+
+  <p class="avatar">cyclops is built by</p>
+  <div class="avatar">
+    
+    
+    <span>
+      <a href="https://github.com/amrit110">
+        <img src="../../../_static/team/amrit-krishnan.jpg" width="32"/>
+        Amrit Krishnan
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/KadenMc">
+        <img src="../../../_static/team/kaden-mckeen.jpg" width="32"/>
+        Kaden McKeen
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/vsubasri">
+        <img src="../../../_static/team/valli-subasri.jpg" width="32"/>
+        Valli Subasri
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/a-kore">
+        <img src="../../../_static/team/ali-kore.jpg" width="32"/>
+        Ali Kore
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/fcogidi">
+        <img src="../../../_static/team/franklin-ogidi.jpg" width="32"/>
+        Franklin Ogidi
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/mahshidaln">
+        <img src="../../../_static/team/mahshid-alinoori.jpg" width="32"/>
+        Mahshid Alinoori
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/elhamdolatabadi">
+        <img src="../../../_static/team/elham-dolatabadi.jpg" width="32"/>
+        Elham Dolatabadi
+      </a>
+    </span>
+    ,
+  </div>
+
+
+  <div class="footer-small-text">
+    All <a href="https://github.com/VectorInstitute/cyclops">source code for cyclops</a> is freely available under the terms of an <a href="https://opensource.org/licenses/Apache-2.0">Apache-2.0</a> license.
+  </div>
+
+  <div class="footer-small-text">
+    This work is made possible due to the data obtained from the
+    General Medicine Inpatient Initiative (GEMINI).
+  </div>
+
+  <hr/>
+
+  <div class="logo">
+    <a class="logo" href="https://vectorinstitute.ai/">
+      <span class="logo"></span>
+      <img alt="Logo of the Vector Institute" style="width:90px; max-width:90px;" src="../../../_static/logos/vector_logo.png" />
+    </a>
+    <a class="logo" href="https://www.geminimedicine.ca/">
+      <span class="logo"></span>
+      <img alt="Logo of GEMINI" style="width:90px; max-width:90px;" src="../../../_static/logos/gemini_logo.png" />
+    </a>
+  </div>
+
+  <div class="copyright">
+    &copy; Copyright 2022, Vector AI Engineering
+  </div>
+
+  <div class="copyright">
+    </p>
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using customised version of
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">base theme</a> provided by
+    <a href="https://readthedocs.org">Read the Docs</a>.
+  </div>
+
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
