@@ -29,6 +29,7 @@
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="cyclops.evaluate.metrics.metric" href="cyclops.evaluate.metrics.metric.html" />
     <link rel="prev" title="cyclops.evaluate.evaluator" href="cyclops.evaluate.evaluator.html" />
 <script type="text/javascript">
   window.onload = function() {
@@ -132,13 +133,19 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../../api.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../cyclops.query.html">cyclops.query</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cyclops.data.html">cyclops.data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cyclops.tasks.html">cyclops.tasks</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../cyclops.evaluate.html">cyclops.evaluate</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="cyclops.evaluate.evaluator.html">cyclops.evaluate.evaluator</a><ul class="current">
 <li class="toctree-l4 current"><a class="current reference internal" href="#">cyclops.evaluate.evaluator.evaluate</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../cyclops.evaluate.html#module-cyclops.evaluate.metrics">cyclops.evaluate.metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cyclops.evaluate.html#module-cyclops.evaluate.metrics.functional">cyclops.evaluate.metrics.functional</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cyclops.evaluate.html#module-cyclops.evaluate.fairness">cyclops.evaluate.fairness</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../cyclops.monitor.html">cyclops.monitor</a></li>
 </ul>
 </li>
 </ul>
@@ -196,7 +203,7 @@
 <li><p><strong>dataset</strong> (<a class="reference internal" href="cyclops.query.ops.Union.html#cyclops.query.ops.Union" title="cyclops.query.ops.Union"><em>Union</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>Dataset</em><em>, </em><em>DatasetDict</em><em>]</em>) – The dataset to evaluate on. If a string, the dataset will be loaded
 using <cite>datasets.load_dataset</cite>. If <cite>DatasetDict</cite>, the <cite>split</cite> argument
 must be specified.</p></li>
-<li><p><strong>metrics</strong> (<a class="reference internal" href="cyclops.query.ops.Union.html#cyclops.query.ops.Union" title="cyclops.query.ops.Union"><em>Union</em></a><em>[</em><em>Metric</em><em>, </em><em>Sequence</em><em>[</em><em>Metric</em><em>]</em><em>, </em><em>Dict</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>Metric</em><em>]</em><em>, </em><em>MetricCollection</em><em>]</em>) – The metrics to compute.</p></li>
+<li><p><strong>metrics</strong> (<a class="reference internal" href="cyclops.query.ops.Union.html#cyclops.query.ops.Union" title="cyclops.query.ops.Union"><em>Union</em></a><em>[</em><a class="reference internal" href="cyclops.evaluate.metrics.metric.Metric.html#cyclops.evaluate.metrics.metric.Metric" title="cyclops.evaluate.metrics.metric.Metric"><em>Metric</em></a><em>, </em><em>Sequence</em><em>[</em><a class="reference internal" href="cyclops.evaluate.metrics.metric.Metric.html#cyclops.evaluate.metrics.metric.Metric" title="cyclops.evaluate.metrics.metric.Metric"><em>Metric</em></a><em>]</em><em>, </em><em>Dict</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><a class="reference internal" href="cyclops.evaluate.metrics.metric.Metric.html#cyclops.evaluate.metrics.metric.Metric" title="cyclops.evaluate.metrics.metric.Metric"><em>Metric</em></a><em>]</em><em>, </em><a class="reference internal" href="cyclops.evaluate.metrics.metric.MetricCollection.html#cyclops.evaluate.metrics.metric.MetricCollection" title="cyclops.evaluate.metrics.metric.MetricCollection"><em>MetricCollection</em></a><em>]</em>) – The metrics to compute.</p></li>
 <li><p><strong>target_columns</strong> (<a class="reference internal" href="cyclops.query.ops.Union.html#cyclops.query.ops.Union" title="cyclops.query.ops.Union"><em>Union</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>]</em><em>]</em>) – The name of the column(s) containing the target values.</p></li>
 <li><p><strong>feature_columns</strong> (<a class="reference internal" href="cyclops.query.ops.Union.html#cyclops.query.ops.Union" title="cyclops.query.ops.Union"><em>Union</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>]</em><em>]</em><em>, </em><em>optional</em>) – The name of the column(s) containing the feature values. This must be provided
 if <cite>models</cite> is not None.</p></li>
@@ -216,7 +223,7 @@ on the entire dataset and the keys will be used as the model names.</p></li>
 <li><p><strong>transforms</strong> (<em>Callable</em><em>, </em><em>optional</em>) – A function that transforms the dataset before doing inference. This is
 useful if the dataset needs to be transformed before being passed to
 the model.</p></li>
-<li><p><strong>slice_spec</strong> (<em>SliceSpec</em><em>, </em><em>optional</em>) – The slice specification to use for computing metrics. If None, no slices
+<li><p><strong>slice_spec</strong> (<a class="reference internal" href="cyclops.data.slicer.SliceSpec.html#cyclops.data.slicer.SliceSpec" title="cyclops.data.slicer.SliceSpec"><em>SliceSpec</em></a><em>, </em><em>optional</em>) – The slice specification to use for computing metrics. If None, no slices
 will be computed - the metrics will be computed on the entire dataset.
 Note that this is not used for computing fairness metrics.</p></li>
 <li><p><strong>split</strong> (<a class="reference internal" href="cyclops.query.ops.Union.html#cyclops.query.ops.Union" title="cyclops.query.ops.Union"><em>Union</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>Split</em><em>]</em><em>, </em><em>optional</em>) – The split of the dataset to use. If None and <cite>dataset</cite> is a string, a
@@ -228,7 +235,7 @@ If <cite>dataset</cite> is a <cite>DatasetDict</cite>, this must be specified.</
 <li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – The batch size to use when computing metrics. If None or a negative
 integer, the entire dataset will be loaded into memory and metrics
 will be computed in one batch.</p></li>
-<li><p><strong>fairness_config</strong> (<em>Optional</em><em>[</em><em>FairnessConfig</em><em>]</em><em>, </em><em>optional</em>) – The configuration for computing fairness metrics. If None, no fairness
+<li><p><strong>fairness_config</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="cyclops.evaluate.fairness.config.FairnessConfig.html#cyclops.evaluate.fairness.config.FairnessConfig" title="cyclops.evaluate.fairness.config.FairnessConfig"><em>FairnessConfig</em></a><em>]</em><em>, </em><em>optional</em>) – The configuration for computing fairness metrics. If None, no fairness
 metrics will be computed. Before computing fairness metrics, the following
 arguments in the configuration will be overridden by the arguments provided
 to this function: <cite>dataset</cite>, <cite>target_columns</cite>, <cite>prediction_columns</cite>,
@@ -268,6 +275,7 @@ the <cite>metrics</cite> argument provided to this function.</p></li>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="cyclops.evaluate.evaluator.html" class="btn btn-neutral float-left" title="cyclops.evaluate.evaluator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cyclops.evaluate.metrics.metric.html" class="btn btn-neutral float-right" title="cyclops.evaluate.metrics.metric" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

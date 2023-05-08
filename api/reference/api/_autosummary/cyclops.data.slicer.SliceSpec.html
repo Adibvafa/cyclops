@@ -1,0 +1,553 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.data.slicer.SliceSpec &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/cyclops.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="cyclops.data.features.medical_image" href="cyclops.data.features.medical_image.html" />
+    <link rel="prev" title="cyclops.data.slicer.overall" href="cyclops.data.slicer.overall.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+    document.body.innerHTML = document.body.innerHTML.replace(/ package/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav">
+  <!--
+    Lie about what theme we really are when some RTD-injected JS fetches the
+    full versions panel from the RTD API.  RTD's JS replaces the stub versions
+    panel in the Sphinx-generated HTML with the full versions panel it fetches
+    from the RTD API.  If the API thinks we're not sphinx_rtd_theme, it will
+    serve us the wrong HTML and the panel will float as a "badge" when it
+    shouldn't.  As a customized version of sphinx_rtd_theme, we really do want
+    the same HTML it gets.  See also the diagnoses in
+    <https://github.com/nextstrain/docs.nextstrain.org/issues/76>.
+
+    This bit of JS finds the data RTD injects into the page and modifies it
+    before the code that RTD injects runs and looks at the data.  RTD's
+    <script>s (in <head>) run before this JS, but they wait until the DOM is
+    ready to actually do any work.  This gives us a chance to modify the data
+    during DOM load before the RTD code actually uses it.
+
+      -trs, 27 Jan 2022
+  -->
+  <script>
+    (() => {
+      try {
+        console.log("Lying about the theme to RTD's JS so the versions panel works properly. 🙈");
+
+        /* Update global variable, which is used in the request to get the RTD
+         * "footer" that includes the versions panel.
+         */
+        if (window.READTHEDOCS_DATA)
+          window.READTHEDOCS_DATA.theme = "sphinx_rtd_theme";
+
+        /* Update stored JSON in case anything else deserializes it later.
+         * Comments in the RTD-injected HTML source claim the global variable
+         * above is deprecated.
+         */
+        var script = document.querySelector("#READTHEDOCS_DATA");
+        if (script)
+          script.innerHTML = JSON.stringify({ ...JSON.parse(script.innerHTML), theme: "sphinx_rtd_theme" });
+      }
+      catch (err) {
+        console.log("Lying about the theme to RTD's JS failed… oh well. 🤷", err);
+      }
+    })();
+  </script>
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+
+
+
+
+  <a href="https://vectorinstitute.github.io/cyclops/">
+    <img src="../../../_static/cyclops_logo-dark.png" class="logo" alt="Logo"/>
+  </a>
+
+
+
+  <div class="subproject">
+    <a href="../../../index.html" class="project-name" alt="Documentation Home">
+      cyclops
+    </a>
+
+    
+    
+    
+
+  </div>
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#developing">🧑🏿‍💻 Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#notebooks">📓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#citation">🎓 Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../cyclops.query.html">cyclops.query</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../cyclops.data.html">cyclops.data</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="cyclops.data.slicer.html">cyclops.data.slicer</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="cyclops.data.slicer.compound_filter.html">cyclops.data.slicer.compound_filter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.data.slicer.filter_datetime.html">cyclops.data.slicer.filter_datetime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.data.slicer.filter_non_null.html">cyclops.data.slicer.filter_non_null</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.data.slicer.filter_range.html">cyclops.data.slicer.filter_range</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.data.slicer.filter_string_contains.html">cyclops.data.slicer.filter_string_contains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.data.slicer.filter_value.html">cyclops.data.slicer.filter_value</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.data.slicer.is_datetime.html">cyclops.data.slicer.is_datetime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cyclops.data.slicer.overall.html">cyclops.data.slicer.overall</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">cyclops.data.slicer.SliceSpec</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../cyclops.data.html#module-cyclops.data.features">cyclops.data.features</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../cyclops.tasks.html">cyclops.tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cyclops.evaluate.html">cyclops.evaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cyclops.monitor.html">cyclops.monitor</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+  
+
+  
+  
+    <li><a href="https://vectorinstitute.github.io/cyclops/">Home</a></li>
+    <li><a href="../../../index.html">cyclops</a></li>
+  
+
+  
+  
+    <li><a href="../../../api.html">API Reference</a></li>
+  
+    <li><a href="../cyclops.data.html">cyclops.data</a></li>
+  
+    <li><a href="cyclops.data.slicer.html">cyclops.data.slicer</a></li>
+  
+
+  
+
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/reference/api/_autosummary/cyclops.data.slicer.SliceSpec.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="cyclops-data-slicer-slicespec">
+<h1>cyclops.data.slicer.SliceSpec<a class="headerlink" href="#cyclops-data-slicer-slicespec" title="Permalink to this headline"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="cyclops.data.slicer.SliceSpec">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SliceSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec_list=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_names=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/data/slicer.html#SliceSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.data.slicer.SliceSpec" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.9/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Specifications for creating a slices of a dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spec_list</strong> (<em>List</em><em>[</em><a class="reference internal" href="cyclops.query.ops.Union.html#cyclops.query.ops.Union" title="cyclops.query.ops.Union"><em>Union</em></a><em>[</em><em>Dict</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>Any</em><em>]</em><em>, </em><em>List</em><em>[</em><em>Dict</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>Any</em><em>]</em><em>]</em><em>]</em><em>]</em><em>, </em><em>default=</em><em>[</em><em>{}</em><em>]</em>) – <p>A list of slice specifications. Each specification is a dictionary mapping
+a column name to a slice specification for that column. A slice specification
+is a dictionary containing one or more of the following keys:</p>
+<ul>
+<li><p><cite>value</cite>: The exact value of a column to select. This can be a single value
+a list of values. If a list of values is provided, the slice selects rows
+where the column value is in the list. Time strings are supported (e.g.
+<cite>“2021-01-01 00:00:00”</cite>).</p></li>
+<li><p><cite>min_value</cite>: The minimum value of a column to select. Specifying the
+<cite>min_inclusive</cite> key indicates whether to include the minimum value in the
+range. This works for numerical and datetime columns. Time strings are
+supported. The default value is set to -inf, if <cite>max_value</cite> is specified and
+<cite>min_value</cite> is not.</p></li>
+<li><p><cite>min_inclusive</cite>: Boolean value to indicated whether to include the <cite>min_value</cite>
+in the range. If True, the slice selects rows where the value is greater than
+or equal to the <cite>min_value</cite>. Defaults to True.</p></li>
+<li><p><cite>max_value</cite>: The maximum value of a column to select. This works for numerical
+and datetime columns. Specifying the <cite>max_inclusive</cite> key indicates whether to
+include the maximum value in the range.  Time strings are supported.
+The default value is set to <cite>inf</cite>, if <cite>min_value</cite> is specified and <cite>max_value</cite>
+is not.</p></li>
+<li><p><cite>max_inclusive</cite>: Boolean value to indicated whether to include the <cite>max_value</cite>
+in the range. If True, the slice selects rows where the value is less than or
+equal to the <cite>max_value</cite>. Defaults to True.</p></li>
+<li><p><cite>year</cite>: A single (numerical or string) value or list of values for selecting
+rows in a datetime column where the year matches the value(s). Defaults to
+None.</p></li>
+<li><p><cite>month</cite>: A single (numerical) value or list of values between 1 and 12 for
+selecting rows in a datetime column where the month matches the value(s).
+Defaults to None.</p></li>
+<li><p><cite>day</cite>: A single (numerical) value or list of values between 1 and 31 for
+selecting rows in a datetime column where the day matches the value(s).
+Defaults to None.</p></li>
+<li><p><cite>hour</cite>: A single (numerical) value or list of values between 0 and 23 for
+selecting rows in a datetime column where the hour matches the value(s).
+Defaults to None.</p></li>
+<li><p><cite>negate</cite>: A boolean flag indicating whether to negate the slice. If True, the
+slice selects rows where the feature value does not match the specification.
+Defaults to False.</p></li>
+<li><p><cite>keep_nulls</cite>: A boolean flag indicating whether to keep rows where the value
+is null. If used in conjunction with <cite>negate</cite>, the slice selects rows where
+the value is not null. Can be used on its own. Defaults to False.</p></li>
+</ul>
+</p></li>
+<li><p><strong>validate</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default=True</em>) – Whether to validate the column names in the slice specifications.</p></li>
+<li><p><strong>column_names</strong> (<em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – List of column names in the dataset. If provided and <cite>validate</cite> is True, it is
+used to validate the column names in the slice specifications.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.data.slicer.SliceSpec.spec_list">
+<span class="sig-name descname"><span class="pre">spec_list</span></span><a class="headerlink" href="#cyclops.data.slicer.SliceSpec.spec_list" title="Permalink to this definition"></a></dt>
+<dd><p>List of slice specifications.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="cyclops.query.ops.Union.html#cyclops.query.ops.Union" title="cyclops.query.ops.Union">Union</a>[Dict[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, Any], List[Dict[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, Any]]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.data.slicer.SliceSpec.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><a class="headerlink" href="#cyclops.data.slicer.SliceSpec.validate" title="Permalink to this definition"></a></dt>
+<dd><p>Whether to validate the column names in the slice specifications.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.data.slicer.SliceSpec.column_names">
+<span class="sig-name descname"><span class="pre">column_names</span></span><a class="headerlink" href="#cyclops.data.slicer.SliceSpec.column_names" title="Permalink to this definition"></a></dt>
+<dd><p>List of column names in the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.data.slicer.SliceSpec._registry">
+<span class="sig-name descname"><span class="pre">_registry</span></span><a class="headerlink" href="#cyclops.data.slicer.SliceSpec._registry" title="Permalink to this definition"></a></dt>
+<dd><p>Dictionary mapping slice names to functions that create the slice.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Dict[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, Callable]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">cyclops.data.slicer</span> <span class="kn">import</span> <span class="n">SliceSpec</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">slice_spec</span> <span class="o">=</span> <span class="n">SliceSpec</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">spec_list</span><span class="o">=</span><span class="p">[</span>
+<span class="gp">... </span>        <span class="p">{</span><span class="s2">&quot;feature_1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;keep_nulls&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}},</span>
+<span class="gp">... </span>        <span class="p">{</span>
+<span class="gp">... </span>            <span class="s2">&quot;feature_2&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;keep_nulls&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+<span class="gp">... </span>            <span class="s2">&quot;feature_3&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;keep_nulls&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+<span class="gp">... </span>        <span class="p">},</span>
+<span class="gp">... </span>        <span class="p">{</span><span class="s2">&quot;feature_1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;value_1&quot;</span><span class="p">}},</span>
+<span class="gp">... </span>        <span class="p">{</span><span class="s2">&quot;feature_1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;value_1&quot;</span><span class="p">,</span> <span class="s2">&quot;value_2&quot;</span><span class="p">]}},</span>
+<span class="gp">... </span>        <span class="p">{</span><span class="s2">&quot;feature_1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;value_1&quot;</span><span class="p">,</span> <span class="s2">&quot;negate&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;keep_nulls&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}},</span>
+<span class="gp">... </span>        <span class="p">{</span><span class="s2">&quot;feature_1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;min_value&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-12-31&quot;</span><span class="p">}},</span>
+<span class="gp">... </span>        <span class="p">{</span><span class="s2">&quot;feature_1&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>            <span class="s2">&quot;min_value&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s2">&quot;min_inclusive&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s2">&quot;max_inclusive&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+<span class="gp">... </span>        <span class="p">},</span>
+<span class="gp">... </span>        <span class="p">{</span><span class="s2">&quot;feature_1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">2021</span><span class="p">,</span> <span class="mi">2022</span><span class="p">]}},</span>
+<span class="gp">... </span>        <span class="p">{</span><span class="s2">&quot;feature_1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;month&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">]}},</span>
+<span class="gp">... </span>        <span class="p">{</span><span class="s2">&quot;feature_1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;month&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">&quot;day&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}},</span>
+<span class="gp">... </span>        <span class="p">{</span><span class="s2">&quot;feature_1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;contains&quot;</span><span class="p">:</span> <span class="s2">&quot;value_1&quot;</span><span class="p">}},</span>
+<span class="gp">... </span>        <span class="p">{</span><span class="s2">&quot;feature_1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;contains&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;value_1&quot;</span><span class="p">,</span> <span class="s2">&quot;value_2&quot;</span><span class="p">]}},</span>
+<span class="gp">... </span>        <span class="p">{</span>
+<span class="gp">... </span>            <span class="s2">&quot;feature_1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;value_1&quot;</span><span class="p">},</span>
+<span class="gp">... </span>            <span class="s2">&quot;feature_2&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>                <span class="s2">&quot;min_value&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="n">keep_nulls</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="p">},</span>
+<span class="gp">... </span>            <span class="s2">&quot;feature_3&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;2000&quot;</span><span class="p">,</span> <span class="s2">&quot;2010&quot;</span><span class="p">,</span> <span class="s2">&quot;2020&quot;</span><span class="p">]},</span>
+<span class="gp">... </span>        <span class="p">},</span>
+<span class="gp">... </span>    <span class="p">],</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">slice_name</span><span class="p">,</span> <span class="n">slice_func</span> <span class="ow">in</span> <span class="n">slice_spec</span><span class="o">.</span><span class="n">slices</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">slice_name</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="c1"># do something with slice_func here (e.g. dataset.filter(slice_func))</span>
+</pre></div>
+</div>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.data.slicer.SliceSpec.add_slice_spec" title="cyclops.data.slicer.SliceSpec.add_slice_spec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_slice_spec</span></code></a></p></td>
+<td><p>Add slice specification to the list of slice specifications.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.data.slicer.SliceSpec.get_slices" title="cyclops.data.slicer.SliceSpec.get_slices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_slices</span></code></a></p></td>
+<td><p>Return the slice function registry.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.data.slicer.SliceSpec.slices" title="cyclops.data.slicer.SliceSpec.slices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slices</span></code></a></p></td>
+<td><p>Return a generator of slice names and slice functions.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.data.slicer.SliceSpec.column_names" title="cyclops.data.slicer.SliceSpec.column_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">column_names</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.data.slicer.SliceSpec.validate" title="cyclops.data.slicer.SliceSpec.validate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.data.slicer.SliceSpec.spec_list" title="cyclops.data.slicer.SliceSpec.spec_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spec_list</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.data.slicer.SliceSpec.add_slice_spec">
+<span class="sig-name descname"><span class="pre">add_slice_spec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slice_spec</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/data/slicer.html#SliceSpec.add_slice_spec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.data.slicer.SliceSpec.add_slice_spec" title="Permalink to this definition"></a></dt>
+<dd><p>Add slice specification to the list of slice specifications.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>slice_spec</strong> (<em>Dict</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>Dict</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>Any</em><em>]</em><em>]</em>) – A dictionary mapping column names to dictionaries containing one or more of
+the following keys: <cite>value</cite>, <cite>min_value</cite>, <cite>max_value</cite>, <cite>year</cite>, <cite>month</cite>,
+<cite>day</cite>, <cite>hour</cite>, <cite>negate</cite>, <cite>keep_nulls</cite>. See <a class="reference internal" href="#cyclops.data.slicer.SliceSpec" title="cyclops.data.slicer.SliceSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">SliceSpec</span></code></a> for more
+details on the slice specification format.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.data.slicer.SliceSpec.get_slices">
+<span class="sig-name descname"><span class="pre">get_slices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/data/slicer.html#SliceSpec.get_slices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.data.slicer.SliceSpec.get_slices" title="Permalink to this definition"></a></dt>
+<dd><p>Return the slice function registry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Callable" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]], <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.data.slicer.SliceSpec.slices">
+<span class="sig-name descname"><span class="pre">slices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/data/slicer.html#SliceSpec.slices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.data.slicer.SliceSpec.slices" title="Permalink to this definition"></a></dt>
+<dd><p>Return a generator of slice names and slice functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Generator" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Callable" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/constants.html#Ellipsis" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code></a>, <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]], <a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, <a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cyclops.data.slicer.overall.html" class="btn btn-neutral float-left" title="cyclops.data.slicer.overall" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cyclops.data.features.medical_image.html" class="btn btn-neutral float-right" title="cyclops.data.features.medical_image" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  
+
+  <div class="citation">
+    CyclOps team <i>et al.,</i>
+    <a href="https://www.medrxiv.org/content/10.1101/2022.12.02.22283021v2">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, medarxiv</i> (2022)
+  </def>
+
+
+  <p class="avatar">cyclops is built by</p>
+  <div class="avatar">
+    
+    
+    <span>
+      <a href="https://github.com/amrit110">
+        <img src="../../../_static/team/amrit-krishnan.jpg" width="32"/>
+        Amrit Krishnan
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/KadenMc">
+        <img src="../../../_static/team/kaden-mckeen.jpg" width="32"/>
+        Kaden McKeen
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/vsubasri">
+        <img src="../../../_static/team/valli-subasri.jpg" width="32"/>
+        Valli Subasri
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/a-kore">
+        <img src="../../../_static/team/ali-kore.jpg" width="32"/>
+        Ali Kore
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/fcogidi">
+        <img src="../../../_static/team/franklin-ogidi.jpg" width="32"/>
+        Franklin Ogidi
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/mahshidaln">
+        <img src="../../../_static/team/mahshid-alinoori.jpg" width="32"/>
+        Mahshid Alinoori
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/elhamdolatabadi">
+        <img src="../../../_static/team/elham-dolatabadi.jpg" width="32"/>
+        Elham Dolatabadi
+      </a>
+    </span>
+    ,
+  </div>
+
+
+  <div class="footer-small-text">
+    All <a href="https://github.com/VectorInstitute/cyclops">source code for cyclops</a> is freely available under the terms of an <a href="https://opensource.org/licenses/Apache-2.0">Apache-2.0</a> license.
+  </div>
+
+  <div class="footer-small-text">
+    This work is made possible due to the data obtained from the
+    General Medicine Inpatient Initiative (GEMINI).
+  </div>
+
+  <hr/>
+
+  <div class="logo">
+    <a class="logo" href="https://vectorinstitute.ai/">
+      <span class="logo"></span>
+      <img alt="Logo of the Vector Institute" style="width:90px; max-width:90px;" src="../../../_static/logos/vector_logo.png" />
+    </a>
+    <a class="logo" href="https://www.geminimedicine.ca/">
+      <span class="logo"></span>
+      <img alt="Logo of GEMINI" style="width:90px; max-width:90px;" src="../../../_static/logos/gemini_logo.png" />
+    </a>
+  </div>
+
+  <div class="copyright">
+    &copy; Copyright 2022, Vector AI Engineering
+  </div>
+
+  <div class="copyright">
+    </p>
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using customised version of
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">base theme</a> provided by
+    <a href="https://readthedocs.org">Read the Docs</a>.
+  </div>
+
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

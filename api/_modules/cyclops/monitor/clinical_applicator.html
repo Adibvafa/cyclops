@@ -1,0 +1,804 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyclops.monitor.clinical_applicator &mdash; cyclops  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/cyclops.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<script type="text/javascript">
+  window.onload = function() {
+    document.body.innerHTML = document.body.innerHTML.replace(/ module/g, '');
+    document.body.innerHTML = document.body.innerHTML.replace(/ package/g, '');
+  }
+</script>
+
+</head>
+
+<body class="wy-body-for-nav">
+  <!--
+    Lie about what theme we really are when some RTD-injected JS fetches the
+    full versions panel from the RTD API.  RTD's JS replaces the stub versions
+    panel in the Sphinx-generated HTML with the full versions panel it fetches
+    from the RTD API.  If the API thinks we're not sphinx_rtd_theme, it will
+    serve us the wrong HTML and the panel will float as a "badge" when it
+    shouldn't.  As a customized version of sphinx_rtd_theme, we really do want
+    the same HTML it gets.  See also the diagnoses in
+    <https://github.com/nextstrain/docs.nextstrain.org/issues/76>.
+
+    This bit of JS finds the data RTD injects into the page and modifies it
+    before the code that RTD injects runs and looks at the data.  RTD's
+    <script>s (in <head>) run before this JS, but they wait until the DOM is
+    ready to actually do any work.  This gives us a chance to modify the data
+    during DOM load before the RTD code actually uses it.
+
+      -trs, 27 Jan 2022
+  -->
+  <script>
+    (() => {
+      try {
+        console.log("Lying about the theme to RTD's JS so the versions panel works properly. 🙈");
+
+        /* Update global variable, which is used in the request to get the RTD
+         * "footer" that includes the versions panel.
+         */
+        if (window.READTHEDOCS_DATA)
+          window.READTHEDOCS_DATA.theme = "sphinx_rtd_theme";
+
+        /* Update stored JSON in case anything else deserializes it later.
+         * Comments in the RTD-injected HTML source claim the global variable
+         * above is deprecated.
+         */
+        var script = document.querySelector("#READTHEDOCS_DATA");
+        if (script)
+          script.innerHTML = JSON.stringify({ ...JSON.parse(script.innerHTML), theme: "sphinx_rtd_theme" });
+      }
+      catch (err) {
+        console.log("Lying about the theme to RTD's JS failed… oh well. 🤷", err);
+      }
+    })();
+  </script>
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #efeeed" >
+
+
+
+
+  <a href="https://vectorinstitute.github.io/cyclops/">
+    <img src="../../../_static/cyclops_logo-dark.png" class="logo" alt="Logo"/>
+  </a>
+
+
+
+  <div class="subproject">
+    <a href="../../../index.html" class="project-name" alt="Documentation Home">
+      cyclops
+    </a>
+
+    
+    
+    
+
+  </div>
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">🐣 Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#developing">🧑🏿‍💻 Developing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#documentation">📚 Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#notebooks">📓 Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#citation">🎓 Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to cyclops</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #efeeed" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">cyclops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+  
+
+  
+  
+    <li><a href="https://vectorinstitute.github.io/cyclops/">Home</a></li>
+    <li><a href="../../../index.html">cyclops</a></li>
+  
+
+  
+  
+    <li><a href="../../index.html">Module code</a></li>
+  
+
+  
+
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cyclops.monitor.clinical_applicator</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Clinical Shift Applicator module.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">datasets.arrow_dataset</span> <span class="kn">import</span> <span class="n">Dataset</span>
+
+<span class="kn">from</span> <span class="nn">cyclops.data.slicer</span> <span class="kn">import</span> <span class="n">SliceSpec</span>
+<span class="kn">from</span> <span class="nn">cyclops.data.utils</span> <span class="kn">import</span> <span class="n">set_decode</span>
+
+
+<div class="viewcode-block" id="ClinicalShiftApplicator"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.monitor.clinical_applicator.ClinicalShiftApplicator.html#cyclops.monitor.clinical_applicator.ClinicalShiftApplicator">[docs]</a><span class="k">class</span> <span class="nc">ClinicalShiftApplicator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ClinicalShiftApplicator class is used induce synthetic clinical shifts.</span>
+
+<span class="sd">    Takes a dataset and generates a source and</span>
+<span class="sd">    target dataset with a specified clinical shift.</span>
+<span class="sd">    The shift is induced by splitting along categorical features in the dataset.</span>
+<span class="sd">    The source and target datasets are then generated by splitting</span>
+<span class="sd">    the original dataset along the categorical feature.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.monitor.clinical_applicator import ClinicalShiftApplicator</span>
+<span class="sd">    &gt;&gt;&gt; from cyclops.data.utils import load_nih</span>
+<span class="sd">    &gt;&gt;&gt; ds = load_nih(path=&quot;/mnt/data/nihcxr&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; applicator = ClinicalShiftApplicator(&quot;hospital_type&quot;,</span>
+<span class="sd">                    source = [&quot;hospital_type_1&quot;, &quot;hospital_type_2&quot;]</span>
+<span class="sd">                    target = [&quot;hospital_type_3&quot;, &quot;hospital_type_4&quot;, &quot;hospital_type_5&quot;]</span>
+<span class="sd">                    )</span>
+<span class="sd">    &gt;&gt;&gt; ds_source, ds_target = applicator.apply_shift(ds)</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    shift_type: str</span>
+<span class="sd">        method used to induce shift in data. Options include:</span>
+<span class="sd">        &quot;time&quot;, &quot;month&quot;, &quot;hospital_type&quot;, &quot;custom&quot;</span>
+<span class="sd">    source: list</span>
+<span class="sd">        List of values for source data.</span>
+<span class="sd">    target: list</span>
+<span class="sd">        List of values for target data.</span>
+<span class="sd">    shift_id: str</span>
+<span class="sd">        Column name for shift id. Default is None.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">shift_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SliceSpec</span><span class="p">],</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SliceSpec</span><span class="p">],</span>
+        <span class="n">shift_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shift_type</span> <span class="o">=</span> <span class="n">shift_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shift_id</span> <span class="o">=</span> <span class="n">shift_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">shift_types</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">age</span><span class="p">,</span>
+            <span class="s2">&quot;sex&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sex</span><span class="p">,</span>
+            <span class="s2">&quot;hospital_type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">hospital_type</span><span class="p">,</span>
+            <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+            <span class="s2">&quot;month&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">month</span><span class="p">,</span>
+            <span class="s2">&quot;custom&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shift_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shift_types</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Shift type </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shift_type</span><span class="si">}</span><span class="s2"> not supported. &quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ClinicalShiftApplicator.apply_shift"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.monitor.clinical_applicator.ClinicalShiftApplicator.html#cyclops.monitor.clinical_applicator.ClinicalShiftApplicator.apply_shift">[docs]</a>    <span class="k">def</span> <span class="nf">apply_shift</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
+        <span class="n">batched</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">num_proc</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply shift to dataset using specified shift type.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ds_source: huggingface Dataset</span>
+<span class="sd">            Dataset with source data.</span>
+<span class="sd">        ds_target: huggingface Dataset</span>
+<span class="sd">            Dataset with target data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shift_types</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">shift_type</span><span class="p">](</span>
+            <span class="n">dataset</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shift_id</span><span class="p">,</span>
+            <span class="n">batched</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">num_proc</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_source_target</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
+        <span class="n">source_slice</span><span class="p">:</span> <span class="n">SliceSpec</span><span class="p">,</span>
+        <span class="n">target_slice</span><span class="p">:</span> <span class="n">SliceSpec</span><span class="p">,</span>
+        <span class="n">batched</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">num_proc</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get source and target datasets.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dataset: huggingface Dataset</span>
+<span class="sd">            Dataset to apply shift to.</span>
+<span class="sd">        source: SliceSpec</span>
+<span class="sd">            SliceSpec for source data.</span>
+<span class="sd">        target: SliceSpec</span>
+<span class="sd">            SliceSpec for target data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ds_source: huggingface Dataset</span>
+<span class="sd">            Dataset with source data.</span>
+<span class="sd">        ds_target: huggingface Dataset</span>
+<span class="sd">            Dataset with target data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">set_decode</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">source_slice</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">shift_func</span> <span class="ow">in</span> <span class="n">source_slice</span><span class="o">.</span><span class="n">get_slices</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">ds_source</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">shift_func</span><span class="p">,</span>
+                    <span class="n">batched</span><span class="o">=</span><span class="n">batched</span><span class="p">,</span>
+                    <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+                    <span class="n">num_proc</span><span class="o">=</span><span class="n">num_proc</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ds_source</span> <span class="o">=</span> <span class="n">dataset</span>
+        <span class="k">if</span> <span class="n">target_slice</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">shift_func</span> <span class="ow">in</span> <span class="n">target_slice</span><span class="o">.</span><span class="n">get_slices</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">ds_target</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">shift_func</span><span class="p">,</span>
+                    <span class="n">batched</span><span class="o">=</span><span class="n">batched</span><span class="p">,</span>
+                    <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+                    <span class="n">num_proc</span><span class="o">=</span><span class="n">num_proc</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ds_target</span> <span class="o">=</span> <span class="n">dataset</span>
+        <span class="n">set_decode</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">set_decode</span><span class="p">(</span><span class="n">ds_source</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">set_decode</span><span class="p">(</span><span class="n">ds_target</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span>
+
+<div class="viewcode-block" id="ClinicalShiftApplicator.age"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.monitor.clinical_applicator.ClinicalShiftApplicator.html#cyclops.monitor.clinical_applicator.ClinicalShiftApplicator.age">[docs]</a>    <span class="k">def</span> <span class="nf">age</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
+        <span class="n">source</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">shift_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">batched</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">num_proc</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply age shift to dataset.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dataset: huggingface Dataset</span>
+<span class="sd">            Dataset to apply shift to.</span>
+<span class="sd">        shift_id: str</span>
+<span class="sd">            Column name for shift id.</span>
+<span class="sd">        source: list</span>
+<span class="sd">            List of values for source data.</span>
+<span class="sd">        target: list</span>
+<span class="sd">            List of values for target data.</span>
+<span class="sd">        shift_id: str</span>
+<span class="sd">            Column name for shift id.</span>
+<span class="sd">        batched: bool</span>
+<span class="sd">            Whether to use batching or not. Default is True.</span>
+<span class="sd">        batch_size: int</span>
+<span class="sd">            Batch size. Default is 1000.</span>
+<span class="sd">        num_proc: int</span>
+<span class="sd">            Number of processes to use. Default is 1.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ds_source: huggingface Dataset</span>
+<span class="sd">            Dataset with source data.</span>
+<span class="sd">        ds_target: huggingface Dataset</span>
+<span class="sd">            Dataset with target data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">source</span><span class="p">:</span>
+            <span class="n">source_slice</span> <span class="o">=</span> <span class="n">SliceSpec</span><span class="p">(</span>
+                <span class="n">spec_list</span><span class="o">=</span><span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="n">shift_id</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s2">&quot;min_value&quot;</span><span class="p">:</span> <span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                            <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="n">source</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                            <span class="s2">&quot;min_inclusive&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                            <span class="s2">&quot;max_inclusive&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">source_slice</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">target</span><span class="p">:</span>
+            <span class="n">target_slice</span> <span class="o">=</span> <span class="n">SliceSpec</span><span class="p">(</span>
+                <span class="n">spec_list</span><span class="o">=</span><span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="n">shift_id</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s2">&quot;min_value&quot;</span><span class="p">:</span> <span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                            <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="n">target</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                            <span class="s2">&quot;min_inclusive&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                            <span class="s2">&quot;max_inclusive&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">target_slice</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_source_target</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="p">,</span> <span class="n">source_slice</span><span class="p">,</span> <span class="n">target_slice</span><span class="p">,</span> <span class="n">batched</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_proc</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span></div>
+
+<div class="viewcode-block" id="ClinicalShiftApplicator.sex"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.monitor.clinical_applicator.ClinicalShiftApplicator.html#cyclops.monitor.clinical_applicator.ClinicalShiftApplicator.sex">[docs]</a>    <span class="k">def</span> <span class="nf">sex</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
+        <span class="n">source</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">shift_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">batched</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">num_proc</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply shift for sex to dataset.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dataset: huggingface Dataset</span>
+<span class="sd">            Dataset to apply shift to.</span>
+<span class="sd">        shift_id: str</span>
+<span class="sd">            Column name for shift id.</span>
+<span class="sd">        source: list</span>
+<span class="sd">            List of values for source data.</span>
+<span class="sd">        target: list</span>
+<span class="sd">            List of values for target data.</span>
+<span class="sd">        shift_id: str</span>
+<span class="sd">            Column name for shift id.</span>
+<span class="sd">        batched: bool</span>
+<span class="sd">            Whether to use batching or not. Default is True.</span>
+<span class="sd">        batch_size: int</span>
+<span class="sd">            Batch size. Default is 1000.</span>
+<span class="sd">        num_proc: int</span>
+<span class="sd">            Number of processes to use. Default is 1.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ds_source: huggingface Dataset</span>
+<span class="sd">            Dataset with source data.</span>
+<span class="sd">        ds_target: huggingface Dataset</span>
+<span class="sd">            Dataset with target data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">source</span><span class="p">:</span>
+            <span class="n">source_slice</span> <span class="o">=</span> <span class="n">SliceSpec</span><span class="p">(</span><span class="n">spec_list</span><span class="o">=</span><span class="p">[{</span><span class="n">shift_id</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">source</span><span class="p">}}])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">source_slice</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">target</span><span class="p">:</span>
+            <span class="n">target_slice</span> <span class="o">=</span> <span class="n">SliceSpec</span><span class="p">(</span><span class="n">spec_list</span><span class="o">=</span><span class="p">[{</span><span class="n">shift_id</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">target</span><span class="p">}}])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">target_slice</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_source_target</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="p">,</span> <span class="n">source_slice</span><span class="p">,</span> <span class="n">target_slice</span><span class="p">,</span> <span class="n">batched</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_proc</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span></div>
+
+<div class="viewcode-block" id="ClinicalShiftApplicator.time"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.monitor.clinical_applicator.ClinicalShiftApplicator.html#cyclops.monitor.clinical_applicator.ClinicalShiftApplicator.time">[docs]</a>    <span class="k">def</span> <span class="nf">time</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
+        <span class="n">source</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">shift_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">batched</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">num_proc</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply time shift to dataset.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dataset: huggingface Dataset</span>
+<span class="sd">            Dataset to apply shift to.</span>
+<span class="sd">        shift_id: str</span>
+<span class="sd">            Column name for shift id.</span>
+<span class="sd">        source: list</span>
+<span class="sd">            List of values for source data.</span>
+<span class="sd">        target: list</span>
+<span class="sd">            List of values for target data.</span>
+<span class="sd">        shift_id: str</span>
+<span class="sd">            Column name for shift id.</span>
+<span class="sd">        batched: bool</span>
+<span class="sd">            Whether to use batching or not. Default is True.</span>
+<span class="sd">        batch_size: int</span>
+<span class="sd">            Batch size. Default is 1000.</span>
+<span class="sd">        num_proc: int</span>
+<span class="sd">            Number of processes to use. Default is 1.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ds_source: huggingface Dataset</span>
+<span class="sd">            Dataset with source data.</span>
+<span class="sd">        ds_target: huggingface Dataset</span>
+<span class="sd">            Dataset with target data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">source</span><span class="p">:</span>
+            <span class="n">source_slice</span> <span class="o">=</span> <span class="n">SliceSpec</span><span class="p">(</span>
+                <span class="n">spec_list</span><span class="o">=</span><span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="n">shift_id</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s2">&quot;min_value&quot;</span><span class="p">:</span> <span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                            <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="n">source</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                            <span class="s2">&quot;min_inclusive&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                            <span class="s2">&quot;max_inclusive&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">source_slice</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">target</span><span class="p">:</span>
+            <span class="n">target_slice</span> <span class="o">=</span> <span class="n">SliceSpec</span><span class="p">(</span>
+                <span class="n">spec_list</span><span class="o">=</span><span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="n">shift_id</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s2">&quot;min_value&quot;</span><span class="p">:</span> <span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                            <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="n">target</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                            <span class="s2">&quot;min_inclusive&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                            <span class="s2">&quot;max_inclusive&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">target_slice</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_source_target</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="p">,</span> <span class="n">source_slice</span><span class="p">,</span> <span class="n">target_slice</span><span class="p">,</span> <span class="n">batched</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_proc</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span></div>
+
+<div class="viewcode-block" id="ClinicalShiftApplicator.month"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.monitor.clinical_applicator.ClinicalShiftApplicator.html#cyclops.monitor.clinical_applicator.ClinicalShiftApplicator.month">[docs]</a>    <span class="k">def</span> <span class="nf">month</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
+        <span class="n">source</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">shift_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">batched</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">num_proc</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply shift for selection of months.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dataset: huggingface Dataset</span>
+<span class="sd">            Dataset to apply shift to.</span>
+<span class="sd">        shift_id: str</span>
+<span class="sd">            Column name for shift id.</span>
+<span class="sd">        source: list</span>
+<span class="sd">            List of values for source data.</span>
+<span class="sd">        target: list</span>
+<span class="sd">            List of values for target data.</span>
+<span class="sd">        shift_id: str</span>
+<span class="sd">            Column name for shift id.</span>
+<span class="sd">        batched: bool</span>
+<span class="sd">            Whether to use batching or not. Default is True.</span>
+<span class="sd">        batch_size: int</span>
+<span class="sd">            Batch size. Default is 1000.</span>
+<span class="sd">        num_proc: int</span>
+<span class="sd">            Number of processes to use. Default is 1.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ds_source: huggingface Dataset</span>
+<span class="sd">            Dataset with source data.</span>
+<span class="sd">        ds_target: huggingface Dataset</span>
+<span class="sd">            Dataset with target data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">source</span><span class="p">:</span>
+            <span class="n">source_slice</span> <span class="o">=</span> <span class="n">SliceSpec</span><span class="p">(</span><span class="n">spec_list</span><span class="o">=</span><span class="p">[{</span><span class="n">shift_id</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;month&quot;</span><span class="p">:</span> <span class="n">source</span><span class="p">}}])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">source_slice</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">target</span><span class="p">:</span>
+            <span class="n">target_slice</span> <span class="o">=</span> <span class="n">SliceSpec</span><span class="p">(</span><span class="n">spec_list</span><span class="o">=</span><span class="p">[{</span><span class="n">shift_id</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;month&quot;</span><span class="p">:</span> <span class="n">target</span><span class="p">}}])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">target_slice</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_source_target</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="p">,</span> <span class="n">source_slice</span><span class="p">,</span> <span class="n">target_slice</span><span class="p">,</span> <span class="n">batched</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_proc</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span></div>
+
+<div class="viewcode-block" id="ClinicalShiftApplicator.hospital_type"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.monitor.clinical_applicator.ClinicalShiftApplicator.html#cyclops.monitor.clinical_applicator.ClinicalShiftApplicator.hospital_type">[docs]</a>    <span class="k">def</span> <span class="nf">hospital_type</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
+        <span class="n">source</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">shift_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">batched</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">num_proc</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply shift for selection of hospital types.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dataset: huggingface Dataset</span>
+<span class="sd">            Dataset to apply shift to.</span>
+<span class="sd">        shift_id: str</span>
+<span class="sd">            Column name for shift id.</span>
+<span class="sd">        source: list</span>
+<span class="sd">            List of values for source data.</span>
+<span class="sd">        target: list</span>
+<span class="sd">            List of values for target data.</span>
+<span class="sd">        shift_id: str</span>
+<span class="sd">            Column name for shift id.</span>
+<span class="sd">        batched: bool</span>
+<span class="sd">            Whether to use batching or not. Default is True.</span>
+<span class="sd">        batch_size: int</span>
+<span class="sd">            Batch size. Default is 1000.</span>
+<span class="sd">        num_proc: int</span>
+<span class="sd">            Number of processes to use. Default is 1.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ds_source: huggingface Dataset</span>
+<span class="sd">            Dataset with source data.</span>
+<span class="sd">        ds_target: huggingface Dataset</span>
+<span class="sd">            Dataset with target data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">source</span><span class="p">:</span>
+            <span class="n">source_slice</span> <span class="o">=</span> <span class="n">SliceSpec</span><span class="p">(</span><span class="n">spec_list</span><span class="o">=</span><span class="p">[{</span><span class="n">shift_id</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">source</span><span class="p">}}])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">source_slice</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">target</span><span class="p">:</span>
+            <span class="n">target_slice</span> <span class="o">=</span> <span class="n">SliceSpec</span><span class="p">(</span><span class="n">spec_list</span><span class="o">=</span><span class="p">[{</span><span class="n">shift_id</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">target</span><span class="p">}}])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">target_slice</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_source_target</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="p">,</span> <span class="n">source_slice</span><span class="p">,</span> <span class="n">target_slice</span><span class="p">,</span> <span class="n">batched</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_proc</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span></div>
+
+<div class="viewcode-block" id="ClinicalShiftApplicator.custom"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.monitor.clinical_applicator.ClinicalShiftApplicator.html#cyclops.monitor.clinical_applicator.ClinicalShiftApplicator.custom">[docs]</a>    <span class="k">def</span> <span class="nf">custom</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
+        <span class="n">source</span><span class="p">:</span> <span class="n">SliceSpec</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">SliceSpec</span><span class="p">,</span>
+        <span class="n">shift_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">batched</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">num_proc</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build custom shift.</span>
+
+<span class="sd">        Build a custom shift by passing in a SliceSpec for source and target data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dataset: huggingface Dataset</span>
+<span class="sd">            Dataset to apply shift to.</span>
+<span class="sd">        source: SliceSpec</span>
+<span class="sd">            SliceSpec for source data.</span>
+<span class="sd">        target: SliceSpec</span>
+<span class="sd">            SliceSpec for target data.</span>
+<span class="sd">        shift_id: str</span>
+<span class="sd">            Column name for shift id.</span>
+<span class="sd">        batched: bool</span>
+<span class="sd">            Whether to use batching or not. Default is True.</span>
+<span class="sd">        batch_size: int</span>
+<span class="sd">            Batch size. Default is 1000.</span>
+<span class="sd">        num_proc: int</span>
+<span class="sd">            Number of processes to use. Default is 1.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ds_source: huggingface Dataset</span>
+<span class="sd">            Dataset with source data.</span>
+<span class="sd">        ds_target: huggingface Dataset</span>
+<span class="sd">            Dataset with target data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">shift_id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Shift id not required for custom shift. </span><span class="se">\</span>
+<span class="s2">                Please remove shift_id from method call.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_source_target</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">batched</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_proc</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  
+
+  <div class="citation">
+    CyclOps team <i>et al.,</i>
+    <a href="https://www.medrxiv.org/content/10.1101/2022.12.02.22283021v2">CyclOps: Cyclical development towards Operationalizing ML models for health</a>
+    <i>, medarxiv</i> (2022)
+  </def>
+
+
+  <p class="avatar">cyclops is built by</p>
+  <div class="avatar">
+    
+    
+    <span>
+      <a href="https://github.com/amrit110">
+        <img src="../../../_static/team/amrit-krishnan.jpg" width="32"/>
+        Amrit Krishnan
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/KadenMc">
+        <img src="../../../_static/team/kaden-mckeen.jpg" width="32"/>
+        Kaden McKeen
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/vsubasri">
+        <img src="../../../_static/team/valli-subasri.jpg" width="32"/>
+        Valli Subasri
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/a-kore">
+        <img src="../../../_static/team/ali-kore.jpg" width="32"/>
+        Ali Kore
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/fcogidi">
+        <img src="../../../_static/team/franklin-ogidi.jpg" width="32"/>
+        Franklin Ogidi
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/mahshidaln">
+        <img src="../../../_static/team/mahshid-alinoori.jpg" width="32"/>
+        Mahshid Alinoori
+      </a>
+    </span>
+    ,
+    
+    <span>
+      <a href="https://github.com/elhamdolatabadi">
+        <img src="../../../_static/team/elham-dolatabadi.jpg" width="32"/>
+        Elham Dolatabadi
+      </a>
+    </span>
+    ,
+  </div>
+
+
+  <div class="footer-small-text">
+    All <a href="https://github.com/VectorInstitute/cyclops">source code for cyclops</a> is freely available under the terms of an <a href="https://opensource.org/licenses/Apache-2.0">Apache-2.0</a> license.
+  </div>
+
+  <div class="footer-small-text">
+    This work is made possible due to the data obtained from the
+    General Medicine Inpatient Initiative (GEMINI).
+  </div>
+
+  <hr/>
+
+  <div class="logo">
+    <a class="logo" href="https://vectorinstitute.ai/">
+      <span class="logo"></span>
+      <img alt="Logo of the Vector Institute" style="width:90px; max-width:90px;" src="../../../_static/logos/vector_logo.png" />
+    </a>
+    <a class="logo" href="https://www.geminimedicine.ca/">
+      <span class="logo"></span>
+      <img alt="Logo of GEMINI" style="width:90px; max-width:90px;" src="../../../_static/logos/gemini_logo.png" />
+    </a>
+  </div>
+
+  <div class="copyright">
+    &copy; Copyright 2022, Vector AI Engineering
+  </div>
+
+  <div class="copyright">
+    </p>
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using customised version of
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">base theme</a> provided by
+    <a href="https://readthedocs.org">Read the Docs</a>.
+  </div>
+
+
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
