@@ -181,6 +181,7 @@
 
 <span class="kn">from</span> <span class="nn">cyclops.data.slicer</span> <span class="kn">import</span> <span class="n">SliceSpec</span>
 <span class="kn">from</span> <span class="nn">cyclops.evaluate.evaluator</span> <span class="kn">import</span> <span class="n">evaluate</span>
+<span class="kn">from</span> <span class="nn">cyclops.evaluate.fairness.config</span> <span class="kn">import</span> <span class="n">FairnessConfig</span>
 <span class="kn">from</span> <span class="nn">cyclops.evaluate.metrics.factory</span> <span class="kn">import</span> <span class="n">create_metric</span>
 <span class="kn">from</span> <span class="nn">cyclops.evaluate.metrics.metric</span> <span class="kn">import</span> <span class="n">MetricCollection</span>
 <span class="kn">from</span> <span class="nn">cyclops.models.catalog</span> <span class="kn">import</span> <span class="n">_model_names_mapping</span><span class="p">,</span> <span class="n">_static_model_keys</span>
@@ -485,6 +486,8 @@
         <span class="n">slice_spec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SliceSpec</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">DEFAULT_MAX_BATCH_SIZE</span><span class="p">,</span>
         <span class="n">remove_columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fairness_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FairnessConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">override_fairness_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate model(s) on a HuggingFace dataset.</span>
 
@@ -513,6 +516,12 @@
 <span class="sd">                by default config.DEFAULT_MAX_BATCH_SIZE</span>
 <span class="sd">        remove_columns : Optional[Union[str, List[str]]], optional</span>
 <span class="sd">            Unnecessary columns to be removed from the dataset, by default None</span>
+<span class="sd">        fairness_config : Optional[FairnessConfig], optional</span>
+<span class="sd">            The configuration for computing fairness metrics. If None, no fairness \</span>
+<span class="sd">            metrics will be computed, by default None</span>
+<span class="sd">        override_fairness_metrics : bool, optional</span>
+<span class="sd">            If True, the `metrics` argument in fairness_config will be overridden by \</span>
+<span class="sd">            the `metrics`, by default False</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -551,13 +560,16 @@
             <span class="p">)</span>
 
         <span class="n">results</span> <span class="o">=</span> <span class="n">evaluate</span><span class="p">(</span>
-            <span class="n">dataset</span><span class="p">,</span>
-            <span class="n">metrics</span><span class="p">,</span>
+            <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+            <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
             <span class="n">target_columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">task_target</span><span class="p">,</span>
             <span class="n">slice_spec</span><span class="o">=</span><span class="n">slice_spec</span><span class="p">,</span>
             <span class="n">prediction_column_prefix</span><span class="o">=</span><span class="n">prediction_column_prefix</span><span class="p">,</span>
-            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
             <span class="n">remove_columns</span><span class="o">=</span><span class="n">remove_columns</span><span class="p">,</span>
+            <span class="n">split</span><span class="o">=</span><span class="n">splits_mapping</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">],</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">fairness_config</span><span class="o">=</span><span class="n">fairness_config</span><span class="p">,</span>
+            <span class="n">override_fairness_metrics</span><span class="o">=</span><span class="n">override_fairness_metrics</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">dataset</span></div></div>
 </pre></div>
