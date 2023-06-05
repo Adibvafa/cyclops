@@ -205,8 +205,7 @@
             <span class="n">Sequence</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">WrappedModel</span><span class="p">]],</span>
             <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">WrappedModel</span><span class="p">],</span>
         <span class="p">],</span>
-        <span class="n">models_config_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">task_features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span>
+        <span class="n">task_features</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span>
         <span class="n">task_target</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">CXR_TARGET</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Chest X-ray classification task.</span>
@@ -215,18 +214,20 @@
 <span class="sd">        ----------</span>
 <span class="sd">        models</span>
 <span class="sd">            The model(s) to be used for prediction, and evaluation.</span>
-<span class="sd">        models_config_path : Union[str, Dict[str, str]], optional</span>
-<span class="sd">            Path to the configuration file(s) for the model(s), by default None</span>
 <span class="sd">        task_features : List[str]</span>
 <span class="sd">            List of feature names.</span>
 <span class="sd">        task_target : str</span>
 <span class="sd">            List of target names.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="n">prepare_models</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">models_config_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="n">prepare_models</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_models</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">task_features</span> <span class="o">=</span> <span class="n">task_features</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">task_target</span> <span class="o">=</span> <span class="n">task_target</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_features</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[</span><span class="n">task_features</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task_features</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">task_features</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_target</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[</span><span class="n">task_target</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task_target</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">task_target</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">get_device</span><span class="p">()</span></div>
 
     <span class="nd">@property</span>
@@ -289,7 +290,6 @@
 <div class="viewcode-block" id="CXRClassification.add_model"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.tasks.cxr_classification.CXRClassification.html#cyclops.tasks.cxr_classification.CXRClassification.add_model">[docs]</a>    <span class="k">def</span> <span class="nf">add_model</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">WrappedModel</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">WrappedModel</span><span class="p">]],</span>
-        <span class="n">model_config_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a model to the task.</span>
 
@@ -297,11 +297,9 @@
 <span class="sd">        ----------</span>
 <span class="sd">        model : Union[str, WrappedModel, Dict[str, WrappedModel]]</span>
 <span class="sd">            Model to be added.</span>
-<span class="sd">        model_config_path : Optional[str], optional</span>
-<span class="sd">            Path to the configuration file for the model.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">model_dict</span> <span class="o">=</span> <span class="n">prepare_models</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">model_config_path</span><span class="p">)</span>
+        <span class="n">model_dict</span> <span class="o">=</span> <span class="n">prepare_models</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">model_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_models</span><span class="p">()):</span>
             <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                 <span class="s2">&quot;Failed to add the model. A model with same name already exists.&quot;</span>
