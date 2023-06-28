@@ -219,7 +219,10 @@
     <span class="n">reader</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ImageReader</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ITKReader&quot;</span>
     <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.jpg&quot;</span>  <span class="c1"># used when decoding/encoding bytes to image</span>
     <span class="n">_loader</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">(</span>
-        <span class="p">[</span><span class="n">LoadImage</span><span class="p">(</span><span class="n">reader</span><span class="o">=</span><span class="n">reader</span><span class="p">,</span> <span class="n">simple_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span> <span class="n">ToNumpy</span><span class="p">()]</span>
+        <span class="p">[</span>
+            <span class="n">LoadImage</span><span class="p">(</span><span class="n">reader</span><span class="o">=</span><span class="n">reader</span><span class="p">,</span> <span class="n">simple_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">image_only</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">ToNumpy</span><span class="p">(),</span>
+        <span class="p">]</span>
     <span class="p">)</span>
     <span class="c1"># Automatically constructed</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span>
