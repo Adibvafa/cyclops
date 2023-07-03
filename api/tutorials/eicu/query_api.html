@@ -138,7 +138,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../mimiciv/query_api.html">MIMIC-IV query API tutorial</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">eICU-CRD query API tutorial</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#Imports-and-instantiate-EICUQuerier">Imports and instantiate <code class="docutils literal notranslate"><span class="pre">EICUQuerier</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Example-1.-Get-all-female-patients-discharged-in-2014.">Example 1. Get all female patients discharged in 2014.</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Example-1.-Get-all-female-patients-discharged-in-2014-(limit-to-100-rows).">Example 1. Get all female patients discharged in 2014 (limit to 100 rows).</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Example-2.-Get-all-patient-encounters-with-diagnoses-(schizophrenia-in-diagnosisstring),-discharged-in-the-year-2015.">Example 2. Get all patient encounters with diagnoses (<code class="docutils literal notranslate"><span class="pre">schizophrenia</span></code> in <code class="docutils literal notranslate"><span class="pre">diagnosisstring</span></code>), discharged in the year 2015.</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Example-3.-Get-potassium-lab-tests-for-patients-discharged-in-the-year-2014,-for-all-teaching-hospitals.">Example 3. Get potassium lab tests for patients discharged in the year 2014, for all teaching hospitals.</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Example-4.-Get-glucose-medications-(substring-search)-for-female-patients-discharged-in-2014.">Example 4. Get glucose medications (substring search) for female patients discharged in 2014.</a></li>
@@ -454,6 +454,7 @@ div.rendered_html tbody tr:hover {
 <section id="eICU-CRD-query-API-tutorial">
 <h1>eICU-CRD query API tutorial<a class="headerlink" href="#eICU-CRD-query-API-tutorial" title="Permalink to this headline"></a></h1>
 <p>This notebook shows examples of how to use the cyclops.query API on <a class="reference external" href="https://eicu-crd.mit.edu/">eicu-CRD</a>.</p>
+<p>Each query is limit to 100 rows (for quick results).</p>
 <ul class="simple">
 <li><p>First, setup the eICU database according to the instructions in <a class="reference external" href="https://github.com/MIT-LCP/eicu-code/tree/master/build-db/postgres">eicu-code</a>.</p></li>
 <li><p>The database is assumed to be hosted using postgres. Update the config parameters such as username and password, passed to <code class="docutils literal notranslate"><span class="pre">EICUQuerier</span></code> accordingly.</p></li>
@@ -485,7 +486,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-07-02 20:50:35,630 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
+2023-07-02 21:45:43,750 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -535,8 +536,8 @@ div.rendered_html tbody tr:hover {
 </pre></div></div>
 </div>
 </section>
-<section id="Example-1.-Get-all-female-patients-discharged-in-2014.">
-<h2>Example 1. Get all female patients discharged in 2014.<a class="headerlink" href="#Example-1.-Get-all-female-patients-discharged-in-2014." title="Permalink to this headline"></a></h2>
+<section id="Example-1.-Get-all-female-patients-discharged-in-2014-(limit-to-100-rows).">
+<h2>Example 1. Get all female patients discharged in 2014 (limit to 100 rows).<a class="headerlink" href="#Example-1.-Get-all-female-patients-discharged-in-2014-(limit-to-100-rows)." title="Permalink to this headline"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -547,7 +548,7 @@ div.rendered_html tbody tr:hover {
         <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;gender&quot;</span><span class="p">,</span> <span class="s2">&quot;Female&quot;</span><span class="p">),</span>
     <span class="p">]</span>
 <span class="p">)</span>
-<span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">eicu_crd</span><span class="o">.</span><span class="n">patient</span><span class="p">(</span><span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">eicu_crd</span><span class="o">.</span><span class="n">patient</span><span class="p">(</span><span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">patients</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -557,8 +558,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-07-02 20:50:37,199 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-07-02 20:50:37,200 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.737158 s
+2023-07-02 21:45:44,475 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-07-02 21:45:44,476 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.035131 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -566,7 +567,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-43717 rows extracted!
+100 rows extracted!
 </pre></div></div>
 </div>
 </section>
@@ -593,7 +594,7 @@ div.rendered_html tbody tr:hover {
         <span class="n">on</span><span class="o">=</span><span class="s2">&quot;patientunitstayid&quot;</span><span class="p">,</span>
     <span class="p">),</span>
     <span class="n">ops</span><span class="o">=</span><span class="n">diagnosis_ops</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">diagnoses</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -603,8 +604,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-07-02 20:50:38,184 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-07-02 20:50:38,186 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.928652 s
+2023-07-02 21:45:44,883 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-07-02 21:45:44,883 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.102628 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -612,7 +613,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-1348 rows extracted!
+100 rows extracted!
 </pre></div></div>
 </div>
 </section>
@@ -643,7 +644,7 @@ div.rendered_html tbody tr:hover {
         <span class="n">on</span><span class="o">=</span><span class="s2">&quot;patientunitstayid&quot;</span><span class="p">,</span>
     <span class="p">),</span>
     <span class="n">ops</span><span class="o">=</span><span class="n">lab_ops</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">labs</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -653,8 +654,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-07-02 20:50:48,271 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-07-02 20:50:48,272 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 9.948157 s
+2023-07-02 21:45:45,062 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-07-02 21:45:45,063 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.031593 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -662,7 +663,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-252638 rows extracted!
+100 rows extracted!
 </pre></div></div>
 </div>
 </section>
@@ -687,7 +688,7 @@ div.rendered_html tbody tr:hover {
 <span class="n">medications</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">eicu_crd</span><span class="o">.</span><span class="n">medication</span><span class="p">(</span>
     <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">patients</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;patientunitstayid&quot;</span><span class="p">),</span>
     <span class="n">ops</span><span class="o">=</span><span class="n">medications_ops</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">medications</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -697,8 +698,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-07-02 20:50:50,518 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-07-02 20:50:50,519 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 2.184488 s
+2023-07-02 21:45:45,338 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-07-02 21:45:45,339 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.200182 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -706,7 +707,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-9063 rows extracted!
+100 rows extracted!
 </pre></div></div>
 </div>
 </section>

@@ -140,8 +140,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#Example-1.-Get-all-patient-admissions-from-2021-or-later-(approx-year-of-admission)">Example 1. Get all patient admissions from 2021 or later (approx year of admission)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Example-2.-Get-all-patient-encounters-with-diagnoses-(schizophrenia-in-ICD-10-long-title),-in-the-year-2015.">Example 2. Get all patient encounters with diagnoses (<code class="docutils literal notranslate"><span class="pre">schizophrenia</span></code> in ICD-10 long title), in the year 2015.</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Example-3.-Advanced---uses-ConditionRegexMatch-from-cyclops.query.ops.-Get-all-patient-encounters-with-diagnoses-(ICD-9-long-title-contains-schizophrenia-and-chronic-),-in-the-year-2015.">Example 3. Advanced - uses <code class="docutils literal notranslate"><span class="pre">ConditionRegexMatch</span></code> from <code class="docutils literal notranslate"><span class="pre">cyclops.query.ops</span></code>. Get all patient encounters with diagnoses (ICD-9 long title contains <code class="docutils literal notranslate"><span class="pre">schizophrenia</span></code> and <code class="docutils literal notranslate"><span class="pre">chronic</span></code> ), in the year 2015.</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Example-4.-Get-routine-vital-signs-for-patients-from-year-2015,-limit-to-100-rows.">Example 4. Get routine vital signs for patients from year 2015, limit to 100 rows.</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Example-5.-Get-hemoglobin-lab-tests-for-patients-from-year-2009,-limit-to-100-rows.">Example 5. Get hemoglobin lab tests for patients from year 2009, limit to 100 rows.</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Example-4.-Get-routine-vital-signs-for-patients-from-year-2015.">Example 4. Get routine vital signs for patients from year 2015.</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Example-5.-Get-hemoglobin-lab-tests-for-patients-from-year-2009.">Example 5. Get hemoglobin lab tests for patients from year 2009.</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Example-6.-Get-all-female-patient-encounters-from-year-2015,-and-return-as-dask-dataframe-(lazy-evaluation)-with-4-partitions-(batches)-aggregated-based-on-subject_id.">Example 6. Get all female patient encounters from year 2015, and return as dask dataframe (lazy evaluation) with 4 partitions (batches) aggregated based on <code class="docutils literal notranslate"><span class="pre">subject_id</span></code>.</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Example-7.-Running-a-raw-SQL-string.">Example 7. Running a raw SQL string.</a></li>
 </ul>
@@ -457,6 +457,7 @@ div.rendered_html tbody tr:hover {
 <section id="MIMIC-IV-query-API-tutorial">
 <h1>MIMIC-IV query API tutorial<a class="headerlink" href="#MIMIC-IV-query-API-tutorial" title="Permalink to this headline"></a></h1>
 <p>This notebook shows examples of how to use the cyclops.query API on <a class="reference external" href="https://physionet.org/content/mimiciv/2.0/">MIMIC-IV v2.0</a>.</p>
+<p>Each query is limit to 100 rows (for quick results).</p>
 <ul class="simple">
 <li><p>First, setup the MIMIC-IV database according to the instructions in <a class="reference external" href="https://github.com/MIT-LCP/mimic-code/tree/main/mimic-iv/buildmimic/postgres">mimic-code</a>.</p></li>
 <li><p>The database is assumed to be hosted using postgres. Update the config parameters such as username and password, passed to <code class="docutils literal notranslate"><span class="pre">MIMICIVQuerier</span></code> accordingly.</p></li>
@@ -488,7 +489,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-07-02 20:53:00,483 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
+2023-07-02 21:47:35,276 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -525,7 +526,7 @@ div.rendered_html tbody tr:hover {
 <span class="n">admissions</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
     <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">patients</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;subject_id&quot;</span><span class="p">),</span>
     <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">admissions</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -535,8 +536,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-07-02 20:53:03,580 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-07-02 20:53:03,580 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.401659 s
+2023-07-02 21:47:38,276 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-07-02 21:47:38,278 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.292407 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -544,7 +545,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-1575 rows extracted!
+100 rows extracted!
 </pre></div></div>
 </div>
 </section>
@@ -577,7 +578,7 @@ div.rendered_html tbody tr:hover {
         <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;subject_id&quot;</span><span class="p">,</span> <span class="s2">&quot;hadm_id&quot;</span><span class="p">],</span>
     <span class="p">),</span>
     <span class="n">ops</span><span class="o">=</span><span class="n">diagnoses_ops</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">diagnoses</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -587,8 +588,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-07-02 20:53:04,360 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-07-02 20:53:04,361 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.662193 s
+2023-07-02 21:47:39,243 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-07-02 21:47:39,244 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.834182 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -596,7 +597,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-263 rows extracted!
+100 rows extracted!
 </pre></div></div>
 </div>
 </section>
@@ -629,7 +630,7 @@ div.rendered_html tbody tr:hover {
         <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;subject_id&quot;</span><span class="p">,</span> <span class="s2">&quot;hadm_id&quot;</span><span class="p">],</span>
     <span class="p">),</span>
     <span class="n">ops</span><span class="o">=</span><span class="n">diagnoses_ops</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">diagnoses</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -639,8 +640,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-07-02 20:53:06,028 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-07-02 20:53:06,029 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 1.477972 s
+2023-07-02 21:47:40,956 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-07-02 21:47:40,957 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 1.494505 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -652,8 +653,8 @@ div.rendered_html tbody tr:hover {
 </pre></div></div>
 </div>
 </section>
-<section id="Example-4.-Get-routine-vital-signs-for-patients-from-year-2015,-limit-to-100-rows.">
-<h2>Example 4. Get routine vital signs for patients from year 2015, limit to 100 rows.<a class="headerlink" href="#Example-4.-Get-routine-vital-signs-for-patients-from-year-2015,-limit-to-100-rows." title="Permalink to this headline"></a></h2>
+<section id="Example-4.-Get-routine-vital-signs-for-patients-from-year-2015.">
+<h2>Example 4. Get routine vital signs for patients from year 2015.<a class="headerlink" href="#Example-4.-Get-routine-vital-signs-for-patients-from-year-2015." title="Permalink to this headline"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
@@ -686,8 +687,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-07-02 20:54:29,500 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-07-02 20:54:29,501 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 83.339774 s
+2023-07-02 21:49:05,588 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-07-02 21:49:05,590 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 84.509000 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -699,8 +700,8 @@ div.rendered_html tbody tr:hover {
 </pre></div></div>
 </div>
 </section>
-<section id="Example-5.-Get-hemoglobin-lab-tests-for-patients-from-year-2009,-limit-to-100-rows.">
-<h2>Example 5. Get hemoglobin lab tests for patients from year 2009, limit to 100 rows.<a class="headerlink" href="#Example-5.-Get-hemoglobin-lab-tests-for-patients-from-year-2009,-limit-to-100-rows." title="Permalink to this headline"></a></h2>
+<section id="Example-5.-Get-hemoglobin-lab-tests-for-patients-from-year-2009.">
+<h2>Example 5. Get hemoglobin lab tests for patients from year 2009.<a class="headerlink" href="#Example-5.-Get-hemoglobin-lab-tests-for-patients-from-year-2009." title="Permalink to this headline"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
@@ -733,8 +734,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-07-02 20:55:33,274 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-07-02 20:55:33,276 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 63.635547 s
+2023-07-02 21:50:11,531 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-07-02 21:50:11,533 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 65.810320 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -776,8 +777,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-07-02 20:55:33,701 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-07-02 20:55:33,703 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.357537 s
+2023-07-02 21:50:11,929 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-07-02 21:50:11,931 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.331899 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -807,8 +808,8 @@ Number of partitions: 4
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-07-02 20:55:34,563 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-07-02 20:55:34,564 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.008536 s
+2023-07-02 21:50:13,038 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-07-02 21:50:13,039 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.009827 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">

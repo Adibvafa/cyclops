@@ -143,7 +143,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#Example-2.-Get-measurements-for-all-visits-in-or-after-2020.">Example 2. Get measurements for all visits in or after 2020.</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id1">Imports and instantiate <code class="docutils literal notranslate"><span class="pre">OMOPQuerier</span></code>.</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Example-1.-Get-all-patient-visits-that-ended-in-a-mortality-outcome-in-or-after-2010.">Example 1. Get all patient visits that ended in a mortality outcome in or after 2010.</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Example-2.-Get-all-measurements-for-female-patient-visits-with-sepsis-diagnoses,-that-ended-in-a-mortality-outcome-(limit-to-10000-rows).">Example 2. Get all measurements for female patient visits with <code class="docutils literal notranslate"><span class="pre">sepsis</span></code> diagnoses, that ended in a mortality outcome (limit to 10000 rows).</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Example-2.-Get-all-measurements-for-female-patient-visits-with-sepsis-diagnoses,-that-ended-in-a-mortality-outcome.">Example 2. Get all measurements for female patient visits with <code class="docutils literal notranslate"><span class="pre">sepsis</span></code> diagnoses, that ended in a mortality outcome.</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../gemini/query_api.html">GEMINI query API tutorial</a></li>
@@ -454,7 +454,8 @@ div.rendered_html tbody tr:hover {
 </style>
 <section id="OMOP-query-API-tutorial">
 <h1>OMOP query API tutorial<a class="headerlink" href="#OMOP-query-API-tutorial" title="Permalink to this headline"></a></h1>
-<p>This notebook shows examples of how to use the cyclops.query API to query EHR databases that follow the OMOP common data model. We showcase the examples on:</p>
+<p>This notebook shows examples of how to use the cyclops.query API to query EHR databases that follow the OMOP common data model. Each query is limit to 100 rows (for quick results).</p>
+<p>We showcase the examples on:</p>
 <ol class="arabic simple">
 <li><p><a class="reference external" href="https://github.com/synthetichealth/synthea">Synthea</a> in OMOP format.</p>
 <ul class="simple">
@@ -494,7 +495,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-07-02 21:04:06,268 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
+2023-07-02 21:58:40,704 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -582,7 +583,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">(</span><span class="s2">&quot;visit_start_date&quot;</span><span class="p">,</span> <span class="s2">&quot;2010-01-01&quot;</span><span class="p">)])</span>
-<span class="n">visits</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">visit_occurrence</span><span class="p">(</span><span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">visits</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">visit_occurrence</span><span class="p">(</span><span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">visits</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">visits</span><span class="p">[</span><span class="s2">&quot;visit_start_date&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
 </pre></div>
@@ -593,8 +594,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-07-02 21:04:06,931 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-07-02 21:04:06,932 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.087327 s
+2023-07-02 21:58:42,174 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-07-02 21:58:42,176 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.052469 s
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -602,7 +603,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-3119 rows extracted!
+100 rows extracted!
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -611,19 +612,19 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-2010     52
-2011     55
-2012     97
-2013    246
-2014    385
-2015    258
-2016    279
-2017    261
-2018    279
-2019    253
-2020    295
-2021    375
-2022    284
+2010     5
+2011     1
+2012     6
+2013    12
+2014    12
+2015    12
+2016    10
+2017     6
+2018     8
+2019     5
+2020     5
+2021    13
+2022     5
 Name: visit_start_date, dtype: int64
 </pre></div></div>
 </div>
@@ -638,7 +639,7 @@ Name: visit_start_date, dtype: int64
 <span class="n">visits</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">visit_occurrence</span><span class="p">(</span><span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span>
 <span class="n">measurements</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">measurement</span><span class="p">(</span>
     <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">visits</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;visit_occurrence_id&quot;</span><span class="p">)</span>
-<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">measurements</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -648,8 +649,8 @@ Name: visit_start_date, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-07-02 21:04:07,533 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-07-02 21:04:07,534 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.476361 s
+2023-07-02 21:58:42,347 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-07-02 21:58:42,348 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.058189 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -657,7 +658,7 @@ Name: visit_start_date, dtype: int64
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-7555 rows extracted!
+100 rows extracted!
 </pre></div></div>
 </div>
 <ol class="arabic simple" start="2">
@@ -695,7 +696,7 @@ Name: visit_start_date, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-07-02 21:04:14,250 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
+2023-07-02 21:58:48,426 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -732,7 +733,7 @@ Name: visit_start_date, dtype: int64
         <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;discharge_to_concept_name&quot;</span><span class="p">,</span> <span class="s2">&quot;died&quot;</span><span class="p">),</span>
     <span class="p">]</span>
 <span class="p">)</span>
-<span class="n">visits</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">get_interface</span><span class="p">(</span><span class="n">visits_concept_mapped</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">visits_ops</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">visits</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">get_interface</span><span class="p">(</span><span class="n">visits_concept_mapped</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">visits_ops</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">visits</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -742,8 +743,8 @@ Name: visit_start_date, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-07-02 21:04:21,910 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-07-02 21:04:21,911 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.960793 s
+2023-07-02 21:58:55,210 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-07-02 21:58:55,212 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.073358 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -751,12 +752,12 @@ Name: visit_start_date, dtype: int64
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-5815 rows extracted!
+100 rows extracted!
 </pre></div></div>
 </div>
 </section>
-<section id="Example-2.-Get-all-measurements-for-female-patient-visits-with-sepsis-diagnoses,-that-ended-in-a-mortality-outcome-(limit-to-10000-rows).">
-<h2>Example 2. Get all measurements for female patient visits with <code class="docutils literal notranslate"><span class="pre">sepsis</span></code> diagnoses, that ended in a mortality outcome (limit to 10000 rows).<a class="headerlink" href="#Example-2.-Get-all-measurements-for-female-patient-visits-with-sepsis-diagnoses,-that-ended-in-a-mortality-outcome-(limit-to-10000-rows)." title="Permalink to this headline"></a></h2>
+<section id="Example-2.-Get-all-measurements-for-female-patient-visits-with-sepsis-diagnoses,-that-ended-in-a-mortality-outcome.">
+<h2>Example 2. Get all measurements for female patient visits with <code class="docutils literal notranslate"><span class="pre">sepsis</span></code> diagnoses, that ended in a mortality outcome.<a class="headerlink" href="#Example-2.-Get-all-measurements-for-female-patient-visits-with-sepsis-diagnoses,-that-ended-in-a-mortality-outcome." title="Permalink to this headline"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
@@ -788,7 +789,7 @@ Name: visit_start_date, dtype: int64
         <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;condition_concept_name&quot;</span><span class="p">,</span> <span class="s2">&quot;sepsis&quot;</span><span class="p">),</span>
     <span class="p">]</span>
 <span class="p">)</span>
-<span class="n">cohort</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">get_interface</span><span class="p">(</span><span class="n">cohort_query</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">sepsis_died_filter</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+<span class="n">cohort</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">get_interface</span><span class="p">(</span><span class="n">cohort_query</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">sepsis_died_filter</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cohort</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -798,8 +799,8 @@ Name: visit_start_date, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-07-02 21:05:46,467 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-07-02 21:05:46,469 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 83.828754 s
+2023-07-02 22:00:13,348 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-07-02 22:00:13,349 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 77.513277 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -807,7 +808,7 @@ Name: visit_start_date, dtype: int64
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-10000 rows extracted!
+100 rows extracted!
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -824,18 +825,14 @@ Name: visit_start_date, dtype: int64
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-No matching concept                                                      5579
-Respiratory rate                                                          308
-Mean blood pressure                                                       263
-Systolic blood pressure                                                   263
-Diastolic blood pressure                                                  263
-                                                                         ...
-Oxygen saturation in Mixed venous blood                                     1
-Imipenem [Susceptibility] by Disk diffusion (KB)                            1
-Trimethoprim+Sulfamethoxazole [Susceptibility] by Disk diffusion (KB)       1
-Nitrofurantoin [Susceptibility] by Disk diffusion (KB)                      1
-Fibrin D-dimer FEU [Mass/volume] in Platelet poor plasma                    1
-Name: measurement_concept_name, Length: 178, dtype: int64
+No matching concept                                                77
+Diastolic blood pressure                                            7
+Level of arousal                                                    6
+Pain assessment                                                     5
+Bacteria identified in Urine by Culture                             2
+Bacteria identified in Blood product unit.autologous by Culture     2
+Body weight                                                         1
+Name: measurement_concept_name, dtype: int64
 </pre></div></div>
 </div>
 </section>
