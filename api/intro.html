@@ -181,18 +181,34 @@
 <hr class="docutils" />
 <p><a class="reference external" href="https://pypi.org/project/pycyclops"><img alt="PyPI" src="https://img.shields.io/pypi/v/pycyclops" /></a> <a class="reference external" href="https://github.com/VectorInstitute/cyclops/actions/workflows/code_checks.yml"><img alt="code checks" src="https://github.com/VectorInstitute/cyclops/actions/workflows/code_checks.yml/badge.svg" /></a> <a class="reference external" href="https://github.com/VectorInstitute/cyclops/actions/workflows/integration_tests.yml"><img alt="integration tests" src="https://github.com/VectorInstitute/cyclops/actions/workflows/integration_tests.yml/badge.svg" /></a> <a class="reference external" href="https://github.com/VectorInstitute/cyclops/actions/workflows/docs_deploy.yml"><img alt="docs" src="https://github.com/VectorInstitute/cyclops/actions/workflows/docs_deploy.yml/badge.svg" /></a> <a class="reference external" href="https://codecov.io/gh/VectorInstitute/cyclops"><img alt="codecov" src="https://codecov.io/gh/VectorInstitute/cyclops/branch/main/graph/badge.svg" /></a> <a class="reference external" href="https://github.com/VectorInstitute/cyclops/blob/main/LICENSE"><img alt="license" src="https://img.shields.io/github/license/VectorInstitute/cyclops.svg" /></a></p>
 <p><code class="docutils literal notranslate"><span class="pre">cyclops</span></code> is a framework for facilitating research and deployment of
-ML models in the health (or clinical) setting. It provides a few
-high-level APIs namely:</p>
+ML models for healthcare. It provides a few high-level APIs namely:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">query</span></code> - Querying EHR databases (such as MIMIC-IV)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">process</span></code> - Process static and temporal EHR data</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">evaluate</span></code> - Evaluate models on clinical prediction tasks</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">monitor</span></code> - Detect data drift relevant for clinical use cases</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">query</span></code> - Query EHR databases (such as MIMIC-IV)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> - Create datasets for training, inference and evaluation. We
+use the popular 🤗
+<a class="reference external" href="https://github.com/huggingface/datasets">datasets</a> to efficiently
+load and slice different modalities of data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">models</span></code> - Use common model implementations using
+<a class="reference external" href="https://scikit-learn.org/stable/">scikit-learn</a> and
+<a class="reference external" href="https://pytorch.org/">PyTorch</a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tasks</span></code> - Use canonical Healthcare ML tasks such as</p>
+<ul>
+<li><p>Mortality prediction</p></li>
+<li><p>Chest X-ray classification</p></li>
 </ul>
-<p><code class="docutils literal notranslate"><span class="pre">cyclops</span></code> also provides a library of use-cases on clinical datasets.
-The implemented use cases include:</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">evaluate</span></code> - Evaluate models on clinical prediction tasks</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">monitor</span></code> - Detect dataset shift relevant for clinical use cases</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">report</span></code> - Create <a class="reference external" href="https://vectorinstitute.github.io/cyclops/api/tutorials/mimiciii/model_card.html">model
+cards</a>
+for clinical ML models</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">cyclops</span></code> also provides a library of end-to-end use cases on clinical
+datasets such as</p>
 <ul class="simple">
-<li><p>Mortality decompensation prediction</p></li>
+<li><p><a class="reference external" href="https://physionet.org/content/mimiciii/1.4/">MIMIC-III</a></p></li>
+<li><p><a class="reference external" href="https://physionet.org/content/mimiciv/2.0/">MIMIC-IV</a></p></li>
+<li><p><a class="reference external" href="https://eicu-crd.mit.edu/about/eicu/">eICU-CRD</a></p></li>
 </ul>
 <section id="getting-started">
 <h1>🐣 Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline"></a></h1>
@@ -201,24 +217,27 @@ The implemented use cases include:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>pycyclops
 </pre></div>
 </div>
-<p>The core package only includes support for the <code class="docutils literal notranslate"><span class="pre">process</span></code> API. To
-install support for <code class="docutils literal notranslate"><span class="pre">query</span></code>, <code class="docutils literal notranslate"><span class="pre">evaluate</span></code> and <code class="docutils literal notranslate"><span class="pre">monitor</span></code> APIs,
-install them as extra dependency installs.</p>
+<p>The base package installation supports the use of the <code class="docutils literal notranslate"><span class="pre">data</span></code> and
+<code class="docutils literal notranslate"><span class="pre">process</span></code> APIs to load and transform clinical data, for downstream
+tasks.</p>
+<p>To install additional functionality from the other APIs, they can be
+installed as extras.</p>
 <p>To install with <code class="docutils literal notranslate"><span class="pre">query</span></code> API support,</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;pycyclops[query]&#39;</span>
 </pre></div>
 </div>
-<p>To install with <code class="docutils literal notranslate"><span class="pre">evaluate</span></code> API support,</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;pycyclops[evaluate]&#39;</span>
+<p>To install with <code class="docutils literal notranslate"><span class="pre">models</span></code>, <code class="docutils literal notranslate"><span class="pre">tasks</span></code>, <code class="docutils literal notranslate"><span class="pre">evaluate</span></code> and <code class="docutils literal notranslate"><span class="pre">monitor</span></code> API
+support,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;pycyclops[models]&#39;</span>
 </pre></div>
 </div>
-<p>To install with <code class="docutils literal notranslate"><span class="pre">monitor</span></code> API support,</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;pycyclops[monitor]&#39;</span>
+<p>To install with <code class="docutils literal notranslate"><span class="pre">report</span></code> API support,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;pycyclops[report]&#39;</span>
 </pre></div>
 </div>
 <p>Multiple extras could also be combined, for example to install with both
-<code class="docutils literal notranslate"><span class="pre">query</span></code> and <code class="docutils literal notranslate"><span class="pre">evaluate</span></code> API support:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;pycyclops[query,evaluate]&#39;</span>
+<code class="docutils literal notranslate"><span class="pre">query</span></code> and <code class="docutils literal notranslate"><span class="pre">models</span></code> support:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;pycyclops[query,models]&#39;</span>
 </pre></div>
 </div>
 </section>
