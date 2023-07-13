@@ -170,7 +170,6 @@
   <h1>Source code for cyclops.report.report</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Cyclops report module.&quot;&quot;&quot;</span>  <span class="c1"># pylint: disable=too-many-lines</span>
 <span class="kn">import</span> <span class="nn">base64</span>
-<span class="kn">import</span> <span class="nn">keyword</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span> <span class="k">as</span> <span class="n">dt_date</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt_datetime</span>
@@ -184,18 +183,17 @@
 <span class="kn">from</span> <span class="nn">plotly.io</span> <span class="kn">import</span> <span class="n">write_image</span>
 <span class="kn">from</span> <span class="nn">plotly.offline</span> <span class="kn">import</span> <span class="n">get_plotlyjs</span>
 <span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">StrictStr</span><span class="p">,</span> <span class="n">create_model</span>
-<span class="kn">from</span> <span class="nn">pydantic.fields</span> <span class="kn">import</span> <span class="n">FieldInfo</span><span class="p">,</span> <span class="n">ModelField</span>
 <span class="kn">from</span> <span class="nn">scour</span> <span class="kn">import</span> <span class="n">scour</span>
 
-<span class="kn">from</span> <span class="nn">cyclops.report.model_card</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">BaseModelCardField</span><span class="p">,</span>
+<span class="kn">from</span> <span class="nn">cyclops.report.model_card</span> <span class="kn">import</span> <span class="n">ModelCard</span>  <span class="c1"># type: ignore[attr-defined]</span>
+<span class="kn">from</span> <span class="nn">cyclops.report.model_card.base</span> <span class="kn">import</span> <span class="n">BaseModelCardField</span>
+<span class="kn">from</span> <span class="nn">cyclops.report.model_card.fields</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Citation</span><span class="p">,</span>
     <span class="n">Dataset</span><span class="p">,</span>
     <span class="n">FairnessAssessment</span><span class="p">,</span>
     <span class="n">Graphic</span><span class="p">,</span>
     <span class="n">GraphicsCollection</span><span class="p">,</span>
     <span class="n">License</span><span class="p">,</span>
-    <span class="n">ModelCard</span><span class="p">,</span>
     <span class="n">Owner</span><span class="p">,</span>
     <span class="n">PerformanceMetric</span><span class="p">,</span>
     <span class="n">Reference</span><span class="p">,</span>
@@ -262,125 +260,37 @@
         <span class="n">report</span><span class="o">.</span><span class="n">_model_card</span> <span class="o">=</span> <span class="n">model_card</span>  <span class="c1"># pylint: disable=protected-access</span>
         <span class="k">return</span> <span class="n">report</span></div>
 
-    <span class="k">def</span> <span class="nf">_get_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseModel</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a section of the model card.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        KeyError</span>
-<span class="sd">            If the given section name is not in the model card.</span>
-<span class="sd">        TypeError</span>
-<span class="sd">            If the given section name is not a subclass of `BaseModel`.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">name_</span> <span class="o">=</span> <span class="n">str_to_snake_case</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="n">model_card_sections</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_card</span><span class="o">.</span><span class="n">__fields__</span>
-        <span class="k">if</span> <span class="n">name_</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">model_card_sections</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Expected `section_name` to be in </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">model_card_sections</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; Got </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> instead.&quot;</span>
-            <span class="p">)</span>
-
-        <span class="c1"># instantiate section if not already instantiated</span>
-        <span class="n">section_type</span> <span class="o">=</span> <span class="n">model_card_sections</span><span class="p">[</span><span class="n">name_</span><span class="p">]</span><span class="o">.</span><span class="n">type_</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_card</span><span class="p">,</span> <span class="n">name_</span><span class="p">),</span> <span class="n">section_type</span><span class="p">):</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_card</span><span class="p">,</span> <span class="n">name_</span><span class="p">,</span> <span class="n">section_type</span><span class="p">())</span>
-
-        <span class="n">model_card_section</span><span class="p">:</span> <span class="n">BaseModel</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_card</span><span class="p">,</span> <span class="n">name_</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">model_card_section</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Expected section `</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">` to be a subclass of `BaseModel`.&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; Got </span><span class="si">{</span><span class="n">model_card_section</span><span class="o">.</span><span class="vm">__class__</span><span class="si">}</span><span class="s2"> instead.&quot;</span>
-            <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">model_card_section</span>
-
     <span class="k">def</span> <span class="nf">_log_field</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
         <span class="n">section_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">field_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">field_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Populate a field in the model card.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : Any</span>
+<span class="sd">        data : Dict[str, Any]</span>
 <span class="sd">            Data to populate the field with.</span>
 <span class="sd">        section_name : str</span>
 <span class="sd">            Name of the section to populate.</span>
 <span class="sd">        field_name : str</span>
 <span class="sd">            Name of the field to populate. If the field does not exist, it will be</span>
 <span class="sd">            created and added to the section.</span>
-<span class="sd">        field_type : BaseModel, optional</span>
-<span class="sd">            Type of the field to populate. If not provided, the type will be inferred</span>
-<span class="sd">            from the data.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        ValueError</span>
-<span class="sd">            If `field_name` is not a valid python identifier.</span>
+<span class="sd">        field_type : BaseModel</span>
+<span class="sd">            Type of the field to populate.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">section</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_section</span><span class="p">(</span><span class="n">section_name</span><span class="p">)</span>
+        <span class="n">section_name</span> <span class="o">=</span> <span class="n">str_to_snake_case</span><span class="p">(</span><span class="n">section_name</span><span class="p">)</span>
+        <span class="n">section</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_card</span><span class="o">.</span><span class="n">get_section</span><span class="p">(</span><span class="n">section_name</span><span class="p">)</span>
+        <span class="n">field_value</span> <span class="o">=</span> <span class="n">field_type</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-        <span class="n">section_fields</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">__fields__</span>
-        <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">section_fields</span><span class="p">:</span>
-            <span class="n">field</span> <span class="o">=</span> <span class="n">section_fields</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
-            <span class="n">field_type</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">type_</span>  <span class="c1"># [!] can be any (serializable) type</span>
-            <span class="n">field_value</span> <span class="o">=</span> <span class="n">_get_field_value</span><span class="p">(</span><span class="n">field_type</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-
-            <span class="n">_check_allowable_sections</span><span class="p">(</span>  <span class="c1"># check if field can be added to section</span>
-                <span class="n">field</span><span class="o">=</span><span class="n">field_value</span><span class="p">,</span> <span class="n">section_name</span><span class="o">=</span><span class="n">section_name</span><span class="p">,</span> <span class="n">field_name</span><span class="o">=</span><span class="n">field_name</span>
-            <span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">default_factory</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
-                <span class="c1"># NOTE: pydantic does not trigger validation when appending to a list,</span>
-                <span class="c1"># but if `validate_assignment` is set to `True`, then validation will</span>
-                <span class="c1"># be triggered when the list is assigned to the field.</span>
-                <span class="n">field_values</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="p">[])</span>
-                <span class="n">field_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field_value</span><span class="p">)</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field_values</span><span class="p">)</span>  <span class="c1"># trigger validation</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field_value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">section</span><span class="o">.</span><span class="n">__fields__</span><span class="p">:</span>
+            <span class="n">section</span><span class="o">.</span><span class="n">update_field</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="n">field_value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">field_name</span><span class="o">.</span><span class="n">isidentifier</span><span class="p">()</span> <span class="ow">or</span> <span class="n">keyword</span><span class="o">.</span><span class="n">iskeyword</span><span class="p">(</span><span class="n">field_name</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Expected `field_name` to be a valid python identifier.&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot; Got </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2"> instead.&quot;</span>
-                <span class="p">)</span>
-
-            <span class="n">field_value</span> <span class="o">=</span> <span class="n">_get_field_value</span><span class="p">(</span><span class="n">field_type</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-            <span class="n">_check_allowable_sections</span><span class="p">(</span>  <span class="c1"># check if field is allowed in section</span>
-                <span class="n">field</span><span class="o">=</span><span class="n">field_value</span><span class="p">,</span> <span class="n">section_name</span><span class="o">=</span><span class="n">section_name</span><span class="p">,</span> <span class="n">field_name</span><span class="o">=</span><span class="n">field_name</span>
-            <span class="p">)</span>
-
-            <span class="n">type_</span> <span class="o">=</span> <span class="n">field_type</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">field_value</span><span class="p">)</span>
-            <span class="n">default_factory</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_value</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">)</span>
-                <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">field_value</span><span class="o">.</span><span class="n">__config__</span><span class="p">,</span> <span class="s2">&quot;list_factory&quot;</span><span class="p">)</span>
-                <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">field_value</span><span class="o">.</span><span class="n">__config__</span><span class="p">,</span> <span class="s2">&quot;list_factory&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
-            <span class="p">):</span>
-                <span class="n">default_factory</span> <span class="o">=</span> <span class="nb">list</span>
-                <span class="n">field_value</span> <span class="o">=</span> <span class="p">[</span><span class="n">field_value</span><span class="p">]</span>  <span class="c1"># add field as a list</span>
-                <span class="n">type_</span> <span class="o">=</span> <span class="n">List</span><span class="p">[</span><span class="n">type_</span><span class="p">]</span>  <span class="c1"># type: ignore[valid-type]</span>
-
-            <span class="nb">setattr</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field_value</span><span class="p">)</span>
-
-            <span class="c1"># modify __fields__ to include new field</span>
-            <span class="n">section_fields</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ModelField</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
-                <span class="n">type_</span><span class="o">=</span><span class="n">type_</span><span class="p">,</span>
-                <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">class_validators</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">model_config</span><span class="o">=</span><span class="n">BaseModelCardField</span><span class="o">.</span><span class="n">Config</span><span class="p">,</span>
-                <span class="n">default_factory</span><span class="o">=</span><span class="n">default_factory</span><span class="p">,</span>
-                <span class="n">field_info</span><span class="o">=</span><span class="n">FieldInfo</span><span class="p">(</span><span class="n">unique_items</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">default_factory</span> <span class="o">==</span> <span class="nb">list</span>
-                <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="n">field_name</span> <span class="o">=</span> <span class="n">str_to_snake_case</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
+            <span class="n">section</span><span class="o">.</span><span class="n">add_field</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="n">field_value</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ModelCardReport.log_from_dict"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.report.report.ModelCardReport.html#cyclops.report.report.ModelCardReport.log_from_dict">[docs]</a>    <span class="k">def</span> <span class="nf">log_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">section_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Populate fields in the model card from a dictionary.</span>
@@ -396,15 +306,15 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_raise_if_not_dict_with_str_keys</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">section_name_</span> <span class="o">=</span> <span class="n">str_to_snake_case</span><span class="p">(</span><span class="n">section_name</span><span class="p">)</span>
-        <span class="n">section</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_section</span><span class="p">(</span><span class="n">section_name_</span><span class="p">)</span>
+        <span class="n">section_name</span> <span class="o">=</span> <span class="n">str_to_snake_case</span><span class="p">(</span><span class="n">section_name</span><span class="p">)</span>
+        <span class="n">section</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_card</span><span class="o">.</span><span class="n">get_section</span><span class="p">(</span><span class="n">section_name</span><span class="p">)</span>
 
         <span class="c1"># get data already in section and update with new data</span>
         <span class="n">section_data</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
         <span class="n">section_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
         <span class="n">populated_section</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">section_data</span><span class="p">)</span>
-        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_card</span><span class="p">,</span> <span class="n">section_name_</span><span class="p">,</span> <span class="n">populated_section</span><span class="p">)</span></div>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_card</span><span class="p">,</span> <span class="n">section_name</span><span class="p">,</span> <span class="n">populated_section</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ModelCardReport.log_descriptor"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.report.report.ModelCardReport.html#cyclops.report.report.ModelCardReport.log_descriptor">[docs]</a>    <span class="k">def</span> <span class="nf">log_descriptor</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">section_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">extra</span><span class="p">:</span> <span class="n">Any</span>
@@ -471,15 +381,37 @@
             <span class="n">field_type</span><span class="o">=</span><span class="n">field_obj</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="ModelCardReport.log_image"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.report.report.ModelCardReport.html#cyclops.report.report.ModelCardReport.log_image">[docs]</a>    <span class="k">def</span> <span class="nf">log_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">alt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">section_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_log_graphic_collection</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">graphic</span><span class="p">:</span> <span class="n">Graphic</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">section_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># get the section</span>
+        <span class="n">section_name</span> <span class="o">=</span> <span class="n">str_to_snake_case</span><span class="p">(</span><span class="n">section_name</span><span class="p">)</span>
+        <span class="n">section</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_card</span><span class="o">.</span><span class="n">get_section</span><span class="p">(</span><span class="n">section_name</span><span class="p">)</span>
+
+        <span class="c1"># append graphic to exisiting GraphicsCollection or create new one</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="s2">&quot;graphics&quot;</span> <span class="ow">in</span> <span class="n">section</span><span class="o">.</span><span class="n">__fields__</span>
+            <span class="ow">and</span> <span class="n">section</span><span class="o">.</span><span class="n">__fields__</span><span class="p">[</span><span class="s2">&quot;graphics&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">type_</span> <span class="ow">is</span> <span class="n">GraphicsCollection</span>
+            <span class="ow">and</span> <span class="n">section</span><span class="o">.</span><span class="n">graphics</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+        <span class="p">):</span>
+            <span class="n">section</span><span class="o">.</span><span class="n">graphics</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">graphic</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_field</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">description</span><span class="p">,</span> <span class="s2">&quot;collection&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">graphic</span><span class="p">]},</span>
+                <span class="n">section_name</span><span class="o">=</span><span class="n">section_name</span><span class="p">,</span>
+                <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;graphics&quot;</span><span class="p">,</span>
+                <span class="n">field_type</span><span class="o">=</span><span class="n">GraphicsCollection</span><span class="p">,</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="ModelCardReport.log_image"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.report.report.ModelCardReport.html#cyclops.report.report.ModelCardReport.log_image">[docs]</a>    <span class="k">def</span> <span class="nf">log_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">caption</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">section_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add an image to a section of the report.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        img_path : str</span>
 <span class="sd">            The path to the image file.</span>
-<span class="sd">        alt : str</span>
-<span class="sd">            The alt text for the image.</span>
+<span class="sd">        caption : str</span>
+<span class="sd">            The caption for the image.</span>
 <span class="sd">        section_name : str</span>
 <span class="sd">            The section of the report to add the image to.</span>
 
@@ -499,15 +431,14 @@
             <span class="n">img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">buffered</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
             <span class="n">img_base64</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">buffered</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_log_field</span><span class="p">(</span>
-            <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">alt</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;data:image/</span><span class="si">{</span><span class="n">img</span><span class="o">.</span><span class="n">format</span><span class="si">}</span><span class="s2">;base64,</span><span class="si">{</span><span class="n">img_base64</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span>
-            <span class="n">section_name</span><span class="o">=</span><span class="n">section_name</span><span class="p">,</span>
-            <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;figures&quot;</span><span class="p">,</span>
-            <span class="n">field_type</span><span class="o">=</span><span class="n">Graphic</span><span class="p">,</span>
-        <span class="p">)</span></div>
+        <span class="n">graphic</span> <span class="o">=</span> <span class="n">Graphic</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">caption</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;data:image/</span><span class="si">{</span><span class="n">img</span><span class="o">.</span><span class="n">format</span><span class="si">}</span><span class="s2">;base64,</span><span class="si">{</span><span class="n">img_base64</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_graphic_collection</span><span class="p">(</span><span class="n">graphic</span><span class="p">,</span> <span class="s2">&quot;Images&quot;</span><span class="p">,</span> <span class="n">section_name</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ModelCardReport.log_plotly_figure"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.report.report.ModelCardReport.html#cyclops.report.report.ModelCardReport.log_plotly_figure">[docs]</a>    <span class="k">def</span> <span class="nf">log_plotly_figure</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="p">:</span> <span class="n">Figure</span><span class="p">,</span> <span class="n">alt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">section_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">interactive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="p">:</span> <span class="n">Figure</span><span class="p">,</span> <span class="n">caption</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">section_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">interactive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a plotly figure to a section of the report.</span>
 
@@ -515,12 +446,12 @@
 <span class="sd">        ----------</span>
 <span class="sd">        fig : Figure</span>
 <span class="sd">            The plotly figure to add.</span>
-<span class="sd">        alt : str</span>
-<span class="sd">            The alt text for the figure.</span>
+<span class="sd">        caption : str</span>
+<span class="sd">            The caption for the figure.</span>
 <span class="sd">        section_name : str</span>
 <span class="sd">            The section of the report to add the figure to.</span>
-<span class="sd">        interactive : bool, optional</span>
-<span class="sd">            Whether or not the figure should be an interactive plot, by default True</span>
+<span class="sd">        interactive : bool, optional, default=True</span>
+<span class="sd">            Whether or not the figure should be an interactive plot.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -529,35 +460,27 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">interactive</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_log_field</span><span class="p">(</span>
-                <span class="n">data</span><span class="o">=</span><span class="p">{</span>
-                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">alt</span><span class="p">,</span>
-                    <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="n">fig</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span><span class="n">full_html</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_plotlyjs</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-                <span class="p">},</span>
-                <span class="n">section_name</span><span class="o">=</span><span class="n">section_name</span><span class="p">,</span>
-                <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;figures&quot;</span><span class="p">,</span>
-                <span class="n">field_type</span><span class="o">=</span><span class="n">Graphic</span><span class="p">,</span>
-            <span class="p">)</span>
-
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">caption</span><span class="p">,</span>
+                <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="n">fig</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span><span class="n">full_html</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_plotlyjs</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">buffer</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
-            <span class="n">write_image</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">buffer</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;svg&quot;</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">bytes_buffer</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
+            <span class="n">write_image</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">bytes_buffer</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;svg&quot;</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
             <span class="n">scour_options</span> <span class="o">=</span> <span class="n">scour</span><span class="o">.</span><span class="n">sanitizeOptions</span><span class="p">()</span>
             <span class="n">scour_options</span><span class="o">.</span><span class="n">remove_descriptive_elements</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="n">svg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">scour</span><span class="o">.</span><span class="n">scourString</span><span class="p">(</span><span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">(),</span> <span class="n">options</span><span class="o">=</span><span class="n">scour_options</span><span class="p">)</span>
+            <span class="n">svg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">scour</span><span class="o">.</span><span class="n">scourString</span><span class="p">(</span><span class="n">bytes_buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">(),</span> <span class="n">options</span><span class="o">=</span><span class="n">scour_options</span><span class="p">)</span>
 
             <span class="c1"># convert svg to base64</span>
             <span class="n">svg</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">svg</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_log_field</span><span class="p">(</span>
-                <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">alt</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;data:image/svg+xml;base64,</span><span class="si">{</span><span class="n">svg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span>
-                <span class="n">section_name</span><span class="o">=</span><span class="n">section_name</span><span class="p">,</span>
-                <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;figures&quot;</span><span class="p">,</span>
-                <span class="n">field_type</span><span class="o">=</span><span class="n">Graphic</span><span class="p">,</span>
-            <span class="p">)</span></div>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">caption</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;data:image/svg+xml;base64,</span><span class="si">{</span><span class="n">svg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
 
-    <span class="c1"># loggers for `Model Details` section</span>
+        <span class="n">graphic</span> <span class="o">=</span> <span class="n">Graphic</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># create Graphic object from data</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_graphic_collection</span><span class="p">(</span><span class="n">graphic</span><span class="p">,</span> <span class="s2">&quot;Plots&quot;</span><span class="p">,</span> <span class="n">section_name</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="ModelCardReport.log_owner"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.report.report.ModelCardReport.html#cyclops.report.report.ModelCardReport.log_owner">[docs]</a>    <span class="k">def</span> <span class="nf">log_owner</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -780,7 +703,6 @@
             <span class="n">field_type</span><span class="o">=</span><span class="n">RegulatoryRequirement</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-    <span class="c1"># loggers for `Model Parameters` section</span>
 <div class="viewcode-block" id="ModelCardReport.log_model_parameters"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.report.report.ModelCardReport.html#cyclops.report.report.ModelCardReport.log_model_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">log_model_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Log model parameters.</span>
 
@@ -870,7 +792,6 @@
             <span class="n">field_type</span><span class="o">=</span><span class="n">Dataset</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-    <span class="c1"># loggers for `Considerations` section</span>
 <div class="viewcode-block" id="ModelCardReport.log_user"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.report.report.ModelCardReport.html#cyclops.report.report.ModelCardReport.log_user">[docs]</a>    <span class="k">def</span> <span class="nf">log_user</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -905,7 +826,7 @@
 <div class="viewcode-block" id="ModelCardReport.log_use_case"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.report.report.ModelCardReport.html#cyclops.report.report.ModelCardReport.log_use_case">[docs]</a>    <span class="k">def</span> <span class="nf">log_use_case</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">kind</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">,</span> <span class="s2">&quot;downstream&quot;</span><span class="p">,</span> <span class="s2">&quot;out-of-scope&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;primary&quot;</span><span class="p">,</span>
+        <span class="n">kind</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">,</span> <span class="s2">&quot;out-of-scope&quot;</span><span class="p">],</span>
         <span class="n">section_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;considerations&quot;</span><span class="p">,</span>
         <span class="o">**</span><span class="n">extra</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -915,9 +836,8 @@
 <span class="sd">        ----------</span>
 <span class="sd">        description : str</span>
 <span class="sd">            A description of the use case.</span>
-<span class="sd">        kind : Literal[&quot;primary&quot;, &quot;downstream&quot;, &quot;out-of-scope&quot;], optional</span>
-<span class="sd">            The kind of use case. If not provided, the use case will be</span>
-<span class="sd">            considered primary.</span>
+<span class="sd">        kind : Literal[&quot;primary&quot;, &quot;out-of-scope&quot;]</span>
+<span class="sd">            The kind of use case - either &quot;primary&quot; or &quot;out-of-scope&quot;.</span>
 <span class="sd">        section_name : str, optional</span>
 <span class="sd">            The section of the report to add the use case to. If not provided,</span>
 <span class="sd">            the use case will be added to the `considerations` section.</span>
@@ -1022,7 +942,6 @@
             <span class="n">field_type</span><span class="o">=</span><span class="n">FairnessAssessment</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-    <span class="c1"># loggers for `Quantitative Analysis` section</span>
 <div class="viewcode-block" id="ModelCardReport.log_performance_metrics"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.report.report.ModelCardReport.html#cyclops.report.report.ModelCardReport.log_performance_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">log_performance_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a performance metric to the `Quantitative Analysis` section.</span>
 
@@ -1062,7 +981,6 @@
 
     <span class="c1"># TODO: MERGE/COMPARE MODEL CARDS</span>
 
-    <span class="c1"># EXPORTING THE REPORT</span>
 <div class="viewcode-block" id="ModelCardReport.validate"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.report.report.ModelCardReport.html#cyclops.report.report.ModelCardReport.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the model card.&quot;&quot;&quot;</span>
         <span class="n">ModelCard</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_card</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span></div>
@@ -1120,6 +1038,7 @@
         <span class="n">jinja_env</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;regex_replace&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">regex_replace</span>
         <span class="n">jinja_env</span><span class="o">.</span><span class="n">tests</span><span class="p">[</span><span class="s2">&quot;list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
         <span class="n">jinja_env</span><span class="o">.</span><span class="n">tests</span><span class="p">[</span><span class="s2">&quot;empty&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">empty</span>
+        <span class="n">jinja_env</span><span class="o">.</span><span class="n">tests</span><span class="p">[</span><span class="s2">&quot;hasattr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">hasattr</span>
         <span class="n">jinja_env</span><span class="o">.</span><span class="n">tests</span><span class="p">[</span><span class="s2">&quot;None&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="n">jinja_env</span><span class="o">.</span><span class="n">tests</span><span class="p">[</span><span class="s2">&quot;int&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
         <span class="n">jinja_env</span><span class="o">.</span><span class="n">tests</span><span class="p">[</span><span class="s2">&quot;float&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
@@ -1182,67 +1101,6 @@
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">report_path</span></div></div>
-
-
-<span class="k">def</span> <span class="nf">_get_field_value</span><span class="p">(</span><span class="n">field_type</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the value of a field.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">field_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">data</span>
-
-    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">field_type</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-        <span class="n">_raise_if_not_dict_with_str_keys</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">field_type</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
-
-    <span class="c1"># explicitly handle `Union` types</span>
-    <span class="k">if</span> <span class="n">field_type</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">==</span> <span class="s2">&quot;typing&quot;</span> <span class="ow">and</span> <span class="n">field_type</span><span class="o">.</span><span class="n">__origin__</span> <span class="o">==</span> <span class="n">Union</span><span class="p">:</span>
-        <span class="c1"># try to match `data` to one of the types in the `Union`</span>
-        <span class="k">for</span> <span class="n">union_type</span> <span class="ow">in</span> <span class="n">field_type</span><span class="o">.</span><span class="n">__args__</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">_get_field_value</span><span class="p">(</span><span class="n">union_type</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-                <span class="k">pass</span>
-        <span class="c1"># if no match is found, raise an error</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Expected `data` to be one of </span><span class="si">{</span><span class="n">field_type</span><span class="o">.</span><span class="n">__args__</span><span class="si">}</span><span class="s2"> types.&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> instead.&quot;</span>
-        <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">data</span>
-
-
-<span class="k">def</span> <span class="nf">_check_allowable_sections</span><span class="p">(</span>
-    <span class="n">field</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">section_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a field can be added to a section.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    field : BaseModel</span>
-<span class="sd">        The field to add to the section.</span>
-<span class="sd">    section_name : str</span>
-<span class="sd">        The name of the section.</span>
-<span class="sd">    field_name : str</span>
-<span class="sd">        The name of the field.</span>
-
-<span class="sd">    Raises</span>
-<span class="sd">    ------</span>
-<span class="sd">    ValueError</span>
-<span class="sd">        If the field cannot be added to the section.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="p">(</span>
-        <span class="n">field</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">)</span>
-        <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">__config__</span><span class="p">,</span> <span class="s2">&quot;allowable_sections&quot;</span><span class="p">)</span>
-    <span class="p">):</span>
-        <span class="n">allowable_sections</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">__config__</span><span class="p">,</span> <span class="s2">&quot;allowable_sections&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">allowable_sections</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">allowable_sections</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
-            <span class="n">section_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowable_sections</span>
-        <span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Field `</span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">` cannot be added to section `</span><span class="si">{</span><span class="n">section_name</span><span class="si">}</span><span class="s2">`.&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Expected section to be one of </span><span class="si">{</span><span class="n">allowable_sections</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
 </pre></div>
 
            </div>
