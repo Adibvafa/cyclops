@@ -175,9 +175,10 @@
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt_datetime</span>
 <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
 <span class="kn">from</span> <span class="nn">re</span> <span class="kn">import</span> <span class="n">sub</span> <span class="k">as</span> <span class="n">re_sub</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">jinja2</span>
+<span class="kn">import</span> <span class="nn">plotly.graph_objects</span> <span class="k">as</span> <span class="nn">go</span>
 <span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
 <span class="kn">from</span> <span class="nn">plotly.graph_objects</span> <span class="kn">import</span> <span class="n">Figure</span>
 <span class="kn">from</span> <span class="nn">plotly.io</span> <span class="kn">import</span> <span class="n">write_image</span>
@@ -190,7 +191,9 @@
 <span class="kn">from</span> <span class="nn">cyclops.report.model_card.fields</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Citation</span><span class="p">,</span>
     <span class="n">Dataset</span><span class="p">,</span>
+    <span class="n">ExplainabilityReport</span><span class="p">,</span>
     <span class="n">FairnessAssessment</span><span class="p">,</span>
+    <span class="n">FairnessReport</span><span class="p">,</span>
     <span class="n">Graphic</span><span class="p">,</span>
     <span class="n">GraphicsCollection</span><span class="p">,</span>
     <span class="n">License</span><span class="p">,</span>
@@ -200,6 +203,7 @@
     <span class="n">RegulatoryRequirement</span><span class="p">,</span>
     <span class="n">Risk</span><span class="p">,</span>
     <span class="n">SensitiveData</span><span class="p">,</span>
+    <span class="n">Test</span><span class="p">,</span>
     <span class="n">UseCase</span><span class="p">,</span>
     <span class="n">User</span><span class="p">,</span>
     <span class="n">Version</span><span class="p">,</span>
@@ -942,6 +946,120 @@
             <span class="n">field_type</span><span class="o">=</span><span class="n">FairnessAssessment</span><span class="p">,</span>
         <span class="p">)</span></div>
 
+<div class="viewcode-block" id="ModelCardReport.log_quantitative_analysis"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.report.report.ModelCardReport.html#cyclops.report.report.ModelCardReport.log_quantitative_analysis">[docs]</a>    <span class="k">def</span> <span class="nf">log_quantitative_analysis</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">analysis_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;performance&quot;</span><span class="p">,</span> <span class="s2">&quot;fairness&quot;</span><span class="p">,</span> <span class="s2">&quot;explainability&quot;</span><span class="p">],</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">metric_slice</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">decision_threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">pass_fail_thresholds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">pass_fail_threshold_fns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+            <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">bool</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]]]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">extra</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a quantitative analysis to the report.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        analysis_type : Literal[&quot;performance&quot;, &quot;fairness&quot;, &quot;explainability&quot;]</span>
+<span class="sd">            The type of analysis to log.</span>
+<span class="sd">        name : str</span>
+<span class="sd">            The name of the metric.</span>
+<span class="sd">        value : Any</span>
+<span class="sd">            The value of the metric.</span>
+<span class="sd">        metric_slice : str, optional</span>
+<span class="sd">            The name of the slice. If not provided, the slice name will be &quot;overall&quot;.</span>
+<span class="sd">        decision_threshold : float, optional</span>
+<span class="sd">            The decision threshold for the metric.</span>
+<span class="sd">        description : str, optional</span>
+<span class="sd">            A description of the metric.</span>
+<span class="sd">        pass_fail_thresholds : Union[float, List[float]], optional</span>
+<span class="sd">            The pass/fail threshold(s) for the metric. If a single threshold is</span>
+<span class="sd">            provided, a single test will be created. If multiple thresholds are</span>
+<span class="sd">            provided, multiple tests will be created.</span>
+<span class="sd">        pass_fail_threshold_fns : Union[Callable[[Any, float], bool],</span>
+<span class="sd">                                  List[Callable[[Any, float], bool]]], optional</span>
+<span class="sd">            The pass/fail threshold function(s) for the metric. If a single function</span>
+<span class="sd">            is provided, a single test will be created. If multiple functions are</span>
+<span class="sd">            provided, multiple tests will be created.</span>
+<span class="sd">        **extra</span>
+<span class="sd">            Any extra fields to add to the metric.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the given metric type is not valid.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">analysis_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;performance&quot;</span><span class="p">,</span> <span class="s2">&quot;fairness&quot;</span><span class="p">,</span> <span class="s2">&quot;explainability&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid metric type </span><span class="si">{</span><span class="n">analysis_type</span><span class="si">}</span><span class="s2">. Must be one of &#39;performance&#39;, &quot;</span>
+                <span class="s2">&quot;&#39;fairness&#39;, or &#39;explainability&#39;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">section_name</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="n">field_type</span><span class="p">:</span> <span class="n">Any</span>
+
+        <span class="n">section_name</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field_type</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;performance&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="s2">&quot;quantitative_analysis&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;performance_metrics&quot;</span><span class="p">,</span>
+                <span class="n">PerformanceMetric</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;fairness&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;fairness_analysis&quot;</span><span class="p">,</span> <span class="s2">&quot;fairness_reports&quot;</span><span class="p">,</span> <span class="n">FairnessReport</span><span class="p">),</span>
+            <span class="s2">&quot;explainability&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="s2">&quot;explainability_analysis&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;explainability_reports&quot;</span><span class="p">,</span>
+                <span class="n">ExplainabilityReport</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">}[</span><span class="n">analysis_type</span><span class="p">]</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span>
+            <span class="s2">&quot;slice&quot;</span><span class="p">:</span> <span class="n">metric_slice</span><span class="p">,</span>
+            <span class="s2">&quot;decision_threshold&quot;</span><span class="p">:</span> <span class="n">decision_threshold</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">description</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">extra</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c1"># TODO: create graphics</span>
+
+        <span class="k">if</span> <span class="n">pass_fail_thresholds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pass_fail_threshold_fns</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pass_fail_thresholds</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="n">pass_fail_thresholds</span> <span class="o">=</span> <span class="p">[</span><span class="n">pass_fail_thresholds</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">pass_fail_threshold_fns</span><span class="p">):</span>
+                <span class="n">pass_fail_threshold_fns</span> <span class="o">=</span> <span class="p">[</span><span class="n">pass_fail_threshold_fns</span><span class="p">]</span>
+
+            <span class="c1"># create Test objects</span>
+            <span class="n">tests</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">threshold_fn</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                <span class="n">pass_fail_thresholds</span><span class="p">,</span> <span class="n">pass_fail_threshold_fns</span>
+            <span class="p">):</span>
+                <span class="n">tests</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">Test</span><span class="p">(</span>
+                        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">metric_slice</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">metric_slice</span> <span class="k">else</span> <span class="n">name</span><span class="p">,</span>
+                        <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+                        <span class="n">result</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                        <span class="n">passed</span><span class="o">=</span><span class="n">threshold_fn</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">threshold</span><span class="p">),</span>
+                        <span class="n">graphics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;tests&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tests</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_field</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">section_name</span><span class="o">=</span><span class="n">section_name</span><span class="p">,</span>
+            <span class="n">field_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
+            <span class="n">field_type</span><span class="o">=</span><span class="n">field_type</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
 <div class="viewcode-block" id="ModelCardReport.log_performance_metrics"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.report.report.ModelCardReport.html#cyclops.report.report.ModelCardReport.log_performance_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">log_performance_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a performance metric to the `Quantitative Analysis` section.</span>
 
@@ -981,9 +1099,9 @@
 
     <span class="c1"># TODO: MERGE/COMPARE MODEL CARDS</span>
 
-<div class="viewcode-block" id="ModelCardReport.validate"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.report.report.ModelCardReport.html#cyclops.report.report.ModelCardReport.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the model card.&quot;&quot;&quot;</span>
-        <span class="n">ModelCard</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_card</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span></div>
+        <span class="n">ModelCard</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_card</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">_write_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Write a file to the given path.</span>
@@ -1035,6 +1153,52 @@
                         <span class="n">empty</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">return</span> <span class="n">empty</span>
 
+        <span class="k">def</span> <span class="nf">donut_chart_tests</span><span class="p">(</span><span class="n">tests</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Test</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Graphic</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Create a plotly donut chart for the given tests.&quot;&quot;&quot;</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">]</span>
+            <span class="n">passed</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">failed</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">tests</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">test</span><span class="o">.</span><span class="n">passed</span><span class="p">:</span>
+                    <span class="n">passed</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">failed</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="p">[</span>
+                    <span class="n">go</span><span class="o">.</span><span class="n">Pie</span><span class="p">(</span>
+                        <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Passed&quot;</span><span class="p">,</span> <span class="s2">&quot;Failed&quot;</span><span class="p">],</span>
+                        <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="n">passed</span><span class="p">,</span> <span class="n">failed</span><span class="p">],</span>
+                        <span class="n">hole</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+                        <span class="n">pull</span><span class="o">=</span><span class="p">[</span><span class="mf">0.005</span><span class="p">,</span> <span class="mf">0.005</span><span class="p">],</span>
+                        <span class="n">textinfo</span><span class="o">=</span><span class="s2">&quot;percent&quot;</span><span class="p">,</span>
+                        <span class="n">marker</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;colors&quot;</span><span class="p">:</span> <span class="n">colors</span><span class="p">},</span>
+                        <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&lt;b&gt;</span><span class="si">{</span><span class="n">passed</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">passed</span><span class="o">+</span><span class="n">failed</span><span class="si">}</span><span class="s2">&lt;/b&gt;&lt;br&gt;Tests Passed&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="c1"># Increase font size and change font</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+                <span class="n">font</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;Courier New, monospace&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span>
+                    <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#7f7f7f&quot;</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="n">autosize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">margin</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;pad&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+                <span class="n">plot_bgcolor</span><span class="o">=</span><span class="s2">&quot;rgba(0,0,0,0)&quot;</span><span class="p">,</span>
+                <span class="n">paper_bgcolor</span><span class="o">=</span><span class="s2">&quot;rgba(0,0,0,0)&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Tests (Pass/Fail) Donut Chart&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="n">fig</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span><span class="n">full_html</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_plotlyjs</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="p">}</span>
+            <span class="n">graphic</span> <span class="o">=</span> <span class="n">Graphic</span><span class="o">.</span><span class="n">parse_obj</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># create Graphic object from data</span>
+            <span class="k">return</span> <span class="n">graphic</span>
+
+        <span class="n">jinja_env</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;donut_chart_tests&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">donut_chart_tests</span>
         <span class="n">jinja_env</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;regex_replace&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">regex_replace</span>
         <span class="n">jinja_env</span><span class="o">.</span><span class="n">tests</span><span class="p">[</span><span class="s2">&quot;list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
         <span class="n">jinja_env</span><span class="o">.</span><span class="n">tests</span><span class="p">[</span><span class="s2">&quot;empty&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">empty</span>
@@ -1077,8 +1241,31 @@
             <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_filename</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
             <span class="ow">and</span> <span class="n">output_filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.html&quot;</span><span class="p">)</span>
         <span class="p">),</span> <span class="s2">&quot;`output_filename` must be a string ending with &#39;.html&#39;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">()</span>
         <span class="n">template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_jinja_template</span><span class="p">(</span><span class="n">template_path</span><span class="o">=</span><span class="n">template_path</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">sweep_tests</span><span class="p">(</span><span class="n">model_card</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">tests</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Sweep model card to find all instances of Test.&quot;&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">model_card</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                    <span class="n">field</span> <span class="o">=</span> <span class="n">field</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">Test</span><span class="p">):</span>
+                    <span class="n">tests</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="s2">&quot;__fields__&quot;</span><span class="p">):</span>
+                    <span class="n">sweep_tests</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">tests</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">field</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">field</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Test</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">field</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                                <span class="n">tests</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">tests</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">sweep_tests</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">tests</span><span class="p">)</span>
+
+        <span class="n">func_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sweep_tests&quot;</span><span class="p">:</span> <span class="n">sweep_tests</span><span class="p">}</span>
+        <span class="n">template</span><span class="o">.</span><span class="n">globals</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">func_dict</span><span class="p">)</span>
+
         <span class="n">plotlyjs</span> <span class="o">=</span> <span class="n">get_plotlyjs</span><span class="p">()</span> <span class="k">if</span> <span class="n">interactive</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="n">content</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">model_card</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_card</span><span class="p">,</span> <span class="n">plotlyjs</span><span class="o">=</span><span class="n">plotlyjs</span><span class="p">)</span>
 
