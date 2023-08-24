@@ -169,7 +169,6 @@
              
   <h1>Source code for cyclops.query.ops</h1><div class="highlight"><pre>
 <span></span><span class="c1"># pylint: disable=too-many-lines</span>
-
 <span class="sd">&quot;&quot;&quot;Low-level query operations.</span>
 
 <span class="sd">This module contains query operation modules such which can be used in high-level query</span>
@@ -2016,6 +2015,48 @@
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
             <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">timestamp</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ConditionLike"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.ConditionLike.html#cyclops.query.ops.ConditionLike">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ConditionLike</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">QueryOp</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter rows by a LIKE condition.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    col: str</span>
+<span class="sd">        Column to filter on.</span>
+<span class="sd">    pattern: str</span>
+<span class="sd">        Pattern to filter on.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; Like(&quot;lab_name&quot;, &quot;HbA1c&quot;)(table)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">col</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span>
+
+<div class="viewcode-block" id="ConditionLike.__call__"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.ConditionLike.html#cyclops.query.ops.ConditionLike.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">TableTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process the table.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : cyclops.query.util.TableTypes</span>
+<span class="sd">            Table on which to perform the operation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sqlalchemy.sql.selectable.Subquery</span>
+<span class="sd">            Processed table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">_process_checks</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">get_column</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">))</span>
             <span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
         <span class="p">)</span></div></div>
 
