@@ -201,7 +201,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shift_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shift_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shift_type</span> <span class="o">=</span> <span class="n">shift_type</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">shift_types</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
@@ -225,9 +225,7 @@
 <span class="sd">            Data to have noise added</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">ds_shift</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shift_types</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">shift_type</span><span class="p">](</span><span class="n">dataset</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">shift_args</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">ds_shift</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shift_types</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">shift_type</span><span class="p">](</span><span class="n">dataset</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">shift_args</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="gaussian_noise_shift"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.monitor.synthetic_applicator.gaussian_noise_shift.html#cyclops.monitor.synthetic_applicator.gaussian_noise_shift">[docs]</a><span class="k">def</span> <span class="nf">gaussian_noise_shift</span><span class="p">(</span>
@@ -268,16 +266,16 @@
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">c_cols</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">noise_amt</span> <span class="o">/</span> <span class="n">normalization</span><span class="p">,</span> <span class="n">X_mod</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
-            <span class="n">X_mod</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span>
+            <span class="n">X_mod</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
-            <span class="mi">0</span><span class="p">,</span> <span class="n">noise_amt</span> <span class="o">/</span> <span class="n">normalization</span><span class="p">,</span> <span class="p">(</span><span class="n">X_mod</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">c_cols</span><span class="p">))</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="n">noise_amt</span> <span class="o">/</span> <span class="n">normalization</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">X_mod</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">c_cols</span><span class="p">)),</span>
         <span class="p">)</span>
-    <span class="k">if</span> <span class="n">clip</span><span class="p">:</span>
-        <span class="n">X_mod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">X_mod</span> <span class="o">+</span> <span class="n">noise</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">X_mod</span> <span class="o">=</span> <span class="n">X_mod</span> <span class="o">+</span> <span class="n">noise</span>
+    <span class="n">X_mod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">X_mod</span> <span class="o">+</span> <span class="n">noise</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="k">if</span> <span class="n">clip</span> <span class="k">else</span> <span class="n">X_mod</span> <span class="o">+</span> <span class="n">noise</span>
 
     <span class="n">X</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">c_cols</span><span class="p">)]</span> <span class="o">=</span> <span class="n">X_mod</span>
 
@@ -363,7 +361,8 @@
     <span class="n">selector</span> <span class="o">=</span> <span class="n">SelectKBest</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">n_feats</span><span class="p">)</span>
     <span class="n">selection</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
     <span class="n">ranked_x</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
-        <span class="nb">zip</span><span class="p">(</span><span class="n">selection</span><span class="o">.</span><span class="n">scores_</span><span class="p">,</span> <span class="n">selection</span><span class="o">.</span><span class="n">get_support</span><span class="p">(</span><span class="n">indices</span><span class="o">=</span><span class="kc">True</span><span class="p">)),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span>
+        <span class="nb">zip</span><span class="p">(</span><span class="n">selection</span><span class="o">.</span><span class="n">scores_</span><span class="p">,</span> <span class="n">selection</span><span class="o">.</span><span class="n">get_support</span><span class="p">(</span><span class="n">indices</span><span class="o">=</span><span class="kc">True</span><span class="p">)),</span>
+        <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">shuffle_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_feats</span><span class="p">))</span>
 

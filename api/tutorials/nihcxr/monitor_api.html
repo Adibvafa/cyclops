@@ -456,7 +456,9 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;NIHCXR Clinical Drift Experiments Tutorial.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
 <span class="kn">from</span> <span class="nn">monai.transforms</span> <span class="kn">import</span> <span class="n">AddChanneld</span><span class="p">,</span> <span class="n">Compose</span><span class="p">,</span> <span class="n">Lambdad</span><span class="p">,</span> <span class="n">Resized</span><span class="p">,</span> <span class="n">ToDeviced</span>
 <span class="kn">from</span> <span class="nn">torchxrayvision.models</span> <span class="kn">import</span> <span class="n">DenseNet</span>
@@ -467,6 +469,7 @@ div.rendered_html tbody tr:hover {
 <span class="kn">from</span> <span class="nn">cyclops.monitor</span> <span class="kn">import</span> <span class="n">ClinicalShiftApplicator</span><span class="p">,</span> <span class="n">Detector</span><span class="p">,</span> <span class="n">Reductor</span><span class="p">,</span> <span class="n">TSTester</span>
 <span class="kn">from</span> <span class="nn">cyclops.monitor.plotter</span> <span class="kn">import</span> <span class="n">plot_drift_experiment</span><span class="p">,</span> <span class="n">plot_drift_timeseries</span>
 <span class="kn">from</span> <span class="nn">cyclops.monitor.utils</span> <span class="kn">import</span> <span class="n">get_device</span>
+
 
 <span class="n">device</span> <span class="o">=</span> <span class="n">get_device</span><span class="p">()</span>
 
@@ -491,7 +494,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">shifter</span> <span class="o">=</span> <span class="n">ClinicalShiftApplicator</span><span class="p">(</span>
-    <span class="s2">&quot;sex&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="n">shift_id</span><span class="o">=</span><span class="s2">&quot;Patient Gender&quot;</span>
+    <span class="s2">&quot;sex&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="n">shift_id</span><span class="o">=</span><span class="s2">&quot;Patient Gender&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">source_ds</span><span class="p">,</span> <span class="n">target_ds</span> <span class="o">=</span> <span class="n">shifter</span><span class="o">.</span><span class="n">apply_shift</span><span class="p">(</span><span class="n">nih_ds</span><span class="p">,</span> <span class="n">num_proc</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
 
@@ -499,7 +502,7 @@ div.rendered_html tbody tr:hover {
     <span class="p">[</span>
         <span class="n">AddChanneld</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">,),</span> <span class="n">allow_missing_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
         <span class="n">Resized</span><span class="p">(</span>
-            <span class="n">keys</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">,),</span> <span class="n">spatial_size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">),</span> <span class="n">allow_missing_keys</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">keys</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">,),</span> <span class="n">spatial_size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">),</span> <span class="n">allow_missing_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">Lambdad</span><span class="p">(</span>
             <span class="n">keys</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">,),</span>
@@ -507,7 +510,7 @@ div.rendered_html tbody tr:hover {
             <span class="n">allow_missing_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">ToDeviced</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">,),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">allow_missing_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-    <span class="p">]</span>
+    <span class="p">],</span>
 <span class="p">)</span>
 
 <span class="n">source_ds</span> <span class="o">=</span> <span class="n">source_ds</span><span class="o">.</span><span class="n">with_transform</span><span class="p">(</span>
@@ -528,8 +531,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:00&lt;00:00, 116251.34 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:00&lt;00:00, 123665.20 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:00&lt;00:00, 115514.29 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:00&lt;00:00, 121045.58 examples/s]
 </pre></div></div>
 </div>
 </section>
@@ -571,18 +574,18 @@ Filter (num_proc=6): 100%|██████████| 112120/112120 [00:00&l
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 24.20 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.58 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 16.39 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.49 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.28 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.94 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.42 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.91 examples/s]
-Map: 100%|██████████| 50/50 [00:01&lt;00:00, 25.15 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 17.09 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.97 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.87 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.03 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.98 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 16.76 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.11 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 21.25 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 14.00 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 16.41 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 21.63 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.85 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.50 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.13 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.39 examples/s]
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -610,7 +613,7 @@ Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.87 examples/
     <span class="n">detector</span> <span class="o">=</span> <span class="n">Detector</span><span class="p">(</span>
         <span class="s2">&quot;sensitivity_test&quot;</span><span class="p">,</span>
         <span class="n">reductor</span><span class="o">=</span><span class="n">Reductor</span><span class="p">(</span>
-            <span class="n">dr_method</span><span class="o">=</span><span class="s2">&quot;bbse-soft&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">DenseNet</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">model</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span>
+            <span class="n">dr_method</span><span class="o">=</span><span class="s2">&quot;bbse-soft&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">DenseNet</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">model</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">tester</span><span class="o">=</span><span class="n">TSTester</span><span class="p">(</span><span class="n">tester_method</span><span class="o">=</span><span class="s2">&quot;ks&quot;</span><span class="p">),</span>
         <span class="n">source_sample_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
@@ -627,18 +630,18 @@ Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.87 examples/
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Map: 100%|██████████| 50/50 [00:01&lt;00:00, 25.32 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.49 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 18.09 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.69 examples/s]
-Map: 100%|██████████| 50/50 [00:01&lt;00:00, 25.51 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.99 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 18.00 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 24.20 examples/s]
-Map: 100%|██████████| 50/50 [00:01&lt;00:00, 25.01 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 17.26 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 18.13 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 24.15 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.34 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.15 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 16.65 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.46 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.47 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 14.90 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.09 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.15 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.45 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.55 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 16.75 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.41 examples/s]
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -661,10 +664,10 @@ Map: 100%|██████████| 50/50 [00:02&lt;00:00, 24.15 examples/
     <span class="s2">&quot;SEX: MALE&quot;</span><span class="p">:</span> <span class="n">SliceSpec</span><span class="p">(</span><span class="n">spec_list</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;Patient Gender&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;M&quot;</span><span class="p">}}]),</span>
     <span class="s2">&quot;SEX: FEMALE&quot;</span><span class="p">:</span> <span class="n">SliceSpec</span><span class="p">(</span><span class="n">spec_list</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;Patient Gender&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;F&quot;</span><span class="p">}}]),</span>
     <span class="s2">&quot;AGE: 18-35&quot;</span><span class="p">:</span> <span class="n">SliceSpec</span><span class="p">(</span>
-        <span class="n">spec_list</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;Patient Age&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;min_value&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="mi">35</span><span class="p">}}]</span>
+        <span class="n">spec_list</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;Patient Age&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;min_value&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="mi">35</span><span class="p">}}],</span>
     <span class="p">),</span>
     <span class="s2">&quot;AGE: 35-65&quot;</span><span class="p">:</span> <span class="n">SliceSpec</span><span class="p">(</span>
-        <span class="n">spec_list</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;Patient Age&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;min_value&quot;</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="mi">65</span><span class="p">}}]</span>
+        <span class="n">spec_list</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;Patient Age&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;min_value&quot;</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="mi">65</span><span class="p">}}],</span>
     <span class="p">),</span>
 <span class="p">}</span>
 <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
@@ -672,7 +675,7 @@ Map: 100%|██████████| 50/50 [00:02&lt;00:00, 24.15 examples/
 <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">target_slice</span> <span class="ow">in</span> <span class="n">target_slices</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
     <span class="n">source_slice</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">shifter</span> <span class="o">=</span> <span class="n">ClinicalShiftApplicator</span><span class="p">(</span>
-        <span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source_slice</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target_slice</span>
+        <span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source_slice</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target_slice</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span> <span class="o">=</span> <span class="n">shifter</span><span class="o">.</span><span class="n">apply_shift</span><span class="p">(</span><span class="n">nih_ds</span><span class="p">,</span> <span class="n">num_proc</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
 
@@ -705,30 +708,30 @@ Map: 100%|██████████| 50/50 [00:02&lt;00:00, 24.15 examples/
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 86447.38 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 76550.37 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 24.75 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 17.61 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 18.01 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 24.08 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 89449.45 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 86763.21 examples/s]
-Map: 100%|██████████| 50/50 [00:01&lt;00:00, 25.40 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.81 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.86 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 24.32 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 88832.54 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 88427.81 examples/s]
-Map: 100%|██████████| 50/50 [00:01&lt;00:00, 25.06 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.77 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 18.14 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 24.21 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 90171.36 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 82928.75 examples/s]
-Map: 100%|██████████| 50/50 [00:01&lt;00:00, 25.08 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 17.27 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 18.19 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 24.99 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 87496.91 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 82037.63 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.95 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.35 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.09 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.17 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 87339.69 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 87281.27 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 21.50 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.76 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 16.94 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.76 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 83058.53 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 91638.87 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.86 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.23 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.22 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.97 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 89150.00 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 82450.81 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.78 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.37 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.53 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.32 examples/s]
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -766,21 +769,21 @@ Map: 100%|██████████| 50/50 [00:02&lt;00:00, 24.99 examples/
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Map: 100%|██████████| 50/50 [00:01&lt;00:00, 25.31 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 17.26 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.96 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 13.61 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.80 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.42 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 17.30 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 17.15 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 17.05 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 17.34 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 13.69 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 17.09 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.92 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 24.10 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.17 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.49 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 13.04 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.72 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.37 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.43 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.45 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.83 examples/s]
 Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.51 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 17.46 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.48 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.28 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.50 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.60 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.07 examples/s]
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">

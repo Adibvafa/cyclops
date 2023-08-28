@@ -201,11 +201,12 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">cyclops.utils.log</span> <span class="kn">import</span> <span class="n">setup_logging</span>
 
+
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">setup_logging</span><span class="p">(</span><span class="n">print_level</span><span class="o">=</span><span class="s2">&quot;WARN&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="evaluate_fairness"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.fairness.evaluator.evaluate_fairness.html#cyclops.evaluate.fairness.evaluator.evaluate_fairness">[docs]</a><span class="k">def</span> <span class="nf">evaluate_fairness</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments, too-many-branches</span>
+<div class="viewcode-block" id="evaluate_fairness"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.fairness.evaluator.evaluate_fairness.html#cyclops.evaluate.fairness.evaluator.evaluate_fairness">[docs]</a><span class="k">def</span> <span class="nf">evaluate_fairness</span><span class="p">(</span>
     <span class="n">metrics</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Metric</span><span class="p">,</span> <span class="n">MetricCollection</span><span class="p">],</span>
     <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
     <span class="n">groups</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
@@ -274,6 +275,11 @@
 <span class="sd">    compute_optimal_threshold : bool, optional, default=False</span>
 <span class="sd">        Whether to compute the optimal threshold for each metric. This is an</span>
 <span class="sd">        expensive operation, and should only be used when necessary.</span>
+<span class="sd">    remove_columns : Union[str, List[str]], optional, default=None</span>
+<span class="sd">        The name of the column(s) to remove from the dataset before filtering</span>
+<span class="sd">        and computing metrics. This is useful if the dataset contains columns</span>
+<span class="sd">        that are not needed for computing metrics but may be expensive to</span>
+<span class="sd">        keep in memory (e.g. image columns).</span>
 <span class="sd">    metric_name : Optional[str], optional, default=None</span>
 <span class="sd">        The name of the metric. If None, the name of the metric will be used.</span>
 <span class="sd">    metric_kwargs : Optional[Dict[str, Any]], optional, default=None</span>
@@ -303,16 +309,18 @@
     <span class="c1"># input validation and formatting</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="s2">&quot;Expected `dataset` to be of type `Dataset`, but got &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="s2">&quot;Expected `dataset` to be of type `Dataset`, but got &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="n">_check_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
     <span class="n">fmt_thresholds</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]</span> <span class="o">=</span> <span class="n">_format_thresholds</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
-        <span class="n">thresholds</span>
+        <span class="n">thresholds</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">metrics_</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">MetricCollection</span><span class="p">]</span> <span class="o">=</span> <span class="n">_format_metrics</span><span class="p">(</span>
-        <span class="n">metrics</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">,</span> <span class="o">**</span><span class="p">(</span><span class="n">metric_kwargs</span> <span class="ow">or</span> <span class="p">{})</span>
+        <span class="n">metrics</span><span class="p">,</span>
+        <span class="n">metric_name</span><span class="p">,</span>
+        <span class="o">**</span><span class="p">(</span><span class="n">metric_kwargs</span> <span class="ow">or</span> <span class="p">{}),</span>
     <span class="p">)</span>
 
     <span class="n">fmt_groups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_format_column_names</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
@@ -330,7 +338,9 @@
     <span class="p">)</span>
 
     <span class="n">set_decode</span><span class="p">(</span>
-        <span class="n">dataset</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">fmt_target_columns</span> <span class="o">+</span> <span class="n">fmt_prediction_columns</span>
+        <span class="n">dataset</span><span class="p">,</span>
+        <span class="n">decode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">exclude</span><span class="o">=</span><span class="n">fmt_target_columns</span> <span class="o">+</span> <span class="n">fmt_prediction_columns</span><span class="p">,</span>
     <span class="p">)</span>  <span class="c1"># don&#39;t decode columns that we don&#39;t need; pass dataset by reference</span>
 
     <span class="k">with</span> <span class="n">dataset</span><span class="o">.</span><span class="n">formatted_as</span><span class="p">(</span>
@@ -339,7 +349,9 @@
         <span class="n">output_all_columns</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">unique_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">_get_unique_values</span><span class="p">(</span>
-            <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">fmt_groups</span><span class="p">,</span> <span class="n">group_values</span><span class="o">=</span><span class="n">group_values</span>
+            <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+            <span class="n">groups</span><span class="o">=</span><span class="n">fmt_groups</span><span class="p">,</span>
+            <span class="n">group_values</span><span class="o">=</span><span class="n">group_values</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">group_base_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -359,7 +371,9 @@
             <span class="n">warn_too_many_unique_values</span><span class="p">(</span><span class="n">unique_values</span><span class="o">=</span><span class="n">unique_values</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">_validate_group_bins</span><span class="p">(</span>
-                <span class="n">group_bins</span><span class="o">=</span><span class="n">group_bins</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">fmt_groups</span><span class="p">,</span> <span class="n">unique_values</span><span class="o">=</span><span class="n">unique_values</span>
+                <span class="n">group_bins</span><span class="o">=</span><span class="n">group_bins</span><span class="p">,</span>
+                <span class="n">groups</span><span class="o">=</span><span class="n">fmt_groups</span><span class="p">,</span>
+                <span class="n">unique_values</span><span class="o">=</span><span class="n">unique_values</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="n">group_bins</span> <span class="o">=</span> <span class="p">{</span>
@@ -388,9 +402,7 @@
 
         <span class="k">if</span> <span class="n">group_base_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># since we have base values, remove overall slice</span>
-            <span class="n">slice_spec</span><span class="o">.</span><span class="n">_registry</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>  <span class="c1"># pylint: disable=protected-access</span>
-                <span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="kc">None</span>
-            <span class="p">)</span>
+            <span class="n">slice_spec</span><span class="o">.</span><span class="n">_registry</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="n">results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -405,13 +417,13 @@
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sliced_dataset</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Slice </span><span class="si">{</span><span class="n">slice_name</span><span class="si">}</span><span class="s2"> is empty. Please check your slice &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;configuration or the data.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;configuration or the data.&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
 
             <span class="k">for</span> <span class="n">prediction_column</span> <span class="ow">in</span> <span class="n">fmt_prediction_columns</span><span class="p">:</span>
                 <span class="n">results</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">prediction_column</span><span class="p">,</span> <span class="p">{})</span>
                 <span class="n">results</span><span class="p">[</span><span class="n">prediction_column</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">slice_name</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                    <span class="p">{</span><span class="s2">&quot;Group Size&quot;</span><span class="p">:</span> <span class="n">sliced_dataset</span><span class="o">.</span><span class="n">num_rows</span><span class="p">}</span>
+                    <span class="p">{</span><span class="s2">&quot;Group Size&quot;</span><span class="p">:</span> <span class="n">sliced_dataset</span><span class="o">.</span><span class="n">num_rows</span><span class="p">},</span>
                 <span class="p">)</span>
 
                 <span class="n">pred_result</span> <span class="o">=</span> <span class="n">_get_metric_results_for_prediction_and_slice</span><span class="p">(</span>
@@ -430,13 +442,12 @@
                     <span class="n">results</span><span class="p">[</span><span class="n">prediction_column</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">slice_result</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">compute_optimal_threshold</span><span class="p">:</span>
-                    <span class="c1"># pylint: disable=fixme</span>
                     <span class="c1"># TODO: generate a comprehensive list of thresholds and compute</span>
                     <span class="c1"># the metric for each threshold. Next compute the parity metrics</span>
                     <span class="c1"># for each threshold and select the threshold that leads to</span>
                     <span class="c1"># the least disparity across all slices for each metric.</span>
                     <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                        <span class="s2">&quot;Computing optimal threshold is not yet implemented.&quot;</span>
+                        <span class="s2">&quot;Computing optimal threshold is not yet implemented.&quot;</span><span class="p">,</span>
                     <span class="p">)</span>
 
     <span class="n">set_decode</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># reset decode</span>
@@ -445,11 +456,13 @@
     <span class="k">if</span> <span class="n">group_base_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">base_slice_name</span> <span class="o">=</span> <span class="n">_construct_base_slice_name</span><span class="p">(</span><span class="n">base_values</span><span class="o">=</span><span class="n">group_base_values</span><span class="p">)</span>
         <span class="n">parity_results</span> <span class="o">=</span> <span class="n">_compute_parity_metrics</span><span class="p">(</span>
-            <span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span> <span class="n">base_slice_name</span><span class="o">=</span><span class="n">base_slice_name</span>
+            <span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span>
+            <span class="n">base_slice_name</span><span class="o">=</span><span class="n">base_slice_name</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">parity_results</span> <span class="o">=</span> <span class="n">_compute_parity_metrics</span><span class="p">(</span>
-            <span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span> <span class="n">base_slice_name</span><span class="o">=</span><span class="s2">&quot;overall&quot;</span>
+            <span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span>
+            <span class="n">base_slice_name</span><span class="o">=</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="c1"># add parity metrics to the results</span>
@@ -490,7 +503,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">max_unique_values</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">max_unique_values</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
             <span class="s2">&quot;`max_unique_values` must be a positive integer. Got &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">max_unique_values</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">max_unique_values</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
@@ -507,7 +520,7 @@
             <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">max_unique_values</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;`unique_values` must be a list or a mapping. Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">unique_values</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;`unique_values` must be a list or a mapping. Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">unique_values</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -553,13 +566,13 @@
             <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;No metric name was specified. The metric name will be set to &quot;</span>
                 <span class="s2">&quot;the function name or &#39;Unnammed Metric&#39; if the function does not &quot;</span>
-                <span class="s2">&quot;have a name.&quot;</span>
+                <span class="s2">&quot;have a name.&quot;</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">metrics</span>
 
     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;Expected `metrics` to be of type `str`, `Metric`, `MetricCollection`, or &quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;`Callable`, but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;`Callable`, but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
 
@@ -589,12 +602,14 @@
 
     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;Expected column name </span><span class="si">{</span><span class="n">column_names</span><span class="si">}</span><span class="s2"> to be a string or &quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;list of strings, but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">column_names</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;list of strings, but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">column_names</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_get_unique_values</span><span class="p">(</span>
-    <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">groups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">group_values</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
+    <span class="n">groups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">group_values</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the unique values for a group.&quot;&quot;&quot;</span>
     <span class="n">unique_values</span> <span class="o">=</span> <span class="p">{}</span>
@@ -609,7 +624,7 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">udv</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">column_unique_values</span><span class="p">)):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;User defined values </span><span class="si">{</span><span class="n">udv</span><span class="si">}</span><span class="s2"> for group </span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s2"> are not a subset of &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;the unique values </span><span class="si">{</span><span class="n">column_unique_values</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;the unique values </span><span class="si">{</span><span class="n">column_unique_values</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="n">unique_values</span><span class="p">[</span><span class="n">group</span><span class="p">]</span> <span class="o">=</span> <span class="n">udv</span>
         <span class="k">else</span><span class="p">:</span>
@@ -645,7 +660,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">base_group_names</span> <span class="o">==</span> <span class="n">group_names</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;The base values must be defined for all groups. Got </span><span class="si">{</span><span class="n">base_group_names</span><span class="si">}</span><span class="s2"> &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;but expected </span><span class="si">{</span><span class="n">group_names</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;but expected </span><span class="si">{</span><span class="n">group_names</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="c1"># base values for each group must be part of the unique values</span>
@@ -657,7 +672,7 @@
         <span class="k">if</span> <span class="n">base_value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">unique_values</span><span class="p">[</span><span class="n">group</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;The base value </span><span class="si">{</span><span class="n">base_value</span><span class="si">}</span><span class="s2"> for group </span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s2"> is not part of the &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;unique values for the group. Got </span><span class="si">{</span><span class="n">unique_values</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;unique values for the group. Got </span><span class="si">{</span><span class="n">unique_values</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
 
@@ -693,27 +708,27 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;All groups defined in `group_bins` must be in `groups`. &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">group_bin_names</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">group_names</span><span class="si">}</span><span class="s2"> in `group_bins` but not in &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;`groups`.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;`groups`.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">group</span><span class="p">,</span> <span class="n">bins</span> <span class="ow">in</span> <span class="n">group_bins</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;The bins for </span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s2"> must be a list or an integer. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="n">bins</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_values</span><span class="p">[</span><span class="n">group</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;The number of bins must be greater than or equal to 2 &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;and less than the number of unique values for </span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s2">. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="n">bins</span><span class="si">}</span><span class="s2"> bins and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">unique_values</span><span class="p">[</span><span class="n">group</span><span class="p">])</span><span class="si">}</span><span class="s2"> unique values.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="n">bins</span><span class="si">}</span><span class="s2"> bins and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">unique_values</span><span class="p">[</span><span class="n">group</span><span class="p">])</span><span class="si">}</span><span class="s2"> unique values.&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;The number of bin values must be greater than or equal to 2. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
 
@@ -751,20 +766,21 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">feature_is_numeric</span><span class="p">(</span><span class="n">group_feature</span><span class="p">)</span> <span class="ow">or</span> <span class="n">column_is_datetime</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Column </span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s2"> in the must have a numeric or datetime dtype. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="n">group_feature</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="n">group_feature</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="c1"># make sure it is monotonic</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">bins</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">bins</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span>
-                <span class="n">bins</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span>
+                <span class="n">bins</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span>  <span class="c1"># noqa: PLW2901</span>
 
             <span class="c1"># convert timestring values to datetime</span>
             <span class="k">if</span> <span class="n">column_is_datetime</span><span class="p">:</span>
-                <span class="n">bins</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+                <span class="n">bins</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>  <span class="c1"># noqa: PLW2901</span>
 
         <span class="n">cut_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
-            <span class="n">unique_values</span><span class="p">[</span><span class="n">group</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;datetime64[ns]&quot;</span> <span class="k">if</span> <span class="n">column_is_datetime</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">unique_values</span><span class="p">[</span><span class="n">group</span><span class="p">],</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;datetime64[ns]&quot;</span> <span class="k">if</span> <span class="n">column_is_datetime</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">cut_data</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">duplicates</span><span class="o">=</span><span class="s2">&quot;drop&quot;</span><span class="p">)</span>
 
@@ -797,7 +813,8 @@
 
 
 <span class="k">def</span> <span class="nf">_update_base_values_with_bins</span><span class="p">(</span>
-    <span class="n">base_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">bins</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">IntervalIndex</span><span class="p">]</span>
+    <span class="n">base_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">bins</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">IntervalIndex</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Update the base values with the corresponding interval.</span>
 
@@ -830,7 +847,9 @@
 
 
 <span class="k">def</span> <span class="nf">_get_slice_spec</span><span class="p">(</span>
-    <span class="n">groups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">unique_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">column_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">groups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">unique_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span>
+    <span class="n">column_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SliceSpec</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create the slice specifications for computing the metrics.</span>
 
@@ -875,7 +894,7 @@
     <span class="k">return</span> <span class="n">SliceSpec</span><span class="p">(</span><span class="n">slices</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="n">column_names</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_compute_metrics</span><span class="p">(</span>
+<span class="k">def</span> <span class="nf">_compute_metrics</span><span class="p">(</span>  <span class="c1"># noqa: C901, PLR0912</span>
     <span class="n">metrics</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">MetricCollection</span><span class="p">],</span>
     <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
     <span class="n">target_columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
@@ -914,7 +933,7 @@
             <span class="c1"># set the threshold for each metric in the collection</span>
             <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="s2">&quot;threshold&quot;</span><span class="p">):</span>
-                    <span class="nb">setattr</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+                    <span class="n">metric</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                         <span class="s2">&quot;Metric </span><span class="si">%s</span><span class="s2"> does not have a threshold attribute. &quot;</span>
@@ -926,19 +945,23 @@
             <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">batch_size</span> <span class="o">&lt;=</span> <span class="mi">0</span>
         <span class="p">):</span>  <span class="c1"># dataset.iter does not support getting all rows</span>
             <span class="n">targets</span> <span class="o">=</span> <span class="n">get_columns_as_numpy_array</span><span class="p">(</span>
-                <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">target_columns</span>
+                <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">target_columns</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">predictions</span> <span class="o">=</span> <span class="n">get_columns_as_numpy_array</span><span class="p">(</span>
-                <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">prediction_column</span>
+                <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">prediction_column</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">):</span>
                 <span class="n">targets</span> <span class="o">=</span> <span class="n">get_columns_as_numpy_array</span><span class="p">(</span>
-                    <span class="n">dataset</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">target_columns</span>
+                    <span class="n">dataset</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span>
+                    <span class="n">columns</span><span class="o">=</span><span class="n">target_columns</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">predictions</span> <span class="o">=</span> <span class="n">get_columns_as_numpy_array</span><span class="p">(</span>
-                    <span class="n">dataset</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">prediction_column</span>
+                    <span class="n">dataset</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span>
+                    <span class="n">columns</span><span class="o">=</span><span class="n">prediction_column</span><span class="p">,</span>
                 <span class="p">)</span>
 
                 <span class="n">metrics</span><span class="o">.</span><span class="n">update_state</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
@@ -951,7 +974,8 @@
     <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">metrics</span><span class="p">):</span>
         <span class="n">targets</span> <span class="o">=</span> <span class="n">get_columns_as_numpy_array</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">target_columns</span><span class="p">)</span>
         <span class="n">predictions</span> <span class="o">=</span> <span class="n">get_columns_as_numpy_array</span><span class="p">(</span>
-            <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">prediction_column</span>
+            <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="n">prediction_column</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># check if the callable can take thresholds as an argument</span>
@@ -962,7 +986,7 @@
                 <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                     <span class="s2">&quot;The `metrics` argument is a callable that does not take a &quot;</span>
                     <span class="s2">&quot;`threshold` or `thresholds` argument. The `threshold` argument &quot;</span>
-                    <span class="s2">&quot;will be ignored.&quot;</span>
+                    <span class="s2">&quot;will be ignored.&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">output</span> <span class="o">=</span> <span class="n">metrics</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -975,7 +999,7 @@
 
     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
         <span class="s2">&quot;The `metrics` argument must be a string, a Metric, a MetricCollection, &quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;or a callable. Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;or a callable. Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
 
@@ -1075,9 +1099,7 @@
             <span class="n">base_slice_name</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">min_end</span><span class="si">}{</span><span class="n">min_value</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">max_value</span><span class="si">}{</span><span class="n">max_end</span><span class="si">}</span><span class="s2">&amp;&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">base_slice_name</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">base_value</span><span class="si">}</span><span class="s2">&amp;&quot;</span>
-    <span class="n">base_slice_name</span> <span class="o">=</span> <span class="n">base_slice_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">base_slice_name</span>
+    <span class="k">return</span> <span class="n">base_slice_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
 
 <span class="k">def</span> <span class="nf">_compute_parity_metrics</span><span class="p">(</span>
@@ -1090,12 +1112,8 @@
 <span class="sd">    ----------</span>
 <span class="sd">    results : Dict[str, Dict[str, Dict[str, Dict[str, float]]]]</span>
 <span class="sd">        A dictionary mapping the prediction column to the metrics dictionary.</span>
-<span class="sd">    group_base_values : Dict[str, Any]</span>
-<span class="sd">        A dictionary mapping the group name to the base value.</span>
-<span class="sd">    group_names : List[str]</span>
-<span class="sd">        A list of group names.</span>
-<span class="sd">    thresholds : Optional[List[float]]</span>
-<span class="sd">        A list of thresholds.</span>
+<span class="sd">    base_slice_name : str</span>
+<span class="sd">        The name of the base slice.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1130,9 +1148,9 @@
                 <span class="n">parity_results</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">slice_name</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                     <span class="p">{</span>
                         <span class="n">parity_metric_name</span><span class="p">:</span> <span class="n">_get_value_if_singleton_array</span><span class="p">(</span>
-                            <span class="n">parity_metric_value</span>
-                        <span class="p">)</span>
-                    <span class="p">}</span>
+                            <span class="n">parity_metric_value</span><span class="p">,</span>
+                        <span class="p">),</span>
+                    <span class="p">},</span>
                 <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">parity_results</span>

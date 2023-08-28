@@ -288,13 +288,21 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">spec_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[{}],</span> <span class="n">init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">hash</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">compare</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[{}],</span>
+        <span class="n">init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="nb">repr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="nb">hash</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">compare</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">column_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="n">_registry</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">hash</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">compare</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span>
+        <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="nb">hash</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">compare</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -331,12 +339,13 @@
             <span class="k">yield</span> <span class="n">registration_key</span><span class="p">,</span> <span class="n">slice_function</span></div>
 
     <span class="k">def</span> <span class="nf">_parse_and_register_slice_specs</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">slice_spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">slice_spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct and register a slice functions from slice specifications.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">slice_spec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Expected `slice_spec` to be a dictionary. Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">slice_spec</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Expected `slice_spec` to be a dictionary. Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">slice_spec</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">slice_spec</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># empty dictionary. Interpret as `overall` slice</span>
@@ -349,7 +358,7 @@
             <span class="n">slice_functions</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">slice_spec</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">sub_registration_key</span><span class="p">,</span> <span class="n">slice_function</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_single_spec_dict</span><span class="p">(</span>
-                    <span class="p">{</span><span class="n">column_name</span><span class="p">:</span> <span class="n">spec</span><span class="p">}</span>
+                    <span class="p">{</span><span class="n">column_name</span><span class="p">:</span> <span class="n">spec</span><span class="p">},</span>
                 <span class="p">)</span>
                 <span class="n">slice_functions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">slice_function</span><span class="p">)</span>
                 <span class="n">registration_key</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sub_registration_key</span><span class="si">}</span><span class="s2">&amp;&quot;</span>
@@ -360,7 +369,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span><span class="p">[</span><span class="n">registration_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">slice_function</span>
 
     <span class="k">def</span> <span class="nf">_parse_single_spec_dict</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">slice_spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">slice_spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the registration key and slice function for a single slice spec.&quot;&quot;&quot;</span>
         <span class="n">column_name</span><span class="p">,</span> <span class="n">spec</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">slice_spec</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
@@ -369,7 +379,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_column_names</span><span class="p">(</span><span class="n">column_names</span><span class="o">=</span><span class="n">column_name</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Expected feature value to be a dictionary. Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Expected feature value to be a dictionary. Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="s2">&quot;value&quot;</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>  <span class="c1"># filter on exact value</span>
@@ -433,10 +443,11 @@
                 <span class="p">[</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-                        <span class="p">(</span><span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;month&quot;</span><span class="p">,</span> <span class="s2">&quot;day&quot;</span><span class="p">,</span> <span class="s2">&quot;hour&quot;</span><span class="p">),</span> <span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">)</span>
+                        <span class="p">(</span><span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;month&quot;</span><span class="p">,</span> <span class="s2">&quot;day&quot;</span><span class="p">,</span> <span class="s2">&quot;hour&quot;</span><span class="p">),</span>
+                        <span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">),</span>
                     <span class="p">)</span>
                     <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                <span class="p">]</span>
+                <span class="p">],</span>
             <span class="p">)</span>
 
             <span class="n">slice_function</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
@@ -474,13 +485,15 @@
 
             <span class="n">registration_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s2">:non_null&quot;</span>
             <span class="n">slice_function</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
-                <span class="n">filter_non_null</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span> <span class="n">negate</span><span class="o">=</span><span class="n">negated</span>
+                <span class="n">filter_non_null</span><span class="p">,</span>
+                <span class="n">column_names</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span>
+                <span class="n">negate</span><span class="o">=</span><span class="n">negated</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Expected the slice specification to contain `value`, `min_value`, &quot;</span>
                 <span class="s2">&quot;`max_value`, `contains`, `year`, `month`, `day`, `hour` or &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;`keep_nulls`. Got </span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s2"> instead.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;`keep_nulls`. Got </span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s2"> instead.&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">negated</span><span class="p">:</span>
@@ -502,12 +515,12 @@
             <span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Column name &#39;</span><span class="si">{</span><span class="n">column_names</span><span class="si">}</span><span class="s2">&#39; is not in the dataset. &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;Valid column names are: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">column_names</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Valid column names are: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">column_names</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="s2">&quot;Expected `column_names` to be a string or list of strings.&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">column_names</span><span class="p">)</span><span class="si">}</span><span class="s2"> instead.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">column_names</span><span class="p">)</span><span class="si">}</span><span class="s2"> instead.&quot;</span><span class="p">,</span>
             <span class="p">)</span></div>
 
 
@@ -527,7 +540,8 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span>
-        <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">values</span><span class="p">())),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span>
+        <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">examples</span><span class="o">.</span><span class="n">values</span><span class="p">())),</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
     <span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -535,7 +549,9 @@
 
 
 <div class="viewcode-block" id="filter_non_null"><a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.data.slicer.filter_non_null.html#cyclops.data.slicer.filter_non_null">[docs]</a><span class="k">def</span> <span class="nf">filter_non_null</span><span class="p">(</span>
-    <span class="n">examples</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">column_names</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">negate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">examples</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">column_names</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">negate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return True for all examples where the feature/column is not null.</span>
 
@@ -565,7 +581,7 @@
     <span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;Expected `column_names` to be a string or list of strings. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="n">column_names</span><span class="si">}</span><span class="s2"> of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">column_names</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="n">column_names</span><span class="si">}</span><span class="s2"> of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">column_names</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -614,11 +630,13 @@
     <span class="n">value_is_datetime</span> <span class="o">=</span> <span class="n">is_datetime</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># only checks timestrings</span>
 
     <span class="n">value</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
-        <span class="n">value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;datetime64[ns]&quot;</span> <span class="k">if</span> <span class="n">value_is_datetime</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">value</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;datetime64[ns]&quot;</span> <span class="k">if</span> <span class="n">value_is_datetime</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
 
     <span class="n">example_values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
-        <span class="n">examples</span><span class="p">[</span><span class="n">column_name</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;datetime64[ns]&quot;</span> <span class="k">if</span> <span class="n">value_is_datetime</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">examples</span><span class="p">[</span><span class="n">column_name</span><span class="p">],</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;datetime64[ns]&quot;</span> <span class="k">if</span> <span class="n">value_is_datetime</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">example_values</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="n">negate</span><span class="p">)</span>
@@ -680,22 +698,24 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># handle datetime values</span>
     <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">value_is_datetime</span> <span class="o">=</span> <span class="n">_maybe_convert_to_datetime</span><span class="p">(</span>
-        <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span>
+        <span class="n">min_value</span><span class="p">,</span>
+        <span class="n">max_value</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">min_value</span> <span class="o">&gt;</span> <span class="n">max_value</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;Expected `min_value` to be less than or equal to `max_value`, but got &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;min_value=</span><span class="si">{</span><span class="n">min_value</span><span class="si">}</span><span class="s2"> and max_value=</span><span class="si">{</span><span class="n">max_value</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;min_value=</span><span class="si">{</span><span class="n">min_value</span><span class="si">}</span><span class="s2"> and max_value=</span><span class="si">{</span><span class="n">max_value</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">if</span> <span class="n">min_value</span> <span class="o">==</span> <span class="n">max_value</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">min_inclusive</span> <span class="ow">and</span> <span class="n">max_inclusive</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;`min_value` and `max_value` are equal and either `min_inclusive` or &quot;</span>
-            <span class="s2">&quot;`max_inclusive` is False. This would result in an empty range.&quot;</span>
+            <span class="s2">&quot;`max_inclusive` is False. This would result in an empty range.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="n">example_values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
-        <span class="n">examples</span><span class="p">[</span><span class="n">column_name</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;datetime64[ns]&quot;</span> <span class="k">if</span> <span class="n">value_is_datetime</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">examples</span><span class="p">[</span><span class="n">column_name</span><span class="p">],</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;datetime64[ns]&quot;</span> <span class="k">if</span> <span class="n">value_is_datetime</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>  <span class="c1"># column does not contain number or datetime values</span>
@@ -704,7 +724,7 @@
     <span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
             <span class="s2">&quot;Expected feature to be numeric or datetime, but got &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">example_values</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">example_values</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="p">(</span>
@@ -780,7 +800,7 @@
     <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
             <span class="s2">&quot;Expected datetime feature, but got feature of type &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">example_values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">example_values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
         <span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
 
     <span class="c1"># convert the datetime values to year, month, day, hour</span>
@@ -863,19 +883,20 @@
     <span class="c1"># make sure the column has string type</span>
     <span class="n">example_values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">examples</span><span class="p">[</span><span class="n">column_name</span><span class="p">])</span>
     <span class="k">if</span> <span class="n">example_values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;object&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
-        <span class="n">example_values</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">StringDtype</span>
+        <span class="n">example_values</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">StringDtype</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;Expected string feature, but got feature of type &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">example_values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">example_values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">if</span> <span class="n">example_values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;object&quot;</span><span class="p">:</span>  <span class="c1"># object type could be string</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">example_values</span><span class="o">.</span><span class="n">str</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">example_values</span><span class="o">.</span><span class="n">str</span>
         <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="s2">&quot;Expected string feature, but got feature of type &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">example_values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">example_values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
             <span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
 
     <span class="c1"># get all the values that contain the given substring</span>
@@ -887,10 +908,10 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">substring</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Expected string value for `contains`, but got value of type &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">substring</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">substring</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="n">result</span> <span class="o">|=</span> <span class="n">example_values</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">substring</span><span class="p">,</span> <span class="n">case</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span>
-            <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">negate</span><span class="p">:</span>
@@ -927,7 +948,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bitwise_and</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span>
-        <span class="p">[</span><span class="n">slice_function</span><span class="p">(</span><span class="n">examples</span><span class="p">)</span> <span class="k">for</span> <span class="n">slice_function</span> <span class="ow">in</span> <span class="n">slice_functions</span><span class="p">]</span>
+        <span class="p">[</span><span class="n">slice_function</span><span class="p">(</span><span class="n">examples</span><span class="p">)</span> <span class="k">for</span> <span class="n">slice_function</span> <span class="ow">in</span> <span class="n">slice_functions</span><span class="p">],</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">result</span></div>

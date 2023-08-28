@@ -228,7 +228,6 @@
         <span class="bp">self</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">],</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the ROC curve from the state variables.&quot;&quot;&quot;</span>
-        <span class="c1"># pylint: disable=no-member # attributes are set with setattr</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">thresholds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">state</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>  <span class="c1"># type: ignore[attr-defined]</span>
@@ -238,12 +237,15 @@
             <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">confmat</span>  <span class="c1"># type: ignore[attr-defined]</span>
 
         <span class="k">return</span> <span class="n">_binary_roc_compute</span><span class="p">(</span>
-            <span class="n">state</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">thresholds</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pos_label</span>
+            <span class="n">state</span><span class="p">,</span>
+            <span class="n">thresholds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">thresholds</span><span class="p">,</span>
+            <span class="n">pos_label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pos_label</span><span class="p">,</span>
         <span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="MulticlassROCCurve"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.metrics.roc.MulticlassROCCurve.html#cyclops.evaluate.metrics.roc.MulticlassROCCurve">[docs]</a><span class="k">class</span> <span class="nc">MulticlassROCCurve</span><span class="p">(</span>
-    <span class="n">MulticlassPrecisionRecallCurve</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multiclass_roc_curve&quot;</span>
+    <span class="n">MulticlassPrecisionRecallCurve</span><span class="p">,</span>
+    <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multiclass_roc_curve&quot;</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the ROC curve for multiclass classification tasks.</span>
 
@@ -309,7 +311,6 @@
         <span class="p">],</span>
     <span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the ROC curve from the state variables.&quot;&quot;&quot;</span>
-        <span class="c1"># pylint: disable=no-member # attributes are set with setattr</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">thresholds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">state</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>  <span class="c1"># type: ignore[attr-defined]</span>
@@ -319,12 +320,15 @@
             <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">confmat</span>  <span class="c1"># type: ignore[attr-defined]</span>
 
         <span class="k">return</span> <span class="n">_multiclass_roc_compute</span><span class="p">(</span>
-            <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">thresholds</span>
+            <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span>
+            <span class="n">num_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span><span class="p">,</span>
+            <span class="n">thresholds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">thresholds</span><span class="p">,</span>
         <span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="MultilabelROCCurve"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.evaluate.metrics.roc.MultilabelROCCurve.html#cyclops.evaluate.metrics.roc.MultilabelROCCurve">[docs]</a><span class="k">class</span> <span class="nc">MultilabelROCCurve</span><span class="p">(</span>
-    <span class="n">MultilabelPrecisionRecallCurve</span><span class="p">,</span> <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multilabel_roc_curve&quot;</span>
+    <span class="n">MultilabelPrecisionRecallCurve</span><span class="p">,</span>
+    <span class="n">registry_key</span><span class="o">=</span><span class="s2">&quot;multilabel_roc_curve&quot;</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the ROC curve for multilabel classification tasks.</span>
 
@@ -381,7 +385,6 @@
         <span class="p">],</span>
     <span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the ROC curve from the state variables.&quot;&quot;&quot;</span>
-        <span class="c1"># pylint: disable=no-member # attributes are set with setattr</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">thresholds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">state</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>  <span class="c1"># type: ignore[attr-defined]</span>
@@ -391,7 +394,9 @@
             <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">confmat</span>  <span class="c1"># type: ignore[attr-defined]</span>
 
         <span class="k">return</span> <span class="n">_multilabel_roc_compute</span><span class="p">(</span>
-            <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_labels</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">thresholds</span>
+            <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span>
+            <span class="n">num_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_labels</span><span class="p">,</span>
+            <span class="n">thresholds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">thresholds</span><span class="p">,</span>
         <span class="p">)</span></div></div>
 
 
@@ -515,17 +520,19 @@
             <span class="k">return</span> <span class="n">BinaryROCCurve</span><span class="p">(</span><span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-                <span class="n">num_classes</span><span class="p">,</span> <span class="nb">int</span>
+                <span class="n">num_classes</span><span class="p">,</span>
+                <span class="nb">int</span><span class="p">,</span>
             <span class="p">),</span> <span class="s2">&quot;Number of classes must be a positive integer.&quot;</span>
             <span class="k">return</span> <span class="n">MulticlassROCCurve</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-                <span class="n">num_labels</span><span class="p">,</span> <span class="nb">int</span>
+                <span class="n">num_labels</span><span class="p">,</span>
+                <span class="nb">int</span><span class="p">,</span>
             <span class="p">),</span> <span class="s2">&quot;Number of labels must be a positive integer.&quot;</span>
             <span class="k">return</span> <span class="n">MultilabelROCCurve</span><span class="p">(</span><span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;Expected argument `task` to be either &#39;binary&#39;, &#39;multiclass&#39; or &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;&#39;multilabel&#39;, but got </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;&#39;multilabel&#39;, but got </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="p">)</span></div>
 </pre></div>
 

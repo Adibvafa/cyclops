@@ -169,8 +169,7 @@
              
   <h1>Source code for cyclops.evaluate.metrics.functional.roc</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Functions for computing the receiver operating characteristic (ROC) curve.&quot;&quot;&quot;</span>
-
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -187,6 +186,11 @@
     <span class="n">_multilabel_precision_recall_curve_update</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">cyclops.evaluate.metrics.utils</span> <span class="kn">import</span> <span class="n">_check_thresholds</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.log</span> <span class="kn">import</span> <span class="n">setup_logging</span>
+
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">setup_logging</span><span class="p">(</span><span class="n">print_level</span><span class="o">=</span><span class="s2">&quot;WARN&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_roc_compute_from_confmat</span><span class="p">(</span>
@@ -201,6 +205,7 @@
 <span class="sd">        A multi-threshold confusion matrix of size (num_thresholds, 2, 2) or</span>
 <span class="sd">        (num_thresholds, num_classes, 2, 2).</span>
 <span class="sd">    thresholds : numpy.ndarray of floats, default=None</span>
+<span class="sd">        Thresholds used to binarize the predicted probabilities.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -218,10 +223,16 @@
     <span class="n">tns</span> <span class="o">=</span> <span class="n">confmat</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
 
     <span class="n">tpr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span>
-        <span class="n">tps</span><span class="p">,</span> <span class="n">tps</span> <span class="o">+</span> <span class="n">fns</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">tps</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="p">(</span><span class="n">tps</span> <span class="o">+</span> <span class="n">fns</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span>
+        <span class="n">tps</span><span class="p">,</span>
+        <span class="n">tps</span> <span class="o">+</span> <span class="n">fns</span><span class="p">,</span>
+        <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">tps</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+        <span class="n">where</span><span class="o">=</span><span class="p">(</span><span class="n">tps</span> <span class="o">+</span> <span class="n">fns</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">fpr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span>
-        <span class="n">fps</span><span class="p">,</span> <span class="n">fps</span> <span class="o">+</span> <span class="n">tns</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">fps</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="p">(</span><span class="n">fps</span> <span class="o">+</span> <span class="n">tns</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span>
+        <span class="n">fps</span><span class="p">,</span>
+        <span class="n">fps</span> <span class="o">+</span> <span class="n">tns</span><span class="p">,</span>
+        <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">fps</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+        <span class="n">where</span><span class="o">=</span><span class="p">(</span><span class="n">fps</span> <span class="o">+</span> <span class="n">tns</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># reverse order of arrays</span>
@@ -266,7 +277,10 @@
         <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_roc_compute_from_confmat</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">fps</span><span class="p">,</span> <span class="n">tps</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_binary_clf_curve</span><span class="p">(</span>
-            <span class="n">y_true</span><span class="o">=</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y_score</span><span class="o">=</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span>
+            <span class="n">y_true</span><span class="o">=</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">y_score</span><span class="o">=</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">,</span>
+            <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># start the curve at (0, 0)</span>
@@ -275,20 +289,18 @@
         <span class="n">thresholds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">))</span>  <span class="c1"># type: ignore[arg-type]</span>
 
         <span class="k">if</span> <span class="n">fps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;No negative samples in `target`, false positive value should be&quot;</span>
-                <span class="s2">&quot; meaningless. Returning zero array in false positive score&quot;</span><span class="p">,</span>
-                <span class="ne">UserWarning</span><span class="p">,</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;No negative samples in `target`, false positive value should be &quot;</span>
+                <span class="s2">&quot;meaningless. Returning zero array in false positive score&quot;</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">fpr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">thresholds</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">fpr</span> <span class="o">=</span> <span class="n">fps</span> <span class="o">/</span> <span class="n">fps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">tps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;No positive samples in `target`, true positive value should be&quot;</span>
                 <span class="s2">&quot; meaningless. Returning zero array in true positive score&quot;</span><span class="p">,</span>
-                <span class="ne">UserWarning</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">tpr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">thresholds</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -348,7 +360,9 @@
     <span class="n">_check_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
 
     <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_binary_precision_recall_curve_format</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">preds</span><span class="p">,</span>
+        <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_format_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
 
@@ -359,7 +373,8 @@
 
 <span class="k">def</span> <span class="nf">_multiclass_roc_compute</span><span class="p">(</span>
     <span class="n">state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
-        <span class="n">Tuple</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]],</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">]</span>
+        <span class="n">Tuple</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]],</span>
+        <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
     <span class="p">],</span>
     <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">thresholds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -411,7 +426,9 @@
     <span class="n">fpr_list</span><span class="p">,</span> <span class="n">tpr_list</span><span class="p">,</span> <span class="n">thresholds_list</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_classes</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">_binary_roc_compute</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">][:,</span> <span class="n">i</span><span class="p">]),</span> <span class="n">thresholds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">i</span>
+            <span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">][:,</span> <span class="n">i</span><span class="p">]),</span>
+            <span class="n">thresholds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">pos_label</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">fpr_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">tpr_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -489,12 +506,17 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_check_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
     <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_multiclass_precision_recall_curve_format</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">preds</span><span class="p">,</span>
+        <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_format_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
 
     <span class="n">state</span> <span class="o">=</span> <span class="n">_multiclass_precision_recall_curve_update</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">preds</span><span class="p">,</span>
+        <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
+        <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">_multiclass_roc_compute</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span></div>
@@ -502,7 +524,8 @@
 
 <span class="k">def</span> <span class="nf">_multilabel_roc_compute</span><span class="p">(</span>
     <span class="n">state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
-        <span class="n">Tuple</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]],</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">]</span>
+        <span class="n">Tuple</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]],</span>
+        <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">],</span>
     <span class="p">],</span>
     <span class="n">num_labels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">thresholds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float_</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -554,7 +577,9 @@
     <span class="n">fpr_list</span><span class="p">,</span> <span class="n">tpr_list</span><span class="p">,</span> <span class="n">thresholds_list</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_labels</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">_binary_roc_compute</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">][:,</span> <span class="n">i</span><span class="p">]),</span> <span class="n">thresholds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">i</span>
+            <span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">][:,</span> <span class="n">i</span><span class="p">]),</span>
+            <span class="n">thresholds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">pos_label</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">fpr_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">tpr_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -631,18 +656,23 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_check_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
     <span class="n">target</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">_multilabel_precision_recall_curve_format</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">preds</span><span class="p">,</span>
+        <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_format_thresholds</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span>
 
     <span class="n">state</span> <span class="o">=</span> <span class="n">_multilabel_precision_recall_curve_update</span><span class="p">(</span>
-        <span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">preds</span><span class="p">,</span>
+        <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">,</span>
+        <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">_multilabel_roc_compute</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">num_labels</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="roc_curve"><a class="viewcode-back" href="../../../../../reference/api/_autosummary/cyclops.evaluate.metrics.functional.roc.roc_curve.html#cyclops.evaluate.metrics.functional.roc.roc_curve">[docs]</a><span class="k">def</span> <span class="nf">roc_curve</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+<div class="viewcode-block" id="roc_curve"><a class="viewcode-back" href="../../../../../reference/api/_autosummary/cyclops.evaluate.metrics.functional.roc.roc_curve.html#cyclops.evaluate.metrics.functional.roc.roc_curve">[docs]</a><span class="k">def</span> <span class="nf">roc_curve</span><span class="p">(</span>
     <span class="n">target</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">preds</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
     <span class="n">task</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">,</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">],</span>
@@ -772,18 +802,20 @@
         <span class="k">return</span> <span class="n">binary_roc_curve</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">,</span> <span class="n">pos_label</span><span class="o">=</span><span class="n">pos_label</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multiclass&quot;</span><span class="p">:</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-            <span class="n">num_classes</span><span class="p">,</span> <span class="nb">int</span>
+            <span class="n">num_classes</span><span class="p">,</span>
+            <span class="nb">int</span><span class="p">,</span>
         <span class="p">),</span> <span class="s2">&quot;Number of classes must be a positive integer.&quot;</span>
         <span class="k">return</span> <span class="n">multiclass_roc_curve</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;multilabel&quot;</span><span class="p">:</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-            <span class="n">num_labels</span><span class="p">,</span> <span class="nb">int</span>
+            <span class="n">num_labels</span><span class="p">,</span>
+            <span class="nb">int</span><span class="p">,</span>
         <span class="p">),</span> <span class="s2">&quot;Number of labels must be a positive integer.&quot;</span>
         <span class="k">return</span> <span class="n">multilabel_roc_curve</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">num_labels</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">)</span>
 
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
         <span class="s2">&quot;Expected argument `task` to be either &#39;binary&#39;, &#39;multiclass&#39; or &quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;&#39;multilabel&#39;, but got </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;&#39;multilabel&#39;, but got </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
     <span class="p">)</span></div>
 </pre></div>
 

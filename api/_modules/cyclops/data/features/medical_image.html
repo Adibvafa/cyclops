@@ -193,11 +193,10 @@
 
 <span class="kn">from</span> <span class="nn">cyclops.utils.log</span> <span class="kn">import</span> <span class="n">setup_logging</span>
 
+
 <span class="c1"># Logging.</span>
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">setup_logging</span><span class="p">(</span><span class="n">print_level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">LOGGER</span><span class="p">)</span>
-
-<span class="c1"># pylint: disable=fixme</span>
 
 
 <div class="viewcode-block" id="MedicalImage"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.data.features.medical_image.MedicalImage.html#cyclops.data.features.medical_image.MedicalImage">[docs]</a><span class="nd">@dataclass</span>
@@ -222,7 +221,7 @@
         <span class="p">[</span>
             <span class="n">LoadImage</span><span class="p">(</span><span class="n">reader</span><span class="o">=</span><span class="n">reader</span><span class="p">,</span> <span class="n">simple_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">image_only</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
             <span class="n">ToNumpy</span><span class="p">(),</span>
-        <span class="p">]</span>
+        <span class="p">],</span>
     <span class="p">)</span>
     <span class="c1"># Automatically constructed</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span>
@@ -230,7 +229,8 @@
     <span class="n">_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;MedicalImage&quot;</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MedicalImage.encode_example"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.data.features.medical_image.MedicalImage.html#cyclops.data.features.medical_image.MedicalImage.encode_example">[docs]</a>    <span class="k">def</span> <span class="nf">encode_example</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Encode example into a format for Arrow.</span>
 
@@ -259,7 +259,9 @@
             <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">filename</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
                 <span class="n">output_ext_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
             <span class="k">return</span> <span class="n">_encode_ndarray</span><span class="p">(</span>
-                <span class="n">value</span><span class="p">[</span><span class="s2">&quot;array&quot;</span><span class="p">],</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata_</span><span class="p">,</span> <span class="n">image_format</span><span class="o">=</span><span class="n">output_ext_</span>
+                <span class="n">value</span><span class="p">[</span><span class="s2">&quot;array&quot;</span><span class="p">],</span>
+                <span class="n">metadata</span><span class="o">=</span><span class="n">metadata_</span><span class="p">,</span>
+                <span class="n">image_format</span><span class="o">=</span><span class="n">output_ext_</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]):</span>
             <span class="c1"># we set &quot;bytes&quot;: None to not duplicate the data</span>
@@ -272,7 +274,7 @@
 
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;An image sample should have one of &#39;path&#39; or &#39;bytes&#39; &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;but they are missing or None in </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;but they are missing or None in </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="MedicalImage.decode_example"><a class="viewcode-back" href="../../../../reference/api/_autosummary/cyclops.data.features.medical_image.MedicalImage.html#cyclops.data.features.medical_image.MedicalImage.decode_example">[docs]</a>    <span class="k">def</span> <span class="nf">decode_example</span><span class="p">(</span>
@@ -300,7 +302,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
                 <span class="s2">&quot;Decoding is disabled for this feature. &quot;</span>
-                <span class="s2">&quot;Please use MedicalImage(decode=True) instead.&quot;</span>
+                <span class="s2">&quot;Please use MedicalImage(decode=True) instead.&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">token_per_repo_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -311,7 +313,7 @@
             <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="s2">&quot;An image should have one of &#39;path&#39; or &#39;bytes&#39; but both are &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;None in </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;None in </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">is_local_path</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
@@ -340,7 +342,8 @@
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;array&quot;</span><span class="p">:</span> <span class="n">image</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">}</span></div>
 
     <span class="k">def</span> <span class="nf">_read_file_from_bytes</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="n">BytesIO</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">buffer</span><span class="p">:</span> <span class="n">BytesIO</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read an image from bytes.</span>
 
@@ -373,8 +376,8 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    array_or_tensor : NdarrayOrTensor</span>
-<span class="sd">        Numpy array or torch tensor.</span>
+<span class="sd">    array : numpy.ndarray</span>
+<span class="sd">        Numpy array to encode.</span>
 <span class="sd">    metadata : dict, optional, default=None</span>
 <span class="sd">        Metadata dictionary.</span>
 <span class="sd">    image_format : str, optional, default=&quot;.png&quot;</span>

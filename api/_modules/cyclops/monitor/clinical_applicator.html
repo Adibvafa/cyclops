@@ -219,7 +219,7 @@
         <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SliceSpec</span><span class="p">],</span>
         <span class="n">target</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SliceSpec</span><span class="p">],</span>
         <span class="n">shift_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shift_type</span> <span class="o">=</span> <span class="n">shift_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shift_id</span> <span class="o">=</span> <span class="n">shift_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span>
@@ -367,9 +367,9 @@
                             <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="n">source</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
                             <span class="s2">&quot;min_inclusive&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
                             <span class="s2">&quot;max_inclusive&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                        <span class="p">}</span>
-                    <span class="p">}</span>
-                <span class="p">]</span>
+                        <span class="p">},</span>
+                    <span class="p">},</span>
+                <span class="p">],</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">source_slice</span> <span class="o">=</span> <span class="kc">None</span>
@@ -382,14 +382,19 @@
                             <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="n">target</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
                             <span class="s2">&quot;min_inclusive&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
                             <span class="s2">&quot;max_inclusive&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                        <span class="p">}</span>
-                    <span class="p">}</span>
-                <span class="p">]</span>
+                        <span class="p">},</span>
+                    <span class="p">},</span>
+                <span class="p">],</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">target_slice</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_source_target</span><span class="p">(</span>
-            <span class="n">dataset</span><span class="p">,</span> <span class="n">source_slice</span><span class="p">,</span> <span class="n">target_slice</span><span class="p">,</span> <span class="n">batched</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_proc</span>
+            <span class="n">dataset</span><span class="p">,</span>
+            <span class="n">source_slice</span><span class="p">,</span>
+            <span class="n">target_slice</span><span class="p">,</span>
+            <span class="n">batched</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">num_proc</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span></div>
 
@@ -441,7 +446,12 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">target_slice</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_source_target</span><span class="p">(</span>
-            <span class="n">dataset</span><span class="p">,</span> <span class="n">source_slice</span><span class="p">,</span> <span class="n">target_slice</span><span class="p">,</span> <span class="n">batched</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_proc</span>
+            <span class="n">dataset</span><span class="p">,</span>
+            <span class="n">source_slice</span><span class="p">,</span>
+            <span class="n">target_slice</span><span class="p">,</span>
+            <span class="n">batched</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">num_proc</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span></div>
 
@@ -493,9 +503,9 @@
                             <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="n">source</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
                             <span class="s2">&quot;min_inclusive&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
                             <span class="s2">&quot;max_inclusive&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                        <span class="p">}</span>
-                    <span class="p">}</span>
-                <span class="p">]</span>
+                        <span class="p">},</span>
+                    <span class="p">},</span>
+                <span class="p">],</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">source_slice</span> <span class="o">=</span> <span class="kc">None</span>
@@ -508,14 +518,19 @@
                             <span class="s2">&quot;max_value&quot;</span><span class="p">:</span> <span class="n">target</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
                             <span class="s2">&quot;min_inclusive&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
                             <span class="s2">&quot;max_inclusive&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                        <span class="p">}</span>
-                    <span class="p">}</span>
-                <span class="p">]</span>
+                        <span class="p">},</span>
+                    <span class="p">},</span>
+                <span class="p">],</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">target_slice</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_source_target</span><span class="p">(</span>
-            <span class="n">dataset</span><span class="p">,</span> <span class="n">source_slice</span><span class="p">,</span> <span class="n">target_slice</span><span class="p">,</span> <span class="n">batched</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_proc</span>
+            <span class="n">dataset</span><span class="p">,</span>
+            <span class="n">source_slice</span><span class="p">,</span>
+            <span class="n">target_slice</span><span class="p">,</span>
+            <span class="n">batched</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">num_proc</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span></div>
 
@@ -567,7 +582,12 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">target_slice</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_source_target</span><span class="p">(</span>
-            <span class="n">dataset</span><span class="p">,</span> <span class="n">source_slice</span><span class="p">,</span> <span class="n">target_slice</span><span class="p">,</span> <span class="n">batched</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_proc</span>
+            <span class="n">dataset</span><span class="p">,</span>
+            <span class="n">source_slice</span><span class="p">,</span>
+            <span class="n">target_slice</span><span class="p">,</span>
+            <span class="n">batched</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">num_proc</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span></div>
 
@@ -619,7 +639,12 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">target_slice</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_source_target</span><span class="p">(</span>
-            <span class="n">dataset</span><span class="p">,</span> <span class="n">source_slice</span><span class="p">,</span> <span class="n">target_slice</span><span class="p">,</span> <span class="n">batched</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_proc</span>
+            <span class="n">dataset</span><span class="p">,</span>
+            <span class="n">source_slice</span><span class="p">,</span>
+            <span class="n">target_slice</span><span class="p">,</span>
+            <span class="n">batched</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">num_proc</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span></div>
 
@@ -665,10 +690,15 @@
         <span class="k">if</span> <span class="n">shift_id</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Shift id not required for custom shift. </span><span class="se">\</span>
-<span class="s2">                Please remove shift_id from method call.&quot;</span>
+<span class="s2">                Please remove shift_id from method call.&quot;</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_source_target</span><span class="p">(</span>
-            <span class="n">dataset</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">batched</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_proc</span>
+            <span class="n">dataset</span><span class="p">,</span>
+            <span class="n">source</span><span class="p">,</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="n">batched</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">num_proc</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span></div></div>
 </pre></div>
