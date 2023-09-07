@@ -5,26 +5,27 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GEMINI query API tutorial &mdash; cyclops  documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/cyclops.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/cyclops.css?v=fc0e58c9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/clipboard.min.js"></script>
-        <script src="../../_static/copybutton.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ccdb6887"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -109,7 +110,7 @@
 
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -445,9 +446,9 @@ div.rendered_html tbody tr:hover {
 }
 </style>
 <section id="GEMINI-query-API-tutorial">
-<h1>GEMINI query API tutorial<a class="headerlink" href="#GEMINI-query-API-tutorial" title="Permalink to this headline"></a></h1>
+<h1>GEMINI query API tutorial<a class="headerlink" href="#GEMINI-query-API-tutorial" title="Link to this heading"></a></h1>
 <section id="Imports-and-instantiate-GEMINIQuerier.">
-<h2>Imports and instantiate <code class="docutils literal notranslate"><span class="pre">GEMINIQuerier</span></code>.<a class="headerlink" href="#Imports-and-instantiate-GEMINIQuerier." title="Permalink to this headline"></a></h2>
+<h2>Imports and instantiate <code class="docutils literal notranslate"><span class="pre">GEMINIQuerier</span></code>.<a class="headerlink" href="#Imports-and-instantiate-GEMINIQuerier." title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -511,18 +512,16 @@ div.rendered_html tbody tr:hover {
 </div>
 </section>
 <section id="Example-1a.-Create-a-table-with-only-one-hospitalization-per-patient,-keeping-the-most-recent-encounter-for-each-patient.-Sort-the-dataset-by-patient_id_hashed-and-discharge_date_time,-and-then-keep-the-recent-record.">
-<h2>Example 1a. Create a table with only one hospitalization per patient, keeping the most recent encounter for each patient. Sort the dataset by <code class="docutils literal notranslate"><span class="pre">patient_id_hashed</span></code> and <code class="docutils literal notranslate"><span class="pre">discharge_date_time</span></code>, and then keep the recent record.<a class="headerlink" href="#Example-1a.-Create-a-table-with-only-one-hospitalization-per-patient,-keeping-the-most-recent-encounter-for-each-patient.-Sort-the-dataset-by-patient_id_hashed-and-discharge_date_time,-and-then-keep-the-recent-record." title="Permalink to this headline"></a></h2>
+<h2>Example 1a. Create a table with only one hospitalization per patient, keeping the most recent encounter for each patient. Sort the dataset by <code class="docutils literal notranslate"><span class="pre">patient_id_hashed</span></code> and <code class="docutils literal notranslate"><span class="pre">discharge_date_time</span></code>, and then keep the recent record.<a class="headerlink" href="#Example-1a.-Create-a-table-with-only-one-hospitalization-per-patient,-keeping-the-most-recent-encounter-for-each-patient.-Sort-the-dataset-by-patient_id_hashed-and-discharge_date_time,-and-then-keep-the-recent-record." title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">OrderBy</span><span class="p">(</span>
-            <span class="p">[</span><span class="s2">&quot;patient_id_hashed&quot;</span><span class="p">,</span> <span class="s2">&quot;discharge_date_time&quot;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
-        <span class="p">),</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">Distinct</span><span class="p">(</span><span class="s2">&quot;patient_id_hashed&quot;</span><span class="p">),</span>
-    <span class="p">],</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">OrderBy</span><span class="p">(</span>
+        <span class="p">[</span><span class="s2">&quot;patient_id_hashed&quot;</span><span class="p">,</span> <span class="s2">&quot;discharge_date_time&quot;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+    <span class="p">),</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">Distinct</span><span class="p">(</span><span class="s2">&quot;patient_id_hashed&quot;</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="n">encounters_qi</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">public</span><span class="o">.</span><span class="n">ip_administrative</span><span class="p">(</span><span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span>
 <span class="n">encounters</span> <span class="o">=</span> <span class="n">encounters_qi</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
@@ -549,16 +548,14 @@ div.rendered_html tbody tr:hover {
 </div>
 </section>
 <section id="Example-1b.-From-the-above-set-of-encounters,-take-a-subset-of-patients-who-were-discharged-between-April-1,-2015-and-March-31,-2016.">
-<h2>Example 1b. From the above set of encounters, take a subset of patients who were discharged between April 1, 2015 and March 31, 2016.<a class="headerlink" href="#Example-1b.-From-the-above-set-of-encounters,-take-a-subset-of-patients-who-were-discharged-between-April-1,-2015-and-March-31,-2016." title="Permalink to this headline"></a></h2>
+<h2>Example 1b. From the above set of encounters, take a subset of patients who were discharged between April 1, 2015 and March 31, 2016.<a class="headerlink" href="#Example-1b.-From-the-above-set-of-encounters,-take-a-subset-of-patients-who-were-discharged-between-April-1,-2015-and-March-31,-2016." title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">(</span><span class="s2">&quot;discharge_date_time&quot;</span><span class="p">,</span> <span class="s2">&quot;2015-04-01&quot;</span><span class="p">),</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionBeforeDate</span><span class="p">(</span><span class="s2">&quot;discharge_date_time&quot;</span><span class="p">,</span> <span class="s2">&quot;2016-03-31&quot;</span><span class="p">),</span>
-    <span class="p">],</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">(</span><span class="s2">&quot;discharge_date_time&quot;</span><span class="p">,</span> <span class="s2">&quot;2015-04-01&quot;</span><span class="p">),</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionBeforeDate</span><span class="p">(</span><span class="s2">&quot;discharge_date_time&quot;</span><span class="p">,</span> <span class="s2">&quot;2016-03-31&quot;</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="n">encounters_qi</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">get_interface</span><span class="p">(</span><span class="n">encounters_qi</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span>
 <span class="n">encounters</span> <span class="o">=</span> <span class="n">encounters_qi</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
@@ -585,7 +582,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </section>
 <section id="Example-1c.-From-the-above-set-of-encounters,-get-the-total-number-of-admissions-for-each-hospital.">
-<h2>Example 1c. From the above set of encounters, get the total number of admissions for each hospital.<a class="headerlink" href="#Example-1c.-From-the-above-set-of-encounters,-get-the-total-number-of-admissions-for-each-hospital." title="Permalink to this headline"></a></h2>
+<h2>Example 1c. From the above set of encounters, get the total number of admissions for each hospital.<a class="headerlink" href="#Example-1c.-From-the-above-set-of-encounters,-get-the-total-number-of-admissions-for-each-hospital." title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
@@ -616,7 +613,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </section>
 <section id="Example-2a.-How-many-sodium-tests-were-placed-between-Apr-1,-2015-and-May-31,-2015-at-SMH?">
-<h2>Example 2a. How many sodium tests were placed between Apr 1, 2015 and May 31, 2015 at SMH?<a class="headerlink" href="#Example-2a.-How-many-sodium-tests-were-placed-between-Apr-1,-2015-and-May-31,-2015-at-SMH?" title="Permalink to this headline"></a></h2>
+<h2>Example 2a. How many sodium tests were placed between Apr 1, 2015 and May 31, 2015 at SMH?<a class="headerlink" href="#Example-2a.-How-many-sodium-tests-were-placed-between-Apr-1,-2015-and-May-31,-2015-at-SMH?" title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
@@ -624,12 +621,10 @@ div.rendered_html tbody tr:hover {
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">encounter_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;hospital_id&quot;</span><span class="p">,</span> <span class="s2">&quot;SMH&quot;</span><span class="p">)</span>
 <span class="n">encounters_qi</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">public</span><span class="o">.</span><span class="n">ip_administrative</span><span class="p">(</span><span class="n">ops</span><span class="o">=</span><span class="n">encounter_ops</span><span class="p">)</span>
 <span class="n">lab_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">(</span><span class="s2">&quot;sample_collection_date_time&quot;</span><span class="p">,</span> <span class="s2">&quot;2015-04-01&quot;</span><span class="p">),</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionBeforeDate</span><span class="p">(</span><span class="s2">&quot;sample_collection_date_time&quot;</span><span class="p">,</span> <span class="s2">&quot;2015-05-31&quot;</span><span class="p">),</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;lab_test_name_mapped&quot;</span><span class="p">,</span> <span class="s2">&quot;sodium&quot;</span><span class="p">),</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">GroupByAggregate</span><span class="p">(</span><span class="s2">&quot;hospital_id&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;hospital_id&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">)}),</span>
-    <span class="p">],</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">(</span><span class="s2">&quot;sample_collection_date_time&quot;</span><span class="p">,</span> <span class="s2">&quot;2015-04-01&quot;</span><span class="p">),</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionBeforeDate</span><span class="p">(</span><span class="s2">&quot;sample_collection_date_time&quot;</span><span class="p">,</span> <span class="s2">&quot;2015-05-31&quot;</span><span class="p">),</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;lab_test_name_mapped&quot;</span><span class="p">,</span> <span class="s2">&quot;sodium&quot;</span><span class="p">),</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">GroupByAggregate</span><span class="p">(</span><span class="s2">&quot;hospital_id&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;hospital_id&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">)}),</span>
 <span class="p">)</span>
 <span class="n">lab_qi</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">public</span><span class="o">.</span><span class="n">lab</span><span class="p">(</span>
     <span class="n">ops</span><span class="o">=</span><span class="n">lab_ops</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">encounters_qi</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;genc_id&quot;</span><span class="p">),</span>

@@ -5,26 +5,27 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MIMIC-IV query API tutorial &mdash; cyclops  documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/cyclops.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/cyclops.css?v=fc0e58c9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/clipboard.min.js"></script>
-        <script src="../../_static/copybutton.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ccdb6887"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -109,7 +110,7 @@
 
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -135,8 +136,9 @@
 <li class="toctree-l4"><a class="reference internal" href="#Example-3.-Advanced---uses-ConditionRegexMatch-from-cyclops.query.ops.-Get-all-patient-encounters-with-diagnoses-(ICD-9-long-title-contains-schizophrenia-and-chronic-),-in-the-year-2015.">Example 3. Advanced - uses <code class="docutils literal notranslate"><span class="pre">ConditionRegexMatch</span></code> from <code class="docutils literal notranslate"><span class="pre">cyclops.query.ops</span></code>. Get all patient encounters with diagnoses (ICD-9 long title contains <code class="docutils literal notranslate"><span class="pre">schizophrenia</span></code> and <code class="docutils literal notranslate"><span class="pre">chronic</span></code> ), in the year 2015.</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Example-4.-Get-routine-vital-signs-for-patients-from-year-2015.">Example 4. Get routine vital signs for patients from year 2015.</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#Example-5.-Get-hemoglobin-lab-tests-for-patients-from-year-2009.">Example 5. Get hemoglobin lab tests for patients from year 2009.</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Example-6.-Get-all-female-patient-encounters-from-year-2015,-and-return-as-dask-dataframe-(lazy-evaluation)-with-4-partitions-(batches)-aggregated-based-on-subject_id.">Example 6. Get all female patient encounters from year 2015, and return as dask dataframe (lazy evaluation) with 4 partitions (batches) aggregated based on <code class="docutils literal notranslate"><span class="pre">subject_id</span></code>.</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Example-7.-Running-a-raw-SQL-string.">Example 7. Running a raw SQL string.</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Example-6.-Get-radiology-reports-and-filter-on-keywords-lymphadenopathy-and-infectious-occurring-together.">Example 6. Get radiology reports and filter on keywords <code class="docutils literal notranslate"><span class="pre">lymphadenopathy</span></code> and <code class="docutils literal notranslate"><span class="pre">infectious</span></code> occurring together.</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Example-7.-Get-all-female-patient-encounters-from-year-2015,-and-return-as-dask-dataframe-(lazy-evaluation)-with-4-partitions-(batches)-aggregated-based-on-subject_id.">Example 7. Get all female patient encounters from year 2015, and return as dask dataframe (lazy evaluation) with 4 partitions (batches) aggregated based on <code class="docutils literal notranslate"><span class="pre">subject_id</span></code>.</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Example-8.-Running-a-raw-SQL-string.">Example 8. Running a raw SQL string.</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../eicu/query_api.html">eICU-CRD query API tutorial</a></li>
@@ -448,7 +450,7 @@ div.rendered_html tbody tr:hover {
 }
 </style>
 <section id="MIMIC-IV-query-API-tutorial">
-<h1>MIMIC-IV query API tutorial<a class="headerlink" href="#MIMIC-IV-query-API-tutorial" title="Permalink to this headline"></a></h1>
+<h1>MIMIC-IV query API tutorial<a class="headerlink" href="#MIMIC-IV-query-API-tutorial" title="Link to this heading"></a></h1>
 <p>This notebook shows examples of how to use the cyclops.query API on <a class="reference external" href="https://physionet.org/content/mimiciv/2.0/">MIMIC-IV v2.0</a>.</p>
 <p>Each query is limit to 100 rows (for quick results).</p>
 <ul class="simple">
@@ -456,7 +458,7 @@ div.rendered_html tbody tr:hover {
 <li><p>The database is assumed to be hosted using postgres. Update the config parameters such as username and password, passed to <code class="docutils literal notranslate"><span class="pre">MIMICIVQuerier</span></code> accordingly.</p></li>
 </ul>
 <section id="Imports-and-instantiate-MIMICIVQuerier">
-<h2>Imports and instantiate <code class="docutils literal notranslate"><span class="pre">MIMICIVQuerier</span></code><a class="headerlink" href="#Imports-and-instantiate-MIMICIVQuerier" title="Permalink to this headline"></a></h2>
+<h2>Imports and instantiate <code class="docutils literal notranslate"><span class="pre">MIMICIVQuerier</span></code><a class="headerlink" href="#Imports-and-instantiate-MIMICIVQuerier" title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -485,7 +487,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-08-30 21:19:00,630 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
+2023-09-07 12:53:05,680 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -508,17 +510,15 @@ div.rendered_html tbody tr:hover {
 </div>
 </section>
 <section id="Example-1.-Get-all-patient-admissions-from-2021-or-later-(approx-year-of-admission)">
-<h2>Example 1. Get all patient admissions from 2021 or later (approx year of admission)<a class="headerlink" href="#Example-1.-Get-all-patient-admissions-from-2021-or-later-(approx-year-of-admission)" title="Permalink to this headline"></a></h2>
+<h2>Example 1. Get all patient admissions from 2021 or later (approx year of admission)<a class="headerlink" href="#Example-1.-Get-all-patient-admissions-from-2021-or-later-(approx-year-of-admission)" title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span>
 <span class="n">ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">AddDeltaColumn</span><span class="p">([</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;dischtime&quot;</span><span class="p">],</span> <span class="n">years</span><span class="o">=</span><span class="s2">&quot;anchor_year_difference&quot;</span><span class="p">),</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">(</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;2021-01-01&quot;</span><span class="p">),</span>
-    <span class="p">],</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">AddDeltaColumn</span><span class="p">([</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;dischtime&quot;</span><span class="p">],</span> <span class="n">years</span><span class="o">=</span><span class="s2">&quot;anchor_year_difference&quot;</span><span class="p">),</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">(</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;2021-01-01&quot;</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="n">admissions</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
     <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">patients</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;subject_id&quot;</span><span class="p">),</span>
@@ -533,8 +533,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-08-30 21:19:03,557 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-08-30 21:19:03,558 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.163919 s
+2023-09-07 12:53:08,100 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-09-07 12:53:08,101 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.151473 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -547,22 +547,18 @@ div.rendered_html tbody tr:hover {
 </div>
 </section>
 <section id="Example-2.-Get-all-patient-encounters-with-diagnoses-(schizophrenia-in-ICD-10-long-title),-in-the-year-2015.">
-<h2>Example 2. Get all patient encounters with diagnoses (<code class="docutils literal notranslate"><span class="pre">schizophrenia</span></code> in ICD-10 long title), in the year 2015.<a class="headerlink" href="#Example-2.-Get-all-patient-encounters-with-diagnoses-(schizophrenia-in-ICD-10-long-title),-in-the-year-2015." title="Permalink to this headline"></a></h2>
+<h2>Example 2. Get all patient encounters with diagnoses (<code class="docutils literal notranslate"><span class="pre">schizophrenia</span></code> in ICD-10 long title), in the year 2015.<a class="headerlink" href="#Example-2.-Get-all-patient-encounters-with-diagnoses-(schizophrenia-in-ICD-10-long-title),-in-the-year-2015." title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">diagnoses_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;icd_version&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;long_title&quot;</span><span class="p">,</span> <span class="s2">&quot;schizophrenia&quot;</span><span class="p">),</span>
-    <span class="p">],</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;icd_version&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;long_title&quot;</span><span class="p">,</span> <span class="s2">&quot;schizophrenia&quot;</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="n">admissions_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">AddDeltaColumn</span><span class="p">([</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;dischtime&quot;</span><span class="p">],</span> <span class="n">years</span><span class="o">=</span><span class="s2">&quot;anchor_year_difference&quot;</span><span class="p">),</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">(</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;2015&quot;</span><span class="p">),</span>
-    <span class="p">],</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">AddDeltaColumn</span><span class="p">([</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;dischtime&quot;</span><span class="p">],</span> <span class="n">years</span><span class="o">=</span><span class="s2">&quot;anchor_year_difference&quot;</span><span class="p">),</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">(</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;2015&quot;</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span>
 <span class="n">admissions</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
@@ -585,8 +581,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-08-30 21:19:04,380 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-08-30 21:19:04,382 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.685338 s
+2023-09-07 12:53:09,007 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-09-07 12:53:09,008 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.776565 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -599,22 +595,18 @@ div.rendered_html tbody tr:hover {
 </div>
 </section>
 <section id="Example-3.-Advanced---uses-ConditionRegexMatch-from-cyclops.query.ops.-Get-all-patient-encounters-with-diagnoses-(ICD-9-long-title-contains-schizophrenia-and-chronic-),-in-the-year-2015.">
-<h2>Example 3. Advanced - uses <code class="docutils literal notranslate"><span class="pre">ConditionRegexMatch</span></code> from <code class="docutils literal notranslate"><span class="pre">cyclops.query.ops</span></code>. Get all patient encounters with diagnoses (ICD-9 long title contains <code class="docutils literal notranslate"><span class="pre">schizophrenia</span></code> and <code class="docutils literal notranslate"><span class="pre">chronic</span></code> ), in the year 2015.<a class="headerlink" href="#Example-3.-Advanced---uses-ConditionRegexMatch-from-cyclops.query.ops.-Get-all-patient-encounters-with-diagnoses-(ICD-9-long-title-contains-schizophrenia-and-chronic-),-in-the-year-2015." title="Permalink to this headline"></a></h2>
+<h2>Example 3. Advanced - uses <code class="docutils literal notranslate"><span class="pre">ConditionRegexMatch</span></code> from <code class="docutils literal notranslate"><span class="pre">cyclops.query.ops</span></code>. Get all patient encounters with diagnoses (ICD-9 long title contains <code class="docutils literal notranslate"><span class="pre">schizophrenia</span></code> and <code class="docutils literal notranslate"><span class="pre">chronic</span></code> ), in the year 2015.<a class="headerlink" href="#Example-3.-Advanced---uses-ConditionRegexMatch-from-cyclops.query.ops.-Get-all-patient-encounters-with-diagnoses-(ICD-9-long-title-contains-schizophrenia-and-chronic-),-in-the-year-2015." title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">admissions_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">AddDeltaColumn</span><span class="p">([</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;dischtime&quot;</span><span class="p">],</span> <span class="n">years</span><span class="o">=</span><span class="s2">&quot;anchor_year_difference&quot;</span><span class="p">),</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">(</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;2015&quot;</span><span class="p">),</span>
-    <span class="p">],</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">AddDeltaColumn</span><span class="p">([</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;dischtime&quot;</span><span class="p">],</span> <span class="n">years</span><span class="o">=</span><span class="s2">&quot;anchor_year_difference&quot;</span><span class="p">),</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">(</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;2015&quot;</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="n">diagnoses_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;icd_version&quot;</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionRegexMatch</span><span class="p">(</span><span class="s2">&quot;long_title&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;(?=.*schizophrenia)(?=.*chronic)&quot;</span><span class="p">),</span>
-    <span class="p">],</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;icd_version&quot;</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionRegexMatch</span><span class="p">(</span><span class="s2">&quot;long_title&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;(?=.*schizophrenia)(?=.*chronic)&quot;</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span>
 <span class="n">admissions</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
@@ -637,8 +629,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-08-30 21:19:06,106 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-08-30 21:19:06,107 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 1.504360 s
+2023-09-07 12:53:10,752 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-09-07 12:53:10,753 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 1.523046 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -651,18 +643,16 @@ div.rendered_html tbody tr:hover {
 </div>
 </section>
 <section id="Example-4.-Get-routine-vital-signs-for-patients-from-year-2015.">
-<h2>Example 4. Get routine vital signs for patients from year 2015.<a class="headerlink" href="#Example-4.-Get-routine-vital-signs-for-patients-from-year-2015." title="Permalink to this headline"></a></h2>
+<h2>Example 4. Get routine vital signs for patients from year 2015.<a class="headerlink" href="#Example-4.-Get-routine-vital-signs-for-patients-from-year-2015." title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">admissions_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">AddDeltaColumn</span><span class="p">([</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;dischtime&quot;</span><span class="p">],</span> <span class="n">years</span><span class="o">=</span><span class="s2">&quot;anchor_year_difference&quot;</span><span class="p">),</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">(</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;2015&quot;</span><span class="p">),</span>
-    <span class="p">],</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">AddDeltaColumn</span><span class="p">([</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;dischtime&quot;</span><span class="p">],</span> <span class="n">years</span><span class="o">=</span><span class="s2">&quot;anchor_year_difference&quot;</span><span class="p">),</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">(</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;2015&quot;</span><span class="p">),</span>
 <span class="p">)</span>
-<span class="n">chartevents_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">,</span> <span class="s2">&quot;Routine Vital Signs&quot;</span><span class="p">)])</span>
+<span class="n">chartevents_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">,</span> <span class="s2">&quot;Routine Vital Signs&quot;</span><span class="p">)</span>
 <span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span>
 <span class="n">admissions</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
     <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">patients</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;subject_id&quot;</span><span class="p">),</span>
@@ -684,8 +674,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-08-30 21:20:26,163 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-08-30 21:20:26,164 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 79.919640 s
+2023-09-07 12:54:22,768 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-09-07 12:54:22,769 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 71.869710 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -698,18 +688,16 @@ div.rendered_html tbody tr:hover {
 </div>
 </section>
 <section id="Example-5.-Get-hemoglobin-lab-tests-for-patients-from-year-2009.">
-<h2>Example 5. Get hemoglobin lab tests for patients from year 2009.<a class="headerlink" href="#Example-5.-Get-hemoglobin-lab-tests-for-patients-from-year-2009." title="Permalink to this headline"></a></h2>
+<h2>Example 5. Get hemoglobin lab tests for patients from year 2009.<a class="headerlink" href="#Example-5.-Get-hemoglobin-lab-tests-for-patients-from-year-2009." title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">admissions_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">AddDeltaColumn</span><span class="p">([</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;dischtime&quot;</span><span class="p">],</span> <span class="n">years</span><span class="o">=</span><span class="s2">&quot;anchor_year_difference&quot;</span><span class="p">),</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">(</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;2009&quot;</span><span class="p">),</span>
-    <span class="p">],</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">AddDeltaColumn</span><span class="p">([</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;dischtime&quot;</span><span class="p">],</span> <span class="n">years</span><span class="o">=</span><span class="s2">&quot;anchor_year_difference&quot;</span><span class="p">),</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">(</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;2009&quot;</span><span class="p">),</span>
 <span class="p">)</span>
-<span class="n">labevents_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;hemoglobin&quot;</span><span class="p">)])</span>
+<span class="n">labevents_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;hemoglobin&quot;</span><span class="p">)</span>
 <span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span>
 <span class="n">admissions</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
     <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">patients</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;subject_id&quot;</span><span class="p">),</span>
@@ -731,8 +719,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-08-30 21:21:36,333 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-08-30 21:21:36,334 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 70.039303 s
+2023-09-07 12:55:32,690 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-09-07 12:55:32,691 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 69.787991 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -744,19 +732,69 @@ div.rendered_html tbody tr:hover {
 </pre></div></div>
 </div>
 </section>
-<section id="Example-6.-Get-all-female-patient-encounters-from-year-2015,-and-return-as-dask-dataframe-(lazy-evaluation)-with-4-partitions-(batches)-aggregated-based-on-subject_id.">
-<h2>Example 6. Get all female patient encounters from year 2015, and return as dask dataframe (lazy evaluation) with 4 partitions (batches) aggregated based on <code class="docutils literal notranslate"><span class="pre">subject_id</span></code>.<a class="headerlink" href="#Example-6.-Get-all-female-patient-encounters-from-year-2015,-and-return-as-dask-dataframe-(lazy-evaluation)-with-4-partitions-(batches)-aggregated-based-on-subject_id." title="Permalink to this headline"></a></h2>
+<section id="Example-6.-Get-radiology-reports-and-filter-on-keywords-lymphadenopathy-and-infectious-occurring-together.">
+<h2>Example 6. Get radiology reports and filter on keywords <code class="docutils literal notranslate"><span class="pre">lymphadenopathy</span></code> and <code class="docutils literal notranslate"><span class="pre">infectious</span></code> occurring together.<a class="headerlink" href="#Example-6.-Get-radiology-reports-and-filter-on-keywords-lymphadenopathy-and-infectious-occurring-together." title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">admissions_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">AddDeltaColumn</span><span class="p">([</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;dischtime&quot;</span><span class="p">],</span> <span class="n">years</span><span class="o">=</span><span class="s2">&quot;anchor_year_difference&quot;</span><span class="p">),</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">(</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;2015&quot;</span><span class="p">),</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">Cast</span><span class="p">(</span><span class="s2">&quot;gender&quot;</span><span class="p">,</span> <span class="s2">&quot;str&quot;</span><span class="p">),</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;gender&quot;</span><span class="p">,</span> <span class="s2">&quot;F&quot;</span><span class="p">),</span>
-    <span class="p">],</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">AddDeltaColumn</span><span class="p">([</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;dischtime&quot;</span><span class="p">],</span> <span class="n">years</span><span class="o">=</span><span class="s2">&quot;anchor_year_difference&quot;</span><span class="p">),</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">(</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;2009&quot;</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span>
+<span class="n">admissions</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
+    <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">patients</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;subject_id&quot;</span><span class="p">),</span>
+    <span class="n">ops</span><span class="o">=</span><span class="n">admissions_ops</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">radiology_notes_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">And</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">qo</span><span class="o">.</span><span class="n">ConditionLike</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;% lymphadenopathy %&quot;</span><span class="p">),</span>
+            <span class="n">qo</span><span class="o">.</span><span class="n">ConditionLike</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">% i</span><span class="s2">nfectious %&quot;</span><span class="p">),</span>
+        <span class="p">],</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="n">radiology_notes</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">mimiciv_note</span><span class="o">.</span><span class="n">radiology</span><span class="p">(</span>
+    <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span>
+        <span class="n">join_table</span><span class="o">=</span><span class="n">admissions</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
+        <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;subject_id&quot;</span><span class="p">,</span> <span class="s2">&quot;hadm_id&quot;</span><span class="p">],</span>
+    <span class="p">),</span>
+    <span class="n">ops</span><span class="o">=</span><span class="n">radiology_notes_ops</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">radiology_notes</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+2023-09-07 12:55:42,830 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-09-07 12:55:42,831 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 10.009578 s
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+100 rows extracted!
+</pre></div></div>
+</div>
+</section>
+<section id="Example-7.-Get-all-female-patient-encounters-from-year-2015,-and-return-as-dask-dataframe-(lazy-evaluation)-with-4-partitions-(batches)-aggregated-based-on-subject_id.">
+<h2>Example 7. Get all female patient encounters from year 2015, and return as dask dataframe (lazy evaluation) with 4 partitions (batches) aggregated based on <code class="docutils literal notranslate"><span class="pre">subject_id</span></code>.<a class="headerlink" href="#Example-7.-Get-all-female-patient-encounters-from-year-2015,-and-return-as-dask-dataframe-(lazy-evaluation)-with-4-partitions-(batches)-aggregated-based-on-subject_id." title="Link to this heading"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">admissions_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">AddDeltaColumn</span><span class="p">([</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;dischtime&quot;</span><span class="p">],</span> <span class="n">years</span><span class="o">=</span><span class="s2">&quot;anchor_year_difference&quot;</span><span class="p">),</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionInYears</span><span class="p">(</span><span class="s2">&quot;admittime&quot;</span><span class="p">,</span> <span class="s2">&quot;2015&quot;</span><span class="p">),</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">Cast</span><span class="p">(</span><span class="s2">&quot;gender&quot;</span><span class="p">,</span> <span class="s2">&quot;str&quot;</span><span class="p">),</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;gender&quot;</span><span class="p">,</span> <span class="s2">&quot;F&quot;</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">patients</span><span class="p">()</span>
 <span class="n">admissions</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">mimiciv_hosp</span><span class="o">.</span><span class="n">admissions</span><span class="p">(</span>
@@ -774,8 +812,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-08-30 21:21:36,752 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-08-30 21:21:36,752 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.348334 s
+2023-09-07 12:55:43,243 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-09-07 12:55:43,244 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.355842 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -789,10 +827,10 @@ Number of partitions: 4
 </pre></div></div>
 </div>
 </section>
-<section id="Example-7.-Running-a-raw-SQL-string.">
-<h2>Example 7. Running a raw SQL string.<a class="headerlink" href="#Example-7.-Running-a-raw-SQL-string." title="Permalink to this headline"></a></h2>
+<section id="Example-8.-Running-a-raw-SQL-string.">
+<h2>Example 8. Running a raw SQL string.<a class="headerlink" href="#Example-8.-Running-a-raw-SQL-string." title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">run_query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM mimiciv_hosp.admissions LIMIT 100&quot;</span><span class="p">)</span>
@@ -805,8 +843,8 @@ Number of partitions: 4
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-08-30 21:21:37,901 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-08-30 21:21:37,902 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.009490 s
+2023-09-07 12:55:43,936 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-09-07 12:55:43,937 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.008097 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">

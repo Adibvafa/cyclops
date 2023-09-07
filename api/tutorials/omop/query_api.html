@@ -5,26 +5,27 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OMOP query API tutorial &mdash; cyclops  documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/cyclops.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/cyclops.css?v=fc0e58c9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/clipboard.min.js"></script>
-        <script src="../../_static/copybutton.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ccdb6887"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -109,7 +110,7 @@
 
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -446,7 +447,7 @@ div.rendered_html tbody tr:hover {
 }
 </style>
 <section id="OMOP-query-API-tutorial">
-<h1>OMOP query API tutorial<a class="headerlink" href="#OMOP-query-API-tutorial" title="Permalink to this headline"></a></h1>
+<h1>OMOP query API tutorial<a class="headerlink" href="#OMOP-query-API-tutorial" title="Link to this heading"></a></h1>
 <p>This notebook shows examples of how to use the cyclops.query API to query EHR databases that follow the OMOP common data model. Each query is limit to 100 rows (for quick results).</p>
 <p>We showcase the examples on:</p>
 <ol class="arabic simple">
@@ -458,7 +459,7 @@ div.rendered_html tbody tr:hover {
 </li>
 </ol>
 <section id="Imports-and-instantiate-OMOPQuerier.">
-<h2>Imports and instantiate <code class="docutils literal notranslate"><span class="pre">OMOPQuerier</span></code>.<a class="headerlink" href="#Imports-and-instantiate-OMOPQuerier." title="Permalink to this headline"></a></h2>
+<h2>Imports and instantiate <code class="docutils literal notranslate"><span class="pre">OMOPQuerier</span></code>.<a class="headerlink" href="#Imports-and-instantiate-OMOPQuerier." title="Link to this heading"></a></h2>
 <p>Pass in the <code class="docutils literal notranslate"><span class="pre">schema_name</span></code> which is the name of the postgres schema which houses all the OMOP tables.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -491,7 +492,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-08-30 21:28:19,416 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
+2023-09-07 13:02:32,291 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -573,12 +574,12 @@ div.rendered_html tbody tr:hover {
 </div>
 </section>
 <section id="Example-1.-Get-all-patient-visits-in-or-after-2010.">
-<h2>Example 1. Get all patient visits in or after 2010.<a class="headerlink" href="#Example-1.-Get-all-patient-visits-in-or-after-2010." title="Permalink to this headline"></a></h2>
+<h2>Example 1. Get all patient visits in or after 2010.<a class="headerlink" href="#Example-1.-Get-all-patient-visits-in-or-after-2010." title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">(</span><span class="s2">&quot;visit_start_date&quot;</span><span class="p">,</span> <span class="s2">&quot;2010-01-01&quot;</span><span class="p">)])</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">(</span><span class="s2">&quot;visit_start_date&quot;</span><span class="p">,</span> <span class="s2">&quot;2010-01-01&quot;</span><span class="p">)</span>
 <span class="n">visits</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">visit_occurrence</span><span class="p">(</span><span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">visits</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">visits</span><span class="p">[</span><span class="s2">&quot;visit_start_date&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
@@ -590,8 +591,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-08-30 21:28:20,394 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-08-30 21:28:20,395 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.060116 s
+2023-09-07 13:02:33,462 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-09-07 13:02:33,464 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.070382 s
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -627,12 +628,12 @@ Name: visit_start_date, dtype: int64
 </div>
 </section>
 <section id="Example-2.-Get-measurements-for-all-visits-in-or-after-2020.">
-<h2>Example 2. Get measurements for all visits in or after 2020.<a class="headerlink" href="#Example-2.-Get-measurements-for-all-visits-in-or-after-2020." title="Permalink to this headline"></a></h2>
+<h2>Example 2. Get measurements for all visits in or after 2020.<a class="headerlink" href="#Example-2.-Get-measurements-for-all-visits-in-or-after-2020." title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">(</span><span class="s2">&quot;visit_start_date&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)])</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">(</span><span class="s2">&quot;visit_start_date&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">))</span>
 <span class="n">visits</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">visit_occurrence</span><span class="p">(</span><span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span>
 <span class="n">measurements</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">measurement</span><span class="p">(</span>
     <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">visits</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;visit_occurrence_id&quot;</span><span class="p">),</span>
@@ -646,8 +647,8 @@ Name: visit_start_date, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-08-30 21:28:20,584 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-08-30 21:28:20,585 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.059232 s
+2023-09-07 13:02:33,655 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-09-07 13:02:33,657 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.062540 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -668,7 +669,7 @@ Name: visit_start_date, dtype: int64
 </ul>
 </section>
 <section id="id1">
-<h2>Imports and instantiate <code class="docutils literal notranslate"><span class="pre">OMOPQuerier</span></code>.<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h2>
+<h2>Imports and instantiate <code class="docutils literal notranslate"><span class="pre">OMOPQuerier</span></code>.<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
 <p>Pass in the <code class="docutils literal notranslate"><span class="pre">schema_name</span></code> which is the name of the postgres schema which houses all the OMOP tables.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
@@ -693,7 +694,7 @@ Name: visit_start_date, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-08-30 21:28:24,993 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
+2023-09-07 13:02:38,752 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -707,16 +708,12 @@ Name: visit_start_date, dtype: int64
 </div>
 </section>
 <section id="Example-1.-Get-all-patient-visits-that-ended-in-a-mortality-outcome-in-or-after-2010.">
-<h2>Example 1. Get all patient visits that ended in a mortality outcome in or after 2010.<a class="headerlink" href="#Example-1.-Get-all-patient-visits-that-ended-in-a-mortality-outcome-in-or-after-2010." title="Permalink to this headline"></a></h2>
+<h2>Example 1. Get all patient visits that ended in a mortality outcome in or after 2010.<a class="headerlink" href="#Example-1.-Get-all-patient-visits-that-ended-in-a-mortality-outcome-in-or-after-2010." title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">(</span><span class="s2">&quot;visit_start_date&quot;</span><span class="p">,</span> <span class="s2">&quot;2010-01-01&quot;</span><span class="p">),</span>
-    <span class="p">],</span>
-<span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">ConditionAfterDate</span><span class="p">(</span><span class="s2">&quot;visit_start_date&quot;</span><span class="p">,</span> <span class="s2">&quot;2010-01-01&quot;</span><span class="p">)</span>
 <span class="n">visits</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">visit_occurrence</span><span class="p">(</span><span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span>
 <span class="n">visits_concept_mapped</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">map_concept_ids_to_name</span><span class="p">(</span>
     <span class="n">visits</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
@@ -725,11 +722,7 @@ Name: visit_start_date, dtype: int64
         <span class="s2">&quot;admitting_concept_id&quot;</span><span class="p">,</span>
     <span class="p">],</span>
 <span class="p">)</span>
-<span class="n">visits_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;discharge_to_concept_name&quot;</span><span class="p">,</span> <span class="s2">&quot;died&quot;</span><span class="p">),</span>
-    <span class="p">],</span>
-<span class="p">)</span>
+<span class="n">visits_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;discharge_to_concept_name&quot;</span><span class="p">,</span> <span class="s2">&quot;died&quot;</span><span class="p">)</span>
 <span class="n">visits</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">get_interface</span><span class="p">(</span><span class="n">visits_concept_mapped</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">visits_ops</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">visits</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
@@ -740,8 +733,8 @@ Name: visit_start_date, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-08-30 21:28:28,041 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-08-30 21:28:28,042 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.075008 s
+2023-09-07 13:02:45,638 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-09-07 13:02:45,639 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.074053 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -754,16 +747,12 @@ Name: visit_start_date, dtype: int64
 </div>
 </section>
 <section id="Example-2.-Get-all-measurements-for-female-patient-visits-with-sepsis-diagnoses,-that-ended-in-a-mortality-outcome.">
-<h2>Example 2. Get all measurements for female patient visits with <code class="docutils literal notranslate"><span class="pre">sepsis</span></code> diagnoses, that ended in a mortality outcome.<a class="headerlink" href="#Example-2.-Get-all-measurements-for-female-patient-visits-with-sepsis-diagnoses,-that-ended-in-a-mortality-outcome." title="Permalink to this headline"></a></h2>
+<h2>Example 2. Get all measurements for female patient visits with <code class="docutils literal notranslate"><span class="pre">sepsis</span></code> diagnoses, that ended in a mortality outcome.<a class="headerlink" href="#Example-2.-Get-all-measurements-for-female-patient-visits-with-sepsis-diagnoses,-that-ended-in-a-mortality-outcome." title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">persons_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;gender_concept_name&quot;</span><span class="p">,</span> <span class="s2">&quot;FEMALE&quot;</span><span class="p">),</span>
-    <span class="p">],</span>
-<span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">persons_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;gender_concept_name&quot;</span><span class="p">,</span> <span class="s2">&quot;FEMALE&quot;</span><span class="p">)</span>
 <span class="n">cohort</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">person</span><span class="p">(</span><span class="n">ops</span><span class="o">=</span><span class="n">persons_ops</span><span class="p">)</span>
 <span class="n">cohort</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">visit_occurrence</span><span class="p">(</span><span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">cohort</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;person_id&quot;</span><span class="p">))</span>
 <span class="n">cohort</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">omop</span><span class="o">.</span><span class="n">condition_occurrence</span><span class="p">(</span>
@@ -781,10 +770,8 @@ Name: visit_start_date, dtype: int64
     <span class="p">],</span>
 <span class="p">)</span>
 <span class="n">sepsis_died_filter</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;discharge_to_concept_name&quot;</span><span class="p">,</span> <span class="s2">&quot;died&quot;</span><span class="p">),</span>
-        <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;condition_concept_name&quot;</span><span class="p">,</span> <span class="s2">&quot;sepsis&quot;</span><span class="p">),</span>
-    <span class="p">],</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;discharge_to_concept_name&quot;</span><span class="p">,</span> <span class="s2">&quot;died&quot;</span><span class="p">),</span>
+    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;condition_concept_name&quot;</span><span class="p">,</span> <span class="s2">&quot;sepsis&quot;</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="n">cohort</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">get_interface</span><span class="p">(</span><span class="n">cohort_query</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">sepsis_died_filter</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cohort</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
@@ -796,8 +783,8 @@ Name: visit_start_date, dtype: int64
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-08-30 21:29:52,025 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-08-30 21:29:52,027 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 83.253554 s
+2023-09-07 13:04:03,926 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-09-07 13:04:03,927 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 77.647128 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -822,28 +809,8 @@ Name: visit_start_date, dtype: int64
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Respiratory rate                                                         51
-No matching concept                                                      22
-Glasgow coma score motor                                                  8
-Trimethoprim+Sulfamethoxazole [Susceptibility] by Disk diffusion (KB)     1
-Nitrofurantoin [Susceptibility] by Disk diffusion (KB)                    1
-Bacteria identified in Urine by Culture                                   1
-Bacteria identified in Blood product unit.autologous by Culture           1
-Piperacillin [Susceptibility] by Disk diffusion (KB)                      1
-Ampicillin+Sulbactam [Susceptibility] by Disk diffusion (KB)              1
-ceFAZolin [Susceptibility] by Disk diffusion (KB)                         1
-Cefuroxime Parenteral [Susceptibility] by Disk diffusion (KB)             1
-Meropenem [Susceptibility] by Disk diffusion (KB)                         1
-Ampicillin [Susceptibility] by Disk diffusion (KB)                        1
-Imipenem [Susceptibility] by Disk diffusion (KB)                          1
-Cefepime [Susceptibility] by Disk diffusion (KB)                          1
-Gentamicin [Susceptibility] by Disk diffusion (KB)                        1
-Tobramycin [Susceptibility] by Disk diffusion (KB)                        1
-levoFLOXacin [Susceptibility] by Disk diffusion (KB)                      1
-cefTAZidime [Susceptibility] by Disk diffusion (KB)                       1
-cefTRIAXone [Susceptibility] by Disk diffusion (KB)                       1
-Ciprofloxacin [Susceptibility] by Disk diffusion (KB)                     1
-Piperacillin+Tazobactam [Susceptibility] by Disk diffusion (KB)           1
+Body weight            51
+No matching concept    49
 Name: measurement_concept_name, dtype: int64
 </pre></div></div>
 </div>

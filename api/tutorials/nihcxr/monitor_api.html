@@ -5,26 +5,27 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NIHCXR Clinical Drift Experiments Tutorial &mdash; cyclops  documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/cyclops.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/cyclops.css?v=fc0e58c9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/clipboard.min.js"></script>
-        <script src="../../_static/copybutton.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=ccdb6887"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -109,7 +110,7 @@
 
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -442,9 +443,9 @@ div.rendered_html tbody tr:hover {
 }
 </style>
 <section id="NIHCXR-Clinical-Drift-Experiments-Tutorial">
-<h1>NIHCXR Clinical Drift Experiments Tutorial<a class="headerlink" href="#NIHCXR-Clinical-Drift-Experiments-Tutorial" title="Permalink to this headline"></a></h1>
+<h1>NIHCXR Clinical Drift Experiments Tutorial<a class="headerlink" href="#NIHCXR-Clinical-Drift-Experiments-Tutorial" title="Link to this heading"></a></h1>
 <section id="Import-Libraries-and-Load-NIHCXR-Dataset">
-<h2>Import Libraries and Load NIHCXR Dataset<a class="headerlink" href="#Import-Libraries-and-Load-NIHCXR-Dataset" title="Permalink to this headline"></a></h2>
+<h2>Import Libraries and Load NIHCXR Dataset<a class="headerlink" href="#Import-Libraries-and-Load-NIHCXR-Dataset" title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -453,7 +454,8 @@ div.rendered_html tbody tr:hover {
 
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
-<span class="kn">from</span> <span class="nn">monai.transforms</span> <span class="kn">import</span> <span class="n">AddChanneld</span><span class="p">,</span> <span class="n">Compose</span><span class="p">,</span> <span class="n">Lambdad</span><span class="p">,</span> <span class="n">Resized</span><span class="p">,</span> <span class="n">ToDeviced</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">monai.transforms</span> <span class="kn">import</span> <span class="n">Compose</span><span class="p">,</span> <span class="n">Lambdad</span><span class="p">,</span> <span class="n">Resized</span><span class="p">,</span> <span class="n">ToDeviced</span>
 <span class="kn">from</span> <span class="nn">torchxrayvision.models</span> <span class="kn">import</span> <span class="n">DenseNet</span>
 
 <span class="kn">from</span> <span class="nn">cyclops.data.loader</span> <span class="kn">import</span> <span class="n">load_nihcxr</span>
@@ -475,13 +477,13 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-/home/amritk/.cache/pypoetry/virtualenvs/pycyclops-mhx6UJW0-py3.9/lib/python3.9/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+/home/amritk/.cache/pypoetry/virtualenvs/pycyclops-wIzUAwxh-py3.9/lib/python3.9/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
   from .autonotebook import tqdm as notebook_tqdm
 </pre></div></div>
 </div>
 </section>
 <section id="Example-1.-Generate-Source/Target-Dataset-for-Experiments-(1-2)">
-<h2>Example 1. Generate Source/Target Dataset for Experiments (1-2)<a class="headerlink" href="#Example-1.-Generate-Source/Target-Dataset-for-Experiments-(1-2)" title="Permalink to this headline"></a></h2>
+<h2>Example 1. Generate Source/Target Dataset for Experiments (1-2)<a class="headerlink" href="#Example-1.-Generate-Source/Target-Dataset-for-Experiments-(1-2)" title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -493,15 +495,15 @@ div.rendered_html tbody tr:hover {
 
 <span class="n">transforms</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">(</span>
     <span class="p">[</span>
-        <span class="n">AddChanneld</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">,),</span> <span class="n">allow_missing_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
         <span class="n">Resized</span><span class="p">(</span>
-            <span class="n">keys</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">,),</span> <span class="n">spatial_size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">),</span> <span class="n">allow_missing_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">keys</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">,),</span> <span class="n">spatial_size</span><span class="o">=</span><span class="p">(</span><span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">),</span> <span class="n">allow_missing_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">Lambdad</span><span class="p">(</span>
             <span class="n">keys</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">,),</span>
             <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="mf">255.0</span><span class="p">))</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span>
             <span class="n">allow_missing_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">),</span>
+        <span class="n">Lambdad</span><span class="p">((</span><span class="s2">&quot;features&quot;</span><span class="p">,),</span> <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:],</span> <span class="n">allow_missing_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
         <span class="n">ToDeviced</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">,),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">allow_missing_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
     <span class="p">],</span>
 <span class="p">)</span>
@@ -524,13 +526,13 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:00&lt;00:00, 120393.27 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:00&lt;00:00, 126433.30 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:00&lt;00:00, 116732.20 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:00&lt;00:00, 120408.96 examples/s]
 </pre></div></div>
 </div>
 </section>
 <section id="Example-2.-Sensitivity-test-experiment-with-3-dimensionality-reduction-techniques">
-<h2>Example 2. Sensitivity test experiment with 3 dimensionality reduction techniques<a class="headerlink" href="#Example-2.-Sensitivity-test-experiment-with-3-dimensionality-reduction-techniques" title="Permalink to this headline"></a></h2>
+<h2>Example 2. Sensitivity test experiment with 3 dimensionality reduction techniques<a class="headerlink" href="#Example-2.-Sensitivity-test-experiment-with-3-dimensionality-reduction-techniques" title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
@@ -567,18 +569,18 @@ Filter (num_proc=6): 100%|██████████| 112120/112120 [00:00&l
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.40 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 14.65 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 16.92 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.58 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 21.44 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.55 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 16.09 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.37 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 24.24 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.83 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.21 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.46 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 19.72 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.79 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 15.79 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.07 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 21.64 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 14.17 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 16.24 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 21.60 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.26 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.05 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 16.96 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.05 examples/s]
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -590,7 +592,7 @@ Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.46 examples/
 </div>
 </section>
 <section id="Example-3.-Sensitivity-test-experiment-with-models-trained-on-different-datasets">
-<h2>Example 3. Sensitivity test experiment with models trained on different datasets<a class="headerlink" href="#Example-3.-Sensitivity-test-experiment-with-models-trained-on-different-datasets" title="Permalink to this headline"></a></h2>
+<h2>Example 3. Sensitivity test experiment with models trained on different datasets<a class="headerlink" href="#Example-3.-Sensitivity-test-experiment-with-models-trained-on-different-datasets" title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
@@ -623,18 +625,18 @@ Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.46 examples/
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 24.38 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.35 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.31 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.54 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.33 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.36 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.59 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.99 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.90 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.18 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.44 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 21.93 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.49 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.50 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 16.93 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.16 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.49 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.13 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.21 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.19 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.11 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.21 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.15 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.67 examples/s]
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -646,7 +648,7 @@ Map: 100%|██████████| 50/50 [00:02&lt;00:00, 21.93 examples/
 </div>
 </section>
 <section id="Example-4.-Sensitivity-test-experiment-with-different-clinical-shifts">
-<h2>Example 4. Sensitivity test experiment with different clinical shifts<a class="headerlink" href="#Example-4.-Sensitivity-test-experiment-with-different-clinical-shifts" title="Permalink to this headline"></a></h2>
+<h2>Example 4. Sensitivity test experiment with different clinical shifts<a class="headerlink" href="#Example-4.-Sensitivity-test-experiment-with-different-clinical-shifts" title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
@@ -701,30 +703,30 @@ Map: 100%|██████████| 50/50 [00:02&lt;00:00, 21.93 examples/
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 87508.47 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 83666.94 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.27 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 83635.67 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 86635.86 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.40 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.14 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 16.69 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.10 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 84271.65 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 80299.61 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.14 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.02 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 16.92 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.25 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 85788.75 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 75680.10 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.23 examples/s]
 Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.26 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.25 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.48 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 87060.37 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 89500.40 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.04 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.62 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.66 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.62 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 87874.05 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 90572.81 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.88 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.42 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 15.77 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.52 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 91248.74 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 87739.50 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 24.01 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.56 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.38 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.69 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.03 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.67 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 83200.35 examples/s]
+Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 77737.03 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.51 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.95 examples/s]
+Map: 100%|██████████| 25/25 [00:01&lt;00:00, 16.90 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.98 examples/s]
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -736,7 +738,7 @@ Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.69 examples/
 </div>
 </section>
 <section id="Example-5.-Rolling-window-experiment-with-synthetic-timestamps-using-biweekly-window">
-<h2>Example 5. Rolling window experiment with synthetic timestamps using biweekly window<a class="headerlink" href="#Example-5.-Rolling-window-experiment-with-synthetic-timestamps-using-biweekly-window" title="Permalink to this headline"></a></h2>
+<h2>Example 5. Rolling window experiment with synthetic timestamps using biweekly window<a class="headerlink" href="#Example-5.-Rolling-window-experiment-with-synthetic-timestamps-using-biweekly-window" title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
@@ -762,21 +764,21 @@ Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.69 examples/
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 24.01 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.32 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.80 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.29 examples/s]
+Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.44 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.40 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 12.82 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.78 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.51 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.48 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.86 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.94 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.98 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.84 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.12 examples/s]
 Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.26 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.24 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.16 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.55 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.81 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.49 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.35 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.13 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.54 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.54 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.71 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.18 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.09 examples/s]
+Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.12 examples/s]
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
