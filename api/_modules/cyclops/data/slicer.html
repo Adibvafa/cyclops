@@ -227,6 +227,8 @@
 <span class="sd">          the value is not null. Can be used on its own. Defaults to False.</span>
 <span class="sd">    validate : bool, default=True</span>
 <span class="sd">        Whether to validate the column names in the slice specifications.</span>
+<span class="sd">    include_overall : bool, default=True</span>
+<span class="sd">        Whether to include an `overall` slice that selects all examples.</span>
 <span class="sd">    column_names : List[str], optional, default=None</span>
 <span class="sd">        List of column names in the dataset. If provided and `validate` is True, it is</span>
 <span class="sd">        used to validate the column names in the slice specifications.</span>
@@ -236,6 +238,8 @@
 <span class="sd">    ----------</span>
 <span class="sd">    spec_list : List[Union[Dict[str, Any], List[Dict[str, Any]]]]</span>
 <span class="sd">        List of slice specifications.</span>
+<span class="sd">    include_overall : bool</span>
+<span class="sd">        Whether to include an `overall` slice that selects all examples.</span>
 <span class="sd">    validate : bool</span>
 <span class="sd">        Whether to validate the column names in the slice specifications.</span>
 <span class="sd">    column_names : List[str]</span>
@@ -291,6 +295,7 @@
         <span class="n">compare</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">include_overall</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">column_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="n">_registry</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
@@ -306,7 +311,8 @@
         <span class="k">for</span> <span class="n">slice_spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec_list</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_parse_and_register_slice_specs</span><span class="p">(</span><span class="n">slice_spec</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">overall</span>  <span class="c1"># always add overall slice function</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_overall</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_registry</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">overall</span>
 
 <div class="viewcode-block" id="SliceSpec.add_slice_spec">
 <a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.data.slicer.SliceSpec.html#cyclops.data.slicer.SliceSpec.add_slice_spec">[docs]</a>

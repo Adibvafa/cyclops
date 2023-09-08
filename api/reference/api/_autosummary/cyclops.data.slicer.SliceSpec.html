@@ -196,7 +196,7 @@
 <h1>cyclops.data.slicer.SliceSpec<a class="headerlink" href="#cyclops-data-slicer-slicespec" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="cyclops.data.slicer.SliceSpec">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SliceSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec_list=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_names=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/data/slicer.html#SliceSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.data.slicer.SliceSpec" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SliceSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec_list=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_overall=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_names=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/data/slicer.html#SliceSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.data.slicer.SliceSpec" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.9/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Specifications for creating a slices of a dataset.</p>
 <dl class="field-list simple">
@@ -247,6 +247,7 @@ the value is not null. Can be used on its own. Defaults to False.</p></li>
 </ul>
 </p></li>
 <li><p><strong>validate</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default=True</em>) – Whether to validate the column names in the slice specifications.</p></li>
+<li><p><strong>include_overall</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>default=True</em>) – Whether to include an <cite>overall</cite> slice that selects all examples.</p></li>
 <li><p><strong>column_names</strong> (<em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>]</em><em>, </em><em>optional</em><em>, </em><em>default=None</em>) – List of column names in the dataset. If provided and <cite>validate</cite> is True, it is
 used to validate the column names in the slice specifications.</p></li>
 </ul>
@@ -259,6 +260,17 @@ used to validate the column names in the slice specifications.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[<a class="reference internal" href="cyclops.query.ops.Union.html#cyclops.query.ops.Union" title="cyclops.query.ops.Union">Union</a>[Dict[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, Any], List[Dict[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, Any]]]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cyclops.data.slicer.SliceSpec.include_overall">
+<span class="sig-name descname"><span class="pre">include_overall</span></span><a class="headerlink" href="#cyclops.data.slicer.SliceSpec.include_overall" title="Link to this definition"></a></dt>
+<dd><p>Whether to include an <cite>overall</cite> slice that selects all examples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -354,10 +366,13 @@ used to validate the column names in the slice specifications.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.data.slicer.SliceSpec.column_names" title="cyclops.data.slicer.SliceSpec.column_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">column_names</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.data.slicer.SliceSpec.validate" title="cyclops.data.slicer.SliceSpec.validate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.data.slicer.SliceSpec.include_overall" title="cyclops.data.slicer.SliceSpec.include_overall"><code class="xref py py-obj docutils literal notranslate"><span class="pre">include_overall</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.data.slicer.SliceSpec.spec_list" title="cyclops.data.slicer.SliceSpec.spec_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spec_list</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.data.slicer.SliceSpec.validate" title="cyclops.data.slicer.SliceSpec.validate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.data.slicer.SliceSpec.spec_list" title="cyclops.data.slicer.SliceSpec.spec_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spec_list</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
