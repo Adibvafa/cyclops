@@ -452,23 +452,18 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;NIHCXR Clinical Drift Experiments Tutorial.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">monai.transforms</span> <span class="kn">import</span> <span class="n">Compose</span><span class="p">,</span> <span class="n">Lambdad</span><span class="p">,</span> <span class="n">Resized</span><span class="p">,</span> <span class="n">ToDeviced</span>
+<span class="kn">from</span> <span class="nn">monai.transforms</span> <span class="kn">import</span> <span class="n">Compose</span><span class="p">,</span> <span class="n">Lambdad</span><span class="p">,</span> <span class="n">Resized</span>
 <span class="kn">from</span> <span class="nn">torchxrayvision.models</span> <span class="kn">import</span> <span class="n">DenseNet</span>
 
 <span class="kn">from</span> <span class="nn">cyclops.data.loader</span> <span class="kn">import</span> <span class="n">load_nihcxr</span>
 <span class="kn">from</span> <span class="nn">cyclops.data.slicer</span> <span class="kn">import</span> <span class="n">SliceSpec</span>
-<span class="kn">from</span> <span class="nn">cyclops.data.utils</span> <span class="kn">import</span> <span class="n">apply_transforms</span>
 <span class="kn">from</span> <span class="nn">cyclops.monitor</span> <span class="kn">import</span> <span class="n">ClinicalShiftApplicator</span><span class="p">,</span> <span class="n">Detector</span><span class="p">,</span> <span class="n">Reductor</span><span class="p">,</span> <span class="n">TSTester</span>
 <span class="kn">from</span> <span class="nn">cyclops.monitor.plotter</span> <span class="kn">import</span> <span class="n">plot_drift_experiment</span><span class="p">,</span> <span class="n">plot_drift_timeseries</span>
-<span class="kn">from</span> <span class="nn">cyclops.monitor.utils</span> <span class="kn">import</span> <span class="n">get_device</span>
 
 
-<span class="n">device</span> <span class="o">=</span> <span class="n">get_device</span><span class="p">()</span>
-
-<span class="n">nih_ds</span> <span class="o">=</span> <span class="n">load_nihcxr</span><span class="p">(</span><span class="s2">&quot;/mnt/data/clinical_datasets/NIHCXR&quot;</span><span class="p">)</span>
+<span class="n">nih_ds</span> <span class="o">=</span> <span class="n">load_nihcxr</span><span class="p">(</span><span class="s2">&quot;/mnt/data/clinical_datasets/NIHCXR&quot;</span><span class="p">)[</span><span class="s2">&quot;test&quot;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -477,7 +472,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-/home/amritk/.cache/pypoetry/virtualenvs/pycyclops-wIzUAwxh-py3.9/lib/python3.9/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+/home/amritk/.cache/pypoetry/virtualenvs/pycyclops-mhx6UJW0-py3.9/lib/python3.9/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
   from .autonotebook import tqdm as notebook_tqdm
 </pre></div></div>
 </div>
@@ -496,27 +491,15 @@ div.rendered_html tbody tr:hover {
 <span class="n">transforms</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">(</span>
     <span class="p">[</span>
         <span class="n">Resized</span><span class="p">(</span>
-            <span class="n">keys</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">,),</span> <span class="n">spatial_size</span><span class="o">=</span><span class="p">(</span><span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">),</span> <span class="n">allow_missing_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">keys</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">,),</span> <span class="n">spatial_size</span><span class="o">=</span><span class="p">(</span><span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">),</span> <span class="n">allow_missing_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">Lambdad</span><span class="p">(</span>
-            <span class="n">keys</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">,),</span>
+            <span class="n">keys</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">,),</span>
             <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="mf">255.0</span><span class="p">))</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span>
             <span class="n">allow_missing_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">),</span>
-        <span class="n">Lambdad</span><span class="p">((</span><span class="s2">&quot;features&quot;</span><span class="p">,),</span> <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:],</span> <span class="n">allow_missing_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-        <span class="n">ToDeviced</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">,),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">allow_missing_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">Lambdad</span><span class="p">((</span><span class="s2">&quot;image&quot;</span><span class="p">,),</span> <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">x</span><span class="p">),</span>
     <span class="p">],</span>
-<span class="p">)</span>
-
-<span class="n">source_ds</span> <span class="o">=</span> <span class="n">source_ds</span><span class="o">.</span><span class="n">with_transform</span><span class="p">(</span>
-    <span class="n">partial</span><span class="p">(</span><span class="n">apply_transforms</span><span class="p">,</span> <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">),</span>
-    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">],</span>
-    <span class="n">output_all_columns</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">target_ds</span> <span class="o">=</span> <span class="n">target_ds</span><span class="o">.</span><span class="n">with_transform</span><span class="p">(</span>
-    <span class="n">partial</span><span class="p">(</span><span class="n">apply_transforms</span><span class="p">,</span> <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">),</span>
-    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">],</span>
-    <span class="n">output_all_columns</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -526,8 +509,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:00&lt;00:00, 114495.15 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:00&lt;00:00, 118119.58 examples/s]
+Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 63623.27 examples/s]
 </pre></div></div>
 </div>
 </section>
@@ -547,9 +529,9 @@ Filter (num_proc=6): 100%|██████████| 112120/112120 [00:00&l
 
 <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">dr_method</span> <span class="ow">in</span> <span class="n">dr_methods</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
     <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;TXRV-AE&quot;</span><span class="p">:</span>
-        <span class="n">reductor</span> <span class="o">=</span> <span class="n">Reductor</span><span class="p">(</span><span class="n">dr_method</span><span class="o">=</span><span class="n">dr_method</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">reductor</span> <span class="o">=</span> <span class="n">Reductor</span><span class="p">(</span><span class="n">dr_method</span><span class="o">=</span><span class="n">dr_method</span><span class="p">,</span> <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">feature_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">reductor</span> <span class="o">=</span> <span class="n">Reductor</span><span class="p">(</span><span class="n">dr_method</span><span class="o">=</span><span class="n">dr_method</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">reductor</span> <span class="o">=</span> <span class="n">Reductor</span><span class="p">(</span><span class="n">dr_method</span><span class="o">=</span><span class="n">dr_method</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">feature_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">])</span>
     <span class="n">detector</span> <span class="o">=</span> <span class="n">Detector</span><span class="p">(</span>
         <span class="s2">&quot;sensitivity_test&quot;</span><span class="p">,</span>
         <span class="n">reductor</span><span class="o">=</span><span class="n">reductor</span><span class="p">,</span>
@@ -564,30 +546,11 @@ Filter (num_proc=6): 100%|██████████| 112120/112120 [00:00&l
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 20.47 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.61 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 16.68 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.01 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.31 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 14.69 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 16.33 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 21.53 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 21.82 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.86 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.14 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.99 examples/s]
-</pre></div></div>
-</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/tutorials_nihcxr_monitor_api_6_1.png" src="../../_images/tutorials_nihcxr_monitor_api_6_1.png" />
+<img alt="../../_images/tutorials_nihcxr_monitor_api_6_0.png" src="../../_images/tutorials_nihcxr_monitor_api_6_0.png" />
 </div>
 </div>
 </section>
@@ -608,8 +571,7 @@ Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.99 examples/
     <span class="n">detector</span> <span class="o">=</span> <span class="n">Detector</span><span class="p">(</span>
         <span class="s2">&quot;sensitivity_test&quot;</span><span class="p">,</span>
         <span class="n">reductor</span><span class="o">=</span><span class="n">Reductor</span><span class="p">(</span>
-            <span class="n">dr_method</span><span class="o">=</span><span class="s2">&quot;bbse-soft&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">DenseNet</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">model</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
-        <span class="p">),</span>
+            <span class="n">dr_method</span><span class="o">=</span><span class="s2">&quot;bbse-soft&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">DenseNet</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">model</span><span class="p">),</span> <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">feature_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">]),</span>
         <span class="n">tester</span><span class="o">=</span><span class="n">TSTester</span><span class="p">(</span><span class="n">tester_method</span><span class="o">=</span><span class="s2">&quot;ks&quot;</span><span class="p">),</span>
         <span class="n">source_sample_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
         <span class="n">target_sample_size</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span>
@@ -620,30 +582,11 @@ Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.99 examples/
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.57 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.54 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.47 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.90 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.76 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.41 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.41 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 21.20 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 24.11 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.18 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.41 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.46 examples/s]
-</pre></div></div>
-</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/tutorials_nihcxr_monitor_api_8_1.png" src="../../_images/tutorials_nihcxr_monitor_api_8_1.png" />
+<img alt="../../_images/tutorials_nihcxr_monitor_api_8_0.png" src="../../_images/tutorials_nihcxr_monitor_api_8_0.png" />
 </div>
 </div>
 </section>
@@ -674,20 +617,9 @@ Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.46 examples/
     <span class="p">)</span>
     <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span> <span class="o">=</span> <span class="n">shifter</span><span class="o">.</span><span class="n">apply_shift</span><span class="p">(</span><span class="n">nih_ds</span><span class="p">,</span> <span class="n">num_proc</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
 
-    <span class="n">ds_source</span> <span class="o">=</span> <span class="n">ds_source</span><span class="o">.</span><span class="n">with_transform</span><span class="p">(</span>
-        <span class="n">partial</span><span class="p">(</span><span class="n">apply_transforms</span><span class="p">,</span> <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">),</span>
-        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">],</span>
-        <span class="n">output_all_columns</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">ds_target</span> <span class="o">=</span> <span class="n">ds_target</span><span class="o">.</span><span class="n">with_transform</span><span class="p">(</span>
-        <span class="n">partial</span><span class="p">(</span><span class="n">apply_transforms</span><span class="p">,</span> <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">),</span>
-        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">],</span>
-        <span class="n">output_all_columns</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="p">)</span>
-
     <span class="n">detector</span> <span class="o">=</span> <span class="n">Detector</span><span class="p">(</span>
         <span class="s2">&quot;sensitivity_test&quot;</span><span class="p">,</span>
-        <span class="n">reductor</span><span class="o">=</span><span class="n">Reductor</span><span class="p">(</span><span class="n">dr_method</span><span class="o">=</span><span class="s2">&quot;bbse-soft&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">),</span>
+        <span class="n">reductor</span><span class="o">=</span><span class="n">Reductor</span><span class="p">(</span><span class="n">dr_method</span><span class="o">=</span><span class="s2">&quot;bbse-soft&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">feature_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">]),</span>
         <span class="n">tester</span><span class="o">=</span><span class="n">TSTester</span><span class="p">(</span><span class="n">tester_method</span><span class="o">=</span><span class="s2">&quot;ks&quot;</span><span class="p">),</span>
         <span class="n">source_sample_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
         <span class="n">target_sample_size</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span>
@@ -703,30 +635,14 @@ Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.46 examples/
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 94122.84 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 85840.32 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.56 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.83 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.26 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.73 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 94175.88 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 95413.42 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.56 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.31 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 15.48 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.02 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 94752.98 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 92103.54 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.92 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.87 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.14 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.06 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 92627.43 examples/s]
-Filter (num_proc=6): 100%|██████████| 112120/112120 [00:01&lt;00:00, 91027.43 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.51 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.55 examples/s]
-Map: 100%|██████████| 25/25 [00:01&lt;00:00, 17.26 examples/s]
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.88 examples/s]
+Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 44042.47 examples/s]
+Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 46454.80 examples/s]
+Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 43806.46 examples/s]
+Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 46179.62 examples/s]
+Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 45050.76 examples/s]
+Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 45128.44 examples/s]
+Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 44466.53 examples/s]
+Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 45833.15 examples/s]
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -746,7 +662,7 @@ Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.88 examples/
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">DenseNet</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="s2">&quot;densenet121-res224-all&quot;</span><span class="p">)</span>
 <span class="n">detector</span> <span class="o">=</span> <span class="n">Detector</span><span class="p">(</span>
     <span class="s2">&quot;rolling_window_drift&quot;</span><span class="p">,</span>
-    <span class="n">reductor</span><span class="o">=</span><span class="n">Reductor</span><span class="p">(</span><span class="n">dr_method</span><span class="o">=</span><span class="s2">&quot;bbse-soft&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">),</span>
+    <span class="n">reductor</span><span class="o">=</span><span class="n">Reductor</span><span class="p">(</span><span class="n">dr_method</span><span class="o">=</span><span class="s2">&quot;bbse-soft&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">feature_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">]),</span>
     <span class="n">tester</span><span class="o">=</span><span class="n">TSTester</span><span class="p">(</span><span class="n">tester_method</span><span class="o">=</span><span class="s2">&quot;ks&quot;</span><span class="p">),</span>
     <span class="n">source_sample_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
     <span class="n">target_sample_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
@@ -759,33 +675,11 @@ Map: 100%|██████████| 50/50 [00:02&lt;00:00, 22.88 examples/
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-Map: 100%|██████████| 50/50 [00:02&lt;00:00, 23.81 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.72 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.13 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.15 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.79 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.91 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.45 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.91 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.38 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.47 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 15.84 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.35 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.19 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.19 examples/s]
-Map: 100%|██████████| 10/10 [00:00&lt;00:00, 16.13 examples/s]
-</pre></div></div>
-</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/tutorials_nihcxr_monitor_api_12_1.png" src="../../_images/tutorials_nihcxr_monitor_api_12_1.png" />
+<img alt="../../_images/tutorials_nihcxr_monitor_api_12_0.png" src="../../_images/tutorials_nihcxr_monitor_api_12_0.png" />
 </div>
 </div>
 </section>
