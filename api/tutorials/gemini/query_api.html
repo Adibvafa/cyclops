@@ -519,7 +519,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
     <span class="n">qo</span><span class="o">.</span><span class="n">OrderBy</span><span class="p">(</span>
-        <span class="p">[</span><span class="s2">&quot;patient_id_hashed&quot;</span><span class="p">,</span> <span class="s2">&quot;discharge_date_time&quot;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;patient_id_hashed&quot;</span><span class="p">,</span> <span class="s2">&quot;discharge_date_time&quot;</span><span class="p">],</span>
+        <span class="n">ascending</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
     <span class="p">),</span>
     <span class="n">qo</span><span class="o">.</span><span class="n">Distinct</span><span class="p">(</span><span class="s2">&quot;patient_id_hashed&quot;</span><span class="p">),</span>
 <span class="p">)</span>
@@ -627,7 +628,8 @@ div.rendered_html tbody tr:hover {
     <span class="n">qo</span><span class="o">.</span><span class="n">GroupByAggregate</span><span class="p">(</span><span class="s2">&quot;hospital_id&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;hospital_id&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">)}),</span>
 <span class="p">)</span>
 <span class="n">lab_qi</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">public</span><span class="o">.</span><span class="n">lab</span><span class="p">(</span>
-    <span class="n">ops</span><span class="o">=</span><span class="n">lab_ops</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">encounters_qi</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;genc_id&quot;</span><span class="p">),</span>
+    <span class="n">ops</span><span class="o">=</span><span class="n">lab_ops</span><span class="p">,</span>
+    <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">encounters_qi</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;genc_id&quot;</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="n">sodium_tests</span> <span class="o">=</span> <span class="n">lab_qi</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sodium_tests</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>

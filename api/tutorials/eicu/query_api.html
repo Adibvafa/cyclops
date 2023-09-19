@@ -474,7 +474,7 @@ div.rendered_html tbody tr:hover {
     <span class="n">password</span><span class="o">=</span><span class="s2">&quot;pwd&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="c1"># List all tables.</span>
-<span class="n">querier</span><span class="o">.</span><span class="n">list_tables</span><span class="p">()</span>
+<span class="n">querier</span><span class="o">.</span><span class="n">list_tables</span><span class="p">(</span><span class="s2">&quot;eicu_crd&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -483,7 +483,9 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-09-12 10:31:49,505 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
+/home/amritk/.cache/pypoetry/virtualenvs/pycyclops-wIzUAwxh-py3.9/lib/python3.9/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+  from .autonotebook import tqdm as notebook_tqdm
+2023-09-19 11:53:21,433 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Database setup, ready to run queries!
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -522,14 +524,7 @@ div.rendered_html tbody tr:hover {
  &#39;eicu_crd.respiratorycharting&#39;,
  &#39;eicu_crd.treatment&#39;,
  &#39;eicu_crd.vitalaperiodic&#39;,
- &#39;eicu_crd.vitalperiodic&#39;,
- &#39;information_schema.sql_packages&#39;,
- &#39;information_schema.sql_features&#39;,
- &#39;information_schema.sql_implementation_info&#39;,
- &#39;information_schema.sql_parts&#39;,
- &#39;information_schema.sql_languages&#39;,
- &#39;information_schema.sql_sizing&#39;,
- &#39;information_schema.sql_sizing_profiles&#39;]
+ &#39;eicu_crd.vitalperiodic&#39;]
 </pre></div></div>
 </div>
 </section>
@@ -543,7 +538,8 @@ div.rendered_html tbody tr:hover {
     <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;hospitaldischargeyear&quot;</span><span class="p">,</span> <span class="mi">2014</span><span class="p">),</span>
     <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;gender&quot;</span><span class="p">,</span> <span class="s2">&quot;Female&quot;</span><span class="p">),</span>
 <span class="p">)</span>
-<span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">eicu_crd</span><span class="o">.</span><span class="n">patient</span><span class="p">(</span><span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">eicu_crd</span><span class="o">.</span><span class="n">patient</span><span class="p">()</span>
+<span class="n">patients</span> <span class="o">=</span> <span class="n">patients</span><span class="o">.</span><span class="n">ops</span><span class="p">(</span><span class="n">ops</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">patients</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -553,8 +549,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-09-12 10:31:50,300 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-09-12 10:31:50,301 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.046299 s
+2023-09-19 11:53:22,326 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-09-19 11:53:22,328 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.047050 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -572,17 +568,15 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;hospitaldischargeyear&quot;</span><span class="p">,</span> <span class="mi">2015</span><span class="p">)</span>
-<span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">eicu_crd</span><span class="o">.</span><span class="n">patient</span><span class="p">(</span><span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span>
-<span class="n">diagnosis_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;diagnosisstring&quot;</span><span class="p">,</span> <span class="s2">&quot;schizophrenia&quot;</span><span class="p">)</span>
-<span class="n">diagnoses</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">eicu_crd</span><span class="o">.</span><span class="n">diagnosis</span><span class="p">(</span>
-    <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span>
-        <span class="n">join_table</span><span class="o">=</span><span class="n">patients</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
-        <span class="n">on</span><span class="o">=</span><span class="s2">&quot;patientunitstayid&quot;</span><span class="p">,</span>
-    <span class="p">),</span>
-    <span class="n">ops</span><span class="o">=</span><span class="n">diagnosis_ops</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">diagnoses</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">eicu_crd</span><span class="o">.</span><span class="n">patient</span><span class="p">()</span>
+<span class="n">diagnoses</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">eicu_crd</span><span class="o">.</span><span class="n">diagnosis</span><span class="p">()</span>
+<span class="n">diagnoses</span> <span class="o">=</span> <span class="n">diagnoses</span><span class="o">.</span><span class="n">ops</span><span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;diagnosisstring&quot;</span><span class="p">,</span> <span class="s2">&quot;schizophrenia&quot;</span><span class="p">))</span>
+<span class="n">patient_diagnoses</span> <span class="o">=</span> <span class="n">patients</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+    <span class="n">join_table</span><span class="o">=</span><span class="n">diagnoses</span><span class="p">,</span>
+    <span class="n">on</span><span class="o">=</span><span class="s2">&quot;patientunitstayid&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">patient_diagnoses</span> <span class="o">=</span> <span class="n">patient_diagnoses</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">patient_diagnoses</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -591,8 +585,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-09-12 10:31:50,483 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-09-12 10:31:50,485 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.112920 s
+2023-09-19 11:53:22,445 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-09-19 11:53:22,447 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.080990 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -611,22 +605,20 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hospitals</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">eicu_crd</span><span class="o">.</span><span class="n">hospital</span><span class="p">()</span>
-<span class="n">ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
-    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;hospitaldischargeyear&quot;</span><span class="p">,</span> <span class="mi">2015</span><span class="p">),</span>
-    <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;teachingstatus&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+<span class="n">hospitals</span> <span class="o">=</span> <span class="n">hospitals</span><span class="o">.</span><span class="n">ops</span><span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;teachingstatus&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+<span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">eicu_crd</span><span class="o">.</span><span class="n">patient</span><span class="p">()</span>
+<span class="n">patients</span> <span class="o">=</span> <span class="n">patients</span><span class="o">.</span><span class="n">ops</span><span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;hospitaldischargeyear&quot;</span><span class="p">,</span> <span class="mi">2015</span><span class="p">))</span>
+<span class="n">patients</span> <span class="o">=</span> <span class="n">patients</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+    <span class="n">join_table</span><span class="o">=</span><span class="n">hospitals</span><span class="p">,</span>
+    <span class="n">on</span><span class="o">=</span><span class="s2">&quot;hospitalid&quot;</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">eicu_crd</span><span class="o">.</span><span class="n">patient</span><span class="p">(</span>
-    <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">hospitals</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;hospitalid&quot;</span><span class="p">),</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">lab_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;labname&quot;</span><span class="p">,</span> <span class="s2">&quot;potassium&quot;</span><span class="p">)</span>
-<span class="n">labs</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">eicu_crd</span><span class="o">.</span><span class="n">lab</span><span class="p">(</span>
-    <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span>
-        <span class="n">join_table</span><span class="o">=</span><span class="n">patients</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
-        <span class="n">on</span><span class="o">=</span><span class="s2">&quot;patientunitstayid&quot;</span><span class="p">,</span>
-    <span class="p">),</span>
-    <span class="n">ops</span><span class="o">=</span><span class="n">lab_ops</span><span class="p">,</span>
+<span class="n">labs</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">eicu_crd</span><span class="o">.</span><span class="n">lab</span><span class="p">()</span>
+<span class="n">labs</span> <span class="o">=</span> <span class="n">labs</span><span class="o">.</span><span class="n">ops</span><span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;labname&quot;</span><span class="p">,</span> <span class="s2">&quot;potassium&quot;</span><span class="p">))</span>
+<span class="n">patient_labs</span> <span class="o">=</span> <span class="n">patients</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+    <span class="n">join_table</span><span class="o">=</span><span class="n">labs</span><span class="p">,</span>
+    <span class="n">on</span><span class="o">=</span><span class="s2">&quot;patientunitstayid&quot;</span><span class="p">,</span>
 <span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">labs</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">patient_labs</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -635,8 +627,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-09-12 10:31:50,680 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-09-12 10:31:50,681 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.034447 s
+2023-09-19 11:53:22,524 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-09-19 11:53:22,526 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.044216 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -658,13 +650,15 @@ div.rendered_html tbody tr:hover {
     <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;hospitaldischargeyear&quot;</span><span class="p">,</span> <span class="mi">2014</span><span class="p">),</span>
     <span class="n">qo</span><span class="o">.</span><span class="n">ConditionEquals</span><span class="p">(</span><span class="s2">&quot;gender&quot;</span><span class="p">,</span> <span class="s2">&quot;Female&quot;</span><span class="p">),</span>
 <span class="p">)</span>
-<span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">eicu_crd</span><span class="o">.</span><span class="n">patient</span><span class="p">(</span><span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span>
-<span class="n">medications_ops</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;drugname&quot;</span><span class="p">,</span> <span class="s2">&quot;glucose&quot;</span><span class="p">)</span>
-<span class="n">medications</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">eicu_crd</span><span class="o">.</span><span class="n">medication</span><span class="p">(</span>
-    <span class="n">join</span><span class="o">=</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">(</span><span class="n">join_table</span><span class="o">=</span><span class="n">patients</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;patientunitstayid&quot;</span><span class="p">),</span>
-    <span class="n">ops</span><span class="o">=</span><span class="n">medications_ops</span><span class="p">,</span>
+<span class="n">patients</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">eicu_crd</span><span class="o">.</span><span class="n">patient</span><span class="p">()</span>
+<span class="n">patients</span> <span class="o">=</span> <span class="n">patients</span><span class="o">.</span><span class="n">ops</span><span class="p">(</span><span class="n">ops</span><span class="p">)</span>
+<span class="n">medications</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">eicu_crd</span><span class="o">.</span><span class="n">medication</span><span class="p">()</span>
+<span class="n">medications</span> <span class="o">=</span> <span class="n">medications</span><span class="o">.</span><span class="n">ops</span><span class="p">(</span><span class="n">qo</span><span class="o">.</span><span class="n">ConditionSubstring</span><span class="p">(</span><span class="s2">&quot;drugname&quot;</span><span class="p">,</span> <span class="s2">&quot;glucose&quot;</span><span class="p">))</span>
+<span class="n">patient_medications</span> <span class="o">=</span> <span class="n">patients</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+    <span class="n">join_table</span><span class="o">=</span><span class="n">medications</span><span class="p">,</span>
+    <span class="n">on</span><span class="o">=</span><span class="s2">&quot;patientunitstayid&quot;</span><span class="p">,</span>
 <span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">medications</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">patient_medications</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows extracted!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -673,8 +667,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-09-12 10:31:50,919 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
-2023-09-12 10:31:50,920 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.163350 s
+2023-09-19 11:53:22,750 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.query.orm - Query returned successfully!
+2023-09-19 11:53:22,751 <span class="ansi-white-intense-fg ansi-bold">INFO</span> cyclops.utils.profile - Finished executing function run_query in 0.182703 s
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">

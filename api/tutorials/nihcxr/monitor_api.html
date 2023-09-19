@@ -472,7 +472,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-/home/amritk/.cache/pypoetry/virtualenvs/pycyclops-mhx6UJW0-py3.9/lib/python3.9/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+/home/amritk/.cache/pypoetry/virtualenvs/pycyclops-wIzUAwxh-py3.9/lib/python3.9/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
   from .autonotebook import tqdm as notebook_tqdm
 </pre></div></div>
 </div>
@@ -484,21 +484,29 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">shifter</span> <span class="o">=</span> <span class="n">ClinicalShiftApplicator</span><span class="p">(</span>
-    <span class="s2">&quot;sex&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="n">shift_id</span><span class="o">=</span><span class="s2">&quot;Patient Gender&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sex&quot;</span><span class="p">,</span>
+    <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">target</span><span class="o">=</span><span class="s2">&quot;F&quot;</span><span class="p">,</span>
+    <span class="n">shift_id</span><span class="o">=</span><span class="s2">&quot;Patient Gender&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">source_ds</span><span class="p">,</span> <span class="n">target_ds</span> <span class="o">=</span> <span class="n">shifter</span><span class="o">.</span><span class="n">apply_shift</span><span class="p">(</span><span class="n">nih_ds</span><span class="p">,</span> <span class="n">num_proc</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
 
 <span class="n">transforms</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">(</span>
     <span class="p">[</span>
         <span class="n">Resized</span><span class="p">(</span>
-            <span class="n">keys</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">,),</span> <span class="n">spatial_size</span><span class="o">=</span><span class="p">(</span><span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">),</span> <span class="n">allow_missing_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">keys</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">,),</span>
+            <span class="n">spatial_size</span><span class="o">=</span><span class="p">(</span><span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">),</span>
+            <span class="n">allow_missing_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">Lambdad</span><span class="p">(</span>
             <span class="n">keys</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">,),</span>
             <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="mf">255.0</span><span class="p">))</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span>
             <span class="n">allow_missing_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">),</span>
-        <span class="n">Lambdad</span><span class="p">((</span><span class="s2">&quot;image&quot;</span><span class="p">,),</span> <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">x</span><span class="p">),</span>
+        <span class="n">Lambdad</span><span class="p">(</span>
+            <span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">,),</span>
+            <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">x</span><span class="p">,</span>
+        <span class="p">),</span>
     <span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
@@ -509,7 +517,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 65334.75 examples/s]
+Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 73402.36 examples/s]
 </pre></div></div>
 </div>
 </section>
@@ -529,9 +537,18 @@ Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;
 
 <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">dr_method</span> <span class="ow">in</span> <span class="n">dr_methods</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
     <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;TXRV-AE&quot;</span><span class="p">:</span>
-        <span class="n">reductor</span> <span class="o">=</span> <span class="n">Reductor</span><span class="p">(</span><span class="n">dr_method</span><span class="o">=</span><span class="n">dr_method</span><span class="p">,</span> <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">feature_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">])</span>
+        <span class="n">reductor</span> <span class="o">=</span> <span class="n">Reductor</span><span class="p">(</span>
+            <span class="n">dr_method</span><span class="o">=</span><span class="n">dr_method</span><span class="p">,</span>
+            <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span>
+            <span class="n">feature_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">reductor</span> <span class="o">=</span> <span class="n">Reductor</span><span class="p">(</span><span class="n">dr_method</span><span class="o">=</span><span class="n">dr_method</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">feature_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">])</span>
+        <span class="n">reductor</span> <span class="o">=</span> <span class="n">Reductor</span><span class="p">(</span>
+            <span class="n">dr_method</span><span class="o">=</span><span class="n">dr_method</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span>
+            <span class="n">feature_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
     <span class="n">detector</span> <span class="o">=</span> <span class="n">Detector</span><span class="p">(</span>
         <span class="s2">&quot;sensitivity_test&quot;</span><span class="p">,</span>
         <span class="n">reductor</span><span class="o">=</span><span class="n">reductor</span><span class="p">,</span>
@@ -571,7 +588,11 @@ Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;
     <span class="n">detector</span> <span class="o">=</span> <span class="n">Detector</span><span class="p">(</span>
         <span class="s2">&quot;sensitivity_test&quot;</span><span class="p">,</span>
         <span class="n">reductor</span><span class="o">=</span><span class="n">Reductor</span><span class="p">(</span>
-            <span class="n">dr_method</span><span class="o">=</span><span class="s2">&quot;bbse-soft&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">DenseNet</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">model</span><span class="p">),</span> <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">feature_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">]),</span>
+            <span class="n">dr_method</span><span class="o">=</span><span class="s2">&quot;bbse-soft&quot;</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">DenseNet</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">model</span><span class="p">),</span>
+            <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span>
+            <span class="n">feature_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
         <span class="n">tester</span><span class="o">=</span><span class="n">TSTester</span><span class="p">(</span><span class="n">tester_method</span><span class="o">=</span><span class="s2">&quot;ks&quot;</span><span class="p">),</span>
         <span class="n">source_sample_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
         <span class="n">target_sample_size</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span>
@@ -613,13 +634,20 @@ Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;
 <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">target_slice</span> <span class="ow">in</span> <span class="n">target_slices</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
     <span class="n">source_slice</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">shifter</span> <span class="o">=</span> <span class="n">ClinicalShiftApplicator</span><span class="p">(</span>
-        <span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source_slice</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target_slice</span><span class="p">,</span>
+        <span class="s2">&quot;custom&quot;</span><span class="p">,</span>
+        <span class="n">source</span><span class="o">=</span><span class="n">source_slice</span><span class="p">,</span>
+        <span class="n">target</span><span class="o">=</span><span class="n">target_slice</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">ds_source</span><span class="p">,</span> <span class="n">ds_target</span> <span class="o">=</span> <span class="n">shifter</span><span class="o">.</span><span class="n">apply_shift</span><span class="p">(</span><span class="n">nih_ds</span><span class="p">,</span> <span class="n">num_proc</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
 
     <span class="n">detector</span> <span class="o">=</span> <span class="n">Detector</span><span class="p">(</span>
         <span class="s2">&quot;sensitivity_test&quot;</span><span class="p">,</span>
-        <span class="n">reductor</span><span class="o">=</span><span class="n">Reductor</span><span class="p">(</span><span class="n">dr_method</span><span class="o">=</span><span class="s2">&quot;bbse-soft&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">feature_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">]),</span>
+        <span class="n">reductor</span><span class="o">=</span><span class="n">Reductor</span><span class="p">(</span>
+            <span class="n">dr_method</span><span class="o">=</span><span class="s2">&quot;bbse-soft&quot;</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span>
+            <span class="n">feature_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
         <span class="n">tester</span><span class="o">=</span><span class="n">TSTester</span><span class="p">(</span><span class="n">tester_method</span><span class="o">=</span><span class="s2">&quot;ks&quot;</span><span class="p">),</span>
         <span class="n">source_sample_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
         <span class="n">target_sample_size</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span>
@@ -635,14 +663,14 @@ Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 52993.29 examples/s]
-Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 51505.21 examples/s]
-Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 48753.86 examples/s]
-Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 49259.58 examples/s]
-Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 48133.38 examples/s]
-Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 49440.85 examples/s]
-Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 49891.26 examples/s]
-Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 42444.44 examples/s]
+Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 52946.51 examples/s]
+Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 45612.79 examples/s]
+Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 44947.65 examples/s]
+Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 51343.47 examples/s]
+Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 43851.37 examples/s]
+Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 48921.93 examples/s]
+Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 48889.29 examples/s]
+Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;00:00, 47420.21 examples/s]
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -662,7 +690,12 @@ Filter (num_proc=6): 100%|██████████| 25596/25596 [00:00&lt;
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">DenseNet</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="s2">&quot;densenet121-res224-all&quot;</span><span class="p">)</span>
 <span class="n">detector</span> <span class="o">=</span> <span class="n">Detector</span><span class="p">(</span>
     <span class="s2">&quot;rolling_window_drift&quot;</span><span class="p">,</span>
-    <span class="n">reductor</span><span class="o">=</span><span class="n">Reductor</span><span class="p">(</span><span class="n">dr_method</span><span class="o">=</span><span class="s2">&quot;bbse-soft&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">feature_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">]),</span>
+    <span class="n">reductor</span><span class="o">=</span><span class="n">Reductor</span><span class="p">(</span>
+        <span class="n">dr_method</span><span class="o">=</span><span class="s2">&quot;bbse-soft&quot;</span><span class="p">,</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+        <span class="n">transforms</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span>
+        <span class="n">feature_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">],</span>
+    <span class="p">),</span>
     <span class="n">tester</span><span class="o">=</span><span class="n">TSTester</span><span class="p">(</span><span class="n">tester_method</span><span class="o">=</span><span class="s2">&quot;ks&quot;</span><span class="p">),</span>
     <span class="n">source_sample_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
     <span class="n">target_sample_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>

@@ -165,15 +165,16 @@
 <span></span><span class="sd">&quot;&quot;&quot;A query interface class to wrap database objects and queries.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">dask.dataframe</span> <span class="k">as</span> <span class="nn">dd</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.sql.elements</span> <span class="kn">import</span> <span class="n">BinaryExpression</span>
 
 <span class="kn">import</span> <span class="nn">cyclops.query.ops</span> <span class="k">as</span> <span class="nn">qo</span>
 <span class="kn">from</span> <span class="nn">cyclops.query.orm</span> <span class="kn">import</span> <span class="n">Database</span>
 <span class="kn">from</span> <span class="nn">cyclops.query.util</span> <span class="kn">import</span> <span class="n">TableTypes</span>
+<span class="kn">from</span> <span class="nn">cyclops.utils.common</span> <span class="kn">import</span> <span class="n">to_list_optional</span>
 <span class="kn">from</span> <span class="nn">cyclops.utils.file</span> <span class="kn">import</span> <span class="n">save_dataframe</span>
 <span class="kn">from</span> <span class="nn">cyclops.utils.log</span> <span class="kn">import</span> <span class="n">setup_logging</span>
 
@@ -185,7 +186,6 @@
 
 <div class="viewcode-block" id="QueryInterface">
 <a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface">[docs]</a>
-<span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">QueryInterface</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An interface dataclass to wrap queries, and run them.</span>
 
@@ -195,47 +195,171 @@
 <span class="sd">        Database object to create ORM, and query data.</span>
 <span class="sd">    query: cyclops.query.util.TableTypes</span>
 <span class="sd">        The query.</span>
-<span class="sd">    join: cyclops.query.ops.JoinArgs, optional</span>
-<span class="sd">        Join arguments to join the query with another table.</span>
-<span class="sd">    ops: cyclops.query.ops.Sequential or cyclops.query.ops.QueryOp, optional</span>
-<span class="sd">        Operations to perform on the query.</span>
-<span class="sd">    _data: pandas.DataFrame or dask.DataFrame</span>
-<span class="sd">        Data returned from executing the query, as Pandas DataFrame.</span>
-<span class="sd">    _run_args: dict Private dictionary attribute to keep track of arguments</span>
-<span class="sd">        passed to run() method.</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    After initialization, the query, join operation and chaining of provided operations,</span>
-<span class="sd">    are automatically done and the query attribute is updated.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">database</span><span class="p">:</span> <span class="n">Database</span>
-    <span class="n">query</span><span class="p">:</span> <span class="n">TableTypes</span>
-    <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">QueryOp</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">_run_args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+<div class="viewcode-block" id="QueryInterface.__init__">
+<a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">database</span><span class="p">:</span> <span class="n">Database</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TableTypes</span><span class="p">,</span> <span class="s2">&quot;QueryInterface&quot;</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the QueryInterface object, join and chain operations.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">database</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">QueryInterface</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">query</span>  <span class="c1"># type: ignore</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">query</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="kc">None</span></div>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Post init method to chain operations with original query.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">join</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span><span class="o">**</span><span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">join</span><span class="p">))(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ops</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ops</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get data.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
 
+<div class="viewcode-block" id="QueryInterface.join">
+<a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface.join">[docs]</a>
+    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">join_table</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TableTypes</span><span class="p">,</span> <span class="s2">&quot;QueryInterface&quot;</span><span class="p">],</span>
+        <span class="n">on</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+            <span class="n">Union</span><span class="p">[</span>
+                <span class="nb">str</span><span class="p">,</span>
+                <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+                <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+                <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+            <span class="p">]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">on_to_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">type</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">cond</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BinaryExpression</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">table_cols</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">join_table_cols</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">isouter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;QueryInterface&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Join the query with another table.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        join_table</span>
+<span class="sd">            Table to join with.</span>
+<span class="sd">        on</span>
+<span class="sd">            Column(s) to join on.</span>
+<span class="sd">        on_to_type</span>
+<span class="sd">            Type(s) to cast the column(s) to join on.</span>
+<span class="sd">        cond</span>
+<span class="sd">            Condition to join on.</span>
+<span class="sd">        table_cols</span>
+<span class="sd">            Columns to select from the original table.</span>
+<span class="sd">        join_table_cols</span>
+<span class="sd">            Columns to select from the joined table.</span>
+<span class="sd">        isouter</span>
+<span class="sd">            Whether to perform an outer join.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        QueryInterface</span>
+<span class="sd">            QueryInterface object with the join operation added.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">on</span> <span class="o">=</span> <span class="n">to_list_optional</span><span class="p">(</span><span class="n">on</span><span class="p">)</span>
+        <span class="n">on_to_type</span> <span class="o">=</span> <span class="n">to_list_optional</span><span class="p">(</span><span class="n">on_to_type</span><span class="p">)</span>
+        <span class="n">table_cols</span> <span class="o">=</span> <span class="n">to_list_optional</span><span class="p">(</span><span class="n">table_cols</span><span class="p">)</span>
+        <span class="n">join_table_cols</span> <span class="o">=</span> <span class="n">to_list_optional</span><span class="p">(</span><span class="n">join_table_cols</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">join_table</span><span class="p">,</span> <span class="n">QueryInterface</span><span class="p">):</span>
+            <span class="n">join_table</span> <span class="o">=</span> <span class="n">join_table</span><span class="o">.</span><span class="n">query</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
+            <span class="n">join_table</span><span class="o">=</span><span class="n">join_table</span><span class="p">,</span>
+            <span class="n">on</span><span class="o">=</span><span class="n">on</span><span class="p">,</span>
+            <span class="n">on_to_type</span><span class="o">=</span><span class="n">on_to_type</span><span class="p">,</span>
+            <span class="n">cond</span><span class="o">=</span><span class="n">cond</span><span class="p">,</span>
+            <span class="n">table_cols</span><span class="o">=</span><span class="n">table_cols</span><span class="p">,</span>
+            <span class="n">join_table_cols</span><span class="o">=</span><span class="n">join_table_cols</span><span class="p">,</span>
+            <span class="n">isouter</span><span class="o">=</span><span class="n">isouter</span><span class="p">,</span>
+        <span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="QueryInterface.ops">
+<a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface.ops">[docs]</a>
+    <span class="k">def</span> <span class="nf">ops</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ops</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">QueryOp</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;QueryInterface&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Chain operations with the query.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ops</span>
+<span class="sd">            Operations to perform on the query.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        QueryInterface</span>
+<span class="sd">            QueryInterface object with the operations added.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">ops</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="QueryInterface.union">
+<a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface.union">[docs]</a>
+    <span class="k">def</span> <span class="nf">union</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;QueryInterface&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;QueryInterface&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Union the query with another query.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other</span>
+<span class="sd">            The other query to union with.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        QueryInterface</span>
+<span class="sd">            QueryInterface object with the union operation added.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Union</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">query</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="QueryInterface.union_all">
+<a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface.union_all">[docs]</a>
+    <span class="k">def</span> <span class="nf">union_all</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;QueryInterface&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;QueryInterface&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Union all the query with another query.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other</span>
+<span class="sd">            The other query to union all with.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        QueryInterface</span>
+<span class="sd">            QueryInterface object with the union all operation added.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Union</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">union_all</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="QueryInterface.run">
 <a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface.run">[docs]</a>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">backend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;pandas&quot;</span><span class="p">,</span> <span class="s2">&quot;dask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pandas&quot;</span><span class="p">,</span>
+        <span class="n">backend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;pandas&quot;</span><span class="p">,</span> <span class="s2">&quot;dask&quot;</span><span class="p">,</span> <span class="s2">&quot;datasets&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pandas&quot;</span><span class="p">,</span>
         <span class="n">index_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">n_partitions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
@@ -246,7 +370,7 @@
 <span class="sd">        limit</span>
 <span class="sd">            No. of rows to limit the query return.</span>
 <span class="sd">        backend</span>
-<span class="sd">            Backend computing framework to use, Pandas or Dask.</span>
+<span class="sd">            Backend computing framework to use, pandas or dask or datasets.</span>
 <span class="sd">        index_col</span>
 <span class="sd">            Column which becomes the index, and defines the partitioning.</span>
 <span class="sd">            Should be a indexed column in the SQL server, and any orderable type.</span>
@@ -255,20 +379,17 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        pandas.DataFrame or dask.DataFrame</span>
-<span class="sd">            Query result dataframe.</span>
+<span class="sd">        pandas.DataFrame or dask.DataFrame or datasets.Dataset</span>
+<span class="sd">            Query result.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Only re-run when new run arguments are given.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_args</span> <span class="o">!=</span> <span class="nb">locals</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">run_query</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
-                <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span>
-                <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span>
-                <span class="n">index_col</span><span class="o">=</span><span class="n">index_col</span><span class="p">,</span>
-                <span class="n">n_partitions</span><span class="o">=</span><span class="n">n_partitions</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">run_query</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
+            <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span>
+            <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span>
+            <span class="n">index_col</span><span class="o">=</span><span class="n">index_col</span><span class="p">,</span>
+            <span class="n">n_partitions</span><span class="o">=</span><span class="n">n_partitions</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span></div>
 
@@ -312,152 +433,6 @@
 
 <div class="viewcode-block" id="QueryInterface.clear_data">
 <a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterface.html#cyclops.query.interface.QueryInterface.clear_data">[docs]</a>
-    <span class="k">def</span> <span class="nf">clear_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear data container.</span>
-
-<span class="sd">        Sets the data attribute to None, thus clearing the dataframe contained.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="kc">None</span></div>
-</div>
-
-
-
-<div class="viewcode-block" id="QueryInterfaceProcessed">
-<a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterfaceProcessed.html#cyclops.query.interface.QueryInterfaceProcessed">[docs]</a>
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">QueryInterfaceProcessed</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;An interface dataclass to wrap queries, and run them with post-processing.</span>
-
-<span class="sd">    A similar dataclass to QueryInterface, where custom post-processing</span>
-<span class="sd">    functions on the pandas dataframe returned from the query can be run. However,</span>
-<span class="sd">    this prevents the query from being further used, and hence is declared as</span>
-<span class="sd">    private attribute.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    database: cyclops.orm.Database</span>
-<span class="sd">        Database object to create ORM, and query data.</span>
-<span class="sd">    _query: cyclops.query.util.TableTypes</span>
-<span class="sd">        The query.</span>
-<span class="sd">    process_fn: Callable</span>
-<span class="sd">        Process function to apply on the pandas dataframe returned from the query.</span>
-<span class="sd">    join: cyclops.query.ops.JoinArgs, optional</span>
-<span class="sd">        Join arguments to join the query with another table.</span>
-<span class="sd">    ops: cyclops.query.ops.Sequential or cyclops.query.ops.QueryOp, optional</span>
-<span class="sd">        Operations to perform on the query.</span>
-<span class="sd">    _data: pandas.DataFrame or dask.DataFrame</span>
-<span class="sd">        Data returned from executing the query, as Pandas DataFrame.</span>
-<span class="sd">    _run_args: dict</span>
-<span class="sd">        Private dictionary attribute to keep track of arguments</span>
-<span class="sd">        passed to run() method.</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    After initialization, the query, join operation and chaining of provided operations,</span>
-<span class="sd">    are automatically done and the query attribute is updated.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">database</span><span class="p">:</span> <span class="n">Database</span>
-    <span class="n">_query</span><span class="p">:</span> <span class="n">TableTypes</span>
-    <span class="n">process_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
-    <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">QueryOp</span><span class="p">,</span> <span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">_run_args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Post init method to chain operations with original query.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">join</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_query</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span><span class="o">**</span><span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">join</span><span class="p">))(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ops</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ops</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">)</span>
-
-<div class="viewcode-block" id="QueryInterfaceProcessed.run">
-<a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterfaceProcessed.html#cyclops.query.interface.QueryInterfaceProcessed.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">backend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;pandas&quot;</span><span class="p">,</span> <span class="s2">&quot;dask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pandas&quot;</span><span class="p">,</span>
-        <span class="n">index_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">n_partitions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run the query, and fetch data.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        limit</span>
-<span class="sd">            No. of rows to limit the query return.</span>
-<span class="sd">        backend</span>
-<span class="sd">            Backend computing framework to use, Pandas or Dask.</span>
-<span class="sd">        index_col</span>
-<span class="sd">            Column which becomes the index, and defines the partitioning.</span>
-<span class="sd">            Should be a indexed column in the SQL server, and any orderable type.</span>
-<span class="sd">        n_partitions</span>
-<span class="sd">            Number of partitions. Check dask documentation for additional details.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        pandas.DataFrame or dask.DataFrame</span>
-<span class="sd">            Query result dataframe.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Only re-run when new run arguments are given.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_args</span> <span class="o">!=</span> <span class="nb">locals</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">run_query</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">,</span>
-                <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span>
-                <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span>
-                <span class="n">index_col</span><span class="o">=</span><span class="n">index_col</span><span class="p">,</span>
-                <span class="n">n_partitions</span><span class="o">=</span><span class="n">n_partitions</span><span class="p">,</span>
-            <span class="p">)</span>
-
-            <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;Applying post-processing fn </span><span class="si">%s</span><span class="s2"> to query output&quot;</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">process_fn</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_fn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span></div>
-
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get data.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
-
-<div class="viewcode-block" id="QueryInterfaceProcessed.save">
-<a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterfaceProcessed.html#cyclops.query.interface.QueryInterfaceProcessed.save">[docs]</a>
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">file_format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;parquet&quot;</span><span class="p">,</span> <span class="s2">&quot;csv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;parquet&quot;</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the processed query.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        path</span>
-<span class="sd">            Path where the file will be saved.</span>
-<span class="sd">        file_format</span>
-<span class="sd">            File format of the file to save.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        str</span>
-<span class="sd">            Processed save path for upstream use.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># The query must be run in order to be processed.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">save_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="n">file_format</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="QueryInterfaceProcessed.clear_data">
-<a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.interface.QueryInterfaceProcessed.html#cyclops.query.interface.QueryInterfaceProcessed.clear_data">[docs]</a>
     <span class="k">def</span> <span class="nf">clear_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear data container.</span>
 

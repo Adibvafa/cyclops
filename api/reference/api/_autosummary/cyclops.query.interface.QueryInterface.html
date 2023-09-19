@@ -30,7 +30,7 @@
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="cyclops.query.interface.QueryInterfaceProcessed" href="cyclops.query.interface.QueryInterfaceProcessed.html" />
+    <link rel="next" title="cyclops.query.ops" href="cyclops.query.ops.html" />
     <link rel="prev" title="cyclops.query.interface" href="cyclops.query.interface.html" /> 
 </head>
 
@@ -129,7 +129,6 @@
 <li class="toctree-l2 current"><a class="reference internal" href="../cyclops.query.html">cyclops.query</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="cyclops.query.interface.html">cyclops.query.interface</a><ul class="current">
 <li class="toctree-l4 current"><a class="current reference internal" href="#">cyclops.query.interface.QueryInterface</a></li>
-<li class="toctree-l4"><a class="reference internal" href="cyclops.query.interface.QueryInterfaceProcessed.html">cyclops.query.interface.QueryInterfaceProcessed</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="cyclops.query.ops.html">cyclops.query.ops</a></li>
@@ -191,7 +190,7 @@
 <h1>cyclops.query.interface.QueryInterface<a class="headerlink" href="#cyclops-query-interface-queryinterface" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="cyclops.query.interface.QueryInterface">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">QueryInterface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">join=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_data=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_run_args=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/interface.html#QueryInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.interface.QueryInterface" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">QueryInterface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/interface.html#QueryInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.interface.QueryInterface" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.9/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>An interface dataclass to wrap queries, and run them.</p>
 <dl class="field-list simple">
@@ -199,27 +198,33 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>database</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Database</span></code>) – Database object to create ORM, and query data.</p></li>
 <li><p><strong>query</strong> (<em>cyclops.query.util.TableTypes</em>) – The query.</p></li>
-<li><p><strong>join</strong> (<a class="reference internal" href="cyclops.query.ops.JoinArgs.html#cyclops.query.ops.JoinArgs" title="cyclops.query.ops.JoinArgs"><em>cyclops.query.ops.JoinArgs</em></a><em>, </em><em>optional</em>) – Join arguments to join the query with another table.</p></li>
-<li><p><strong>ops</strong> (<a class="reference internal" href="cyclops.query.ops.Sequential.html#cyclops.query.ops.Sequential" title="cyclops.query.ops.Sequential"><em>cyclops.query.ops.Sequential</em></a><em> or </em><a class="reference internal" href="cyclops.query.ops.QueryOp.html#cyclops.query.ops.QueryOp" title="cyclops.query.ops.QueryOp"><em>cyclops.query.ops.QueryOp</em></a><em>, </em><em>optional</em>) – Operations to perform on the query.</p></li>
-<li><p><strong>_data</strong> (<a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.1.0)"><em>pandas.DataFrame</em></a><em> or </em><em>dask.DataFrame</em>) – Data returned from executing the query, as Pandas DataFrame.</p></li>
-<li><p><strong>_run_args</strong> (<em>dict Private dictionary attribute to keep track</em><em> of </em><em>arguments</em>) – passed to run() method.</p></li>
 </ul>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>After initialization, the query, join operation and chaining of provided operations,
-are automatically done and the query attribute is updated.</p>
+<p>Initialize the QueryInterface object, join and chain operations.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.interface.QueryInterface.clear_data" title="cyclops.query.interface.QueryInterface.clear_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_data</span></code></a></p></td>
 <td><p>Clear data container.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.interface.QueryInterface.join" title="cyclops.query.interface.QueryInterface.join"><code class="xref py py-obj docutils literal notranslate"><span class="pre">join</span></code></a></p></td>
+<td><p>Join the query with another table.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.interface.QueryInterface.ops" title="cyclops.query.interface.QueryInterface.ops"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ops</span></code></a></p></td>
+<td><p>Chain operations with the query.</p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.interface.QueryInterface.run" title="cyclops.query.interface.QueryInterface.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a></p></td>
 <td><p>Run the query, and fetch data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.interface.QueryInterface.save" title="cyclops.query.interface.QueryInterface.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a></p></td>
 <td><p>Save the query.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cyclops.query.interface.QueryInterface.union" title="cyclops.query.interface.QueryInterface.union"><code class="xref py py-obj docutils literal notranslate"><span class="pre">union</span></code></a></p></td>
+<td><p>Union the query with another query.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.interface.QueryInterface.union_all" title="cyclops.query.interface.QueryInterface.union_all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">union_all</span></code></a></p></td>
+<td><p>Union all the query with another query.</p></td>
 </tr>
 </tbody>
 </table>
@@ -229,20 +234,14 @@ are automatically done and the query attribute is updated.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#cyclops.query.interface.QueryInterface.data" title="cyclops.query.interface.QueryInterface.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
 <td><p>Get data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">join</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ops</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">database</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code></p></td>
-<td><p></p></td>
-</tr>
 </tbody>
 </table>
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.query.interface.QueryInterface.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/interface.html#QueryInterface.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.interface.QueryInterface.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the QueryInterface object, join and chain operations.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="cyclops.query.interface.QueryInterface.clear_data">
 <span class="sig-name descname"><span class="pre">clear_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/interface.html#QueryInterface.clear_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.interface.QueryInterface.clear_data" title="Link to this definition"></a></dt>
@@ -262,6 +261,48 @@ are automatically done and the query attribute is updated.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="cyclops.query.interface.QueryInterface.join">
+<span class="sig-name descname"><span class="pre">join</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">join_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_to_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cond</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">join_table_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isouter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/interface.html#QueryInterface.join"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.interface.QueryInterface.join" title="Link to this definition"></a></dt>
+<dd><p>Join the query with another table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>join_table</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/selectable.html#sqlalchemy.sql.expression.Select" title="(in SQLAlchemy v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Select</span></code></a>, <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/selectable.html#sqlalchemy.sql.expression.Subquery" title="(in SQLAlchemy v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subquery</span></code></a>, <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/metadata.html#sqlalchemy.schema.Table" title="(in SQLAlchemy v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DBTable</span></code>, <a class="reference internal" href="#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">QueryInterface</span></code></a>]) – Table to join with.</p></li>
+<li><p><strong>on</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]], <a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]) – Column(s) to join on.</p></li>
+<li><p><strong>on_to_type</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#type" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a>, <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#type" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a>], <a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]) – Type(s) to cast the column(s) to join on.</p></li>
+<li><p><strong>cond</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/sqlelement.html#sqlalchemy.sql.expression.BinaryExpression" title="(in SQLAlchemy v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinaryExpression</span></code></a>]) – Condition to join on.</p></li>
+<li><p><strong>table_cols</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]) – Columns to select from the original table.</p></li>
+<li><p><strong>join_table_cols</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]) – Columns to select from the joined table.</p></li>
+<li><p><strong>isouter</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]) – Whether to perform an outer join.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>QueryInterface object with the join operation added.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface">QueryInterface</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.query.interface.QueryInterface.ops">
+<span class="sig-name descname"><span class="pre">ops</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ops</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/interface.html#QueryInterface.ops"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.interface.QueryInterface.ops" title="Link to this definition"></a></dt>
+<dd><p>Chain operations with the query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ops</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference internal" href="cyclops.query.ops.QueryOp.html#cyclops.query.ops.QueryOp" title="cyclops.query.ops.QueryOp"><code class="xref py py-class docutils literal notranslate"><span class="pre">QueryOp</span></code></a>, <a class="reference internal" href="cyclops.query.ops.Sequential.html#cyclops.query.ops.Sequential" title="cyclops.query.ops.Sequential"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequential</span></code></a>]) – Operations to perform on the query.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>QueryInterface object with the operations added.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface">QueryInterface</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="cyclops.query.interface.QueryInterface.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pandas'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_partitions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/interface.html#QueryInterface.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.interface.QueryInterface.run" title="Link to this definition"></a></dt>
 <dd><p>Run the query, and fetch data.</p>
@@ -269,17 +310,17 @@ are automatically done and the query attribute is updated.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – No. of rows to limit the query return.</p></li>
-<li><p><strong>backend</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Literal" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'pandas'</span></code>, <code class="docutils literal notranslate"><span class="pre">'dask'</span></code>]) – Backend computing framework to use, Pandas or Dask.</p></li>
+<li><p><strong>backend</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Literal" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'pandas'</span></code>, <code class="docutils literal notranslate"><span class="pre">'dask'</span></code>, <code class="docutils literal notranslate"><span class="pre">'datasets'</span></code>]) – Backend computing framework to use, pandas or dask or datasets.</p></li>
 <li><p><strong>index_col</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – Column which becomes the index, and defines the partitioning.
 Should be a indexed column in the SQL server, and any orderable type.</p></li>
 <li><p><strong>n_partitions</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – Number of partitions. Check dask documentation for additional details.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Query result dataframe.</p>
+<dd class="field-even"><p>Query result.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.1.0)">pandas.DataFrame</a> or dask.DataFrame</p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.1.0)">pandas.DataFrame</a> or dask.DataFrame or datasets.Dataset</p>
 </dd>
 </dl>
 </dd></dl>
@@ -304,6 +345,40 @@ Should be a indexed column in the SQL server, and any orderable type.</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.query.interface.QueryInterface.union">
+<span class="sig-name descname"><span class="pre">union</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/interface.html#QueryInterface.union"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.interface.QueryInterface.union" title="Link to this definition"></a></dt>
+<dd><p>Union the query with another query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">QueryInterface</span></code></a>) – The other query to union with.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>QueryInterface object with the union operation added.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface">QueryInterface</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cyclops.query.interface.QueryInterface.union_all">
+<span class="sig-name descname"><span class="pre">union_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/cyclops/query/interface.html#QueryInterface.union_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cyclops.query.interface.QueryInterface.union_all" title="Link to this definition"></a></dt>
+<dd><p>Union all the query with another query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">QueryInterface</span></code></a>) – The other query to union all with.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>QueryInterface object with the union all operation added.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#cyclops.query.interface.QueryInterface" title="cyclops.query.interface.QueryInterface">QueryInterface</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -313,7 +388,7 @@ Should be a indexed column in the SQL server, and any orderable type.</p></li>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="cyclops.query.interface.html" class="btn btn-neutral float-left" title="cyclops.query.interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="cyclops.query.interface.QueryInterfaceProcessed.html" class="btn btn-neutral float-right" title="cyclops.query.interface.QueryInterfaceProcessed" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cyclops.query.ops.html" class="btn btn-neutral float-right" title="cyclops.query.ops" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

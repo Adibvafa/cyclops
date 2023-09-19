@@ -171,7 +171,6 @@
 <span class="kn">import</span> <span class="nn">typing</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">islice</span>
 
@@ -217,56 +216,6 @@
 
 
 <span class="c1"># ruff: noqa: W505</span>
-
-
-<div class="viewcode-block" id="JoinArgs">
-<a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.ops.JoinArgs.html#cyclops.query.ops.JoinArgs">[docs]</a>
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">JoinArgs</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Arguments for joining tables.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    join_table</span>
-<span class="sd">        Table to join.</span>
-<span class="sd">    on</span>
-<span class="sd">        Column(s) to join on.</span>
-<span class="sd">    on_to_type</span>
-<span class="sd">        A list of types to which to convert the on columns before joining. Useful when</span>
-<span class="sd">        two columns have the same values but in different format, e.g., strings of int.</span>
-<span class="sd">    cond</span>
-<span class="sd">        Condition on which to join to tables.</span>
-<span class="sd">    table_cols</span>
-<span class="sd">        Filters to keep only these columns from the table.</span>
-<span class="sd">    join_table_cols</span>
-<span class="sd">        Filters to keep only these columns from the join_table.</span>
-<span class="sd">    isouter</span>
-<span class="sd">        Flag to say if the join is a left outer join.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">join_table</span><span class="p">:</span> <span class="n">TableTypes</span>
-    <span class="n">on</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span>
-        <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span>
-            <span class="nb">str</span><span class="p">,</span>
-            <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-            <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-            <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
-        <span class="p">]</span>
-    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">on_to_type</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">type</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">cond</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">BinaryExpression</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">table_cols</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">join_table_cols</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">isouter</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Post initialization.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">on</span> <span class="o">=</span> <span class="n">to_list_optional</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">on_to_type</span> <span class="o">=</span> <span class="n">to_list_optional</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_to_type</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table_cols</span> <span class="o">=</span> <span class="n">to_list_optional</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_cols</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">join_table_cols</span> <span class="o">=</span> <span class="n">to_list_optional</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">join_table_cols</span><span class="p">)</span></div>
-
 
 
 <span class="k">def</span> <span class="nf">_addindent</span><span class="p">(</span><span class="n">s_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_spaces</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>

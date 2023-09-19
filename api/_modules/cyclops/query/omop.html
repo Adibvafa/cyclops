@@ -233,7 +233,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        schema_name: str</span>
+<span class="sd">        schema_name</span>
 <span class="sd">            Name of database schema.</span>
 <span class="sd">        **config_overrides</span>
 <span class="sd">            Override configuration parameters, specified as kwargs.</span>
@@ -250,10 +250,10 @@
 <a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.omop.OMOPQuerier.html#cyclops.query.omop.OMOPQuerier.map_concept_ids_to_name">[docs]</a>
     <span class="k">def</span> <span class="nf">map_concept_ids_to_name</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">src_table</span><span class="p">:</span> <span class="n">Subquery</span><span class="p">,</span>
+        <span class="n">src_table</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Subquery</span><span class="p">,</span> <span class="n">QueryInterface</span><span class="p">],</span>
         <span class="n">src_cols</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
         <span class="n">dst_cols</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Map concept IDs in a source table to concept names from concept table.</span>
 
 <span class="sd">        For each concept ID column with a name like `somecol_concept_ID`, the mapped</span>
@@ -263,19 +263,21 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        src_table: Subquery</span>
+<span class="sd">        src_table</span>
 <span class="sd">            Source table with concept IDs.</span>
-<span class="sd">        src_cols: str or list of str</span>
+<span class="sd">        src_cols</span>
 <span class="sd">            Column name(s) to consider as concept IDs for mapping.</span>
-<span class="sd">        dst_cols: str or list of str, optional</span>
+<span class="sd">        dst_cols</span>
 <span class="sd">            Column name(s) to assign for the mapped concept name columns.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        Subquery</span>
+<span class="sd">        cyclops.query.interface.QueryInterface</span>
 <span class="sd">            Query with mapped columns from concept table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src_table</span><span class="p">,</span> <span class="n">QueryInterface</span><span class="p">):</span>
+            <span class="n">src_table</span> <span class="o">=</span> <span class="n">src_table</span><span class="o">.</span><span class="n">query</span>
         <span class="n">concept_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema_name</span><span class="p">,</span> <span class="s2">&quot;concept&quot;</span><span class="p">)</span>
         <span class="n">src_cols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">src_cols</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">dst_cols</span><span class="p">:</span>
@@ -295,46 +297,44 @@
             <span class="n">dst_col_name</span> <span class="o">=</span> <span class="n">dst_cols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">dst_cols</span> <span class="k">else</span> <span class="n">col</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">ID</span><span class="p">,</span> <span class="n">NAME</span><span class="p">)</span>
             <span class="n">src_table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Rename</span><span class="p">({</span><span class="n">CONCEPT_NAME</span><span class="p">:</span> <span class="n">dst_col_name</span><span class="p">})(</span><span class="n">src_table</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">src_table</span></div>
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">src_table</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_map_care_site_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_table</span><span class="p">:</span> <span class="n">Subquery</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subquery</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_map_care_site_id</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">source_table</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Subquery</span><span class="p">,</span> <span class="n">QueryInterface</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Map care_site_id in a source table to care_site table.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        source_table: Subquery</span>
+<span class="sd">        source_table</span>
 <span class="sd">            Source table with care_site_id.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        Subquery</span>
+<span class="sd">        cyclops.query.interface.QueryInterface</span>
 <span class="sd">            Query with mapped columns from care_site table.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source_table</span><span class="p">,</span> <span class="n">QueryInterface</span><span class="p">):</span>
+            <span class="n">source_table</span> <span class="o">=</span> <span class="n">source_table</span><span class="o">.</span><span class="n">query</span>
         <span class="n">care_site_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema_name</span><span class="p">,</span> <span class="s2">&quot;care_site&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Join</span><span class="p">(</span>
             <span class="n">care_site_table</span><span class="p">,</span>
             <span class="n">on</span><span class="o">=</span><span class="n">CARE_SITE_ID</span><span class="p">,</span>
             <span class="n">join_table_cols</span><span class="o">=</span><span class="p">[</span><span class="n">CARE_SITE_NAME</span><span class="p">,</span> <span class="n">CARE_SITE_SOURCE_VALUE</span><span class="p">],</span>
             <span class="n">isouter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)(</span><span class="n">source_table</span><span class="p">)</span>
 
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
+
 <div class="viewcode-block" id="OMOPQuerier.visit_occurrence">
 <a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.omop.OMOPQuerier.html#cyclops.query.omop.OMOPQuerier.visit_occurrence">[docs]</a>
     <span class="k">def</span> <span class="nf">visit_occurrence</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Query OMOP visit_occurrence table.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        join: cyclops.query.ops.JoinArgs, optional</span>
-<span class="sd">            Join arguments.</span>
-<span class="sd">        ops: qo.Sequential, optional</span>
-<span class="sd">            Additional operations to perform on query.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -352,24 +352,15 @@
         <span class="p">)</span>
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_map_care_site_id</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="OMOPQuerier.visit_detail">
 <a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.omop.OMOPQuerier.html#cyclops.query.omop.OMOPQuerier.visit_detail">[docs]</a>
     <span class="k">def</span> <span class="nf">visit_detail</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Query OMOP visit_detail table.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        join: qo.JoinArgs, optional</span>
-<span class="sd">            Join arguments.</span>
-<span class="sd">        ops: qo.Sequential, optional</span>
-<span class="sd">            Additional operations to perform on query.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -383,24 +374,15 @@
             <span class="p">[</span><span class="s2">&quot;visit_detail_concept_id&quot;</span><span class="p">,</span> <span class="s2">&quot;visit_detail_type_concept_id&quot;</span><span class="p">],</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="OMOPQuerier.person">
 <a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.omop.OMOPQuerier.html#cyclops.query.omop.OMOPQuerier.person">[docs]</a>
     <span class="k">def</span> <span class="nf">person</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Query OMOP person table.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        join: qo.JoinArgs, optional</span>
-<span class="sd">            Join arguments.</span>
-<span class="sd">        ops: qo.Sequential, optional</span>
-<span class="sd">            Additional operations to perform on query.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -414,24 +396,15 @@
             <span class="p">[</span><span class="s2">&quot;gender_concept_id&quot;</span><span class="p">,</span> <span class="s2">&quot;race_concept_id&quot;</span><span class="p">,</span> <span class="s2">&quot;ethnicity_concept_id&quot;</span><span class="p">],</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="OMOPQuerier.observation">
 <a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.omop.OMOPQuerier.html#cyclops.query.omop.OMOPQuerier.observation">[docs]</a>
     <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Query OMOP observation table.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        join: qo.JoinArgs, optional</span>
-<span class="sd">            Join arguments.</span>
-<span class="sd">        ops: qo.Sequential, optional</span>
-<span class="sd">            Additional operations to perform on query.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -445,24 +418,15 @@
             <span class="p">[</span><span class="n">OBSERVATION_CONCEPT_ID</span><span class="p">,</span> <span class="n">OBSERVATION_TYPE_CONCEPT_ID</span><span class="p">],</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="OMOPQuerier.measurement">
 <a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.omop.OMOPQuerier.html#cyclops.query.omop.OMOPQuerier.measurement">[docs]</a>
     <span class="k">def</span> <span class="nf">measurement</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Query OMOP measurement table.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        join: qo.JoinArgs, optional</span>
-<span class="sd">            Join arguments.</span>
-<span class="sd">        ops: qo.Sequential, optional</span>
-<span class="sd">            Additional operations to perform on query.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -478,7 +442,7 @@
             <span class="p">[</span><span class="n">MEASUREMENT_CONCEPT_ID</span><span class="p">,</span> <span class="n">MEASUREMENT_TYPE_CONCEPT_ID</span><span class="p">,</span> <span class="n">UNIT_CONCEPT_ID</span><span class="p">],</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
 </div>
 
 </pre></div>

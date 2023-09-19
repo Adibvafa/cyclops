@@ -165,7 +165,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;GEMINI query API.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
 
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">select</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.sql.expression</span> <span class="kn">import</span> <span class="n">union_all</span>
@@ -211,17 +211,8 @@
 <a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.gemini.GEMINIQuerier.html#cyclops.query.gemini.GEMINIQuerier.ip_admin">[docs]</a>
     <span class="k">def</span> <span class="nf">ip_admin</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Query GEMINI patient encounters.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        join: qo.JoinArgs, optional</span>
-<span class="sd">            Join arguments.</span>
-<span class="sd">        ops: qo.Sequential, optional</span>
-<span class="sd">            Additional operations to perform on the table.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -249,24 +240,15 @@
         <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Rename</span><span class="p">({</span><span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;discharge_description&quot;</span><span class="p">})(</span><span class="n">table</span><span class="p">)</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Drop</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="GEMINIQuerier.diagnoses">
 <a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.gemini.GEMINIQuerier.html#cyclops.query.gemini.GEMINIQuerier.diagnoses">[docs]</a>
     <span class="k">def</span> <span class="nf">diagnoses</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Query diagnosis data.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        join: qo.JoinArgs, optional</span>
-<span class="sd">            Join arguments.</span>
-<span class="sd">        ops: qo.Sequential, optional</span>
-<span class="sd">            Additional operations to perform on the table.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -291,24 +273,15 @@
         <span class="c1"># Trim whitespace from ICD codes.</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Trim</span><span class="p">(</span><span class="s2">&quot;diagnosis_code&quot;</span><span class="p">)(</span><span class="n">table</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="GEMINIQuerier.room_transfer">
 <a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.gemini.GEMINIQuerier.html#cyclops.query.gemini.GEMINIQuerier.room_transfer">[docs]</a>
     <span class="k">def</span> <span class="nf">room_transfer</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Query room transfer data.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        join: qo.JoinArgs, optional</span>
-<span class="sd">            Join arguments.</span>
-<span class="sd">        ops: qo.Sequential, optional</span>
-<span class="sd">            Additional operations to perform on the table.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -330,24 +303,15 @@
         <span class="p">)(</span><span class="n">table</span><span class="p">)</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">qo</span><span class="o">.</span><span class="n">Rename</span><span class="p">({</span><span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;transfer_description&quot;</span><span class="p">})(</span><span class="n">table</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="GEMINIQuerier.care_units">
 <a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.gemini.GEMINIQuerier.html#cyclops.query.gemini.GEMINIQuerier.care_units">[docs]</a>
     <span class="k">def</span> <span class="nf">care_units</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Query care unit data, fetches transfer info from multiple tables.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        join: qo.JoinArgs, optional</span>
-<span class="sd">            Join arguments.</span>
-<span class="sd">        ops: qo.Sequential, optional</span>
-<span class="sd">            Additional operations to perform on the table.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -416,24 +380,15 @@
             <span class="n">select</span><span class="p">(</span><span class="n">rt_table</span><span class="p">),</span>
         <span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="GEMINIQuerier.imaging">
 <a class="viewcode-back" href="../../../reference/api/_autosummary/cyclops.query.gemini.GEMINIQuerier.html#cyclops.query.gemini.GEMINIQuerier.imaging">[docs]</a>
     <span class="k">def</span> <span class="nf">imaging</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">join</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">JoinArgs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">qo</span><span class="o">.</span><span class="n">Sequential</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QueryInterface</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Query imaging reports data.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        join: qo.JoinArgs, optional</span>
-<span class="sd">            Join arguments.</span>
-<span class="sd">        ops: qo.Sequential, optional</span>
-<span class="sd">            Additional operations to perform on the table.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -461,7 +416,7 @@
             <span class="n">table</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="n">join</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
 </div>
 
 </pre></div>
